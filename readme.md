@@ -1,4 +1,4 @@
-EfCoreTriggers is a library to write triggers for EFCore using OOP syntax. Triggers are translating into sql and adding to migrations.
+EfCoreTriggers is the library to write triggers for EFCore using OOP style. Triggers are translating into sql and automatically adding to migrations.
 
 ## Available providers
 
@@ -6,17 +6,18 @@ EfCoreTriggers is a library to write triggers for EFCore using OOP syntax. Trigg
 
 ### Configuring DB to use triggers
 
-Call UseTriggers() to use library
+Call UseTriggers() to use the library.
 
 ```cs
 var options = new DbContextOptionsBuilder<TestDbContext>()
     .UseNpgsql("User ID=test;Password=test;Host=localhost;Port=5432;Database=test;")
     .UseTriggers() // Initialize necessary dependencies
     .Options;
+
 var dbContext = new TestDbContext(options);
 ```
 
-AfterUpdate trigger example
+After Update trigger example.
 
 ```cs
 modelBuilder.Entity<Transaction>()
@@ -28,7 +29,7 @@ modelBuilder.Entity<Transaction>()
                 (oldTransaction, newTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance + newTransaction.Value - oldTransaction.Value })));
 ```
 
-AfterDelete trigger example
+After Delete trigger example.
 
 ```cs
 modelBuilder.Entity<Transaction>()
@@ -40,7 +41,7 @@ modelBuilder.Entity<Transaction>()
                 (deletedTransaction, oldUser) => new UserBalance { Balance = oldUser.Balance - deletedTransaction.Value })));));
 ```
 
-AfterInsert trigger example
+After Insert trigger example.
 
 ```cs
 modelBuilder.Entity<Transaction>()
