@@ -4,20 +4,6 @@ EfCoreTriggers is the library to write native SQL triggers using EFCore model bu
 
 - PostgreSQL
 
-## Available triggers
-
-- Before Insert
-- After Insert
-- Before Update
-- After Update
-- Before Delete
-- After Delete
-
-## Available actions - what you can do when triggered
-
-- Update
-- Upsert
-
 ### Configuring DB to use triggers
 
 Call UseTriggers() to use the library.
@@ -39,8 +25,8 @@ modelBuilder.Entity<Transaction>()
         .Action(action => action
             .Condition((oldTransaction, newTransaction) => oldTransaction.IsVeryfied && newTransaction.IsVeryfied) // Executes only if condition met 
             .Update<UserBalance>(
-                (oldTransaction, newTransaction, userBalances) => userBalances.UserId == oldTransaction.UserId, // Will be updated entities with matched condition
-                (oldTransaction, newTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance + newTransaction.Value - oldTransaction.Value }))); // New values for matched entities.
+                (oldTransaction, updatedTransaction, userBalances) => userBalances.UserId == oldTransaction.UserId, // Will be updated entities with matched condition
+                (oldTransaction, updatedTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance + updatedTransaction.Value - oldTransaction.Value }))); // New values for matched entities.
 ```
 
 After Insert trigger entity, upsert record in the table with UserBalance entities.
@@ -55,3 +41,17 @@ modelBuilder.Entity<Transaction>()
                 insertedTransaction => new UserBalance { Balance = insertedTransaction.Value }, // Insert, if value didn't exist
                 (insertedTransaction, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance + insertedTransaction.Value }))); // Update if value existed
 ```
+
+#### All available triggers
+
+- Before Insert
+- After Insert
+- Before Update
+- After Update
+- Before Delete
+- After Delete
+
+#### Available actions - what you can do when triggered
+
+- Update
+- Upsert
