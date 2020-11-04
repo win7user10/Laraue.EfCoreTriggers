@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Laraue.EfCoreTriggers.Common
 {
-    class Initializer
+    public class TriggersInitializer
     {
         public static DbProvider? UsingProvider { get; private set; }
 

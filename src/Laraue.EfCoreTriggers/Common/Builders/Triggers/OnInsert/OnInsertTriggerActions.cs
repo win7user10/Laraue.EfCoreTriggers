@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
 {
-    public class OnInsertTriggerActions<TTriggerEntity> : TriggerActions
+    public class OnInsertTriggerActions<TTriggerEntity> : TriggerActions<TTriggerEntity>
         where TTriggerEntity : class
     {
         public OnInsertTriggerActions<TTriggerEntity> Condition(Expression<Func<TTriggerEntity, bool>> condition)
@@ -14,12 +14,22 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
             return this;
         }
 
-        public OnInsertTriggerActions<TTriggerEntity> UpdateAnotherEntity<TUpdateEntity>(
-                Expression<Func<TTriggerEntity, TUpdateEntity, bool>> entityFilter,
-                Expression<Func<TTriggerEntity, TUpdateEntity, TUpdateEntity>> setValues)
+        public OnInsertTriggerActions<TTriggerEntity> Update<TUpdateEntity>(
+            Expression<Func<TTriggerEntity, TUpdateEntity, bool>> entityFilter,
+            Expression<Func<TTriggerEntity, TUpdateEntity, TUpdateEntity>> setValues)
             where TUpdateEntity : class
         {
             ActionExpressions.Add(new OnInsertTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
+            return this;
+        }
+
+        public OnInsertTriggerActions<TTriggerEntity> Upsert<TUpsertEntity>(
+            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TUpsertEntity>> insertExpression,
+            Expression<Func<TTriggerEntity, TUpsertEntity, TUpsertEntity>> onMatchExpression)
+            where TUpsertEntity : class
+        {
+            ActionExpressions.Add(new OnInsertTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
             return this;
         }
 

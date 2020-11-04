@@ -23,7 +23,7 @@ namespace Laraue.EfCoreTriggers.Extensions
             if (providers.Length > 1) throw new InvalidOperationException(
                 $"Found {providers.Length} DB providers, try to chose provider explicitly using another overload.");
 
-            Initializer.SetProvider(providers.First().GetType().Name);
+            TriggersInitializer.SetProvider(providers.First().GetType().Name);
 
             return optionsBuilder;
         }
@@ -32,7 +32,7 @@ namespace Laraue.EfCoreTriggers.Extensions
             where TContext : DbContext
         {
             optionsBuilder.ReplaceServices();
-            Initializer.SetProvider(dbProvider);
+            TriggersInitializer.SetProvider(dbProvider);
             return optionsBuilder;
         }
 

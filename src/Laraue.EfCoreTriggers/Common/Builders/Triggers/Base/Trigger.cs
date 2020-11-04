@@ -19,6 +19,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 
         public abstract string BuildSql(ITriggerSqlVisitor visitor);
 
-        public string Name => $"{Constants.AnnotationKey}_{TriggerTime}_{TriggerType}_{typeof(TTriggerEntity).Name}";
+        public string Name => $"{Constants.AnnotationKey}_{TriggerTime.ToString().ToUpper()}_{TriggerType.ToString().ToUpper()}_{typeof(TTriggerEntity).Name.ToUpper()}";
     }
 }

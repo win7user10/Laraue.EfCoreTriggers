@@ -14,5 +14,10 @@
         /// Old entity prefix. Available on update and delete operations.
         /// </summary>
         Old,
+
+        /// <summary>
+        /// Entity without prefix.
+        /// </summary>
+        None,
     }
 }

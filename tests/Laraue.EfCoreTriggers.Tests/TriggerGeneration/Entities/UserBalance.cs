@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Laraue.EfCoreTriggers.Tests.StoredProcedures.Entities
+namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities
 {
     public class UserBalance
     {

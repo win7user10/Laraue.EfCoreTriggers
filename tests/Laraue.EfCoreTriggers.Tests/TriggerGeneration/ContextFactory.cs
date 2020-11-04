@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Laraue.EfCoreTriggers.Tests.StoredProcedures
+namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration
 {
     public class ContextFactory : IDesignTimeDbContextFactory<TestDbContext>
     {

@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 {
-    public abstract class BaseExpressionSqlVisitor : IExpressionSqlVisitor
+    public abstract class BaseExpressionSqlVisitor
     {
         private Dictionary<MemberInfo, string> _columnNamesCache = new Dictionary<MemberInfo, string>();
 
@@ -69,54 +69,76 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             ExpressionType.LessThanOrEqual => "<=",
             ExpressionType.IsTrue => "is true",
             ExpressionType.IsFalse => "is false",
+            ExpressionType.Negate => "-",
             _ => throw new NotSupportedException($"Unknown sign of {expressionType}"),
         };
 
-        public virtual string GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        public virtual string GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentPrefix> argumentTypes = null)
         {
+            argumentTypes ??= new Dictionary<string, ArgumentPrefix>();
             var sqlBuilder = new StringBuilder();
 
             var memberName = ((ParameterExpression)memberExpression.Expression).Name;
             if (argumentTypes.TryGetValue(memberName, out var argumentType))
             {
-                if (argumentType == ArgumentPrefix.New)
-                    sqlBuilder.Append(NewEntityPrefix);
-                else if (argumentType == ArgumentPrefix.Old)
-                    sqlBuilder.Append(OldEntityPrefix);
+                if (argumentType != ArgumentPrefix.None)
+                {
+                    if (argumentType == ArgumentPrefix.New)
+                        sqlBuilder.Append(NewEntityPrefix);
+                    else if (argumentType == ArgumentPrefix.Old)
+                        sqlBuilder.Append(OldEntityPrefix);
+                    sqlBuilder.Append('.');
+                }
             }
             else
-                sqlBuilder.Append(GetTableName(memberExpression.Member));
+                sqlBuilder.Append($"{GetTableName(memberExpression.Member)}.");
 
-            sqlBuilder.Append('.')
-                .Append(GetColumnName(memberExpression.Member));
+            sqlBuilder.Append(GetColumnName(memberExpression.Member));
 
             return sqlBuilder.ToString();
         }
 
-        public virtual string GetMemberAssignmentSql(MemberAssignment memberAssignment, Dictionary<string, ArgumentPrefix> argumentTypes)
+        public virtual (string ColumnName, string AssignmentExpressionSql) GetMemberAssignmentParts(MemberAssignment memberAssignment, Dictionary<string, ArgumentPrefix> argumentTypes = null)
         {
-            var sqlBuilder = new StringBuilder();
+            var columnName = GetColumnName(memberAssignment.Member);
+            var assignmentExpressionSql = memberAssignment.Expression switch
+            {
+                BinaryExpression binaryExpression => GetBinaryExpressionSql(binaryExpression, argumentTypes),
+                MemberExpression memberExpression => GetMemberExpressionSql(memberExpression, argumentTypes),
+                UnaryExpression unaryExpression => GetUnaryExpressionSql(unaryExpression, argumentTypes),
+                _ => throw new NotSupportedException($"Member assignment expression of type ({memberAssignment.Expression.GetType()}) is not supported."),
+            };
 
-            sqlBuilder.Append(GetColumnName(memberAssignment.Member))
-                .Append(" = ");
-
-            var assignmentExpression = (BinaryExpression)memberAssignment.Expression;
-            var assignmentExpressionSql = GetBinaryExpressionSql(assignmentExpression, argumentTypes);
-            sqlBuilder.Append(assignmentExpressionSql);
-
-            return sqlBuilder.ToString();
+            return (columnName, assignmentExpressionSql);
         }
 
-        public virtual string GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        public virtual string GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes = null)
         {
             var sqlBuilder = new StringBuilder();
             var memberExpression = (MemberExpression)unaryExpression.Operand;
+            if (unaryExpression.NodeType == ExpressionType.Negate)
+                sqlBuilder.Append(GetExpressionTypeSql(unaryExpression.NodeType));
             sqlBuilder.Append(GetMemberExpressionSql(memberExpression, argumentTypes));
-            sqlBuilder.Append($" {GetExpressionTypeSql(unaryExpression.NodeType)}");
+            if (unaryExpression.NodeType != ExpressionType.Negate)
+                sqlBuilder.Append($" {GetExpressionTypeSql(unaryExpression.NodeType)}");
+
             return sqlBuilder.ToString();
         }
 
-        public virtual string GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        public virtual string[] GetNewExpressionColumns(NewExpression newExpression)
+        {
+            return newExpression.Arguments.Select(argument =>
+            {
+                var memberExpression = (MemberExpression)argument;
+                var parameter = (ParameterExpression)memberExpression.Expression;
+                return GetMemberExpressionSql(memberExpression, new Dictionary<string, ArgumentPrefix>
+                {
+                    [parameter.Name] = ArgumentPrefix.None,
+                });
+            }).ToArray();
+        }
+
+        public virtual string GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes = null)
         {
             var sqlBuilder = new StringBuilder();
 
@@ -157,22 +179,13 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder.ToString();
         }
 
-        public virtual string GetMemberInitSql(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected Dictionary<string, string> GetMemberInitExpressionAssignmentParts(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentPrefix> argumentTypes = null)
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.Append("set ");
-            var setExpressionBindings = memberInitExpression.Bindings;
-            foreach (var memberBinding in setExpressionBindings)
+            return memberInitExpression.Bindings.Select(memberBinding =>
             {
                 var memberAssignmentExpression = (MemberAssignment)memberBinding;
-                var sql = GetMemberAssignmentSql(memberAssignmentExpression, argumentTypes);
-                sqlBuilder.Append(sql);
-
-                if (memberBinding != setExpressionBindings.Last())
-                    sqlBuilder.Append(", ");
-            }
-
-            return sqlBuilder.ToString();
+                return GetMemberAssignmentParts(memberAssignmentExpression, argumentTypes);
+            }).ToDictionary(x => x.ColumnName, x => x.AssignmentExpressionSql);
         }
 
         public virtual string GetConstantExpressionSql(ConstantExpression constantExpression) => constantExpression.Value.ToString().ToLower();

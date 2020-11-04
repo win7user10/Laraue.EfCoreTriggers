@@ -1,17 +1,24 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Visitor;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 {
-    public abstract class TriggerCondition : ISqlConvertible
+    public abstract class TriggerCondition<TTriggerEntity> : ISqlConvertible
+        where TTriggerEntity : class
     {
-        public Expression Condition { get; }
+        public LambdaExpression Condition { get; }
 
-        public TriggerCondition(Expression triggerCondition)
+        public TriggerCondition(LambdaExpression triggerCondition)
         {
             Condition = triggerCondition;
         }
 
-        public abstract string BuildSql(ITriggerSqlVisitor visitor);
+        public virtual string BuildSql(ITriggerSqlVisitor visitor)
+        {
+            return visitor.GetTriggerConditionSql(this);
+        }
+
+        public abstract Dictionary<string, ArgumentPrefix> ConditionPrefixes { get; }
     }
 }

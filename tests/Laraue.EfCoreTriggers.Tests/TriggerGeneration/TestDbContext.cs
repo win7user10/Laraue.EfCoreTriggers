@@ -1,8 +1,8 @@
 ﻿using Laraue.EfCoreTriggers.CSharpBuilder;
-using Laraue.EfCoreTriggers.Tests.StoredProcedures.Entities;
+using Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laraue.EfCoreTriggers.Tests.StoredProcedures
+namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration
 {
     public class TestDbContext : DbContext
     {
@@ -11,7 +11,6 @@ namespace Laraue.EfCoreTriggers.Tests.StoredProcedures
         public DbSet<Transaction> Transactions { get; set; }
 
         public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
-
         { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -20,7 +19,11 @@ namespace Laraue.EfCoreTriggers.Tests.StoredProcedures
                 .AfterUpdate(trigger => trigger
                     .Action(action => action
                         .Condition((oldTransaction, newTransaction) => oldTransaction.IsVeryfied && newTransaction.IsVeryfied)
-                        .UpdateAnotherEntity<UserBalance>(
+                        .Upsert(
+                            balance => new { balance.UserId },
+                            (oldTransaction, updatedTransaction) => new UserBalance { Balance = updatedTransaction.Value - oldTransaction.Value },
+                            (oldTransaction, updatedTransaction, oldUserBalance) => new UserBalance { Balance = updatedTransaction.Value - oldTransaction.Value + oldUserBalance.Balance })
+                        .Update<UserBalance>(
                             (oldTransaction, newTransaction, userBalances) => userBalances.UserId == oldTransaction.UserId,
                             (oldTransaction, newTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance + newTransaction.Value - oldTransaction.Value })));
 
@@ -28,7 +31,11 @@ namespace Laraue.EfCoreTriggers.Tests.StoredProcedures
                 .AfterDelete(trigger => trigger
                     .Action(action => action
                         .Condition(deletedTransaction => deletedTransaction.IsVeryfied)
-                        .UpdateAnotherEntity<UserBalance>(
+                        .Upsert(
+                            balance => new { balance.UserId },
+                            deletedTransaction => new UserBalance { Balance = -deletedTransaction.Value },
+                            (deletedTransaction, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance - deletedTransaction.Value })
+                        .Update<UserBalance>(
                             (deletedTransaction, userBalances) => userBalances.UserId == deletedTransaction.UserId,
                             (deletedTransaction, oldUser) => new UserBalance { Balance = oldUser.Balance - deletedTransaction.Value })));
 
@@ -36,7 +43,11 @@ namespace Laraue.EfCoreTriggers.Tests.StoredProcedures
                 .AfterInsert(trigger => trigger
                     .Action(action => action
                         .Condition(insertedTransaction => insertedTransaction.IsVeryfied)
-                        .UpdateAnotherEntity<UserBalance>(
+                        .Upsert(
+                            balance => new { balance.UserId },
+                            insertedTransaction => new UserBalance { Balance = insertedTransaction.Value },
+                            (insertedTransaction, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance + insertedTransaction.Value })
+                        .Update<UserBalance>(
                             (insertedTransaction, userBalances) => userBalances.UserId == insertedTransaction.UserId,
                             (insertedTransaction, oldUser) => new UserBalance { Balance = oldUser.Balance + insertedTransaction.Value })));
         }

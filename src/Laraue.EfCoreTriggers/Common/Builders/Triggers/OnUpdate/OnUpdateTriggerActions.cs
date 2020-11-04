@@ -1,11 +1,10 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Laraue.EfCoreTriggers.Common.Builders.Visitor;
 using System;
 using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
 {
-    public class OnUpdateTriggerActions<TTriggerEntity> : TriggerActions
+    public class OnUpdateTriggerActions<TTriggerEntity> : TriggerActions<TTriggerEntity>
         where TTriggerEntity : class
     {
         public OnUpdateTriggerActions<TTriggerEntity> Condition(Expression<Func<TTriggerEntity, TTriggerEntity, bool>> condition)
@@ -14,7 +13,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
             return this;
         }
 
-        public OnUpdateTriggerActions<TTriggerEntity> UpdateAnotherEntity<TUpdateEntity>(
+        public OnUpdateTriggerActions<TTriggerEntity> Update<TUpdateEntity>(
                 Expression<Func<TTriggerEntity, TTriggerEntity, TUpdateEntity, bool>> entityFilter,
                 Expression<Func<TTriggerEntity, TTriggerEntity, TUpdateEntity, TUpdateEntity>> setValues)
             where TUpdateEntity : class
@@ -23,9 +22,14 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
             return this;
         }
 
-        public override string BuildSql(ITriggerSqlVisitor visitor)
+        public OnUpdateTriggerActions<TTriggerEntity> Upsert<TUpsertEntity>(
+            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TTriggerEntity, TUpsertEntity>> insertExpression,
+            Expression<Func<TTriggerEntity, TTriggerEntity, TUpsertEntity, TUpsertEntity>> onMatchExpression)
+            where TUpsertEntity : class
         {
-            return visitor.GetTriggerActionsSql(this);
+            ActionExpressions.Add(new OnUpdateTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
+            return this;
         }
     }
 }

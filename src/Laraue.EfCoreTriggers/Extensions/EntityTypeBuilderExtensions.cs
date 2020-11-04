@@ -14,8 +14,9 @@ namespace Laraue.EfCoreTriggers.CSharpBuilder
             this EntityTypeBuilder<T> entityTypeBuilder,
             Trigger<T> configuredTrigger) where T : class
         {
-            var sqlProvider = Initializer.GetSqlProvider(entityTypeBuilder.Metadata.Model);
-            entityTypeBuilder.Metadata.Model.FindEntityType(typeof(T).FullName).AddAnnotation(configuredTrigger.Name, configuredTrigger.BuildSql(sqlProvider));
+            var sqlProvider = TriggersInitializer.GetSqlProvider(entityTypeBuilder.Metadata.Model);
+            var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(typeof(T).FullName);
+            entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger.BuildSql(sqlProvider));
             return entityTypeBuilder;
         }
 

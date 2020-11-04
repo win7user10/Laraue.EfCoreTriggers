@@ -1,21 +1,31 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Visitor;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 {
-    public abstract class TriggerUpdateAction : ISqlConvertible
+    public abstract class TriggerUpdateAction<TTriggerEntity, TUpdateEntity> : ISqlConvertible
+       where TTriggerEntity : class
+       where TUpdateEntity : class
     {
-        public Expression UpdateFilter;
-        public Expression UpdateExpression;
+        public LambdaExpression UpdateFilter;
+        public LambdaExpression UpdateExpression;
 
         public TriggerUpdateAction(
-            Expression updateFilter,
-            Expression updateExpression)
+            LambdaExpression updateFilter,
+            LambdaExpression updateExpression)
         {
             UpdateFilter = updateFilter;
             UpdateExpression = updateExpression;
         }
 
-        public abstract string BuildSql(ITriggerSqlVisitor visitor);
+        public virtual string BuildSql(ITriggerSqlVisitor visitor)
+        {
+            return visitor.GetTriggerUpdateActionSql(this);
+        }
+
+        public abstract Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes { get; }
+
+        public abstract Dictionary<string, ArgumentPrefix> UpdateExpressionPrefixes { get; }
     }
 }

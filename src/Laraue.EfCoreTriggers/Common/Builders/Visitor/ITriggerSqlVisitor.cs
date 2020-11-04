@@ -1,7 +1,5 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
-using System;
+﻿using System;
+using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 {
@@ -9,55 +7,21 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
     {
         string GetDropTriggerSql(string triggerName, Type entityType);
 
-        #region OnUpdateTriggers
-
-        string GetTriggerSql<TTriggerEntity>(OnUpdateTrigger<TTriggerEntity> trigger)
+        string GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
             where TTriggerEntity : class;
 
-        string GetTriggerConditionSql<TTriggerEntity>(OnUpdateTriggerCondition<TTriggerEntity> triggerCondition)
+        string GetTriggerConditionSql<TTriggerEntity>(TriggerCondition<TTriggerEntity> triggerCondition)
             where TTriggerEntity : class;
 
-        string GetTriggerActionsSql<TTriggerEntity>(OnUpdateTriggerActions<TTriggerEntity> triggerActions)
+        string GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
             where TTriggerEntity : class;
 
-        string GetTriggerUpdateActionSql<TTriggerEntity, TUpdateEntity>(OnUpdateTriggerUpdateAction<TTriggerEntity, TUpdateEntity> triggerUpdateAction)
+        string GetTriggerUpdateActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpdateAction<TTriggerEntity, TUpdateEntity> triggerUpdateAction)
             where TTriggerEntity : class
             where TUpdateEntity : class;
 
-        #endregion
-
-        #region OnDeleteTriggers
-
-        string GetTriggerSql<TTriggerEntity>(OnDeleteTrigger<TTriggerEntity> trigger)
-            where TTriggerEntity : class;
-
-        string GetTriggerConditionSql<TTriggerEntity>(OnDeleteTriggerCondition<TTriggerEntity> triggerCondition)
-            where TTriggerEntity : class;
-
-        string GetTriggerActionsSql<TTriggerEntity>(OnDeleteTriggerActions<TTriggerEntity> triggerActions)
-            where TTriggerEntity : class;
-
-        string GetTriggerUpdateActionSql<TTriggerEntity, TUpdateEntity>(OnDeleteTriggerUpdateAction<TTriggerEntity, TUpdateEntity> triggerUpdateAction)
+        string GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
             where TTriggerEntity : class
             where TUpdateEntity : class;
-
-        #endregion
-
-        #region OnInsertTriggers
-
-        string GetTriggerSql<TTriggerEntity>(OnInsertTrigger<TTriggerEntity> trigger)
-            where TTriggerEntity : class;
-
-        string GetTriggerConditionSql<TTriggerEntity>(OnInsertTriggerCondition<TTriggerEntity> triggerCondition)
-            where TTriggerEntity : class;
-
-        string GetTriggerActionsSql<TTriggerEntity>(OnInsertTriggerActions<TTriggerEntity> triggerActions)
-            where TTriggerEntity : class;
-
-        string GetTriggerUpdateActionSql<TTriggerEntity, TUpdateEntity>(OnInsertTriggerUpdateAction<TTriggerEntity, TUpdateEntity> triggerUpdateAction)
-            where TTriggerEntity : class
-            where TUpdateEntity : class;
-
-        #endregion
     }
 }
