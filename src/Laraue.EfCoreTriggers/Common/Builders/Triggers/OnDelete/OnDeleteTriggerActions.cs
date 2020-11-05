@@ -18,7 +18,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
                 Expression<Func<TTriggerEntity, TUpdateEntity, TUpdateEntity>> setValues)
             where TUpdateEntity : class
         {
-            ActionExpressions.Add(new OnDeleteTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
+            Update(new OnDeleteTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
             return this;
         }
 
@@ -28,7 +28,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
             Expression<Func<TTriggerEntity, TUpsertEntity, TUpsertEntity>> onMatchExpression)
             where TUpsertEntity : class
         {
-            ActionExpressions.Add(new OnDeleteTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
+            Upsert(new OnDeleteTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
             return this;
         }
     }

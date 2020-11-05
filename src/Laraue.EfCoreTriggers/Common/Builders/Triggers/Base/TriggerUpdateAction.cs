@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 {
-    public abstract class TriggerUpdateAction<TTriggerEntity, TUpdateEntity> : ISqlConvertible
+    public abstract class TriggerUpdateAction<TTriggerEntity, TUpdateEntity> : ITriggerAction
        where TTriggerEntity : class
        where TUpdateEntity : class
     {
@@ -20,9 +20,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         }
 
         public virtual string BuildSql(ITriggerSqlVisitor visitor)
-        {
-            return visitor.GetTriggerUpdateActionSql(this);
-        }
+            => visitor.GetTriggerUpdateActionSql(this);
 
         public abstract Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes { get; }
 

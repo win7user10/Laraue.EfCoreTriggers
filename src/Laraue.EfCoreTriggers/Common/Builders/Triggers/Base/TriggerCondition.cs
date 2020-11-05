@@ -10,14 +10,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         public LambdaExpression Condition { get; }
 
         public TriggerCondition(LambdaExpression triggerCondition)
-        {
-            Condition = triggerCondition;
-        }
+            => Condition = triggerCondition;
 
         public virtual string BuildSql(ITriggerSqlVisitor visitor)
-        {
-            return visitor.GetTriggerConditionSql(this);
-        }
+            => visitor.GetTriggerConditionSql(this);
 
         public abstract Dictionary<string, ArgumentPrefix> ConditionPrefixes { get; }
     }

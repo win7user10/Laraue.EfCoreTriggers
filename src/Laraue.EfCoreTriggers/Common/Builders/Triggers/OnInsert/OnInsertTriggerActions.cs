@@ -19,7 +19,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
             Expression<Func<TTriggerEntity, TUpdateEntity, TUpdateEntity>> setValues)
             where TUpdateEntity : class
         {
-            ActionExpressions.Add(new OnInsertTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
+            Update(new OnInsertTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
             return this;
         }
 
@@ -29,13 +29,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
             Expression<Func<TTriggerEntity, TUpsertEntity, TUpsertEntity>> onMatchExpression)
             where TUpsertEntity : class
         {
-            ActionExpressions.Add(new OnInsertTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
+            Upsert(new OnInsertTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
             return this;
-        }
-
-        public override string BuildSql(ITriggerSqlVisitor visitor)
-        {
-            return visitor.GetTriggerActionsSql(this);
         }
     }
 }

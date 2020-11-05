@@ -74,5 +74,16 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         public abstract string GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
             where TTriggerEntity : class
             where TUpdateEntity : class;
+
+        public string GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)
+            where TTriggerEntity : class
+            where TUpdateEntity : class
+        {
+            var sqlBuilder = new StringBuilder();
+            sqlBuilder
+                .Append($"DELETE FROM {GetTableName(typeof(TUpdateEntity))} WHERE ")
+                .Append(GetConditionStatementSql(triggerDeleteAction.DeleteFilter, triggerDeleteAction.DeleteFilterPrefixes));
+            return sqlBuilder.ToString();
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 {
-    public abstract class TriggerUpsertAction<TTriggerEntity, TUpsertEntity> : ISqlConvertible
+    public abstract class TriggerUpsertAction<TTriggerEntity, TUpsertEntity> : ITriggerAction
        where TTriggerEntity : class
        where TUpsertEntity : class
     {
@@ -23,9 +23,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         }
 
         public virtual string BuildSql(ITriggerSqlVisitor visitor)
-        {
-            return visitor.GetTriggerUpsertActionSql(this);
-        }
+            => visitor.GetTriggerUpsertActionSql(this);
 
         public abstract Dictionary<string, ArgumentPrefix> InsertExpressionPrefixes { get; }
 

@@ -23,5 +23,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         string GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
             where TTriggerEntity : class
             where TUpdateEntity : class;
+
+        string GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)
+            where TTriggerEntity : class
+            where TUpdateEntity : class;
     }
 }
