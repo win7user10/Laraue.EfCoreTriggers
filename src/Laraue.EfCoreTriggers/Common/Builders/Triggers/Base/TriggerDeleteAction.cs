@@ -4,9 +4,9 @@ using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 {
-    public abstract class TriggerDeleteAction<TTriggerEntity, TUpdateEntity> : ITriggerAction
+    public abstract class TriggerDeleteAction<TTriggerEntity, TDeleteEntity> : ITriggerAction
        where TTriggerEntity : class
-       where TUpdateEntity : class
+       where TDeleteEntity : class
     {
         public LambdaExpression DeleteFilter;
 

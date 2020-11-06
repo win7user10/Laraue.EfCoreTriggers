@@ -31,5 +31,12 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
             Upsert(new OnDeleteTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
             return this;
         }
+
+        public OnDeleteTriggerActions<TTriggerEntity> Delete<TDeleteEntity>(Expression<Func<TTriggerEntity, TDeleteEntity, bool>> deleteExpression)
+            where TDeleteEntity : class
+        {
+            Delete(new OnDeleteTriggerDeleteAction<TTriggerEntity, TDeleteEntity>(deleteExpression));
+            return this;
+        }
     }
 }

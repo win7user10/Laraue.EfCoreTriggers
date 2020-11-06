@@ -1,10 +1,6 @@
-﻿using Laraue.EfCoreTriggers;
-using Laraue.EfCoreTriggers.Common;
-using Laraue.EfCoreTriggers.Common.Builders.Providers;
+﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Common.Builders.Visitor;
-using Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Laraue.EfCoreTriggers.Tests.Entities;
 using Xunit;
 
 namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration

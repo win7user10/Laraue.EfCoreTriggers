@@ -1,5 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.CSharpBuilder;
-using Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities;
+using Laraue.EfCoreTriggers.Tests.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration

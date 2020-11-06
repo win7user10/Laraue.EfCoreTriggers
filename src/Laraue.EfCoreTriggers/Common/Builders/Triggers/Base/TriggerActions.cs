@@ -21,5 +21,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 
         protected void Upsert<TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> upsertAction)
             where TUpsertEntity : class => AddAction(upsertAction);
+
+        protected void Delete<TDeleteEntity>(TriggerDeleteAction<TTriggerEntity, TDeleteEntity> deleteAction)
+            where TDeleteEntity : class => AddAction(deleteAction);
     }
 }

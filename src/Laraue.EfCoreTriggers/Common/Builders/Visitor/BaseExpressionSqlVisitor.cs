@@ -70,6 +70,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             ExpressionType.IsTrue => "is true",
             ExpressionType.IsFalse => "is false",
             ExpressionType.Negate => "-",
+            ExpressionType.Not => "!",
             _ => throw new NotSupportedException($"Unknown sign of {expressionType}"),
         };
 
@@ -114,12 +115,14 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         public virtual string GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes = null)
         {
+            var leftSideExpressionTypes = new[] { ExpressionType.Negate, ExpressionType.Not };
+
             var sqlBuilder = new StringBuilder();
             var memberExpression = (MemberExpression)unaryExpression.Operand;
-            if (unaryExpression.NodeType == ExpressionType.Negate)
+            if (leftSideExpressionTypes.Contains(unaryExpression.NodeType))
                 sqlBuilder.Append(GetExpressionTypeSql(unaryExpression.NodeType));
             sqlBuilder.Append(GetMemberExpressionSql(memberExpression, argumentTypes));
-            if (unaryExpression.NodeType != ExpressionType.Negate)
+            if (!leftSideExpressionTypes.Contains(unaryExpression.NodeType))
                 sqlBuilder.Append($" {GetExpressionTypeSql(unaryExpression.NodeType)}");
 
             return sqlBuilder.ToString();
@@ -168,6 +171,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
                         sqlBuilder.Append(GetConstantExpressionSql(constantExpression));
                     else if (part is BinaryExpression binaryExp)
                         sqlBuilder.Append(GetBinaryExpressionSql(binaryExp, argumentTypes));
+                    else if (part is UnaryExpression unaryExp)
+                        sqlBuilder.Append(GetUnaryExpressionSql(unaryExp, argumentTypes));
                     else
                         throw new InvalidOperationException($"{part.GetType()} expression does not supports in set statement.");
 

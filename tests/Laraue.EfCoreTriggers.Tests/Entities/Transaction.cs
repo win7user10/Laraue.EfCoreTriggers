@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities
+namespace Laraue.EfCoreTriggers.Tests.Entities
 {
     public class Transaction
     {

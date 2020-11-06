@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers", "src\Laraue.EfCoreTriggers\Laraue.EfCoreTriggers.csproj", "{ECCF70FF-4296-4680-AD53-AA8352C4D663}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.Tests", "tests\Laraue.EfCoreTriggers.Tests\Laraue.EfCoreTriggers.Tests.csproj", "{869EAFC2-4BDD-4AD0-8BFA-4247FC2EA6EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.SqlTests", "tests\Laraue.EfCoreTriggers.SqlTests\Laraue.EfCoreTriggers.SqlTests.csproj", "{4D295778-940F-45B5-B4B4-59596F3CE11B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.Tests", "tests\Laraue.EfCoreTriggers.Tests\Laraue.EfCoreTriggers.Tests.csproj", "{B46A4658-8199-4A91-A97E-ECF316BBECBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.EfCoreTriggers.PostgreSqlTests", "tests\Laraue.EfCoreTriggers.PostgreSqlTests\Laraue.EfCoreTriggers.PostgreSqlTests.csproj", "{6D06F2CF-1D9D-43DA-AD0D-1EE0BE986481}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +21,18 @@ Global
 		{ECCF70FF-4296-4680-AD53-AA8352C4D663}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECCF70FF-4296-4680-AD53-AA8352C4D663}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECCF70FF-4296-4680-AD53-AA8352C4D663}.Release|Any CPU.Build.0 = Release|Any CPU
-		{869EAFC2-4BDD-4AD0-8BFA-4247FC2EA6EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{869EAFC2-4BDD-4AD0-8BFA-4247FC2EA6EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{869EAFC2-4BDD-4AD0-8BFA-4247FC2EA6EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{869EAFC2-4BDD-4AD0-8BFA-4247FC2EA6EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D295778-940F-45B5-B4B4-59596F3CE11B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D295778-940F-45B5-B4B4-59596F3CE11B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D295778-940F-45B5-B4B4-59596F3CE11B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D295778-940F-45B5-B4B4-59596F3CE11B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B46A4658-8199-4A91-A97E-ECF316BBECBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B46A4658-8199-4A91-A97E-ECF316BBECBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B46A4658-8199-4A91-A97E-ECF316BBECBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B46A4658-8199-4A91-A97E-ECF316BBECBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D06F2CF-1D9D-43DA-AD0D-1EE0BE986481}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D06F2CF-1D9D-43DA-AD0D-1EE0BE986481}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D06F2CF-1D9D-43DA-AD0D-1EE0BE986481}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D06F2CF-1D9D-43DA-AD0D-1EE0BE986481}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

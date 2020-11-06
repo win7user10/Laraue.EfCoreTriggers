@@ -1,9 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Common;
-using Laraue.EfCoreTriggers.CSharpBuilder;
-using Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata.Conventions;
+﻿using Laraue.EfCoreTriggers.Tests.Entities;
 using Xunit;
 
 namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration
