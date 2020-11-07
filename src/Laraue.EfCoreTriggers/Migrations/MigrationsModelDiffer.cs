@@ -26,9 +26,41 @@ namespace Laraue.EfCoreTriggers.Migrations
         {
         }
 
+        private readonly Type[] _operationsOrder =
+        {
+            typeof(DropTableOperation),
+            typeof(DropIndexOperation),
+            typeof(DropPrimaryKeyOperation),
+            typeof(DropSequenceOperation),
+            typeof(DropUniqueConstraintOperation),
+            typeof(DropCheckConstraintOperation),
+            typeof(DropForeignKeyOperation),
+            typeof(DeleteDataOperation),
+            typeof(DropColumnOperation),
+            typeof(EnsureSchemaOperation),
+            typeof(RenameTableOperation),
+            typeof(RenameColumnOperation),
+            typeof(RenameIndexOperation),
+            typeof(RenameSequenceOperation),
+            typeof(AlterDatabaseOperation),
+            typeof(CreateSequenceOperation),
+            typeof(AlterTableOperation),
+            typeof(ColumnOperation),
+            typeof(AddPrimaryKeyOperation),
+            typeof(AddUniqueConstraintOperation),
+            typeof(AlterSequenceOperation),
+            typeof(RestartSequenceOperation),
+            typeof(CreateTableOperation),
+            typeof(InsertDataOperation),
+            typeof(UpdateDataOperation),
+            typeof(AddForeignKeyOperation),
+            typeof(CreateIndexOperation),
+        };
+
         public override IReadOnlyList<MigrationOperation> GetDifferences(IModel source, IModel target)
         {
-            var differences = new List<MigrationOperation>();
+            var deleteTriggerOperations = new List<SqlOperation>();
+            var createTriggerOperations = new List<SqlOperation>();
 
             var oldEntityTypeNames = source?.GetEntityTypes().Select(x => x.Name) ?? Enumerable.Empty<string>();
             var newEntityTypeNames = target?.GetEntityTypes().Select(x => x.Name) ?? Enumerable.Empty<string>();
@@ -40,14 +72,14 @@ namespace Laraue.EfCoreTriggers.Migrations
             {
                 var deletedEntityType = source.FindEntityType(deletedTypeName);
                 deletedEntityType.GetTriggerAnnotations()
-                    .SafeForEach(annotation => differences.AddDeleteTriggerSqlMigration(annotation, deletedEntityType.ClrType, source));
+                    .SafeForEach(annotation => deleteTriggerOperations.AddDeleteTriggerSqlMigration(annotation, deletedEntityType.ClrType, source));
             }
 
             // Add all triggers to created entities.
             foreach (var newTypeName in newEntityTypeNames.Except(commonEntityTypeNames))
             {
                 target.FindEntityType(newTypeName).GetTriggerAnnotations()
-                    .SafeForEach(annotation => differences.AddCreateTriggerSqlMigration(annotation));
+                    .SafeForEach(annotation => createTriggerOperations.AddCreateTriggerSqlMigration(annotation));
             }
 
             // For existing entities.
@@ -77,8 +109,8 @@ namespace Laraue.EfCoreTriggers.Migrations
                     var newValue = target.FindEntityType(entityTypeName).GetAnnotation(commonAnnotationName);
                     if ((string)oldValue.Value != (string)newValue.Value)
                     {
-                        differences.AddDeleteTriggerSqlMigration(oldValue, clrType, source);
-                        differences.AddCreateTriggerSqlMigration(newValue);
+                        deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldValue, clrType, source);
+                        createTriggerOperations.AddCreateTriggerSqlMigration(newValue);
                     }
                 }
 
@@ -86,18 +118,55 @@ namespace Laraue.EfCoreTriggers.Migrations
                 foreach (var oldTriggerName in oldAnnotationNames.Except(commonAnnotationNames))
                 {
                     var oldTriggerAnnotation = oldEntityType.GetAnnotation(oldTriggerName);
-                    differences.AddDeleteTriggerSqlMigration(oldTriggerAnnotation, clrType, source);
+                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldTriggerAnnotation, clrType, source);
                 }
 
                 // If trigger was added, create it.
                 foreach (var newTriggerName in newAnnotationNames.Except(commonAnnotationNames))
                 {
                     var newTriggerAnnotation = newEntityType.GetAnnotation(newTriggerName);
-                    differences.AddCreateTriggerSqlMigration(newTriggerAnnotation);
+                    createTriggerOperations.AddCreateTriggerSqlMigration(newTriggerAnnotation);
                 }
             }
-            
-            return differences.Concat(base.GetDifferences(source, target)).ToList();
+
+            return MergeOperations(base.GetDifferences(source, target), createTriggerOperations, deleteTriggerOperations);
+        }
+
+        private IReadOnlyList<MigrationOperation> MergeOperations(
+            IReadOnlyList<MigrationOperation> migrationOperations,
+            IReadOnlyList<MigrationOperation> createTriggersOperations,
+            IReadOnlyList<MigrationOperation> deleteTriggersOperation)
+        {
+            var operationsOrder = _operationsOrder.Select((value, index) => new { value, index })
+                .ToDictionary(x => x.value, x => x.index);
+
+            operationsOrder.TryGetValue(typeof(DeleteDataOperation), out int deleteOperationOrder);
+            operationsOrder.TryGetValue(typeof(InsertDataOperation), out int insertOperationOrder);
+
+            var operations = new List<MigrationOperation>();
+
+            // First, should be executed all operations including delete data, because when 
+            // data is dropping thiggers should be fired.
+            foreach (var migrationOperation in migrationOperations)
+            {
+                if (operationsOrder.TryGetValue(migrationOperation.GetType(), out int order) && order > deleteOperationOrder)
+                    break;
+                operations.Add(migrationOperation);
+            }
+
+            operations.AddRange(deleteTriggersOperation);
+
+            foreach (var migrationOperation in migrationOperations.Except(operations))
+            {
+                if (operationsOrder.TryGetValue(migrationOperation.GetType(), out int order) && order >= insertOperationOrder)
+                    break;
+                operations.Add(migrationOperation);
+            }
+
+            operations.AddRange(createTriggersOperations);
+            operations.AddRange(migrationOperations.Except(operations));
+
+            return operations;
         }
     }
 
@@ -109,7 +178,7 @@ namespace Laraue.EfCoreTriggers.Migrations
                 .Where(x => x.Name.StartsWith(Constants.AnnotationKey));
         }
 
-        public static IList<MigrationOperation> AddCreateTriggerSqlMigration(this IList<MigrationOperation> list, IAnnotation annotation)
+        public static IList<SqlOperation> AddCreateTriggerSqlMigration(this IList<SqlOperation> list, IAnnotation annotation)
         {
             list.Add(new SqlOperation 
             {
@@ -118,7 +187,7 @@ namespace Laraue.EfCoreTriggers.Migrations
             return list;
         }
 
-        public static IList<MigrationOperation> AddDeleteTriggerSqlMigration(this IList<MigrationOperation> list, IAnnotation annotation, Type entityType, IModel model)
+        public static IList<SqlOperation> AddDeleteTriggerSqlMigration(this IList<SqlOperation> list, IAnnotation annotation, Type entityType, IModel model)
         {
             list.Add(new SqlOperation
             {

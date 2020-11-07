@@ -1,8 +1,9 @@
 ﻿using Laraue.EfCoreTriggers.CSharpBuilder;
-using Laraue.EfCoreTriggers.SqlTests.Entities;
+using Laraue.EfCoreTriggers.Tests.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 
-namespace Laraue.EfCoreTriggers.SqlTests
+namespace Laraue.EfCoreTriggers.Tests
 {
     public class NativeDbContext : DbContext
     {
@@ -14,7 +15,6 @@ namespace Laraue.EfCoreTriggers.SqlTests
 
         public NativeDbContext(DbContextOptions<NativeDbContext> options) : base(options)
         {
-            Database.Migrate();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

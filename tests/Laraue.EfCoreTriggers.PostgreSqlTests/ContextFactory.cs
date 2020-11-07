@@ -1,8 +1,9 @@
 ﻿using Laraue.EfCoreTriggers.Extensions;
+using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Laraue.EfCoreTriggers.SqlTests
+namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
     public class ContextFactory : IDesignTimeDbContextFactory<NativeDbContext>
     {

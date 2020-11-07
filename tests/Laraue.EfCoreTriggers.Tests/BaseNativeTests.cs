@@ -1,12 +1,11 @@
-﻿using Laraue.EfCoreTriggers.SqlTests;
-using Laraue.EfCoreTriggers.SqlTests.Entities;
+﻿using Laraue.EfCoreTriggers.Tests.Entities;
 using LinqToDB;
 using LinqToDB.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Laraue.EfCoreTriggers.Tests.NativeTests
+namespace Laraue.EfCoreTriggers.Tests
 {
     public abstract class BaseNativeTests
     {

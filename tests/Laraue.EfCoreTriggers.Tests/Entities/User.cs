@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Laraue.EfCoreTriggers.SqlTests.Entities
+namespace Laraue.EfCoreTriggers.Tests.Entities
 {
     public class User
     {

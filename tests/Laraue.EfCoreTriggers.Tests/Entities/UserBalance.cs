@@ -9,5 +9,7 @@ namespace Laraue.EfCoreTriggers.Tests.Entities
         public Guid UserId { get; set; }
 
         public decimal Balance { get; set; }
+
+        public User User { get; set; }
     }
 }

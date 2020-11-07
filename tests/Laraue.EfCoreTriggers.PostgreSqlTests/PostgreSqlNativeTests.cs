@@ -1,5 +1,5 @@
-﻿using Laraue.EfCoreTriggers.SqlTests;
-using Laraue.EfCoreTriggers.Tests.NativeTests;
+﻿using Laraue.EfCoreTriggers.Tests;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
@@ -9,6 +9,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
     {
         public PostgreSqlNativeTests() : base(new ContextFactory().CreatePgDbContext())
         {
+            DbContext.Database.Migrate();
         }
     }
 }
