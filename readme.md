@@ -1,3 +1,8 @@
+Entity Framework Core Triggers
+--------------------
+
+[![latest version](https://img.shields.io/nuget/v/Laraue.EfCoreTriggers)](https://www.nuget.org/packages/Laraue.EfCoreTriggers) [![downloads](https://img.shields.io/nuget/dt/Laraue.EfCoreTriggers)](https://www.nuget.org/packages/Laraue.EfCoreTriggers)
+
 EfCoreTriggers is the library to write native SQL triggers using EFCore model builder. Triggers are automatically translating into sql and adding to migrations.
 
 ## Available providers
