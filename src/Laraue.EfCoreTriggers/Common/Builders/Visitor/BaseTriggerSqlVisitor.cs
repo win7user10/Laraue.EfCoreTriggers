@@ -27,6 +27,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
                 return GetBinaryExpressionSql(binaryExpression, triggerCondition.ConditionPrefixes);
             else if (conditionBody is MemberExpression memberExpression)
                 return GetUnaryExpressionSql(Expression.IsTrue(memberExpression), triggerCondition.ConditionPrefixes);
+            else if (conditionBody is UnaryExpression unaryExpression)
+                return GetUnaryExpressionSql(unaryExpression, triggerCondition.ConditionPrefixes);
             throw new NotImplementedException($"Trigger condition of type {conditionBody.GetType()} is not supported.");
         }
 

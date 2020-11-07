@@ -23,9 +23,11 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
             [InsertExpression.Parameters[0].Name] = ArgumentPrefix.New,
         };
 
-        public override Dictionary<string, ArgumentPrefix> OnMatchExpressionPrefixes => new Dictionary<string, ArgumentPrefix>
-        {
-            [OnMatchExpression.Parameters[0].Name] = ArgumentPrefix.New,
-        };
+        public override Dictionary<string, ArgumentPrefix> OnMatchExpressionPrefixes => OnMatchExpression is null
+            ? new Dictionary<string, ArgumentPrefix>()
+            : new Dictionary<string, ArgumentPrefix>
+            {
+                [OnMatchExpression.Parameters[0].Name] = ArgumentPrefix.New,
+            };
     }
 }

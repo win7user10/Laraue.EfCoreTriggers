@@ -56,3 +56,4 @@ modelBuilder.Entity<Transaction>()
 - Update
 - Upsert
 - Delete
+- InsertIfNotExists

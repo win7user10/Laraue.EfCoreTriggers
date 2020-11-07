@@ -48,8 +48,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             if (triggerActions.ActionConditions.Count > 0)
                 sqlBuilder.Append($"END IF;");
 
-            sqlBuilder.Append($"RETURN NEW;");
-
             return sqlBuilder.ToString();
         }
 
@@ -62,7 +60,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             foreach (var action in trigger.Actions)
                 sqlBuilder.Append(action.BuildSql(this));
 
-            sqlBuilder.Append(" END;")
+            sqlBuilder.Append(" RETURN NEW;END;")
                 .Append($"${trigger.Name}$ LANGUAGE plpgsql;")
                 .Append($"CREATE TRIGGER {trigger.Name} {trigger.TriggerTime.ToString().ToUpper()} {trigger.TriggerType.ToString().ToUpper()} ")
                 .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
@@ -76,8 +74,12 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
             sqlBuilder.Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
                 .Append(GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes))
-                .Append($" ON CONFLICT ({string.Join(", ", GetNewExpressionColumns((NewExpression)triggerUpsertAction.MatchExpression.Body))})")
-                .Append($" DO UPDATE SET ")
+                .Append($" ON CONFLICT ({string.Join(", ", GetNewExpressionColumns((NewExpression)triggerUpsertAction.MatchExpression.Body))})");
+
+            if (triggerUpsertAction.OnMatchExpression is null)
+                sqlBuilder.Append(" DO NOTHING");
+            else
+                sqlBuilder.Append($" DO UPDATE SET ")
                 .Append(GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes));
 
             return sqlBuilder.ToString();

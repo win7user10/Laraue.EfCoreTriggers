@@ -23,9 +23,11 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
             [InsertExpression.Parameters[0].Name] = ArgumentPrefix.Old,
         };
 
-        public override Dictionary<string, ArgumentPrefix> OnMatchExpressionPrefixes => new Dictionary<string, ArgumentPrefix>
-        {
-            [OnMatchExpression.Parameters[0].Name] = ArgumentPrefix.Old,
-        };
+        public override Dictionary<string, ArgumentPrefix> OnMatchExpressionPrefixes => OnMatchExpression is null
+            ? new Dictionary<string, ArgumentPrefix>()
+            : new Dictionary<string, ArgumentPrefix>
+            {
+                [OnMatchExpression.Parameters[0].Name] = ArgumentPrefix.Old,
+            };
     }
 }

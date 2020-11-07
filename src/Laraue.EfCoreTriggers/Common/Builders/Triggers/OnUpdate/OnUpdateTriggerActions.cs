@@ -31,5 +31,14 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
             Upsert(new OnUpdateTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
             return this;
         }
+
+        public OnUpdateTriggerActions<TTriggerEntity> InsertIfNotExists<TUpsertEntity>(
+            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TTriggerEntity, TUpsertEntity>> insertExpression)
+            where TUpsertEntity : class
+        {
+            Upsert(new OnUpdateTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, null));
+            return this;
+        }
     }
 }
