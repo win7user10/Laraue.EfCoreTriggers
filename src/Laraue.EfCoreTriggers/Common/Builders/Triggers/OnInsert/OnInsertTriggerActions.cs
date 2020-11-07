@@ -1,4 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete;
 using Laraue.EfCoreTriggers.Common.Builders.Visitor;
 using System;
 using System.Linq.Expressions;
@@ -19,7 +20,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
             Expression<Func<TTriggerEntity, TUpdateEntity, TUpdateEntity>> setValues)
             where TUpdateEntity : class
         {
-            ActionExpressions.Add(new OnInsertTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
+            Update(new OnInsertTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
             return this;
         }
 
@@ -29,13 +30,31 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
             Expression<Func<TTriggerEntity, TUpsertEntity, TUpsertEntity>> onMatchExpression)
             where TUpsertEntity : class
         {
-            ActionExpressions.Add(new OnInsertTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
+            Upsert(new OnInsertTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
             return this;
         }
 
-        public override string BuildSql(ITriggerSqlVisitor visitor)
+        public OnInsertTriggerActions<TTriggerEntity> InsertIfNotExists<TUpsertEntity>(
+            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TUpsertEntity>> insertExpression)
+            where TUpsertEntity : class
         {
-            return visitor.GetTriggerActionsSql(this);
+            Upsert(new OnInsertTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, null));
+            return this;
+        }
+
+        public OnInsertTriggerActions<TTriggerEntity> Delete<TDeleteEntity>(Expression<Func<TTriggerEntity, TDeleteEntity, bool>> deleteFilter)
+            where TDeleteEntity : class
+        {
+            Delete(new OnInsertTriggerDeleteAction<TTriggerEntity, TDeleteEntity>(deleteFilter));
+            return this;
+        }
+
+        public OnInsertTriggerActions<TTriggerEntity> Insert<TInsertEntity>(Expression<Func<TTriggerEntity, TInsertEntity>> setValues)
+            where TInsertEntity : class
+        {
+            Insert(new OnInsertTriggerInsertAction<TTriggerEntity, TInsertEntity>(setValues));
+            return this;
         }
     }
 }

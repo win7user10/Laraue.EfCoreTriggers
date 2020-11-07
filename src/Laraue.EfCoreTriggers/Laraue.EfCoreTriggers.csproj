@@ -2,16 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Description>Generating native sql triggers using EFCore entity builder.</Description>
+    <Description>Generating native sql triggers through migrations using EFCore entity builder.</Description>
     <RepositoryUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Authors>Belyanskiy Ilya</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
+    <PackageProjectUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Laraue.Core.Extensions.Linq" Version="1.0.0-build-13" />
+    <PackageReference Include="Laraue.Core.Extensions.Linq" Version="1.0.0-build-15" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9">
       <PrivateAssets>all</PrivateAssets>

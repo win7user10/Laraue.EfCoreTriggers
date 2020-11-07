@@ -38,9 +38,11 @@ modelBuilder.Entity<Transaction>()
             .Condition(deletedTransaction => deletedTransaction.IsVeryfied)
             .Upsert(
                 balance => new { balance.UserId }, // If this field is matched, will be executed update operation else insert
-                insertedTransaction => new UserBalance { Balance = insertedTransaction.Value }, // Insert, if value didn't exist
+                insertedTransaction => new UserBalance { UserId = insertedTransaction.UserId, Balance = insertedTransaction.Value }, // Insert, if value didn't exist
                 (insertedTransaction, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance + insertedTransaction.Value }))); // Update if value existed
 ```
+
+More examples of using are available in Tests/NativeDbContext.cs.
 
 #### All available triggers
 
@@ -51,7 +53,10 @@ modelBuilder.Entity<Transaction>()
 - Before Delete
 - After Delete
 
-#### Available actions - what you can do when triggered
+#### Available actions after trigger has worked
 
+- Insert
+- InsertIfNotExists
 - Update
 - Upsert
+- Delete

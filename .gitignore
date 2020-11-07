@@ -239,5 +239,3 @@ _Pvt_Extensions
 .fake/
 
 .local-chromium
-
-tests/*/migrations

@@ -18,7 +18,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
                 Expression<Func<TTriggerEntity, TUpdateEntity, TUpdateEntity>> setValues)
             where TUpdateEntity : class
         {
-            ActionExpressions.Add(new OnDeleteTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
+            Update(new OnDeleteTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
             return this;
         }
 
@@ -28,7 +28,30 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
             Expression<Func<TTriggerEntity, TUpsertEntity, TUpsertEntity>> onMatchExpression)
             where TUpsertEntity : class
         {
-            ActionExpressions.Add(new OnDeleteTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
+            Upsert(new OnDeleteTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
+            return this;
+        }
+
+        public OnDeleteTriggerActions<TTriggerEntity> InsertIfNotExists<TUpsertEntity>(
+            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TUpsertEntity>> insertExpression)
+            where TUpsertEntity : class
+        {
+            Upsert(new OnDeleteTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, null));
+            return this;
+        }
+
+        public OnDeleteTriggerActions<TTriggerEntity> Delete<TDeleteEntity>(Expression<Func<TTriggerEntity, TDeleteEntity, bool>> deleteExpression)
+            where TDeleteEntity : class
+        {
+            Delete(new OnDeleteTriggerDeleteAction<TTriggerEntity, TDeleteEntity>(deleteExpression));
+            return this;
+        }
+
+        public OnDeleteTriggerActions<TTriggerEntity> Insert<TInsertEntity>(Expression<Func<TTriggerEntity, TInsertEntity>> setValues)
+            where TInsertEntity : class
+        {
+            Insert(new OnDeleteTriggerInsertAction<TTriggerEntity, TInsertEntity>(setValues));
             return this;
         }
     }

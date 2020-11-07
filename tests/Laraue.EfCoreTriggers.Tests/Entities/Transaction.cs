@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities
+namespace Laraue.EfCoreTriggers.Tests.Entities
 {
     public class Transaction
     {
@@ -11,5 +11,7 @@ namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities
         public bool IsVeryfied { get; set; }
 
         public Guid UserId { get; set; }
+
+        public User User { get; set; }
     }
 }

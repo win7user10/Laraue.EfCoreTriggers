@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities
+namespace Laraue.EfCoreTriggers.Tests.Entities
 {
     public class UserBalance
     {
@@ -9,5 +9,7 @@ namespace Laraue.EfCoreTriggers.Tests.TriggerGeneration.Entities
         public Guid UserId { get; set; }
 
         public decimal Balance { get; set; }
+
+        public User User { get; set; }
     }
 }
