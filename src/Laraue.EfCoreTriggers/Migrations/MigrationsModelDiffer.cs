@@ -26,37 +26,6 @@ namespace Laraue.EfCoreTriggers.Migrations
         {
         }
 
-        private readonly Type[] _operationsOrder =
-        {
-            typeof(DropTableOperation),
-            typeof(DropIndexOperation),
-            typeof(DropPrimaryKeyOperation),
-            typeof(DropSequenceOperation),
-            typeof(DropUniqueConstraintOperation),
-            typeof(DropCheckConstraintOperation),
-            typeof(DropForeignKeyOperation),
-            typeof(DeleteDataOperation),
-            typeof(DropColumnOperation),
-            typeof(EnsureSchemaOperation),
-            typeof(RenameTableOperation),
-            typeof(RenameColumnOperation),
-            typeof(RenameIndexOperation),
-            typeof(RenameSequenceOperation),
-            typeof(AlterDatabaseOperation),
-            typeof(CreateSequenceOperation),
-            typeof(AlterTableOperation),
-            typeof(ColumnOperation),
-            typeof(AddPrimaryKeyOperation),
-            typeof(AddUniqueConstraintOperation),
-            typeof(AlterSequenceOperation),
-            typeof(RestartSequenceOperation),
-            typeof(CreateTableOperation),
-            typeof(InsertDataOperation),
-            typeof(UpdateDataOperation),
-            typeof(AddForeignKeyOperation),
-            typeof(CreateIndexOperation),
-        };
-
         public override IReadOnlyList<MigrationOperation> GetDifferences(IModel source, IModel target)
         {
             var deleteTriggerOperations = new List<SqlOperation>();
@@ -137,36 +106,10 @@ namespace Laraue.EfCoreTriggers.Migrations
             IReadOnlyList<MigrationOperation> createTriggersOperations,
             IReadOnlyList<MigrationOperation> deleteTriggersOperation)
         {
-            var operationsOrder = _operationsOrder.Select((value, index) => new { value, index })
-                .ToDictionary(x => x.value, x => x.index);
-
-            operationsOrder.TryGetValue(typeof(DeleteDataOperation), out int deleteOperationOrder);
-            operationsOrder.TryGetValue(typeof(InsertDataOperation), out int insertOperationOrder);
-
-            var operations = new List<MigrationOperation>();
-
-            // First, should be executed all operations including delete data, because when 
-            // data is dropping thiggers should be fired.
-            foreach (var migrationOperation in migrationOperations)
-            {
-                if (operationsOrder.TryGetValue(migrationOperation.GetType(), out int order) && order > deleteOperationOrder)
-                    break;
-                operations.Add(migrationOperation);
-            }
-
-            operations.AddRange(deleteTriggersOperation);
-
-            foreach (var migrationOperation in migrationOperations.Except(operations))
-            {
-                if (operationsOrder.TryGetValue(migrationOperation.GetType(), out int order) && order >= insertOperationOrder)
-                    break;
-                operations.Add(migrationOperation);
-            }
-
-            operations.AddRange(createTriggersOperations);
-            operations.AddRange(migrationOperations.Except(operations));
-
-            return operations;
+            return new List<MigrationOperation>(deleteTriggersOperation)
+                .Concat(migrationOperations)
+                .Concat(createTriggersOperations)
+                .ToList();
         }
     }
 
