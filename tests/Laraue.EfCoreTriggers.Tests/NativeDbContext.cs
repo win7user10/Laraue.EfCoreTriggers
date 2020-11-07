@@ -12,6 +12,8 @@ namespace Laraue.EfCoreTriggers.Tests
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<TransactionMirror> TransactionsMirror { get; set; }
+
         public NativeDbContext(DbContextOptions<NativeDbContext> options) : base(options)
         {
         }
@@ -21,6 +23,11 @@ namespace Laraue.EfCoreTriggers.Tests
             modelBuilder.Entity<Transaction>()
                 .HasOne(x => x.User)
                 .WithMany(x => x.Transactions)
+                .HasForeignKey(x => x.UserId);
+
+            modelBuilder.Entity<TransactionMirror>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.MirroredTransactions)
                 .HasForeignKey(x => x.UserId);
 
             modelBuilder.Entity<User>()
@@ -41,7 +48,16 @@ namespace Laraue.EfCoreTriggers.Tests
                         .Condition(insertedTransaction => !insertedTransaction.IsVeryfied)
                         .InsertIfNotExists(
                             balance => new { balance.UserId },
-                            insertedTransaction => new UserBalance { UserId = insertedTransaction.UserId, Balance = 0 })));
+                            insertedTransaction => new UserBalance { UserId = insertedTransaction.UserId, Balance = 0 }))
+                    .Action(action => action
+                        .Insert(
+                            insertedTransaction => new TransactionMirror
+                            {
+                                Id = insertedTransaction.Id,
+                                UserId = insertedTransaction.UserId,
+                                IsVeryfied = insertedTransaction.IsVeryfied,
+                                Value = insertedTransaction.Value,
+                            })));
 
             modelBuilder.Entity<Transaction>()
                 .AfterUpdate(trigger => trigger
@@ -54,7 +70,15 @@ namespace Laraue.EfCoreTriggers.Tests
                         .Condition((oldTransaction, newTransaction) => !oldTransaction.IsVeryfied && newTransaction.IsVeryfied)
                         .Update<UserBalance>(
                             (oldTransaction, updatedTransaction, userBalances) => userBalances.UserId == oldTransaction.UserId,
-                            (oldTransaction, updatedTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance + updatedTransaction.Value })));
+                            (oldTransaction, updatedTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance + updatedTransaction.Value }))
+                    .Action(action => action
+                        .Update<TransactionMirror>(
+                            (oldTransaction, updatedTransaction, mirroredTransaction) => mirroredTransaction.Id == updatedTransaction.Id,
+                            (oldTransaction, updatedTransaction, mirroredTransaction) => new TransactionMirror
+                            {
+                                IsVeryfied = updatedTransaction.IsVeryfied,
+                                Value = updatedTransaction.Value,
+                            })));
 
             modelBuilder.Entity<Transaction>()
                 .AfterDelete(trigger => trigger
@@ -62,7 +86,9 @@ namespace Laraue.EfCoreTriggers.Tests
                         .Condition(deletedTransaction => deletedTransaction.IsVeryfied)
                         .Update<UserBalance>(
                             (deletedTransaction, userBalances) => userBalances.UserId == deletedTransaction.UserId,
-                            (deletedTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance - deletedTransaction.Value })));
+                            (deletedTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance - deletedTransaction.Value }))
+                    .Action(action => action
+                        .Delete<TransactionMirror>((deletedTransaction, mirroredTransaction) => deletedTransaction.Id == mirroredTransaction.Id )));
         }
     }
 }

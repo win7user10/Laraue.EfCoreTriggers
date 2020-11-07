@@ -42,6 +42,8 @@ modelBuilder.Entity<Transaction>()
                 (insertedTransaction, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance + insertedTransaction.Value }))); // Update if value existed
 ```
 
+More examples of using are available in Tests/NativeDbContext.cs.
+
 #### All available triggers
 
 - Before Insert
@@ -53,7 +55,8 @@ modelBuilder.Entity<Transaction>()
 
 #### Available actions after trigger has worked
 
+- Insert
+- InsertIfNotExists
 - Update
 - Upsert
 - Delete
-- InsertIfNotExists

@@ -20,12 +20,16 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             where TTriggerEntity : class
             where TUpdateEntity : class;
 
-        string GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
+        string GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
             where TTriggerEntity : class
-            where TUpdateEntity : class;
+            where TUpsertEntity : class;
 
-        string GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)
+        string GetTriggerDeleteActionSql<TTriggerEntity, TDeleteEntity>(TriggerDeleteAction<TTriggerEntity, TDeleteEntity> triggerDeleteAction)
             where TTriggerEntity : class
-            where TUpdateEntity : class;
+            where TDeleteEntity : class;
+
+        string GetTriggerInsertActionSql<TTriggerEntity, TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> triggerInsertAction)
+            where TTriggerEntity : class
+            where TInsertEntity : class;
     }
 }

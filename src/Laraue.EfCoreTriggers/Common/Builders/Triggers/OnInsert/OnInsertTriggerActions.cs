@@ -1,4 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete;
 using Laraue.EfCoreTriggers.Common.Builders.Visitor;
 using System;
 using System.Linq.Expressions;
@@ -39,6 +40,20 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
             where TUpsertEntity : class
         {
             Upsert(new OnInsertTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, null));
+            return this;
+        }
+
+        public OnInsertTriggerActions<TTriggerEntity> Delete<TDeleteEntity>(Expression<Func<TTriggerEntity, TDeleteEntity, bool>> deleteFilter)
+            where TDeleteEntity : class
+        {
+            Delete(new OnInsertTriggerDeleteAction<TTriggerEntity, TDeleteEntity>(deleteFilter));
+            return this;
+        }
+
+        public OnInsertTriggerActions<TTriggerEntity> Insert<TInsertEntity>(Expression<Func<TTriggerEntity, TInsertEntity>> setValues)
+            where TInsertEntity : class
+        {
+            Insert(new OnInsertTriggerInsertAction<TTriggerEntity, TInsertEntity>(setValues));
             return this;
         }
     }

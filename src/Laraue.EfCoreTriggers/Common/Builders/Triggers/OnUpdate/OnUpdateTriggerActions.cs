@@ -40,5 +40,19 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
             Upsert(new OnUpdateTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, null));
             return this;
         }
+
+        public OnUpdateTriggerActions<TTriggerEntity> Delete<TDeleteEntity>(Expression<Func<TTriggerEntity, TTriggerEntity, TDeleteEntity, bool>> deleteFilter)
+            where TDeleteEntity : class
+        {
+            Delete(new OnUpdateTriggerDeleteAction<TTriggerEntity, TDeleteEntity>(deleteFilter));
+            return this;
+        }
+
+        public OnUpdateTriggerActions<TTriggerEntity> Insert<TInsertEntity>(Expression<Func<TTriggerEntity, TTriggerEntity, TInsertEntity, TInsertEntity>> setValues)
+            where TInsertEntity : class
+        {
+            Insert(new OnUpdateTriggerInsertAction<TTriggerEntity, TInsertEntity>(setValues));
+            return this;
+        }
     }
 }

@@ -73,9 +73,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder.ToString();
         }
 
-        public abstract string GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
+        public abstract string GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
             where TTriggerEntity : class
-            where TUpdateEntity : class;
+            where TUpsertEntity : class;
 
         public string GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)
             where TTriggerEntity : class
@@ -83,8 +83,18 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         {
             var sqlBuilder = new StringBuilder();
             sqlBuilder
-                .Append($"DELETE FROM {GetTableName(typeof(TUpdateEntity))} WHERE ")
+                .Append($"DELETE FROM {GetTableName(typeof(TUpdateEntity))} ")
                 .Append(GetConditionStatementSql(triggerDeleteAction.DeleteFilter, triggerDeleteAction.DeleteFilterPrefixes));
+            return sqlBuilder.ToString();
+        }
+
+        public string GetTriggerInsertActionSql<TTriggerEntity, TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> triggerInsertAction)
+            where TTriggerEntity : class
+            where TInsertEntity : class
+        {
+            var sqlBuilder = new StringBuilder();
+            sqlBuilder.Append($"INSERT INTO {GetTableName(typeof(TInsertEntity))} ")
+                .Append(GetInsertStatementBodySql(triggerInsertAction.InsertExpression, triggerInsertAction.InsertExpressionPrefixes));
             return sqlBuilder.ToString();
         }
     }

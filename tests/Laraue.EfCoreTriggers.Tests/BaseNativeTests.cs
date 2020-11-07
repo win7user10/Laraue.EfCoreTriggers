@@ -65,15 +65,25 @@ namespace Laraue.EfCoreTriggers.Tests
                 .DeleteAsync() > 0;
         }
 
+        protected async Task VerifyMirroredTransactionAsync(Guid transactionId, bool isVerifyed, decimal value)
+        {
+            var transaction = await DbContext.TransactionsMirror.Where(x => x.Id == transactionId)
+                .FirstOrDefaultAsyncLinqToDB();
+            Assert.NotNull(transaction);
+            Assert.Equal(isVerifyed, transaction.IsVeryfied);
+            Assert.Equal(value, transaction.Value);
+        }
+
         [Theory]
         [InlineData(true, 50)]
         [InlineData(false, 0)]
         public async Task InsertVerifyedTransactionShouldInsertBalance(bool isVeryfied, decimal exceptedBalance)
         {
-            await AddTransactionAsync(isVeryfied, 50);
+            var transactionId = await AddTransactionAsync(isVeryfied, 50);
             var balance = Assert.Single(DbContext.Balances);
             Assert.Equal(UserId, balance.UserId);
             Assert.Equal(exceptedBalance, balance.Balance);
+            await VerifyMirroredTransactionAsync(transactionId, isVeryfied, 50);
         }
 
         [Theory]
@@ -86,6 +96,7 @@ namespace Laraue.EfCoreTriggers.Tests
             await UpdateTransactionAsync(transactionId, isNewTransactionVerifyed, 70);
             var balance = Assert.Single(DbContext.Balances);
             Assert.Equal(exceptedBalance, balance.Balance);
+            await VerifyMirroredTransactionAsync(transactionId, isNewTransactionVerifyed, 70);
         }
 
         [Theory]
@@ -97,11 +108,14 @@ namespace Laraue.EfCoreTriggers.Tests
 
             var balance = Assert.Single(DbContext.Balances.AsNoTracking());
             Assert.Equal(intermediateBalance, balance.Balance);
+            await VerifyMirroredTransactionAsync(transactionId, isVeryfied, 50);
 
             await DeleteTransactionAsync(transactionId);
 
             balance = Assert.Single(DbContext.Balances.AsNoTracking());
             Assert.Equal(0, balance.Balance);
+
+            Assert.Null(await DbContext.TransactionsMirror.Where(x => x.Id == transactionId).FirstOrDefaultAsyncLinqToDB());
         }
     }
 }

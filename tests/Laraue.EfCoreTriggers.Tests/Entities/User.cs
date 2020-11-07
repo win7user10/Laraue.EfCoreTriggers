@@ -10,5 +10,7 @@ namespace Laraue.EfCoreTriggers.Tests.Entities
         public UserBalance Balance { get; set; }
 
         public IEnumerable<Transaction> Transactions { get; set; }
+
+        public IEnumerable<TransactionMirror> MirroredTransactions { get; set; }
     }
 }

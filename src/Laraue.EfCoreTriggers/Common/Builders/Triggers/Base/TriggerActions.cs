@@ -24,5 +24,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 
         protected void Delete<TDeleteEntity>(TriggerDeleteAction<TTriggerEntity, TDeleteEntity> deleteAction)
             where TDeleteEntity : class => AddAction(deleteAction);
+
+        protected void Insert<TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> insertAction)
+            where TInsertEntity : class => AddAction(insertAction);
     }
 }
