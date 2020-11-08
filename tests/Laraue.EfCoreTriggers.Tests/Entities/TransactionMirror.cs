@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Laraue.EfCoreTriggers.Tests.Enums;
+using System;
 
 namespace Laraue.EfCoreTriggers.Tests.Entities
 {
@@ -9,6 +10,8 @@ namespace Laraue.EfCoreTriggers.Tests.Entities
         public decimal Value { get; set; }
 
         public bool IsVeryfied { get; set; }
+
+        public string Description { get; set; }
 
         public Guid UserId { get; set; }
 

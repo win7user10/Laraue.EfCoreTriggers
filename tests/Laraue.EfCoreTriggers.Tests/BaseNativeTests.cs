@@ -40,7 +40,8 @@ namespace Laraue.EfCoreTriggers.Tests
             {
                 IsVeryfied = isVerifyed,
                 UserId = UserId,
-                Value = value
+                Value = value,
+                Description = "test",
             };
             DbContext.Transactions.Add(transaction);
             await DbContext.SaveChangesAsync();
@@ -65,19 +66,20 @@ namespace Laraue.EfCoreTriggers.Tests
                 .DeleteAsync() > 0;
         }
 
-        protected async Task VerifyMirroredTransactionAsync(Guid transactionId, bool isVerifyed, decimal value)
+        protected async Task VerifyMirroredTransactionAsync(Guid transactionId, bool isVerifyed, decimal value, string description = "TEST-copy")
         {
             var transaction = await DbContext.TransactionsMirror.Where(x => x.Id == transactionId)
                 .FirstOrDefaultAsyncLinqToDB();
             Assert.NotNull(transaction);
             Assert.Equal(isVerifyed, transaction.IsVeryfied);
             Assert.Equal(value, transaction.Value);
+            Assert.Equal(description, transaction.Description);
         }
 
         [Theory]
         [InlineData(true, 50)]
         [InlineData(false, 0)]
-        public async Task InsertVerifyedTransactionShouldInsertBalance(bool isVeryfied, decimal exceptedBalance)
+        public async Task InsertTransactionShouldInsertBalance(bool isVeryfied, decimal exceptedBalance)
         {
             var transactionId = await AddTransactionAsync(isVeryfied, 50);
             var balance = Assert.Single(DbContext.Balances);

@@ -2,9 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Moq" Version="4.14.7" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
     <PackageReference Include="EFCore.NamingConventions" Version="1.1.0" />
     <PackageReference Include="Laraue.Core.DataAccess.Linq2DB" Version="1.0.0-build-15" />

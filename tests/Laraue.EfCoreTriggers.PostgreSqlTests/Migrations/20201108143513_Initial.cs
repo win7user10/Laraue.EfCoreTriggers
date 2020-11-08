@@ -12,7 +12,8 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
                 name: "users",
                 columns: table => new
                 {
-                    user_id = table.Column<Guid>(nullable: false)
+                    user_id = table.Column<Guid>(nullable: false),
+                    role = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,6 +47,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
                     id = table.Column<Guid>(nullable: false),
                     value = table.Column<decimal>(nullable: false),
                     is_veryfied = table.Column<bool>(nullable: false),
+                    description = table.Column<string>(nullable: true),
                     user_id = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -66,6 +68,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
                     id = table.Column<Guid>(nullable: false),
                     value = table.Column<decimal>(nullable: false),
                     is_veryfied = table.Column<bool>(nullable: false),
+                    description = table.Column<string>(nullable: true),
                     user_id = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
@@ -97,9 +100,9 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
 
             migrationBuilder.Sql("CREATE FUNCTION LC_TRIGGER_AFTER_DELETE_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_DELETE_TRANSACTION$ BEGIN IF OLD.is_veryfied is true THEN UPDATE balances SET balance = balances.balance - OLD.value WHERE balances.user_id = OLD.user_id;END IF;DELETE FROM transactions_mirror WHERE OLD.id = transactions_mirror.id; RETURN NEW;END;$LC_TRIGGER_AFTER_DELETE_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_DELETE_TRANSACTION AFTER DELETE ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_DELETE_TRANSACTION();");
 
-            migrationBuilder.Sql("CREATE FUNCTION LC_TRIGGER_AFTER_INSERT_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_INSERT_TRANSACTION$ BEGIN IF NEW.is_veryfied is true THEN INSERT INTO balances (user_id, balance) VALUES (NEW.user_id, NEW.value) ON CONFLICT (user_id) DO UPDATE SET balance = balances.balance + NEW.value;END IF;IF NEW.is_veryfied is false THEN INSERT INTO balances (user_id, balance) VALUES (NEW.user_id, 0) ON CONFLICT (user_id) DO NOTHING;END IF;INSERT INTO transactions_mirror (id, user_id, is_veryfied, value) VALUES (NEW.id, NEW.user_id, NEW.is_veryfied, NEW.value); RETURN NEW;END;$LC_TRIGGER_AFTER_INSERT_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_INSERT_TRANSACTION AFTER INSERT ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_INSERT_TRANSACTION();");
+            migrationBuilder.Sql("CREATE FUNCTION LC_TRIGGER_AFTER_INSERT_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_INSERT_TRANSACTION$ BEGIN IF NEW.is_veryfied is true THEN INSERT INTO balances (user_id, balance) VALUES (NEW.user_id, NEW.value) ON CONFLICT (user_id) DO UPDATE SET balance = balances.balance + NEW.value;END IF;IF NEW.is_veryfied is false THEN INSERT INTO balances (user_id, balance) VALUES (NEW.user_id, 0) ON CONFLICT (user_id) DO NOTHING;END IF;INSERT INTO transactions_mirror (id, user_id, is_veryfied, value, description) VALUES (NEW.id, NEW.user_id, NEW.is_veryfied, NEW.value, CONCAT(UPPER(NEW.description), LOWER('-COPY'))); RETURN NEW;END;$LC_TRIGGER_AFTER_INSERT_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_INSERT_TRANSACTION AFTER INSERT ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_INSERT_TRANSACTION();");
 
-            migrationBuilder.Sql("CREATE FUNCTION LC_TRIGGER_AFTER_UPDATE_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_UPDATE_TRANSACTION$ BEGIN IF OLD.is_veryfied is true AND NEW.is_veryfied is true THEN UPDATE balances SET balance = balances.balance + NEW.value - OLD.value WHERE balances.user_id = OLD.user_id;END IF;IF OLD.is_veryfied is false AND NEW.is_veryfied THEN UPDATE balances SET balance = balances.balance + NEW.value WHERE balances.user_id = OLD.user_id;END IF;UPDATE transactions_mirror SET is_veryfied = NEW.is_veryfied, value = NEW.value WHERE transactions_mirror.id = NEW.id; RETURN NEW;END;$LC_TRIGGER_AFTER_UPDATE_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_UPDATE_TRANSACTION AFTER UPDATE ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_UPDATE_TRANSACTION();");
+            migrationBuilder.Sql("CREATE FUNCTION LC_TRIGGER_AFTER_UPDATE_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_UPDATE_TRANSACTION$ BEGIN IF OLD.is_veryfied is true AND NEW.is_veryfied is true THEN UPDATE balances SET balance = balances.balance + NEW.value - OLD.value WHERE balances.user_id = OLD.user_id;END IF;IF OLD.is_veryfied is false AND NEW.is_veryfied is true THEN UPDATE balances SET balance = balances.balance + NEW.value WHERE balances.user_id = OLD.user_id;END IF;UPDATE transactions_mirror SET is_veryfied = NEW.is_veryfied, value = NEW.value WHERE transactions_mirror.id = NEW.id; RETURN NEW;END;$LC_TRIGGER_AFTER_UPDATE_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_UPDATE_TRANSACTION AFTER UPDATE ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_UPDATE_TRANSACTION();");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

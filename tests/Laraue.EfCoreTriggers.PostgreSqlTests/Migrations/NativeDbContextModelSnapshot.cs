@@ -26,6 +26,10 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
                         .HasColumnName("id")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Description")
+                        .HasColumnName("description")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsVeryfied")
                         .HasColumnName("is_veryfied")
                         .HasColumnType("boolean");
@@ -48,9 +52,9 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
 
                     b.HasAnnotation("LC_TRIGGER_AFTER_DELETE_TRANSACTION", "CREATE FUNCTION LC_TRIGGER_AFTER_DELETE_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_DELETE_TRANSACTION$ BEGIN IF OLD.is_veryfied is true THEN UPDATE balances SET balance = balances.balance - OLD.value WHERE balances.user_id = OLD.user_id;END IF;DELETE FROM transactions_mirror WHERE OLD.id = transactions_mirror.id; RETURN NEW;END;$LC_TRIGGER_AFTER_DELETE_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_DELETE_TRANSACTION AFTER DELETE ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_DELETE_TRANSACTION();");
 
-                    b.HasAnnotation("LC_TRIGGER_AFTER_INSERT_TRANSACTION", "CREATE FUNCTION LC_TRIGGER_AFTER_INSERT_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_INSERT_TRANSACTION$ BEGIN IF NEW.is_veryfied is true THEN INSERT INTO balances (user_id, balance) VALUES (NEW.user_id, NEW.value) ON CONFLICT (user_id) DO UPDATE SET balance = balances.balance + NEW.value;END IF;IF NEW.is_veryfied is false THEN INSERT INTO balances (user_id, balance) VALUES (NEW.user_id, 0) ON CONFLICT (user_id) DO NOTHING;END IF;INSERT INTO transactions_mirror (id, user_id, is_veryfied, value) VALUES (NEW.id, NEW.user_id, NEW.is_veryfied, NEW.value); RETURN NEW;END;$LC_TRIGGER_AFTER_INSERT_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_INSERT_TRANSACTION AFTER INSERT ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_INSERT_TRANSACTION();");
+                    b.HasAnnotation("LC_TRIGGER_AFTER_INSERT_TRANSACTION", "CREATE FUNCTION LC_TRIGGER_AFTER_INSERT_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_INSERT_TRANSACTION$ BEGIN IF NEW.is_veryfied is true THEN INSERT INTO balances (user_id, balance) VALUES (NEW.user_id, NEW.value) ON CONFLICT (user_id) DO UPDATE SET balance = balances.balance + NEW.value;END IF;IF NEW.is_veryfied is false THEN INSERT INTO balances (user_id, balance) VALUES (NEW.user_id, 0) ON CONFLICT (user_id) DO NOTHING;END IF;INSERT INTO transactions_mirror (id, user_id, is_veryfied, value, description) VALUES (NEW.id, NEW.user_id, NEW.is_veryfied, NEW.value, CONCAT(UPPER(NEW.description), LOWER('-COPY'))); RETURN NEW;END;$LC_TRIGGER_AFTER_INSERT_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_INSERT_TRANSACTION AFTER INSERT ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_INSERT_TRANSACTION();");
 
-                    b.HasAnnotation("LC_TRIGGER_AFTER_UPDATE_TRANSACTION", "CREATE FUNCTION LC_TRIGGER_AFTER_UPDATE_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_UPDATE_TRANSACTION$ BEGIN IF OLD.is_veryfied is true AND NEW.is_veryfied is true THEN UPDATE balances SET balance = balances.balance + NEW.value - OLD.value WHERE balances.user_id = OLD.user_id;END IF;IF OLD.is_veryfied is false AND NEW.is_veryfied THEN UPDATE balances SET balance = balances.balance + NEW.value WHERE balances.user_id = OLD.user_id;END IF;UPDATE transactions_mirror SET is_veryfied = NEW.is_veryfied, value = NEW.value WHERE transactions_mirror.id = NEW.id; RETURN NEW;END;$LC_TRIGGER_AFTER_UPDATE_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_UPDATE_TRANSACTION AFTER UPDATE ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_UPDATE_TRANSACTION();");
+                    b.HasAnnotation("LC_TRIGGER_AFTER_UPDATE_TRANSACTION", "CREATE FUNCTION LC_TRIGGER_AFTER_UPDATE_TRANSACTION() RETURNS trigger as $LC_TRIGGER_AFTER_UPDATE_TRANSACTION$ BEGIN IF OLD.is_veryfied is true AND NEW.is_veryfied is true THEN UPDATE balances SET balance = balances.balance + NEW.value - OLD.value WHERE balances.user_id = OLD.user_id;END IF;IF OLD.is_veryfied is false AND NEW.is_veryfied is true THEN UPDATE balances SET balance = balances.balance + NEW.value WHERE balances.user_id = OLD.user_id;END IF;UPDATE transactions_mirror SET is_veryfied = NEW.is_veryfied, value = NEW.value WHERE transactions_mirror.id = NEW.id; RETURN NEW;END;$LC_TRIGGER_AFTER_UPDATE_TRANSACTION$ LANGUAGE plpgsql;CREATE TRIGGER LC_TRIGGER_AFTER_UPDATE_TRANSACTION AFTER UPDATE ON transactions FOR EACH ROW EXECUTE PROCEDURE LC_TRIGGER_AFTER_UPDATE_TRANSACTION();");
                 });
 
             modelBuilder.Entity("Laraue.EfCoreTriggers.Tests.Entities.TransactionMirror", b =>
@@ -59,6 +63,10 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("id")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasColumnName("description")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsVeryfied")
                         .HasColumnName("is_veryfied")
@@ -87,6 +95,10 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("user_id")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Role")
+                        .HasColumnName("role")
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId")
                         .HasName("pk_users");

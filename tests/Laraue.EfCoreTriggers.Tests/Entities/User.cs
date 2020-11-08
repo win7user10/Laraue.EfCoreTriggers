@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Laraue.EfCoreTriggers.Tests.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Laraue.EfCoreTriggers.Tests.Entities
@@ -8,6 +9,8 @@ namespace Laraue.EfCoreTriggers.Tests.Entities
         public Guid UserId { get; set; }
 
         public UserBalance Balance { get; set; }
+
+        public UserRole Role { get; set; }
 
         public IEnumerable<Transaction> Transactions { get; set; }
 

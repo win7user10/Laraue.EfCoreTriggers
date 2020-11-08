@@ -22,6 +22,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         protected abstract string OldEntityPrefix { get; }
 
+        protected abstract char Quote { get; }
+
         public BaseExpressionSqlVisitor(IModel model)
         {
             Model = model ?? throw new ArgumentNullException(nameof(model));
@@ -74,7 +76,21 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             _ => throw new NotSupportedException($"Unknown sign of {expressionType}"),
         };
 
-        public virtual string GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentPrefix> argumentTypes = null)
+        public virtual string GetExpressionSql(Expression expression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        {
+            return expression switch
+            {
+                BinaryExpression binaryExpression => GetBinaryExpressionSql(binaryExpression, argumentTypes),
+                MemberExpression memberExpression => GetMemberExpressionSql(memberExpression, argumentTypes),
+                UnaryExpression unaryExpression => GetUnaryExpressionSql(unaryExpression, argumentTypes),
+                ConstantExpression constantExpression => GetConstantExpressionSql(constantExpression),
+                MethodCallExpression methodCallExpression => GetMethodCallExpressionSql(methodCallExpression, argumentTypes),
+                _ => throw new NotSupportedException($"Expression of type {expression.GetHashCode()} for {expression} is not supported."),
+            };
+        }
+
+
+        public virtual string GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             argumentTypes ??= new Dictionary<string, ArgumentPrefix>();
             var sqlBuilder = new StringBuilder();
@@ -99,22 +115,32 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder.ToString();
         }
 
-        public virtual (string ColumnName, string AssignmentExpressionSql) GetMemberAssignmentParts(MemberAssignment memberAssignment, Dictionary<string, ArgumentPrefix> argumentTypes = null)
+        public virtual (string ColumnName, string AssignmentExpressionSql) GetMemberAssignmentParts(MemberAssignment memberAssignment, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             var columnName = GetColumnName(memberAssignment.Member);
-            var assignmentExpressionSql = memberAssignment.Expression switch
-            {
-                BinaryExpression binaryExpression => GetBinaryExpressionSql(binaryExpression, argumentTypes),
-                MemberExpression memberExpression => GetMemberExpressionSql(memberExpression, argumentTypes),
-                UnaryExpression unaryExpression => GetUnaryExpressionSql(unaryExpression, argumentTypes),
-                ConstantExpression constantExpression => GetConstantExpressionSql(constantExpression),
-                _ => throw new NotSupportedException($"Member assignment expression of type ({memberAssignment.Expression.GetType()}) is not supported."),
-            };
-
+            var assignmentExpressionSql = GetExpressionSql(memberAssignment.Expression, argumentTypes);
             return (columnName, assignmentExpressionSql);
         }
 
-        public virtual string GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes = null)
+        public virtual string GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        {
+            var parsedArguments = methodCallExpression.Arguments.Select(argumentExpression => GetExpressionSql(argumentExpression, argumentTypes)).ToArray();
+            return methodCallExpression.Method.Name switch
+            {
+                "Concat" => GetMethodConcatCallExpressionSql(methodCallExpression, parsedArguments),
+                "ToLower" => GetMethodToLowerCallExpressionSql(methodCallExpression, GetExpressionSql(methodCallExpression.Object, argumentTypes)),
+                "ToUpper" => GetMethodToUpperCallExpressionSql(methodCallExpression, GetExpressionSql(methodCallExpression.Object, argumentTypes)),
+                _ => throw new NotSupportedException($"Expression {methodCallExpression.Method.Name} is not supported"),
+            };
+        }
+
+        public abstract string GetMethodConcatCallExpressionSql(MethodCallExpression methodCallExpression, params string[] concatExpressionArgsSql);
+
+        public abstract string GetMethodToLowerCallExpressionSql(MethodCallExpression methodCallExpression, string lowerSqlExpression);
+
+        public abstract string GetMethodToUpperCallExpressionSql(MethodCallExpression methodCallExpression, string upperSqlExpression);
+
+        public virtual string GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             var leftSideExpressionTypes = new[] { ExpressionType.Negate };
 
@@ -142,50 +168,31 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             }).ToArray();
         }
 
-        public virtual string GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes = null)
+        public virtual string GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
-            var sqlBuilder = new StringBuilder();
-
-            void AddBinarySeparator()
+            Expression[] GetBinaryExpressionParts()
             {
-                sqlBuilder.Append($" {GetExpressionTypeSql(binaryExpression.NodeType)} ");
-            }
+                var parts = new[] { binaryExpression.Left, binaryExpression.Right };
+                if (binaryExpression.Method is null)
+                {
+                    if (binaryExpression.Left is MemberExpression leftMemberExpression)
+                        parts[0] = Expression.IsTrue(binaryExpression.Left);
+                    if (binaryExpression.Right is MemberExpression rightMemberExpression)
+                        parts[1] = Expression.IsTrue(binaryExpression.Right);
+                }
+                return parts;
+            };
 
-            var parts = new[] { binaryExpression.Left, binaryExpression.Right };
-
-            // Correct transform expressions like x => x.IsGood && x.IsSmth to boolean x.IsGood = true && x.IsSmth = true 
-            if (parts[0] is MemberExpression leftMemberExpression && parts[1] is MemberExpression rightMemberExpression
-                && ((PropertyInfo)leftMemberExpression.Member).PropertyType == typeof(bool)
-                && ((PropertyInfo)rightMemberExpression.Member).PropertyType == typeof(bool))
-            {
-                sqlBuilder.Append(GetUnaryExpressionSql(Expression.IsTrue(leftMemberExpression), argumentTypes));
-                AddBinarySeparator();
-                sqlBuilder.Append(GetUnaryExpressionSql(Expression.IsTrue(rightMemberExpression), argumentTypes));
-            }
+            if (binaryExpression.Method?.Name == "Concat")
+                return GetMethodCallExpressionSql(Expression.Call(null, binaryExpression.Method, binaryExpression.Left, binaryExpression.Right), argumentTypes);
             else
             {
-                foreach (var part in parts)
-                {
-                    if (part is MemberExpression memberExpression)
-                        sqlBuilder.Append(GetMemberExpressionSql(memberExpression, argumentTypes));
-                    else if (part is ConstantExpression constantExpression)
-                        sqlBuilder.Append(GetConstantExpressionSql(constantExpression));
-                    else if (part is BinaryExpression binaryExp)
-                        sqlBuilder.Append(GetBinaryExpressionSql(binaryExp, argumentTypes));
-                    else if (part is UnaryExpression unaryExp)
-                        sqlBuilder.Append(GetUnaryExpressionSql(unaryExp, argumentTypes));
-                    else
-                        throw new InvalidOperationException($"{part.GetType()} expression does not supports in set statement.");
-
-                    if (part != binaryExpression.Right) AddBinarySeparator();
-                }
+                var binaryParts = GetBinaryExpressionParts().Select(part => GetExpressionSql(part, argumentTypes));
+                return string.Join($" {GetExpressionTypeSql(binaryExpression.NodeType)} ", binaryParts);
             }
-
-            
-            return sqlBuilder.ToString();
         }
 
-        protected Dictionary<string, string> GetMemberInitExpressionAssignmentParts(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentPrefix> argumentTypes = null)
+        protected Dictionary<string, string> GetMemberInitExpressionAssignmentParts(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             return memberInitExpression.Bindings.Select(memberBinding =>
             {
@@ -194,6 +201,13 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             }).ToDictionary(x => x.ColumnName, x => x.AssignmentExpressionSql);
         }
 
-        public virtual string GetConstantExpressionSql(ConstantExpression constantExpression) => constantExpression.Value.ToString().ToLower();
+        public virtual string GetConstantExpressionSql(ConstantExpression constantExpression)
+        {
+            if (constantExpression.Value is string strValue)
+                return $"{Quote}{strValue}{Quote}";
+            else if (constantExpression.Value is Enum enumValue)
+                return enumValue.ToString("D");
+            return constantExpression.Value.ToString().ToLower();
+        }
     }
 }

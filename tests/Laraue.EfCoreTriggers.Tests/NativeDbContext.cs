@@ -57,6 +57,7 @@ namespace Laraue.EfCoreTriggers.Tests
                                 UserId = insertedTransaction.UserId,
                                 IsVeryfied = insertedTransaction.IsVeryfied,
                                 Value = insertedTransaction.Value,
+                                Description = insertedTransaction.Description.ToUpper() + "-COPY".ToLower(),
                             })));
 
             modelBuilder.Entity<Transaction>()

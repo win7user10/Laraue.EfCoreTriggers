@@ -17,6 +17,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected override string OldEntityPrefix => "OLD";
 
+        protected override char Quote => '\'';
+
         public override string GetDropTriggerSql(string triggerName, Type entityType)
         {
             var sqlBuilder = new StringBuilder();
@@ -84,5 +86,14 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
             return sqlBuilder.ToString();
         }
+
+        public override string GetMethodConcatCallExpressionSql(MethodCallExpression methodCallExpression, string[] concatExpressionArgsSql)
+            => $"CONCAT({string.Join(", ", concatExpressionArgsSql)})";
+
+        public override string GetMethodToLowerCallExpressionSql(MethodCallExpression methodCallExpression, string lowerSqlExpression)
+            => $"LOWER({lowerSqlExpression})";
+
+        public override string GetMethodToUpperCallExpressionSql(MethodCallExpression methodCallExpression, string upperSqlExpression)
+            => $"UPPER({upperSqlExpression})";
     }
 }
