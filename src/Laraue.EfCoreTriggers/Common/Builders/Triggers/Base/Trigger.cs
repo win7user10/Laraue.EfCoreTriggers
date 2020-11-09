@@ -4,12 +4,13 @@ using System.Collections.Generic;
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 {
     public abstract class Trigger<TTriggerEntity> : ISqlConvertible
+        where TTriggerEntity : class
     {
-        public TriggerType TriggerType { get; }
+        internal TriggerType TriggerType { get; }
 
-        public TriggerTime TriggerTime { get; }
+        internal TriggerTime TriggerTime { get; }
 
-        public readonly List<ISqlConvertible> Actions = new List<ISqlConvertible>();
+        internal readonly List<ISqlConvertible> Actions = new List<ISqlConvertible>();
 
         public Trigger(TriggerType triggerType, TriggerTime triggerTime)
         {
@@ -17,8 +18,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
             TriggerTime = triggerTime;
         }
 
-        public abstract string BuildSql(ITriggerSqlVisitor visitor);
+        public string BuildSql(ITriggerSqlVisitor visitor) => visitor.GetTriggerSql(this);
 
-        public string Name => $"{Constants.AnnotationKey}_{TriggerTime.ToString().ToUpper()}_{TriggerType.ToString().ToUpper()}_{typeof(TTriggerEntity).Name.ToUpper()}";
+        internal string Name => $"{Constants.AnnotationKey}_{TriggerTime.ToString().ToUpper()}_{TriggerType.ToString().ToUpper()}_{typeof(TTriggerEntity).Name.ToUpper()}";
     }
 }

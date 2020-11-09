@@ -14,7 +14,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
         {
         }
 
-        public override Dictionary<string, ArgumentPrefix> ConditionPrefixes => new Dictionary<string, ArgumentPrefix>
+        internal override Dictionary<string, ArgumentPrefix> ConditionPrefixes => new Dictionary<string, ArgumentPrefix>
         {
             [Condition.Parameters[0].Name] = ArgumentPrefix.Old,
             [Condition.Parameters[1].Name] = ArgumentPrefix.New,

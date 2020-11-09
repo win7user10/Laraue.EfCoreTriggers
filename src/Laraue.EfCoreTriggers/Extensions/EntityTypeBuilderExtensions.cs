@@ -6,7 +6,7 @@ using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace Laraue.EfCoreTriggers.CSharpBuilder
+namespace Laraue.EfCoreTriggers.Extensions
 {
     public static class EntityTypeBuilderExtensions
     {

@@ -8,7 +8,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
        where TTriggerEntity : class
        where TDeleteEntity : class
     {
-        public LambdaExpression DeleteFilter;
+        internal LambdaExpression DeleteFilter;
 
         public TriggerDeleteAction(LambdaExpression deleteFilter)
             => DeleteFilter = deleteFilter;
@@ -16,6 +16,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         public virtual string BuildSql(ITriggerSqlVisitor visitor)
             => visitor.GetTriggerDeleteActionSql(this);
 
-        public abstract Dictionary<string, ArgumentPrefix> DeleteFilterPrefixes { get; }
+        internal abstract Dictionary<string, ArgumentPrefix> DeleteFilterPrefixes { get; }
     }
 }

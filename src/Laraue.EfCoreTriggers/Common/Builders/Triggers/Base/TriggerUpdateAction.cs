@@ -8,8 +8,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
        where TTriggerEntity : class
        where TUpdateEntity : class
     {
-        public LambdaExpression UpdateFilter;
-        public LambdaExpression UpdateExpression;
+        internal LambdaExpression UpdateFilter;
+        internal LambdaExpression UpdateExpression;
 
         public TriggerUpdateAction(
             LambdaExpression updateFilter,
@@ -22,8 +22,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         public virtual string BuildSql(ITriggerSqlVisitor visitor)
             => visitor.GetTriggerUpdateActionSql(this);
 
-        public abstract Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes { get; }
+        internal abstract Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes { get; }
 
-        public abstract Dictionary<string, ArgumentPrefix> UpdateExpressionPrefixes { get; }
+        internal abstract Dictionary<string, ArgumentPrefix> UpdateExpressionPrefixes { get; }
     }
 }

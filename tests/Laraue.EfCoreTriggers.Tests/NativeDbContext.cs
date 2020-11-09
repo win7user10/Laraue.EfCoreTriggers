@@ -1,4 +1,4 @@
-﻿using Laraue.EfCoreTriggers.CSharpBuilder;
+﻿using Laraue.EfCoreTriggers.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Microsoft.EntityFrameworkCore;
 

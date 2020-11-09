@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
 {
     [DbContext(typeof(NativeDbContext))]
-    [Migration("20201108143513_Initial")]
+    [Migration("20201109174642_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

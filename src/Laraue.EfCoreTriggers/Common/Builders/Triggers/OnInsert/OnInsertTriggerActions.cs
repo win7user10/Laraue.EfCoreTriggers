@@ -1,6 +1,4 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete;
-using Laraue.EfCoreTriggers.Common.Builders.Visitor;
 using System;
 using System.Linq.Expressions;
 

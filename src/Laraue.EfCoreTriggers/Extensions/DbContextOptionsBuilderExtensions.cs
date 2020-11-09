@@ -9,10 +9,9 @@ namespace Laraue.EfCoreTriggers.Extensions
 {
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder<TContext> UseTriggers<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder)
-            where TContext : DbContext
+        public static DbContextOptionsBuilder UseTriggers(this DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.ReplaceServices();
+            optionsBuilder.ReplaceMigrationsService();
 
             var providers = optionsBuilder.Options
                 .Extensions
@@ -28,16 +27,28 @@ namespace Laraue.EfCoreTriggers.Extensions
             return optionsBuilder;
         }
 
-        public static DbContextOptionsBuilder<TContext> UseTriggers<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder, DbProvider dbProvider)
+        public static DbContextOptionsBuilder<TContext> UseTriggers<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder)
             where TContext : DbContext
         {
-            optionsBuilder.ReplaceServices();
+            UseTriggers((DbContextOptionsBuilder)optionsBuilder);
+            return optionsBuilder;
+        }
+
+        public static DbContextOptionsBuilder UseTriggers(this DbContextOptionsBuilder optionsBuilder, DbProvider dbProvider)
+        {
+            optionsBuilder.ReplaceMigrationsService();
             TriggersInitializer.SetProvider(dbProvider);
             return optionsBuilder;
         }
 
-        private static DbContextOptionsBuilder<TContext> ReplaceServices<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder)
+        public static DbContextOptionsBuilder<TContext> UseTriggers<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder, DbProvider dbProvider)
             where TContext : DbContext
+        {
+            UseTriggers((DbContextOptionsBuilder)optionsBuilder, dbProvider);
+            return optionsBuilder;
+        }
+
+        private static DbContextOptionsBuilder ReplaceMigrationsService(this DbContextOptionsBuilder optionsBuilder)
         {
             return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
         }

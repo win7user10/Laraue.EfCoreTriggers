@@ -8,7 +8,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
        where TTriggerEntity : class
        where TInsertEntity : class
     {
-        public LambdaExpression InsertExpression;
+        internal LambdaExpression InsertExpression;
 
         public TriggerInsertAction(LambdaExpression insertExpression)
         {
@@ -18,6 +18,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         public virtual string BuildSql(ITriggerSqlVisitor visitor)
             => visitor.GetTriggerInsertActionSql(this);
 
-        public abstract Dictionary<string, ArgumentPrefix> InsertExpressionPrefixes { get; }
+        internal abstract Dictionary<string, ArgumentPrefix> InsertExpressionPrefixes { get; }
     }
 }

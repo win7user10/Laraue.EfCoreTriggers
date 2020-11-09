@@ -18,12 +18,12 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
         {
         }
 
-        public override Dictionary<string, ArgumentPrefix> InsertExpressionPrefixes => new Dictionary<string, ArgumentPrefix>
+        internal override Dictionary<string, ArgumentPrefix> InsertExpressionPrefixes => new Dictionary<string, ArgumentPrefix>
         {
             [InsertExpression.Parameters[0].Name] = ArgumentPrefix.New,
         };
 
-        public override Dictionary<string, ArgumentPrefix> OnMatchExpressionPrefixes => OnMatchExpression is null
+        internal override Dictionary<string, ArgumentPrefix> OnMatchExpressionPrefixes => OnMatchExpression is null
             ? new Dictionary<string, ArgumentPrefix>()
             : new Dictionary<string, ArgumentPrefix>
             {

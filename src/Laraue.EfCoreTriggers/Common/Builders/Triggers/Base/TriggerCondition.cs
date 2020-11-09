@@ -7,7 +7,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
     public abstract class TriggerCondition<TTriggerEntity> : ISqlConvertible
         where TTriggerEntity : class
     {
-        public LambdaExpression Condition { get; }
+        internal LambdaExpression Condition { get; }
 
         public TriggerCondition(LambdaExpression triggerCondition)
             => Condition = triggerCondition;
@@ -15,6 +15,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         public virtual string BuildSql(ITriggerSqlVisitor visitor)
             => visitor.GetTriggerConditionSql(this);
 
-        public abstract Dictionary<string, ArgumentPrefix> ConditionPrefixes { get; }
+        internal abstract Dictionary<string, ArgumentPrefix> ConditionPrefixes { get; }
     }
 }

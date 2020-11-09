@@ -17,12 +17,12 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
         {
         }
 
-        public override Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes => new Dictionary<string, ArgumentPrefix>
+        internal override Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes => new Dictionary<string, ArgumentPrefix>
         {
             [UpdateFilter.Parameters[0].Name] = ArgumentPrefix.Old, 
         };
 
-        public override Dictionary<string, ArgumentPrefix> UpdateExpressionPrefixes => new Dictionary<string, ArgumentPrefix>
+        internal override Dictionary<string, ArgumentPrefix> UpdateExpressionPrefixes => new Dictionary<string, ArgumentPrefix>
         {
             [UpdateExpression.Parameters[0].Name] = ArgumentPrefix.Old,
         };

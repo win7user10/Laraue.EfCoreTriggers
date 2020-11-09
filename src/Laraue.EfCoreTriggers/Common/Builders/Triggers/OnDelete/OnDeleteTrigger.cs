@@ -1,5 +1,4 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Laraue.EfCoreTriggers.Common.Builders.Visitor;
 using System;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
@@ -17,11 +16,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
             actionSetup.Invoke(actionTrigger);
             Actions.Add(actionTrigger);
             return this;
-        }
-
-        public override string BuildSql(ITriggerSqlVisitor visitor)
-        {
-            return visitor.GetTriggerSql(this);
         }
     }
 }

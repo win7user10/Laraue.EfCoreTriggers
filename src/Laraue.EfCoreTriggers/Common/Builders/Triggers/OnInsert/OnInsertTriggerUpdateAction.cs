@@ -17,12 +17,12 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
         {
         }
 
-        public override Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes => new Dictionary<string, ArgumentPrefix>
+        internal override Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes => new Dictionary<string, ArgumentPrefix>
         {
             [UpdateFilter.Parameters[0].Name] = ArgumentPrefix.New,
         };
 
-        public override Dictionary<string, ArgumentPrefix> UpdateExpressionPrefixes => new Dictionary<string, ArgumentPrefix>
+        internal override Dictionary<string, ArgumentPrefix> UpdateExpressionPrefixes => new Dictionary<string, ArgumentPrefix>
         {
             [UpdateExpression.Parameters[0].Name] = ArgumentPrefix.New,
         };
