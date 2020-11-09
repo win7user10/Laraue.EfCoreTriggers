@@ -9,6 +9,22 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "test_entities",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    decimal_value = table.Column<decimal>(nullable: false),
+                    double_value = table.Column<double>(nullable: false),
+                    int_value = table.Column<int>(nullable: false),
+                    guid_value = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_test_entities", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
@@ -115,6 +131,9 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
 
             migrationBuilder.DropTable(
                 name: "balances");
+
+            migrationBuilder.DropTable(
+                name: "test_entities");
 
             migrationBuilder.DropTable(
                 name: "transactions");

@@ -35,5 +35,29 @@ namespace Laraue.EfCoreTriggers.Tests.SqlGeneration
             var sql = action.BuildSql(Visitor);
             Assert.Equal("INSERT INTO users (role) VALUES (999)", sql);
         }
+
+        [Fact]
+        public virtual void DecimalAddSql()
+        {
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { DecimalValue = t.DecimalValue + 3 });
+            var sql = action.BuildSql(Visitor);
+            Assert.Equal("INSERT INTO test_entities (decimal_value) VALUES (NEW.decimal_value + 3)", sql);
+        }
+
+        [Fact]
+        public virtual void DoubleSubSql()
+        {
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { DoubleValue = t.DoubleValue - 3 });
+            var sql = action.BuildSql(Visitor);
+            Assert.Equal("INSERT INTO test_entities (double_value) VALUES (NEW.double_value - 3)", sql);
+        }
+
+        [Fact]
+        public virtual void IntMultiplySql()
+        {
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { IntValue = t.IntValue * 2 });
+            var sql = action.BuildSql(Visitor);
+            Assert.Equal("INSERT INTO test_entities (int_value) VALUES (NEW.int_value * 2)", sql);
+        }
     }
 }

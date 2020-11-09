@@ -19,6 +19,36 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Migrations
                 .HasAnnotation("ProductVersion", "3.1.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            modelBuilder.Entity("Laraue.EfCoreTriggers.Tests.Entities.TestEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<decimal>("DecimalValue")
+                        .HasColumnName("decimal_value")
+                        .HasColumnType("numeric");
+
+                    b.Property<double>("DoubleValue")
+                        .HasColumnName("double_value")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid>("GuidValue")
+                        .HasColumnName("guid_value")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("IntValue")
+                        .HasColumnName("int_value")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_test_entities");
+
+                    b.ToTable("test_entities");
+                });
+
             modelBuilder.Entity("Laraue.EfCoreTriggers.Tests.Entities.Transaction", b =>
                 {
                     b.Property<Guid>("Id")

@@ -175,9 +175,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
                 var parts = new[] { binaryExpression.Left, binaryExpression.Right };
                 if (binaryExpression.Method is null)
                 {
-                    if (binaryExpression.Left is MemberExpression leftMemberExpression)
+                    if (binaryExpression.Left is MemberExpression leftMemberExpression && leftMemberExpression.Type == typeof(bool))
                         parts[0] = Expression.IsTrue(binaryExpression.Left);
-                    if (binaryExpression.Right is MemberExpression rightMemberExpression)
+                    if (binaryExpression.Right is MemberExpression rightMemberExpression && rightMemberExpression.Type == typeof(bool))
                         parts[1] = Expression.IsTrue(binaryExpression.Right);
                 }
                 return parts;

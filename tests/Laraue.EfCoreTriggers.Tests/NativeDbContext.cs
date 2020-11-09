@@ -14,6 +14,8 @@ namespace Laraue.EfCoreTriggers.Tests
 
         public DbSet<TransactionMirror> TransactionsMirror { get; set; }
 
+        public DbSet<TestEntity> TestEntities { get; set; }
+
         public NativeDbContext(DbContextOptions<NativeDbContext> options) : base(options)
         {
         }
