@@ -7,12 +7,12 @@
     <RepositoryType>git</RepositoryType>
     <Authors>Belyanskiy Ilya</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.6</Version>
+    <Version>1.0.7</Version>
     <PackageProjectUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Laraue.Core.Extensions.Linq" Version="1.0.0-build-15" />
+    <PackageReference Include="Laraue.Core.Extensions.Linq" Version="1.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9">
       <PrivateAssets>all</PrivateAssets>

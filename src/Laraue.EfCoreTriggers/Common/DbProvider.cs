@@ -3,5 +3,6 @@
     public enum DbProvider
     {
         PostgreSql,
+        SqlServer,
     }
 }

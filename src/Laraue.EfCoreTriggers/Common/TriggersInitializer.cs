@@ -8,33 +8,31 @@ namespace Laraue.EfCoreTriggers.Common
 {
     public class TriggersInitializer
     {
-        public static DbProvider? UsingProvider { get; private set; }
-
-        public static readonly Dictionary<string, DbProvider> KnownProviders = new Dictionary<string, DbProvider>
+        private static readonly Dictionary<string, DbProvider> ProvidersAnnotations = new Dictionary<string, DbProvider>
         {
-            ["NpgsqlOptionsExtension"] = DbProvider.PostgreSql,
+            ["Npgsql:ValueGenerationStrategy"] = DbProvider.PostgreSql,
+            ["SqlServer:ValueGenerationStrategy"] = DbProvider.SqlServer,
         };
-
-        public static void SetProvider(DbProvider dbProvider)
-        {
-            UsingProvider = dbProvider;
-        }
-
-        public static void SetProvider(string providerName)
-        {
-            if (!KnownProviders.TryGetValue(providerName, out var dbProvider))
-                throw new InvalidOperationException($"Extension {providerName} is not supporting!");
-
-            SetProvider(dbProvider);
-        }
 
         public static ITriggerSqlVisitor GetSqlProvider(IModel model)
         {
-            return UsingProvider switch
+            DbProvider? provider = null;
+            foreach (var providerAnnotation in ProvidersAnnotations)
+            {
+                var annotation = model.FindAnnotation(providerAnnotation.Key);
+                if (annotation != null)
+                {
+                    provider = providerAnnotation.Value;
+                    break;
+                }
+            }
+
+            if (provider is null)
+                throw new InvalidOperationException($"Not found one of annotation {string.Join(", ", ProvidersAnnotations.Keys)} to recognize DB provider.");
+
+            return provider switch
             {
                 DbProvider.PostgreSql => new PostgreSqlVisitor(model),
-                null => throw new InvalidOperationException("DB provider hasn't been configured"),
-                _ => throw new InvalidOperationException($"DB provider {UsingProvider} is not suppoting"),
             };
         }
     }
