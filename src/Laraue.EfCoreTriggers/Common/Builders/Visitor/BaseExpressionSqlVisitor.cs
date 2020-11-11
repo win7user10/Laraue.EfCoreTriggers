@@ -16,20 +16,22 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         private Dictionary<Type, string> _tableNamesCache = new Dictionary<Type, string>();
 
+        private Dictionary<Type, string> _tableSchemasCache = new Dictionary<Type, string>();
+
         protected IModel Model { get; }
 
         protected abstract string NewEntityPrefix { get; }
 
         protected abstract string OldEntityPrefix { get; }
 
-        protected abstract char Quote { get; }
+        protected virtual char Quote { get; } = '\'';
 
         public BaseExpressionSqlVisitor(IModel model)
         {
             Model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
-        public string GetColumnName(MemberInfo memberInfo)
+        protected virtual string GetColumnName(MemberInfo memberInfo)
         {
             if (!_columnNamesCache.ContainsKey(memberInfo))
             {
@@ -41,9 +43,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return columnName;
         }
 
-        public string GetTableName(MemberInfo memberInfo) => GetTableName(memberInfo.DeclaringType);
+        protected virtual string GetTableName(MemberInfo memberInfo) => GetTableName(memberInfo.DeclaringType);
 
-        public string GetTableName(Type entity)
+        protected virtual string GetTableName(Type entity)
         {
             if (!_tableNamesCache.ContainsKey(entity))
             {
@@ -55,7 +57,19 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return columnName;
         }
 
-        public virtual string GetExpressionTypeSql(ExpressionType expressionType) => expressionType switch
+        protected virtual string GetTableSchemaName(Type entity)
+        {
+            if (!_tableSchemasCache.ContainsKey(entity))
+            {
+                var entityType = Model.FindEntityType(entity);
+                _tableSchemasCache.Add(entity, entityType.GetSchema());
+            }
+            if (!_tableSchemasCache.TryGetValue(entity, out var schemaName))
+                throw new InvalidOperationException($"Schema for entity {entity.FullName} is not defined in model.");
+            return schemaName;
+        }
+
+        protected virtual string GetExpressionTypeSql(ExpressionType expressionType) => expressionType switch
         {
             ExpressionType.Add => "+",
             ExpressionType.Subtract => "-",
@@ -76,7 +90,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             _ => throw new NotSupportedException($"Unknown sign of {expressionType}"),
         };
 
-        public virtual string GetExpressionSql(Expression expression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual string GetExpressionSql(Expression expression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             return expression switch
             {
@@ -90,7 +104,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         }
 
 
-        public virtual string GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual string GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             argumentTypes ??= new Dictionary<string, ArgumentPrefix>();
             var sqlBuilder = new StringBuilder();
@@ -115,32 +129,35 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder.ToString();
         }
 
-        public virtual (string ColumnName, string AssignmentExpressionSql) GetMemberAssignmentParts(MemberAssignment memberAssignment, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual (string ColumnName, string AssignmentExpressionSql) GetMemberAssignmentParts(MemberAssignment memberAssignment, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             var columnName = GetColumnName(memberAssignment.Member);
             var assignmentExpressionSql = GetExpressionSql(memberAssignment.Expression, argumentTypes);
             return (columnName, assignmentExpressionSql);
         }
 
-        public virtual string GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual string GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             var parsedArguments = methodCallExpression.Arguments.Select(argumentExpression => GetExpressionSql(argumentExpression, argumentTypes)).ToArray();
             return methodCallExpression.Method.Name switch
             {
-                "Concat" => GetMethodConcatCallExpressionSql(methodCallExpression, parsedArguments),
-                "ToLower" => GetMethodToLowerCallExpressionSql(methodCallExpression, GetExpressionSql(methodCallExpression.Object, argumentTypes)),
-                "ToUpper" => GetMethodToUpperCallExpressionSql(methodCallExpression, GetExpressionSql(methodCallExpression.Object, argumentTypes)),
+                "Concat" => GetMethodConcatCallExpressionSql(parsedArguments),
+                "ToLower" => GetMethodToLowerCallExpressionSql(GetExpressionSql(methodCallExpression.Object, argumentTypes)),
+                "ToUpper" => GetMethodToUpperCallExpressionSql(GetExpressionSql(methodCallExpression.Object, argumentTypes)),
                 _ => throw new NotSupportedException($"Expression {methodCallExpression.Method.Name} is not supported"),
             };
         }
 
-        public abstract string GetMethodConcatCallExpressionSql(MethodCallExpression methodCallExpression, params string[] concatExpressionArgsSql);
+        protected virtual string GetMethodConcatCallExpressionSql(params string[] concatExpressionArgsSql)
+            => string.Join(" + ", concatExpressionArgsSql);
 
-        public abstract string GetMethodToLowerCallExpressionSql(MethodCallExpression methodCallExpression, string lowerSqlExpression);
+        protected virtual string GetMethodToLowerCallExpressionSql(string lowerSqlExpression)
+            => $"LOWER({lowerSqlExpression})";
 
-        public abstract string GetMethodToUpperCallExpressionSql(MethodCallExpression methodCallExpression, string upperSqlExpression);
+        protected virtual string GetMethodToUpperCallExpressionSql(string upperSqlExpression)
+            => $"UPPER({upperSqlExpression})";
 
-        public virtual string GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual string GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             var leftSideExpressionTypes = new[] { ExpressionType.Negate };
 
@@ -155,7 +172,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder.ToString();
         }
 
-        public virtual string[] GetNewExpressionColumns(NewExpression newExpression)
+        protected virtual string[] GetNewExpressionColumns(NewExpression newExpression)
         {
             return newExpression.Arguments.Select(argument =>
             {
@@ -168,7 +185,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             }).ToArray();
         }
 
-        public virtual string GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual string GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             Expression[] GetBinaryExpressionParts()
             {
@@ -201,7 +218,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             }).ToDictionary(x => x.ColumnName, x => x.AssignmentExpressionSql);
         }
 
-        public virtual string GetConstantExpressionSql(ConstantExpression constantExpression)
+        protected virtual string GetConstantExpressionSql(ConstantExpression constantExpression)
         {
             if (constantExpression.Value is string strValue)
                 return $"{Quote}{strValue}{Quote}";

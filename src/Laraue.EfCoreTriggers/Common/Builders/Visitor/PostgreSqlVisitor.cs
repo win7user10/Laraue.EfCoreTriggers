@@ -1,7 +1,9 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+﻿using Laraue.Core.Extensions;
+using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Laraue.EfCoreTriggers.Common.Builders.Visitor;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -16,8 +18,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         protected override string NewEntityPrefix => "NEW";
 
         protected override string OldEntityPrefix => "OLD";
-
-        protected override char Quote => '\'';
 
         public override string GetDropTriggerSql(string triggerName, Type entityType)
         {
@@ -34,10 +34,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             if (triggerActions.ActionConditions.Count > 0)
             {
                 sqlBuilder.Append($"IF ");
-                foreach (var actionCondition in triggerActions.ActionConditions)
-                {
-                    sqlBuilder.Append(actionCondition.BuildSql(this));
-                }
+                var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
+                sqlBuilder.Append(string.Join(" AND ", conditionsSql));
                 sqlBuilder.Append($" THEN ");
             }
 
@@ -87,13 +85,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             return sqlBuilder.ToString();
         }
 
-        public override string GetMethodConcatCallExpressionSql(MethodCallExpression methodCallExpression, string[] concatExpressionArgsSql)
+        protected override string GetMethodConcatCallExpressionSql(string[] concatExpressionArgsSql)
             => $"CONCAT({string.Join(", ", concatExpressionArgsSql)})";
-
-        public override string GetMethodToLowerCallExpressionSql(MethodCallExpression methodCallExpression, string lowerSqlExpression)
-            => $"LOWER({lowerSqlExpression})";
-
-        public override string GetMethodToUpperCallExpressionSql(MethodCallExpression methodCallExpression, string upperSqlExpression)
-            => $"UPPER({upperSqlExpression})";
     }
 }

@@ -33,6 +33,8 @@ namespace Laraue.EfCoreTriggers.Common
             return provider switch
             {
                 DbProvider.PostgreSql => new PostgreSqlVisitor(model),
+                DbProvider.SqlServer => new SqlServerSqlVisitor(model),
+                _ => throw new NotSupportedException($"Provider {provider} is not supported!"),
             };
         }
     }
