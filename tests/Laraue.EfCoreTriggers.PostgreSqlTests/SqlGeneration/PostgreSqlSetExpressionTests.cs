@@ -19,7 +19,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.SqlGeneration
             {
                 Description = transaction.Description + "abc",
             }).BuildSql(Visitor);
-            Assert.Equal("INSERT INTO transactions_mirror (description) VALUES (CONCAT(NEW.description, 'abc'))", sql);
+            Assert.Equal("INSERT INTO transactions_mirror (description) VALUES (CONCAT(NEW.description, 'abc'));", sql);
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.SqlGeneration
             {
                 Description = transaction.Description.ToLower()
             }).BuildSql(Visitor);
-            Assert.Equal("INSERT INTO transactions_mirror (description) VALUES (LOWER(NEW.description))", sql);
+            Assert.Equal("INSERT INTO transactions_mirror (description) VALUES (LOWER(NEW.description));", sql);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.SqlGeneration
             {
                 Description = transaction.Description.ToUpper()
             }).BuildSql(Visitor);
-            Assert.Equal("INSERT INTO transactions_mirror (description) VALUES (UPPER(NEW.description))", sql);
+            Assert.Equal("INSERT INTO transactions_mirror (description) VALUES (UPPER(NEW.description));", sql);
         }
     }
 }

@@ -72,20 +72,22 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             var sqlBuilder = new GeneratedSql(insertStatementSql.AffectedColumns)
                 .MergeColumnsInfo(newExpressionColumnsSql.SelectMany(x => x.AffectedColumns))
                 .Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
+                .Append(insertStatementSql.SqlBuilder)
                 .Append($" ON CONFLICT (")
                 .AppendJoin(", ", newExpressionColumnsSql.Select(x => x.SqlBuilder))
                 .Append(")");
 
             if (triggerUpsertAction.OnMatchExpression is null)
             {
-                sqlBuilder.Append(" DO NOTHING");
+                sqlBuilder.Append(" DO NOTHING;");
             }
             else
             {
                 var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes);
                 sqlBuilder.MergeColumnsInfo(updateStatementSql.AffectedColumns)
                     .Append($" DO UPDATE SET ")
-                    .Append(updateStatementSql.SqlBuilder);
+                    .Append(updateStatementSql.SqlBuilder)
+                    .Append(";");
             }
 
             return sqlBuilder;

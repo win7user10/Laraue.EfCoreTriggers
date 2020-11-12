@@ -43,9 +43,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return new GeneratedSql(updateStatement.AffectedColumns)
                 .MergeColumnsInfo(conditionStatement.AffectedColumns)
                 .Append($"UPDATE {GetTableName(typeof(TUpdateEntity))} SET ")
-                .Append(conditionStatement.SqlBuilder)
+                .Append(updateStatement.SqlBuilder)
                 .Append(" ")
-                .Append(updateStatement.SqlBuilder);
+                .Append(conditionStatement.SqlBuilder)
+                .Append(";");
         }
 
         public virtual GeneratedSql GetConditionStatementSql(LambdaExpression conditionExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
@@ -84,7 +85,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             var conditionStatement = GetConditionStatementSql(triggerDeleteAction.DeleteFilter, triggerDeleteAction.DeleteFilterPrefixes);
             return new GeneratedSql(conditionStatement.AffectedColumns)
                 .Append($"DELETE FROM {GetTableName(typeof(TUpdateEntity))} ")
-                .Append(conditionStatement.SqlBuilder);
+                .Append(conditionStatement.SqlBuilder)
+                .Append(";");
         }
 
         public GeneratedSql GetTriggerInsertActionSql<TTriggerEntity, TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> triggerInsertAction)
@@ -94,7 +96,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             var insertStatement = GetInsertStatementBodySql(triggerInsertAction.InsertExpression, triggerInsertAction.InsertExpressionPrefixes);
             return new GeneratedSql(insertStatement.AffectedColumns)
                 .Append($"INSERT INTO {GetTableName(typeof(TInsertEntity))} ")
-                .Append(insertStatement.SqlBuilder);
+                .Append(insertStatement.SqlBuilder)
+                .Append(";");
         }
     }
 }

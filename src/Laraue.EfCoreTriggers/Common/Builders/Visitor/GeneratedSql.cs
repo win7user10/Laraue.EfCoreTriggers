@@ -20,12 +20,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         public GeneratedSql(IEnumerable<MemberInfo> affectedColumnsInfo, string sql)
             : this(affectedColumnsInfo) => Append(sql);
 
-        public GeneratedSql(IEnumerable<GeneratedSql> subResults)
-            => subResults.SafeForEach(subResult => subResult.AffectedColumns.SafeForEach(member => AffectedColumns.Add(member)));
-
-        public GeneratedSql(IEnumerable<GeneratedSql> subResults, string sql)
-            : this(subResults) => Append(sql);
-
         public GeneratedSql(MemberInfo affectedColumnInfo)
             => AffectedColumns.Add(affectedColumnInfo);
 
@@ -42,9 +36,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return this;
         }
 
-        public void MergeColumnsInfo(GeneratedSql subResult)
-            => subResult.AffectedColumns.SafeForEach(member => AffectedColumns.Add(member));
-
         public GeneratedSql Append(StringBuilder builder)
         {
             SqlBuilder.Append(builder);
@@ -56,13 +47,13 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         public GeneratedSql AppendJoin(string separator, IEnumerable<StringBuilder> builders)
         {
-            var lastBuilder = builders.Last();
-            builders.SafeForEach(builder =>
+            var buildersArray = builders.ToArray();
+            for (int i = 0; i < buildersArray.Length; i++)
             {
-                SqlBuilder.Append(builder);
-                if (builder != lastBuilder)
+                SqlBuilder.Append(buildersArray[i]);
+                if (i < buildersArray.Length - 1)
                     SqlBuilder.Append(separator);
-            });
+            }
             return this;
         }
 
