@@ -90,7 +90,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             _ => throw new NotSupportedException($"Unknown sign of {expressionType}"),
         };
 
-        protected virtual SqlExtendedResult GetExpressionSql(Expression expression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetExpressionSql(Expression expression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             return expression switch
             {
@@ -104,11 +104,11 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         }
 
 
-        protected virtual SqlExtendedResult GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             argumentTypes ??= new Dictionary<string, ArgumentPrefix>();
 
-            var sqlResult = new SqlExtendedResult(memberExpression.Member);
+            var sqlResult = new GeneratedSql(memberExpression.Member);
 
             var parameterExpression = (ParameterExpression)memberExpression.Expression;
             var memberName = parameterExpression.Name;
@@ -136,14 +136,14 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         /// <param name="memberAssignment"></param>
         /// <param name="argumentTypes"></param>
         /// <returns></returns>
-        protected virtual (MemberInfo MemberInfo, SqlExtendedResult AssignmentSqlResult) GetMemberAssignmentParts(
+        protected virtual (MemberInfo MemberInfo, GeneratedSql AssignmentSqlResult) GetMemberAssignmentParts(
             MemberAssignment memberAssignment, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             var sqlExtendedResult = GetExpressionSql(memberAssignment.Expression, argumentTypes);
             return (memberAssignment.Member, sqlExtendedResult);
         }
 
-        protected virtual SqlExtendedResult GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             var parsedArguments = methodCallExpression.Arguments.Select(argumentExpression => GetExpressionSql(argumentExpression, argumentTypes)).ToArray();
             return methodCallExpression.Method.Name switch
@@ -155,20 +155,20 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             };
         }
 
-        protected virtual SqlExtendedResult GetMethodConcatCallExpressionSql(params SqlExtendedResult[] concatExpressionArgsSql)
-            => new SqlExtendedResult(concatExpressionArgsSql, string.Join(" + ", concatExpressionArgsSql.Select(x => x.Sql)));
+        protected virtual GeneratedSql GetMethodConcatCallExpressionSql(params GeneratedSql[] concatExpressionArgsSql)
+            => new GeneratedSql(concatExpressionArgsSql, string.Join(" + ", concatExpressionArgsSql.Select(x => x.Sql)));
 
-        protected virtual SqlExtendedResult GetMethodToLowerCallExpressionSql(SqlExtendedResult lowerSqlExpression)
-            => new SqlExtendedResult(lowerSqlExpression, $"LOWER({lowerSqlExpression})");
+        protected virtual GeneratedSql GetMethodToLowerCallExpressionSql(GeneratedSql lowerSqlExpression)
+            => new GeneratedSql(lowerSqlExpression.AffectedColumns, $"LOWER({lowerSqlExpression})");
 
-        protected virtual SqlExtendedResult GetMethodToUpperCallExpressionSql(SqlExtendedResult upperSqlExpression)
-            => new SqlExtendedResult(upperSqlExpression, $"UPPER({upperSqlExpression})");
+        protected virtual GeneratedSql GetMethodToUpperCallExpressionSql(GeneratedSql upperSqlExpression)
+            => new GeneratedSql(upperSqlExpression.AffectedColumns, $"UPPER({upperSqlExpression})");
 
-        protected virtual SqlExtendedResult GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             var leftSideExpressionTypes = new[] { ExpressionType.Negate };
             var memberExpression = (MemberExpression)unaryExpression.Operand;
-            var sqlBuilder = new SqlExtendedResult(memberExpression.Member);
+            var sqlBuilder = new GeneratedSql(memberExpression.Member);
             if (leftSideExpressionTypes.Contains(unaryExpression.NodeType))
                 sqlBuilder.Append(GetExpressionTypeSql(unaryExpression.NodeType));
 
@@ -181,7 +181,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder;
         }
 
-        protected virtual SqlExtendedResult[] GetNewExpressionColumns(NewExpression newExpression)
+        protected virtual GeneratedSql[] GetNewExpressionColumns(NewExpression newExpression)
         {
             return newExpression.Arguments.Select(argument =>
             {
@@ -194,7 +194,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             }).ToArray();
         }
 
-        protected virtual SqlExtendedResult GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             Expression[] GetBinaryExpressionParts()
             {
@@ -214,7 +214,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             else
             {
                 var binaryParts = GetBinaryExpressionParts().Select(part => GetExpressionSql(part, argumentTypes));
-                return new SqlExtendedResult(binaryParts, string.Join($" {GetExpressionTypeSql(binaryExpression.NodeType)} ", binaryParts));
+                return new GeneratedSql(binaryParts, string.Join($" {GetExpressionTypeSql(binaryExpression.NodeType)} ", binaryParts));
             }
         }
 
@@ -224,7 +224,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         /// <param name="memberInitExpression"></param>
         /// <param name="argumentTypes"></param>
         /// <returns></returns>
-        protected Dictionary<MemberInfo, SqlExtendedResult> GetMemberInitExpressionAssignmentParts(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected Dictionary<MemberInfo, GeneratedSql> GetMemberInitExpressionAssignmentParts(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
         {
             return memberInitExpression.Bindings.Select(memberBinding =>
             {
@@ -233,13 +233,13 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             }).ToDictionary(x => x.MemberInfo, x => x.AssignmentSqlResult);
         }
 
-        protected virtual SqlExtendedResult GetConstantExpressionSql(ConstantExpression constantExpression)
+        protected virtual GeneratedSql GetConstantExpressionSql(ConstantExpression constantExpression)
         {
             if (constantExpression.Value is string strValue)
-                return new SqlExtendedResult($"{Quote}{strValue}{Quote}");
+                return new GeneratedSql($"{Quote}{strValue}{Quote}");
             else if (constantExpression.Value is Enum enumValue)
-                return new SqlExtendedResult(enumValue.ToString("D"));
-            return new SqlExtendedResult(constantExpression.Value.ToString().ToLower());
+                return new GeneratedSql(enumValue.ToString("D"));
+            return new GeneratedSql(constantExpression.Value.ToString().ToLower());
         }
     }
 }

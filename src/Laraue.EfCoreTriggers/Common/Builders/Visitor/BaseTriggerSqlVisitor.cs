@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 {
@@ -14,12 +13,12 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         {
         }
 
-        public abstract string GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
+        public abstract GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
             where TTriggerEntity : class;
 
-        public abstract string GetDropTriggerSql(string triggerName, Type entityType);
+        public abstract GeneratedSql GetDropTriggerSql(string triggerName, Type entityType);
 
-        public virtual SqlExtendedResult GetTriggerConditionSql<TTriggerEntity>(TriggerCondition<TTriggerEntity> triggerCondition)
+        public virtual GeneratedSql GetTriggerConditionSql<TTriggerEntity>(TriggerCondition<TTriggerEntity> triggerCondition)
             where TTriggerEntity : class
         {
             var conditionBody = triggerCondition.Condition.Body;
@@ -32,70 +31,70 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             throw new NotImplementedException($"Trigger condition of type {conditionBody.GetType()} is not supported.");
         }
 
-        public abstract SqlExtendedResult GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
+        public abstract GeneratedSql GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
             where TTriggerEntity : class;
 
-        public string GetTriggerUpdateActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpdateAction<TTriggerEntity, TUpdateEntity> triggerUpdateAction)
+        public GeneratedSql GetTriggerUpdateActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpdateAction<TTriggerEntity, TUpdateEntity> triggerUpdateAction)
             where TTriggerEntity : class
             where TUpdateEntity : class
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder
+            var updateStatement = GetUpdateStatementBodySql(triggerUpdateAction.UpdateExpression, triggerUpdateAction.UpdateExpressionPrefixes);
+            var conditionStatement = GetConditionStatementSql(triggerUpdateAction.UpdateFilter, triggerUpdateAction.UpdateFilterPrefixes);
+            return new GeneratedSql(updateStatement.AffectedColumns)
+                .MergeColumnsInfo(conditionStatement.AffectedColumns)
                 .Append($"UPDATE {GetTableName(typeof(TUpdateEntity))} SET ")
-                .Append(GetUpdateStatementBodySql(triggerUpdateAction.UpdateExpression, triggerUpdateAction.UpdateExpressionPrefixes))
+                .Append(conditionStatement.SqlBuilder)
                 .Append(" ")
-                .Append(GetConditionStatementSql(triggerUpdateAction.UpdateFilter, triggerUpdateAction.UpdateFilterPrefixes));
-            return sqlBuilder.ToString();
+                .Append(updateStatement.SqlBuilder);
         }
 
-        public virtual SqlExtendedResult GetConditionStatementSql(LambdaExpression conditionExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
+        public virtual GeneratedSql GetConditionStatementSql(LambdaExpression conditionExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.Append("WHERE ")
-                .Append(GetBinaryExpressionSql((BinaryExpression)conditionExpression.Body, argumentPrefixes));
-            return sqlBuilder.ToString();
+            var binaryExpressionSql = GetBinaryExpressionSql((BinaryExpression)conditionExpression.Body, argumentPrefixes);
+            return new GeneratedSql(binaryExpressionSql.AffectedColumns)
+                .Append("WHERE ")
+                .Append(binaryExpressionSql.SqlBuilder);
         }
 
-        public virtual SqlExtendedResult GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
+        public virtual GeneratedSql GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
         {
             var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)updateExpression.Body, argumentPrefixes);
-            var sqlResult = new SqlExtendedResult(assignmentParts.Keys);
+            var sqlResult = new GeneratedSql(assignmentParts.Keys);
             sqlResult.Append(string.Join(", ", assignmentParts.Select(expressionPart => $"{GetColumnName(expressionPart.Key)} = {expressionPart.Value}")));
             return sqlResult;
         }
 
-        public virtual SqlExtendedResult GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
+        public virtual GeneratedSql GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
         {
             var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)insertExpression.Body, argumentPrefixes);
-            var sqlResult = new SqlExtendedResult(assignmentParts.Keys);
+            var sqlResult = new GeneratedSql(assignmentParts.Keys);
             sqlResult.Append($"({string.Join(", ", assignmentParts.Select(x => GetColumnName(x.Key)))})")
                 .Append($" VALUES ({string.Join(", ", assignmentParts.Select(x => x.Value))})");
             return sqlResult;
         }
 
-        public abstract SqlExtendedResult GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
+        public abstract GeneratedSql GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
             where TTriggerEntity : class
             where TUpsertEntity : class;
 
-        public SqlExtendedResult GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)
+        public GeneratedSql GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)
             where TTriggerEntity : class
             where TUpdateEntity : class
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder
+            var conditionStatement = GetConditionStatementSql(triggerDeleteAction.DeleteFilter, triggerDeleteAction.DeleteFilterPrefixes);
+            return new GeneratedSql(conditionStatement.AffectedColumns)
                 .Append($"DELETE FROM {GetTableName(typeof(TUpdateEntity))} ")
-                .Append(GetConditionStatementSql(triggerDeleteAction.DeleteFilter, triggerDeleteAction.DeleteFilterPrefixes));
-            return sqlBuilder.ToString();
+                .Append(conditionStatement.SqlBuilder);
         }
 
-        public SqlExtendedResult GetTriggerInsertActionSql<TTriggerEntity, TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> triggerInsertAction)
+        public GeneratedSql GetTriggerInsertActionSql<TTriggerEntity, TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> triggerInsertAction)
             where TTriggerEntity : class
             where TInsertEntity : class
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.Append($"INSERT INTO {GetTableName(typeof(TInsertEntity))} ")
-                .Append(GetInsertStatementBodySql(triggerInsertAction.InsertExpression, triggerInsertAction.InsertExpressionPrefixes));
-            return sqlBuilder.ToString();
+            var insertStatement = GetInsertStatementBodySql(triggerInsertAction.InsertExpression, triggerInsertAction.InsertExpressionPrefixes);
+            return new GeneratedSql(insertStatement.AffectedColumns)
+                .Append($"INSERT INTO {GetTableName(typeof(TInsertEntity))} ")
+                .Append(insertStatement.SqlBuilder);
         }
     }
 }

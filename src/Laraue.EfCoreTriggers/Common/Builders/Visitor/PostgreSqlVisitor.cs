@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
@@ -19,73 +18,83 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected override string OldEntityPrefix => "OLD";
 
-        public override string GetDropTriggerSql(string triggerName, Type entityType)
+        public override GeneratedSql GetDropTriggerSql(string triggerName, Type entityType)
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder
+            return new GeneratedSql()
                 .Append($"DROP TRIGGER {triggerName} ON {GetTableName(entityType)};")
                 .Append($"DROP FUNCTION {triggerName}();");
-            return sqlBuilder.ToString();
         }
 
-        public override string GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
+        public override GeneratedSql GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
         {
-            var sqlBuilder = new StringBuilder();
+            var sqlResult = new GeneratedSql();
+
             if (triggerActions.ActionConditions.Count > 0)
             {
-                sqlBuilder.Append($"IF ");
                 var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
-                sqlBuilder.Append(string.Join(" AND ", conditionsSql));
-                sqlBuilder.Append($" THEN ");
+                sqlResult.MergeColumnsInfo(conditionsSql.SelectMany(x => x.AffectedColumns));
+                sqlResult.Append($"IF ")
+                    .AppendJoin(" AND ", conditionsSql.Select(x => x.SqlBuilder))
+                    .Append($" THEN ");
             }
 
-            foreach (var actionExpression in triggerActions.ActionExpressions)
-            {
-                sqlBuilder.Append(actionExpression.BuildSql(this))
-                    .Append(";");
-            }
+            var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this));
+            sqlResult.MergeColumnsInfo(actionsSql.SelectMany(x => x.AffectedColumns))
+                .AppendJoin(", ", actionsSql.Select(x => x.SqlBuilder));
 
             if (triggerActions.ActionConditions.Count > 0)
-                sqlBuilder.Append($"END IF;");
+            {
+                sqlResult
+                    .Append($"END IF;");
+            }
 
-            return sqlBuilder.ToString();
+            return sqlResult;
         }
 
-        public override string GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
+        public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.Append($"CREATE FUNCTION {trigger.Name}() RETURNS trigger as ${trigger.Name}$ ")
-                .Append("BEGIN ");
-
-            foreach (var action in trigger.Actions)
-                sqlBuilder.Append(action.BuildSql(this));
-
-            sqlBuilder.Append(" RETURN NEW;END;")
+            var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
+            return new GeneratedSql(actionsSql.SelectMany(x => x.AffectedColumns))
+                .Append($"CREATE FUNCTION {trigger.Name}() RETURNS trigger as ${trigger.Name}$ ")
+                .Append("BEGIN ")
+                .AppendJoin(actionsSql.Select(x => x.SqlBuilder))
+                .Append(" RETURN NEW;END;")
                 .Append($"${trigger.Name}$ LANGUAGE plpgsql;")
                 .Append($"CREATE TRIGGER {trigger.Name} {trigger.TriggerTime.ToString().ToUpper()} {trigger.TriggerType.ToString().ToUpper()} ")
                 .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
-
-            return sqlBuilder.ToString();
         }
 
-        public override string GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
+        public override GeneratedSql GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
         {
-            var sqlBuilder = new StringBuilder();
+            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
+            var newExpressionColumnsSql = GetNewExpressionColumns((NewExpression)triggerUpsertAction.MatchExpression.Body);
 
-            sqlBuilder.Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
-                .Append(GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes))
-                .Append($" ON CONFLICT ({string.Join(", ", GetNewExpressionColumns((NewExpression)triggerUpsertAction.MatchExpression.Body))})");
+            var sqlBuilder = new GeneratedSql(insertStatementSql.AffectedColumns)
+                .MergeColumnsInfo(newExpressionColumnsSql.SelectMany(x => x.AffectedColumns))
+                .Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
+                .Append($" ON CONFLICT (")
+                .AppendJoin(", ", newExpressionColumnsSql.Select(x => x.SqlBuilder))
+                .Append(")");
 
             if (triggerUpsertAction.OnMatchExpression is null)
+            {
                 sqlBuilder.Append(" DO NOTHING");
+            }
             else
-                sqlBuilder.Append($" DO UPDATE SET ")
-                .Append(GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes));
+            {
+                var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes);
+                sqlBuilder.MergeColumnsInfo(updateStatementSql.AffectedColumns)
+                    .Append($" DO UPDATE SET ")
+                    .Append(updateStatementSql.SqlBuilder);
+            }
 
-            return sqlBuilder.ToString();
+            return sqlBuilder;
         }
 
-        protected override string GetMethodConcatCallExpressionSql(string[] concatExpressionArgsSql)
-            => $"CONCAT({string.Join(", ", concatExpressionArgsSql)})";
+        protected override GeneratedSql GetMethodConcatCallExpressionSql(params GeneratedSql[] concatExpressionArgsSql)
+            => new GeneratedSql(concatExpressionArgsSql.SelectMany(x => x.AffectedColumns))
+                .Append("CONCAT(")
+                .AppendJoin(", ", concatExpressionArgsSql.Select(x => x.SqlBuilder))
+                .Append(")");
     }
 }

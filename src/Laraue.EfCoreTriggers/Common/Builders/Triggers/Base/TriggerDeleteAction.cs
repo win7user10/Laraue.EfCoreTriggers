@@ -13,7 +13,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         public TriggerDeleteAction(LambdaExpression deleteFilter)
             => DeleteFilter = deleteFilter;
 
-        public virtual string BuildSql(ITriggerSqlVisitor visitor)
+        public virtual GeneratedSql BuildSql(ITriggerSqlVisitor visitor)
             => visitor.GetTriggerDeleteActionSql(this);
 
         internal abstract Dictionary<string, ArgumentPrefix> DeleteFilterPrefixes { get; }

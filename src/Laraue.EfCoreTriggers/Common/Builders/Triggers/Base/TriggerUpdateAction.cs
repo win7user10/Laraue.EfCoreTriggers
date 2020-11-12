@@ -19,7 +19,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
             UpdateExpression = updateExpression;
         }
 
-        public virtual string BuildSql(ITriggerSqlVisitor visitor)
+        public virtual GeneratedSql BuildSql(ITriggerSqlVisitor visitor)
             => visitor.GetTriggerUpdateActionSql(this);
 
         internal abstract Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes { get; }
