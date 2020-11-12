@@ -1,6 +1,8 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 {
@@ -14,6 +16,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         protected override string OldEntityPrefix => "Deleted";
 
+        private const string DeletedCursorName = "DeletedCursor";
+
+        private const string InsertedCursorName = "InsertedCursor";
+
         public override GeneratedSql GetDropTriggerSql(string triggerName, Type entityType)
             => new GeneratedSql($"DROP TRIGGER {triggerName} ON {GetTableName(entityType)};");
 
@@ -23,6 +29,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             sqlBuilder.Append($"CREATE TRIGGER {trigger.Name} ON {GetTableName(typeof(TTriggerEntity))}")
                 .Append($" FOR {trigger.TriggerType} AS BEGIN ");
 
+            sqlBuilder.Append("DECLARE TempCursor CURSOR FOR");
             // TODO not ready
 
             return sqlBuilder;
