@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using System.Linq;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
@@ -108,7 +107,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         {
             argumentTypes ??= new Dictionary<string, ArgumentPrefix>();
 
-            var sqlResult = new GeneratedSql(memberExpression.Member);
+            var sqlResult = new GeneratedSql();
 
             var parameterExpression = (ParameterExpression)memberExpression.Expression;
             var memberName = parameterExpression.Name;
@@ -127,6 +126,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
                 sqlResult.Append($"{GetTableName(memberExpression.Member)}.");
 
             sqlResult.Append(GetColumnName(memberExpression.Member));
+            sqlResult.MergeColumnInfo(memberExpression.Member, argumentType);
+
             return sqlResult;
         }
 
@@ -156,7 +157,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         }
 
         protected virtual GeneratedSql GetMethodConcatCallExpressionSql(params GeneratedSql[] concatExpressionArgsSql)
-            => new GeneratedSql(concatExpressionArgsSql.SelectMany(x => x.AffectedColumns))
+            => new GeneratedSql(concatExpressionArgsSql)
                 .AppendJoin(" + ", concatExpressionArgsSql.Select(x => x.SqlBuilder));
 
         protected virtual GeneratedSql GetMethodToLowerCallExpressionSql(GeneratedSql lowerSqlExpression)
@@ -169,7 +170,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         {
             var leftSideExpressionTypes = new[] { ExpressionType.Negate };
             var memberExpression = (MemberExpression)unaryExpression.Operand;
-            var sqlBuilder = new GeneratedSql(memberExpression.Member);
+            var sqlBuilder = new GeneratedSql();
             if (leftSideExpressionTypes.Contains(unaryExpression.NodeType))
                 sqlBuilder.Append(GetExpressionTypeSql(unaryExpression.NodeType));
 
@@ -216,7 +217,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             else
             {
                 var binaryParts = GetBinaryExpressionParts().Select(part => GetExpressionSql(part, argumentTypes));
-                return new GeneratedSql(binaryParts.SelectMany(x => x.AffectedColumns))
+                return new GeneratedSql(binaryParts)
                     .AppendJoin($" {GetExpressionTypeSql(binaryExpression.NodeType)} ", binaryParts.Select(x => x.SqlBuilder));
             }
         }

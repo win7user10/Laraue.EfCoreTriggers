@@ -12,16 +12,25 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         public StringBuilder SqlBuilder { get; } = new StringBuilder();
 
-        public readonly HashSet<MemberInfo> AffectedColumns = new HashSet<MemberInfo>();
+        public readonly Dictionary<ArgumentPrefix, HashSet<MemberInfo>> AffectedColumns
+            = new Dictionary<ArgumentPrefix, HashSet<MemberInfo>>
+            {
+                [ArgumentPrefix.New] = new HashSet<MemberInfo>(),
+                [ArgumentPrefix.Old] = new HashSet<MemberInfo>(),
+            };
 
-        public GeneratedSql(IEnumerable<MemberInfo> affectedColumnsInfo)
-            => affectedColumnsInfo.SafeForEach(x => AffectedColumns.Add(x));
 
-        public GeneratedSql(IEnumerable<MemberInfo> affectedColumnsInfo, string sql)
-            : this(affectedColumnsInfo) => Append(sql);
+        public GeneratedSql(IEnumerable<GeneratedSql> generatedSqls)
+            => MergeColumnsInfo(generatedSqls);
 
-        public GeneratedSql(MemberInfo affectedColumnInfo)
-            => AffectedColumns.Add(affectedColumnInfo);
+        public GeneratedSql(Dictionary<ArgumentPrefix, HashSet<MemberInfo>> affectedColumns)
+            => MergeColumnsInfo(affectedColumns);
+
+        public GeneratedSql(Dictionary<ArgumentPrefix, HashSet<MemberInfo>> affectedColumns, string sql)
+            : this(affectedColumns) => Append(sql);
+
+        public GeneratedSql(MemberInfo affectedColumn, ArgumentPrefix argumentPrefix)
+            => MergeColumnInfo(affectedColumn, argumentPrefix);
 
         public GeneratedSql(string sql)
             => Append(sql);
@@ -30,9 +39,22 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         {
         }
 
-        public GeneratedSql MergeColumnsInfo(IEnumerable<MemberInfo> subResults)
+        public GeneratedSql MergeColumnsInfo(IEnumerable<GeneratedSql> generatedSqls)
         {
-            subResults.SafeForEach(x => AffectedColumns.Add(x));
+            generatedSqls.SafeForEach(x => MergeColumnsInfo(x.AffectedColumns));
+            return this;
+        }
+
+        public GeneratedSql MergeColumnsInfo(Dictionary<ArgumentPrefix, HashSet<MemberInfo>> affectedColumns)
+        {
+            affectedColumns.SafeForEach(x => AffectedColumns[x.Key].AddRange(x.Value));
+            return this;
+        }
+
+        public GeneratedSql MergeColumnInfo(MemberInfo affectedColumn, ArgumentPrefix argumentPrefix)
+        {
+            if (argumentPrefix == ArgumentPrefix.New || argumentPrefix == ArgumentPrefix.Old)
+                AffectedColumns[argumentPrefix].Add(affectedColumn);
             return this;
         }
 
@@ -72,5 +94,14 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         public static implicit operator string(GeneratedSql @this) => @this.Sql;
 
         public override string ToString() => Sql;
+    }
+
+    internal static class HashSetExtensions
+    {
+        public static HashSet<T> AddRange<T>(this HashSet<T> hashSet, IEnumerable<T> values)
+        {
+            values.SafeForEach(x => hashSet.Add(x));
+            return hashSet;
+        }
     }
 }

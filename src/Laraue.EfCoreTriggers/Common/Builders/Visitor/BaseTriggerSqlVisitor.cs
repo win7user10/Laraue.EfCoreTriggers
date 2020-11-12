@@ -60,7 +60,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         public virtual GeneratedSql GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
         {
             var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)updateExpression.Body, argumentPrefixes);
-            var sqlResult = new GeneratedSql(assignmentParts.Keys);
+            var sqlResult = new GeneratedSql(assignmentParts.Values);
             sqlResult.Append(string.Join(", ", assignmentParts.Select(expressionPart => $"{GetColumnName(expressionPart.Key)} = {expressionPart.Value}")));
             return sqlResult;
         }
@@ -68,7 +68,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         public virtual GeneratedSql GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
         {
             var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)insertExpression.Body, argumentPrefixes);
-            var sqlResult = new GeneratedSql(assignmentParts.Keys);
+            var sqlResult = new GeneratedSql(assignmentParts.Values);
             sqlResult.Append($"({string.Join(", ", assignmentParts.Select(x => GetColumnName(x.Key)))})")
                 .Append($" VALUES ({string.Join(", ", assignmentParts.Select(x => x.Value))})");
             return sqlResult;

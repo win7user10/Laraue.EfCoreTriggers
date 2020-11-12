@@ -32,14 +32,14 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             if (triggerActions.ActionConditions.Count > 0)
             {
                 var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
-                sqlResult.MergeColumnsInfo(conditionsSql.SelectMany(x => x.AffectedColumns));
+                sqlResult.MergeColumnsInfo(conditionsSql);
                 sqlResult.Append($"IF ")
                     .AppendJoin(" AND ", conditionsSql.Select(x => x.SqlBuilder))
                     .Append($" THEN ");
             }
 
             var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this));
-            sqlResult.MergeColumnsInfo(actionsSql.SelectMany(x => x.AffectedColumns))
+            sqlResult.MergeColumnsInfo(actionsSql)
                 .AppendJoin(", ", actionsSql.Select(x => x.SqlBuilder));
 
             if (triggerActions.ActionConditions.Count > 0)
@@ -54,7 +54,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
-            return new GeneratedSql(actionsSql.SelectMany(x => x.AffectedColumns))
+            return new GeneratedSql(actionsSql)
                 .Append($"CREATE FUNCTION {trigger.Name}() RETURNS trigger as ${trigger.Name}$ ")
                 .Append("BEGIN ")
                 .AppendJoin(actionsSql.Select(x => x.SqlBuilder))
@@ -70,7 +70,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             var newExpressionColumnsSql = GetNewExpressionColumns((NewExpression)triggerUpsertAction.MatchExpression.Body);
 
             var sqlBuilder = new GeneratedSql(insertStatementSql.AffectedColumns)
-                .MergeColumnsInfo(newExpressionColumnsSql.SelectMany(x => x.AffectedColumns))
+                .MergeColumnsInfo(newExpressionColumnsSql)
                 .Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
                 .Append(insertStatementSql.SqlBuilder)
                 .Append($" ON CONFLICT (")
@@ -94,7 +94,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         }
 
         protected override GeneratedSql GetMethodConcatCallExpressionSql(params GeneratedSql[] concatExpressionArgsSql)
-            => new GeneratedSql(concatExpressionArgsSql.SelectMany(x => x.AffectedColumns))
+            => new GeneratedSql(concatExpressionArgsSql)
                 .Append("CONCAT(")
                 .AppendJoin(", ", concatExpressionArgsSql.Select(x => x.SqlBuilder))
                 .Append(")");

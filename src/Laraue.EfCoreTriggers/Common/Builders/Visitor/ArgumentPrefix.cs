@@ -6,6 +6,11 @@
     public enum ArgumentPrefix
     {
         /// <summary>
+        /// Entity without prefix.
+        /// </summary>
+        None,
+
+        /// <summary>
         /// New entity prefix.Available on insert and update operations.
         /// </summary>
         New,
@@ -14,10 +19,5 @@
         /// Old entity prefix. Available on update and delete operations.
         /// </summary>
         Old,
-
-        /// <summary>
-        /// Entity without prefix.
-        /// </summary>
-        None,
     }
 }
