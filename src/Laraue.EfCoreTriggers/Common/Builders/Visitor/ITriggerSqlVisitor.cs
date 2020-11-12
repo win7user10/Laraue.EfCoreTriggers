@@ -10,25 +10,25 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         string GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
             where TTriggerEntity : class;
 
-        string GetTriggerConditionSql<TTriggerEntity>(TriggerCondition<TTriggerEntity> triggerCondition)
+        SqlExtendedResult GetTriggerConditionSql<TTriggerEntity>(TriggerCondition<TTriggerEntity> triggerCondition)
             where TTriggerEntity : class;
 
-        string GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
+        SqlExtendedResult GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
             where TTriggerEntity : class;
 
-        string GetTriggerUpdateActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpdateAction<TTriggerEntity, TUpdateEntity> triggerUpdateAction)
+        SqlExtendedResult GetTriggerUpdateActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpdateAction<TTriggerEntity, TUpdateEntity> triggerUpdateAction)
             where TTriggerEntity : class
             where TUpdateEntity : class;
 
-        string GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
+        SqlExtendedResult GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
             where TTriggerEntity : class
             where TUpsertEntity : class;
 
-        string GetTriggerDeleteActionSql<TTriggerEntity, TDeleteEntity>(TriggerDeleteAction<TTriggerEntity, TDeleteEntity> triggerDeleteAction)
+        SqlExtendedResult GetTriggerDeleteActionSql<TTriggerEntity, TDeleteEntity>(TriggerDeleteAction<TTriggerEntity, TDeleteEntity> triggerDeleteAction)
             where TTriggerEntity : class
             where TDeleteEntity : class;
 
-        string GetTriggerInsertActionSql<TTriggerEntity, TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> triggerInsertAction)
+        SqlExtendedResult GetTriggerInsertActionSql<TTriggerEntity, TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> triggerInsertAction)
             where TTriggerEntity : class
             where TInsertEntity : class;
     }

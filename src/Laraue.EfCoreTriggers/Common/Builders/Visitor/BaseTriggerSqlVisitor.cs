@@ -19,7 +19,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         public abstract string GetDropTriggerSql(string triggerName, Type entityType);
 
-        public virtual string GetTriggerConditionSql<TTriggerEntity>(TriggerCondition<TTriggerEntity> triggerCondition)
+        public virtual SqlExtendedResult GetTriggerConditionSql<TTriggerEntity>(TriggerCondition<TTriggerEntity> triggerCondition)
             where TTriggerEntity : class
         {
             var conditionBody = triggerCondition.Condition.Body;
@@ -32,7 +32,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             throw new NotImplementedException($"Trigger condition of type {conditionBody.GetType()} is not supported.");
         }
 
-        public abstract string GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
+        public abstract SqlExtendedResult GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
             where TTriggerEntity : class;
 
         public string GetTriggerUpdateActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpdateAction<TTriggerEntity, TUpdateEntity> triggerUpdateAction)
@@ -48,7 +48,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder.ToString();
         }
 
-        public virtual string GetConditionStatementSql(LambdaExpression conditionExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
+        public virtual SqlExtendedResult GetConditionStatementSql(LambdaExpression conditionExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
         {
             var sqlBuilder = new StringBuilder();
             sqlBuilder.Append("WHERE ")
@@ -56,28 +56,28 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder.ToString();
         }
 
-        public virtual string GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
+        public virtual SqlExtendedResult GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
         {
-            var sqlBuilder = new StringBuilder();
             var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)updateExpression.Body, argumentPrefixes);
-            sqlBuilder.Append(string.Join(", ", assignmentParts.Select(expressionPart => $"{expressionPart.Key} = {expressionPart.Value}")));
-            return sqlBuilder.ToString();
+            var sqlResult = new SqlExtendedResult(assignmentParts.Keys);
+            sqlResult.Append(string.Join(", ", assignmentParts.Select(expressionPart => $"{GetColumnName(expressionPart.Key)} = {expressionPart.Value}")));
+            return sqlResult;
         }
 
-        public virtual string GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
+        public virtual SqlExtendedResult GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
         {
-            var sqlBuilder = new StringBuilder();
             var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)insertExpression.Body, argumentPrefixes);
-            sqlBuilder.Append($"({string.Join(", ", assignmentParts.Select(x => x.Key))})")
+            var sqlResult = new SqlExtendedResult(assignmentParts.Keys);
+            sqlResult.Append($"({string.Join(", ", assignmentParts.Select(x => GetColumnName(x.Key)))})")
                 .Append($" VALUES ({string.Join(", ", assignmentParts.Select(x => x.Value))})");
-            return sqlBuilder.ToString();
+            return sqlResult;
         }
 
-        public abstract string GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
+        public abstract SqlExtendedResult GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
             where TTriggerEntity : class
             where TUpsertEntity : class;
 
-        public string GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)
+        public SqlExtendedResult GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)
             where TTriggerEntity : class
             where TUpdateEntity : class
         {
@@ -88,7 +88,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder.ToString();
         }
 
-        public string GetTriggerInsertActionSql<TTriggerEntity, TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> triggerInsertAction)
+        public SqlExtendedResult GetTriggerInsertActionSql<TTriggerEntity, TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> triggerInsertAction)
             where TTriggerEntity : class
             where TInsertEntity : class
         {
