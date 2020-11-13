@@ -58,6 +58,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return this;
         }
 
+        public GeneratedSql Append(GeneratedSql generatedSql)
+            => Append(generatedSql.SqlBuilder);
+
         public GeneratedSql Append(StringBuilder builder)
         {
             SqlBuilder.Append(builder);
@@ -66,6 +69,12 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         public GeneratedSql AppendJoin(IEnumerable<StringBuilder> builders)
             => AppendJoin(string.Empty, builders);
+
+        public GeneratedSql AppendJoin(string separator, IEnumerable<string> values)
+        {
+            SqlBuilder.AppendJoin(separator, values);
+            return this;
+        }
 
         public GeneratedSql AppendJoin(string separator, IEnumerable<StringBuilder> builders)
         {
