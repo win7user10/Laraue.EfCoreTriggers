@@ -3,6 +3,7 @@ using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Laraue.EfCoreTriggers.Common.Builders.Visitor;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -67,7 +68,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         public override GeneratedSql GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
         {
             var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
-            var newExpressionColumnsSql = GetNewExpressionColumns((NewExpression)triggerUpsertAction.MatchExpression.Body);
+            var newExpressionColumnsSql = GetNewExpressionColumnsSql((NewExpression)triggerUpsertAction.MatchExpression.Body, new Dictionary<string, ArgumentType>());
 
             var sqlBuilder = new GeneratedSql(insertStatementSql.AffectedColumns)
                 .MergeColumnsInfo(newExpressionColumnsSql)

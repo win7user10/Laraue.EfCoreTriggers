@@ -15,10 +15,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
         {
         }
 
-        internal override Dictionary<string, ArgumentPrefix> InsertExpressionPrefixes => new Dictionary<string, ArgumentPrefix>
+        internal override Dictionary<string, ArgumentType> InsertExpressionPrefixes => new Dictionary<string, ArgumentType>
         {
-            [InsertExpression.Parameters[0].Name] = ArgumentPrefix.Old,
-            [InsertExpression.Parameters[1].Name] = ArgumentPrefix.New,
+            [InsertExpression.Parameters[0].Name] = ArgumentType.Old,
+            [InsertExpression.Parameters[1].Name] = ArgumentType.New,
         };
     }
 }

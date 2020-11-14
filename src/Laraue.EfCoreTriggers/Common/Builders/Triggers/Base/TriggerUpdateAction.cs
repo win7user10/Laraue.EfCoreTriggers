@@ -22,8 +22,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         public virtual GeneratedSql BuildSql(ITriggerSqlVisitor visitor)
             => visitor.GetTriggerUpdateActionSql(this);
 
-        internal abstract Dictionary<string, ArgumentPrefix> UpdateFilterPrefixes { get; }
+        internal abstract Dictionary<string, ArgumentType> UpdateFilterPrefixes { get; }
 
-        internal abstract Dictionary<string, ArgumentPrefix> UpdateExpressionPrefixes { get; }
+        internal abstract Dictionary<string, ArgumentType> UpdateExpressionPrefixes { get; }
     }
 }

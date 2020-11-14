@@ -3,7 +3,7 @@
     /// <summary>
     /// Arguments prefixes for using in SQL generating.
     /// </summary>
-    public enum ArgumentPrefix
+    public enum ArgumentType
     {
         /// <summary>
         /// Entity without prefix.

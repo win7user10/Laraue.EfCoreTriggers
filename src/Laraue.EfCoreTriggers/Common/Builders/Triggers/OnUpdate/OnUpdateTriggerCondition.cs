@@ -14,10 +14,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
         {
         }
 
-        internal override Dictionary<string, ArgumentPrefix> ConditionPrefixes => new Dictionary<string, ArgumentPrefix>
+        internal override Dictionary<string, ArgumentType> ConditionPrefixes => new Dictionary<string, ArgumentType>
         {
-            [Condition.Parameters[0].Name] = ArgumentPrefix.Old,
-            [Condition.Parameters[1].Name] = ArgumentPrefix.New,
+            [Condition.Parameters[0].Name] = ArgumentType.Old,
+            [Condition.Parameters[1].Name] = ArgumentType.New,
         };
     }
 }

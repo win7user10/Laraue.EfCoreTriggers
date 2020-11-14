@@ -89,7 +89,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             _ => throw new NotSupportedException($"Unknown sign of {expressionType}"),
         };
 
-        protected virtual GeneratedSql GetExpressionSql(Expression expression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetExpressionSql(Expression expression, Dictionary<string, ArgumentType> argumentTypes)
         {
             return expression switch
             {
@@ -103,32 +103,25 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         }
 
 
-        protected virtual GeneratedSql GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetMemberExpressionSql(MemberExpression memberExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
-            argumentTypes ??= new Dictionary<string, ArgumentPrefix>();
-
-            var sqlResult = new GeneratedSql();
-
+            argumentTypes ??= new Dictionary<string, ArgumentType>();
             var parameterExpression = (ParameterExpression)memberExpression.Expression;
             var memberName = parameterExpression.Name;
-            if (argumentTypes.TryGetValue(memberName, out var argumentType))
+            argumentTypes.TryGetValue(memberName, out var argumentType);
+            return new GeneratedSql(memberExpression.Member, argumentType)
+                .Append(GetMemberExpressionSql(memberExpression, argumentType));
+        }
+
+        protected virtual string GetMemberExpressionSql(MemberExpression memberExpression, ArgumentType argumentType)
+        {
+            return argumentType switch
             {
-                if (argumentType != ArgumentPrefix.None)
-                {
-                    if (argumentType == ArgumentPrefix.New)
-                        sqlResult.Append(NewEntityPrefix);
-                    else if (argumentType == ArgumentPrefix.Old)
-                        sqlResult.Append(OldEntityPrefix);
-                    sqlResult.Append('.');
-                }
-            }
-            else
-                sqlResult.Append($"{GetTableName(memberExpression.Member)}.");
-
-            sqlResult.Append(GetColumnName(memberExpression.Member));
-            sqlResult.MergeColumnInfo(memberExpression.Member, argumentType);
-
-            return sqlResult;
+                ArgumentType.New => $"{NewEntityPrefix}.{GetColumnName(memberExpression.Member)}", 
+                ArgumentType.Old => $"{OldEntityPrefix}.{GetColumnName(memberExpression.Member)}", 
+                ArgumentType.None => $"{GetTableName(memberExpression.Member)}.{GetColumnName(memberExpression.Member)}", 
+                _ => GetColumnName(memberExpression.Member),
+            };
         }
 
         /// <summary>
@@ -138,13 +131,13 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         /// <param name="argumentTypes"></param>
         /// <returns></returns>
         protected virtual (MemberInfo MemberInfo, GeneratedSql AssignmentSqlResult) GetMemberAssignmentParts(
-            MemberAssignment memberAssignment, Dictionary<string, ArgumentPrefix> argumentTypes)
+            MemberAssignment memberAssignment, Dictionary<string, ArgumentType> argumentTypes)
         {
             var sqlExtendedResult = GetExpressionSql(memberAssignment.Expression, argumentTypes);
             return (memberAssignment.Member, sqlExtendedResult);
         }
 
-        protected virtual GeneratedSql GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
             var parsedArguments = methodCallExpression.Arguments.Select(argumentExpression => GetExpressionSql(argumentExpression, argumentTypes)).ToArray();
             return methodCallExpression.Method.Name switch
@@ -166,7 +159,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         protected virtual GeneratedSql GetMethodToUpperCallExpressionSql(GeneratedSql upperSqlExpression)
             => new GeneratedSql(upperSqlExpression.AffectedColumns, $"UPPER({upperSqlExpression})");
 
-        protected virtual GeneratedSql GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
             var leftSideExpressionTypes = new[] { ExpressionType.Negate };
             var memberExpression = (MemberExpression)unaryExpression.Operand;
@@ -184,20 +177,17 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             return sqlBuilder;
         }
 
-        protected virtual GeneratedSql[] GetNewExpressionColumns(NewExpression newExpression)
+        protected virtual GeneratedSql[] GetNewExpressionColumnsSql(NewExpression newExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
             return newExpression.Arguments.Select(argument =>
             {
                 var memberExpression = (MemberExpression)argument;
                 var parameter = (ParameterExpression)memberExpression.Expression;
-                return GetMemberExpressionSql(memberExpression, new Dictionary<string, ArgumentPrefix>
-                {
-                    [parameter.Name] = ArgumentPrefix.None,
-                });
+                return GetMemberExpressionSql(memberExpression, argumentTypes);
             }).ToArray();
         }
 
-        protected virtual GeneratedSql GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected virtual GeneratedSql GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
             Expression[] GetBinaryExpressionParts()
             {
@@ -228,7 +218,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         /// <param name="memberInitExpression"></param>
         /// <param name="argumentTypes"></param>
         /// <returns></returns>
-        protected Dictionary<MemberInfo, GeneratedSql> GetMemberInitExpressionAssignmentParts(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentPrefix> argumentTypes)
+        protected Dictionary<MemberInfo, GeneratedSql> GetMemberInitExpressionAssignmentParts(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
             return memberInitExpression.Bindings.Select(memberBinding =>
             {

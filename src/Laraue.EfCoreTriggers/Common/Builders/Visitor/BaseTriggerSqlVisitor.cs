@@ -49,25 +49,25 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
                 .Append(";");
         }
 
-        public virtual GeneratedSql GetConditionStatementSql(LambdaExpression conditionExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
+        public virtual GeneratedSql GetConditionStatementSql(LambdaExpression conditionExpression, Dictionary<string, ArgumentType> argumentTypees)
         {
-            var binaryExpressionSql = GetBinaryExpressionSql((BinaryExpression)conditionExpression.Body, argumentPrefixes);
+            var binaryExpressionSql = GetBinaryExpressionSql((BinaryExpression)conditionExpression.Body, argumentTypees);
             return new GeneratedSql(binaryExpressionSql.AffectedColumns)
                 .Append("WHERE ")
                 .Append(binaryExpressionSql.SqlBuilder);
         }
 
-        public virtual GeneratedSql GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
+        public virtual GeneratedSql GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentType> argumentTypees)
         {
-            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)updateExpression.Body, argumentPrefixes);
+            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)updateExpression.Body, argumentTypees);
             var sqlResult = new GeneratedSql(assignmentParts.Values);
             sqlResult.Append(string.Join(", ", assignmentParts.Select(expressionPart => $"{GetColumnName(expressionPart.Key)} = {expressionPart.Value}")));
             return sqlResult;
         }
 
-        public virtual GeneratedSql GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentPrefix> argumentPrefixes)
+        public virtual GeneratedSql GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentType> argumentTypees)
         {
-            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)insertExpression.Body, argumentPrefixes);
+            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)insertExpression.Body, argumentTypees);
             var sqlResult = new GeneratedSql(assignmentParts.Values);
             sqlResult.Append($"({string.Join(", ", assignmentParts.Select(x => GetColumnName(x.Key)))})")
                 .Append($" VALUES ({string.Join(", ", assignmentParts.Select(x => x.Value))})");
