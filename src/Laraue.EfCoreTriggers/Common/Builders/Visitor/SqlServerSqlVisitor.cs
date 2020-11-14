@@ -26,8 +26,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
 
             var sqlBuilder = new GeneratedSql(actionsSql);
-            sqlBuilder.Append($"CREATE TRIGGER {trigger.Name} ON {GetTableName(typeof(TTriggerEntity))}")
-                .Append($" FOR {trigger.TriggerType} AS BEGIN ");
+            sqlBuilder.Append($"CREATE TRIGGER {trigger.Name} ON {GetTableName(typeof(TTriggerEntity))} ")
+                .Append(trigger.TriggerTime == TriggerTime.Before ? "INSTEAD OF" : "FOR")
+                .Append($" {trigger.TriggerType} AS BEGIN ");
 
             sqlBuilder.Append(DeclareCursorBlocksSql<TTriggerEntity>(sqlBuilder.AffectedColumns))
                 .Append(" ")
@@ -191,6 +192,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             var sqlBuilder = new GeneratedSql(newExpressionArgumentPairs.Select(x => x.Value));
 
             sqlBuilder
+                .Append("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;")
                 .Append($"MERGE {GetTableName(typeof(TUpsertEntity))} USING {GetTableName(typeof(TTriggerEntity))}")
                 .Append($" ON ")
                 .AppendJoin(" AND ", newExpressionArgumentPairs
