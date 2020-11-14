@@ -108,7 +108,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             argumentTypes ??= new Dictionary<string, ArgumentType>();
             var parameterExpression = (ParameterExpression)memberExpression.Expression;
             var memberName = parameterExpression.Name;
-            argumentTypes.TryGetValue(memberName, out var argumentType);
+            if (!argumentTypes.TryGetValue(memberName, out var argumentType))
+                argumentType = ArgumentType.Default;
             return new GeneratedSql(memberExpression.Member, argumentType)
                 .Append(GetMemberExpressionSql(memberExpression, argumentType));
         }
@@ -119,8 +120,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
             {
                 ArgumentType.New => $"{NewEntityPrefix}.{GetColumnName(memberExpression.Member)}", 
                 ArgumentType.Old => $"{OldEntityPrefix}.{GetColumnName(memberExpression.Member)}", 
-                ArgumentType.None => $"{GetTableName(memberExpression.Member)}.{GetColumnName(memberExpression.Member)}", 
-                _ => GetColumnName(memberExpression.Member),
+                ArgumentType.None => GetColumnName(memberExpression.Member), 
+                _ => $"{GetTableName(memberExpression.Member)}.{GetColumnName(memberExpression.Member)}",
             };
         }
 
@@ -178,14 +179,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
         }
 
         protected virtual GeneratedSql[] GetNewExpressionColumnsSql(NewExpression newExpression, Dictionary<string, ArgumentType> argumentTypes)
-        {
-            return newExpression.Arguments.Select(argument =>
-            {
-                var memberExpression = (MemberExpression)argument;
-                var parameter = (ParameterExpression)memberExpression.Expression;
-                return GetMemberExpressionSql(memberExpression, argumentTypes);
-            }).ToArray();
-        }
+            => newExpression.Arguments.Select(argument => GetMemberExpressionSql((MemberExpression)argument, argumentTypes)).ToArray();
 
         protected virtual GeneratedSql GetBinaryExpressionSql(BinaryExpression binaryExpression, Dictionary<string, ArgumentType> argumentTypes)
         {

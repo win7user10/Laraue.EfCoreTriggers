@@ -56,8 +56,13 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         public GeneratedSql MergeColumnInfo(MemberInfo affectedColumn, ArgumentType argumentType)
         {
-            if (argumentType == ArgumentType.New || argumentType == ArgumentType.Old)
-                AffectedColumns[argumentType].Add(affectedColumn);
+            switch (argumentType)
+            {
+                case ArgumentType.New:
+                case ArgumentType.Old:
+                    AffectedColumns[argumentType].Add(affectedColumn);
+                    break;
+            }
             return this;
         }
 
@@ -69,6 +74,12 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         public GeneratedSql AppendJoin(IEnumerable<StringBuilder> builders)
             => AppendJoin(string.Empty, builders);
+
+        public GeneratedSql AppendJoin(string separator, IEnumerable<string> values)
+        {
+            SqlBuilder.AppendJoin(separator, values);
+            return this;
+        }
 
         public GeneratedSql AppendJoin(string separator, IEnumerable<StringBuilder> builders)
         {

@@ -28,5 +28,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         internal abstract Dictionary<string, ArgumentType> InsertExpressionPrefixes { get; }
 
         internal abstract Dictionary<string, ArgumentType> OnMatchExpressionPrefixes { get; }
+
+        internal abstract Dictionary<string, ArgumentType> MatchExpressionPrefixes { get; }
     }
 }

@@ -31,5 +31,11 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
                 [OnMatchExpression.Parameters[0].Name] = ArgumentType.Old,
                 [OnMatchExpression.Parameters[1].Name] = ArgumentType.New,
             };
+
+        internal override Dictionary<string, ArgumentType> MatchExpressionPrefixes => new Dictionary<string, ArgumentType>
+        {
+            [MatchExpression.Parameters[0].Name] = ArgumentType.Old,
+            [MatchExpression.Parameters[1].Name] = ArgumentType.New,
+        };
     }
 }

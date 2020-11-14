@@ -1,23 +1,28 @@
 ﻿namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 {
     /// <summary>
-    /// Arguments prefixes for using in SQL generating.
+    /// Arguments types for using in SQL generating.
     /// </summary>
     public enum ArgumentType
     {
         /// <summary>
-        /// Entity without prefix.
+        /// For entity should be used annotation ColumnName
         /// </summary>
         None,
 
         /// <summary>
-        /// New entity prefix.Available on insert and update operations.
+        /// For entity should be used annotation NewPrefix.ColumnName
         /// </summary>
         New,
 
         /// <summary>
-        /// Old entity prefix. Available on update and delete operations.
+        /// For entity should be used annotation OldPrefix.ColumnName
         /// </summary>
         Old,
+
+        /// <summary>
+        /// For entity should be used annotation TableName.ColumnName
+        /// </summary>
+        Default,
     }
 }

@@ -15,7 +15,7 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
         public NativeDbContext CreateDbContext()
         {
             var options = new DbContextOptionsBuilder<NativeDbContext>()
-                .UseSqlServer("Data Source=(LocalDb)\\v15.0",
+                .UseSqlServer("Data Source=(LocalDb)\\v15.0;Initial Catalog=EfCoreTriggers",
                     x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                 .UseSnakeCaseNamingConvention()
                 .UseTriggers()
