@@ -6,7 +6,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
     public class OnUpdateTrigger<TTriggerEntity> : Trigger<TTriggerEntity>
         where TTriggerEntity : class
     {
-        public OnUpdateTrigger(TriggerTime triggerTime) : base(TriggerType.Update, triggerTime)
+        public OnUpdateTrigger(TriggerType triggerType) : base(TriggerAction.Update, triggerType)
         {
         }
 

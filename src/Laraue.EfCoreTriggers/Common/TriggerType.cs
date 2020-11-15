@@ -2,8 +2,8 @@
 {
     public enum TriggerType
     {
-        Insert,
-        Update,
-        Delete,
+        Before,
+        After,
+        InsteadOf,
     }
 }

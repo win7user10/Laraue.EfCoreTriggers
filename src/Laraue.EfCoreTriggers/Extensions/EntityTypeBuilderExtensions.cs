@@ -21,25 +21,34 @@ namespace Laraue.EfCoreTriggers.Extensions
         }
 
         public static EntityTypeBuilder<T> BeforeUpdate<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnUpdateTrigger<T>> configuration) where T : class
-            => entityTypeBuilder.AddOnUpdateTrigger(configuration, TriggerTime.Before);
+            => entityTypeBuilder.AddOnUpdateTrigger(configuration, TriggerType.Before);
 
         public static EntityTypeBuilder<T> AfterUpdate<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnUpdateTrigger<T>> configuration) where T : class
-            => entityTypeBuilder.AddOnUpdateTrigger(configuration, TriggerTime.After);
+            => entityTypeBuilder.AddOnUpdateTrigger(configuration, TriggerType.After);
+
+        public static EntityTypeBuilder<T> InsteadOfUpdate<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnUpdateTrigger<T>> configuration) where T : class
+            => entityTypeBuilder.AddOnUpdateTrigger(configuration, TriggerType.InsteadOf);
 
         public static EntityTypeBuilder<T> BeforeDelete<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnDeleteTrigger<T>> configuration) where T : class
-            => entityTypeBuilder.AddOnDeleteTrigger(configuration, TriggerTime.Before);
+            => entityTypeBuilder.AddOnDeleteTrigger(configuration, TriggerType.Before);
 
         public static EntityTypeBuilder<T> AfterDelete<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnDeleteTrigger<T>> configuration) where T : class
-            => entityTypeBuilder.AddOnDeleteTrigger(configuration, TriggerTime.After);
+            => entityTypeBuilder.AddOnDeleteTrigger(configuration, TriggerType.After);
+
+        public static EntityTypeBuilder<T> InsteadOfDelete<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnDeleteTrigger<T>> configuration) where T : class
+            => entityTypeBuilder.AddOnDeleteTrigger(configuration, TriggerType.InsteadOf);
 
         public static EntityTypeBuilder<T> BeforeInsert<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnInsertTrigger<T>> configuration) where T : class
-            => entityTypeBuilder.AddOnInsertTrigger(configuration, TriggerTime.Before);
+            => entityTypeBuilder.AddOnInsertTrigger(configuration, TriggerType.Before);
 
         public static EntityTypeBuilder<T> AfterInsert<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnInsertTrigger<T>> configuration) where T : class
-            => entityTypeBuilder.AddOnInsertTrigger(configuration, TriggerTime.After);
+            => entityTypeBuilder.AddOnInsertTrigger(configuration, TriggerType.After);
+
+        public static EntityTypeBuilder<T> InsteadOfInsert<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnInsertTrigger<T>> configuration) where T : class
+            => entityTypeBuilder.AddOnInsertTrigger(configuration, TriggerType.InsteadOf);
 
         private static EntityTypeBuilder<T> AddOnUpdateTrigger<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnUpdateTrigger<T>> configuration,
-            TriggerTime triggerTime) where T : class
+            TriggerType triggerTime) where T : class
         {
             var trigger = new OnUpdateTrigger<T>(triggerTime);
             configuration.Invoke(trigger);
@@ -47,7 +56,7 @@ namespace Laraue.EfCoreTriggers.Extensions
         }
 
         private static EntityTypeBuilder<T> AddOnDeleteTrigger<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnDeleteTrigger<T>> configuration,
-            TriggerTime triggerTime) where T : class
+            TriggerType triggerTime) where T : class
         {
             var trigger = new OnDeleteTrigger<T>(triggerTime);
             configuration.Invoke(trigger);
@@ -55,7 +64,7 @@ namespace Laraue.EfCoreTriggers.Extensions
         }
 
         private static EntityTypeBuilder<T> AddOnInsertTrigger<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnInsertTrigger<T>> configuration,
-            TriggerTime triggerTime) where T : class
+            TriggerType triggerTime) where T : class
         {
             var trigger = new OnInsertTrigger<T>(triggerTime);
             configuration.Invoke(trigger);

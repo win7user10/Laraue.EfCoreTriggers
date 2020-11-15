@@ -1,4 +1,4 @@
-﻿namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
+﻿namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
     /// <summary>
     /// Arguments types for using in SQL generating.

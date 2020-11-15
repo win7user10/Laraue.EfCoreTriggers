@@ -1,9 +1,9 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
+namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
-    public interface ITriggerSqlVisitor
+    public interface ITriggerProvider
     {
         GeneratedSql GetDropTriggerSql(string triggerName, Type entityType);
 

@@ -1,5 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
-using Laraue.EfCoreTriggers.Common.Builders.Visitor;
+using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using System;
@@ -10,9 +10,9 @@ namespace Laraue.EfCoreTriggers.Tests
 {
     public abstract class BaseGeneratingExpressionsTests
     {
-        protected readonly ITriggerSqlVisitor Visitor;
+        protected readonly ITriggerProvider Visitor;
 
-        public BaseGeneratingExpressionsTests(ITriggerSqlVisitor visitor)
+        public BaseGeneratingExpressionsTests(ITriggerProvider visitor)
         {
             Visitor = visitor;
         }

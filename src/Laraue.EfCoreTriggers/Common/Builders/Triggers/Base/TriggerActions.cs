@@ -1,4 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Visitor;
+﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using System.Collections.Generic;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
@@ -10,7 +10,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 
         internal readonly List<ITriggerAction> ActionExpressions = new List<ITriggerAction>();
 
-        public virtual GeneratedSql BuildSql(ITriggerSqlVisitor visitor)
+        public virtual GeneratedSql BuildSql(ITriggerProvider visitor)
             => visitor.GetTriggerActionsSql(this);
 
         internal void AddAction(ITriggerAction triggerAction)

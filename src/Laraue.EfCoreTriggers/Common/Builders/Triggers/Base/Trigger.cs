@@ -1,4 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Visitor;
+﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using System.Collections.Generic;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
@@ -6,20 +6,20 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
     public abstract class Trigger<TTriggerEntity> : ISqlConvertible
         where TTriggerEntity : class
     {
-        internal TriggerType TriggerType { get; }
+        internal TriggerAction TriggerAction { get; }
 
-        internal TriggerTime TriggerTime { get; }
+        internal TriggerType TriggerType { get; }
 
         internal readonly List<ISqlConvertible> Actions = new List<ISqlConvertible>();
 
-        public Trigger(TriggerType triggerType, TriggerTime triggerTime)
+        public Trigger(TriggerAction triggerAction, TriggerType triggerType)
         {
             TriggerType = triggerType;
-            TriggerTime = triggerTime;
+            TriggerAction = triggerAction;
         }
 
-        public virtual GeneratedSql BuildSql(ITriggerSqlVisitor visitor) => visitor.GetTriggerSql(this);
+        public virtual GeneratedSql BuildSql(ITriggerProvider visitor) => visitor.GetTriggerSql(this);
 
-        internal string Name => $"{Constants.AnnotationKey}_{TriggerTime.ToString().ToUpper()}_{TriggerType.ToString().ToUpper()}_{typeof(TTriggerEntity).Name.ToUpper()}";
+        internal string Name => $"{Constants.AnnotationKey}_{TriggerAction.ToString().ToUpper()}_{TriggerType.ToString().ToUpper()}_{typeof(TTriggerEntity).Name.ToUpper()}";
     }
 }

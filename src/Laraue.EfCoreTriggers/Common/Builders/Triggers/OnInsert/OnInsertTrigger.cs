@@ -6,7 +6,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert
     public class OnInsertTrigger<TTriggerEntity> : Trigger<TTriggerEntity>
         where TTriggerEntity : class
     {
-        public OnInsertTrigger(TriggerTime triggerTime) : base(TriggerType.Insert, triggerTime)
+        public OnInsertTrigger(TriggerType triggerType) : base(TriggerAction.Insert, triggerType)
         {
         }
 

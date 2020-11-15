@@ -1,4 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Visitor;
+﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Laraue.EfCoreTriggers.Common
             ["SqlServer:ValueGenerationStrategy"] = DbProvider.SqlServer,
         };
 
-        public static ITriggerSqlVisitor GetSqlProvider(IModel model)
+        public static ITriggerProvider GetSqlProvider(IModel model)
         {
             DbProvider? provider = null;
             foreach (var providerAnnotation in ProvidersAnnotations)
@@ -31,8 +31,8 @@ namespace Laraue.EfCoreTriggers.Common
 
             return provider switch
             {
-                DbProvider.PostgreSql => new PostgreSqlVisitor(model),
-                DbProvider.SqlServer => new SqlServerSqlVisitor(model),
+                DbProvider.PostgreSql => new PostgreSqlProvider(model),
+                DbProvider.SqlServer => new SqlServerProvider(model),
                 _ => throw new NotSupportedException($"Provider {provider} is not supported!"),
             };
         }

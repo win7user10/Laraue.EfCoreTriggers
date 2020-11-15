@@ -1,11 +1,11 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Visitor;
+﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Tests;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
     public class PostgreSqlGeneratingExpressionsTests : BaseGeneratingExpressionsTests
     {
-        public PostgreSqlGeneratingExpressionsTests() : base(new PostgreSqlVisitor(new ContextFactory().CreatePgDbContext().Model))
+        public PostgreSqlGeneratingExpressionsTests() : base(new PostgreSqlProvider(new ContextFactory().CreatePgDbContext().Model))
         {
         }
 

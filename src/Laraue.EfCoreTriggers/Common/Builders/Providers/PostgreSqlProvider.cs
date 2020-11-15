@@ -1,14 +1,15 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
+namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
-    public class PostgreSqlVisitor : BaseTriggerSqlVisitor
+    public class PostgreSqlProvider : BaseTriggerProvider
     {
-        public PostgreSqlVisitor(IModel model) : base(model)
+        public PostgreSqlProvider(IModel model) : base(model)
         {
         }
 
@@ -51,6 +52,16 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
+            var triggerTypes = new Dictionary<TriggerType, string>
+            {
+                [TriggerType.After] = "AFTER",
+                [TriggerType.Before] = "BEFORE",
+                [TriggerType.InsteadOf] = "INSTEAD OF",
+            };
+
+            if (!triggerTypes.TryGetValue(trigger.TriggerType, out var triggerTypeName))
+                throw new NotSupportedException($"Trigger type {trigger.TriggerType} is not supported for {nameof(PostgreSqlProvider)}.");
+
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
             return new GeneratedSql(actionsSql)
                 .Append($"CREATE FUNCTION {trigger.Name}() RETURNS trigger as ${trigger.Name}$ ")
@@ -58,7 +69,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
                 .AppendJoin(actionsSql.Select(x => x.SqlBuilder))
                 .Append(" RETURN NEW;END;")
                 .Append($"${trigger.Name}$ LANGUAGE plpgsql;")
-                .Append($"CREATE TRIGGER {trigger.Name} {trigger.TriggerTime.ToString().ToUpper()} {trigger.TriggerType.ToString().ToUpper()} ")
+                .Append($"CREATE TRIGGER {trigger.Name} {triggerTypeName} {trigger.TriggerAction.ToString().ToUpper()} ")
                 .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
         }
 

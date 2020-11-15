@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
+namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
     public class GeneratedSql
     {

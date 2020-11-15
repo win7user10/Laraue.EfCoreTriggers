@@ -5,10 +5,10 @@ Entity Framework Core Triggers
 
 EfCoreTriggers is the library to write native SQL triggers using EFCore model builder. Triggers are automatically translating into sql and adding to migrations.
 
-## Available providers
+## Current available providers
 
 - PostgreSQL
-- SQL Server (Before insert statements uses instead of syntax)
+- SQL Server
 
 ### Configuring DB to use triggers
 
@@ -52,12 +52,16 @@ More examples of using are available in Tests/NativeDbContext.cs.
 
 #### All available triggers
 
-- Before Insert
-- After Insert
-- Before Update
-- After Update
-- Before Delete
-- After Delete
+||PostgreSql| SqlServer |
+|Before Insert|+|-|
+|After Insert|+|+|
+|Instead Of Insert|+|+|
+|Before Update|+|-|
+|After Update|+|+|
+|Instead Of Update|+|+|
+|Before Delete|+|-|
+|After Delete|+|+|
+|Instead Of Delete|+|+|
 
 #### Available actions after trigger has worked
 

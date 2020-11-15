@@ -1,11 +1,11 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Visitor;
+﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Tests;
 
 namespace Laraue.EfCoreTriggers.SqlServerTests
 {
     public class SqlServerGeneratingExpressionsTests : BaseGeneratingExpressionsTests
     {
-        public SqlServerGeneratingExpressionsTests() : base(new SqlServerSqlVisitor(new ContextFactory().CreateDbContext().Model))
+        public SqlServerGeneratingExpressionsTests() : base(new SqlServerProvider(new ContextFactory().CreateDbContext().Model))
         {
         }
 

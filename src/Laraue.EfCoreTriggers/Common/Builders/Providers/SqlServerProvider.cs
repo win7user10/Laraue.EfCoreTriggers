@@ -6,11 +6,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
+namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
-    public class SqlServerSqlVisitor : BaseTriggerSqlVisitor
+    public class SqlServerProvider : BaseTriggerProvider
     {
-        public SqlServerSqlVisitor(IModel model) : base(model)
+        public SqlServerProvider(IModel model) : base(model)
         {
         }
 
@@ -23,12 +23,21 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
+            var triggerTypes = new Dictionary<TriggerType, string>
+            {
+                [TriggerType.After] = "FOR",
+                [TriggerType.InsteadOf] = "INSTEAD OF",
+            };
+
+            if (!triggerTypes.TryGetValue(trigger.TriggerType, out var triggerTypeName))
+                throw new NotSupportedException($"Trigger type {trigger.TriggerType} is not supported for {nameof(SqlServerProvider)}.");
+
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
 
             var sqlBuilder = new GeneratedSql(actionsSql);
             sqlBuilder.Append($"CREATE TRIGGER {trigger.Name} ON {GetTableName(typeof(TTriggerEntity))} ")
-                .Append(trigger.TriggerTime == TriggerTime.Before ? "INSTEAD OF" : "FOR")
-                .Append($" {trigger.TriggerType} AS BEGIN ");
+                .Append(triggerTypeName)
+                .Append($" {trigger.TriggerAction} AS BEGIN ");
 
             sqlBuilder.Append(DeclareCursorBlocksSql<TTriggerEntity>(sqlBuilder.AffectedColumns))
                 .Append(" ")

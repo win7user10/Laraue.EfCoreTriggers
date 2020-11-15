@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
+namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
-    public abstract class BaseTriggerSqlVisitor : BaseExpressionSqlVisitor, ITriggerSqlVisitor
+    public abstract class BaseTriggerProvider : BaseExpressionProvider, ITriggerProvider
     {
-        public BaseTriggerSqlVisitor(IModel model) : base(model)
+        public BaseTriggerProvider(IModel model) : base(model)
         {
         }
 

@@ -7,9 +7,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Linq;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
+namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
-    public abstract class BaseExpressionSqlVisitor
+    public abstract class BaseExpressionProvider
     {
         private Dictionary<MemberInfo, string> _columnNamesCache = new Dictionary<MemberInfo, string>();
 
@@ -25,7 +25,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Visitor
 
         protected virtual char Quote { get; } = '\'';
 
-        public BaseExpressionSqlVisitor(IModel model)
+        public BaseExpressionProvider(IModel model)
         {
             Model = model ?? throw new ArgumentNullException(nameof(model));
         }

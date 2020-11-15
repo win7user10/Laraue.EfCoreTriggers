@@ -1,5 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Laraue.EfCoreTriggers.Common.Builders.Visitor;
+using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
