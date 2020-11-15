@@ -52,16 +52,17 @@ More examples of using are available in Tests/NativeDbContext.cs.
 
 #### All available triggers
 
-||PostgreSql| SqlServer |
-|Before Insert|+|-|
-|After Insert|+|+|
-|Instead Of Insert|+|+|
-|Before Update|+|-|
-|After Update|+|+|
-|Instead Of Update|+|+|
-|Before Delete|+|-|
-|After Delete|+|+|
-|Instead Of Delete|+|+|
+| Trigger | PostgreSql | SqlServer |
+| --- | --- | --- |
+| Before Insert | + | - |
+| After Insert | + | + |
+| Instead Of Insert | + | + |
+| Before Update | + | - |
+| After Update | + | + |
+| Instead Of Update | + | + |
+| Before Delete | + | - |
+| After Delete | + | + |
+| Instead Of Delete | + | + |
 
 #### Available actions after trigger has worked
 
