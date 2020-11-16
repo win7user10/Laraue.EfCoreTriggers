@@ -9,8 +9,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
         public override NativeDbContext CreateDbContext()
         {
             var options = new DbContextOptionsBuilder<NativeDbContext>()
-                .UseNpgsql("User ID=postgres;Password=postgres;Host=localhost;Port=5432;Database=efcoretriggers;",
-                    x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
+                .UseSqlite("Filename=:memory:", x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                 .UseSnakeCaseNamingConvention()
                 .UseTriggers()
                 .Options;

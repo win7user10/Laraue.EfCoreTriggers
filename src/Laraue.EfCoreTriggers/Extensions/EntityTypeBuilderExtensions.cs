@@ -1,5 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Common;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate;
@@ -14,9 +13,8 @@ namespace Laraue.EfCoreTriggers.Extensions
             this EntityTypeBuilder<T> entityTypeBuilder,
             Trigger<T> configuredTrigger) where T : class
         {
-            var sqlProvider = TriggersInitializer.GetSqlProvider(entityTypeBuilder.Metadata.Model);
             var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(typeof(T).FullName);
-            entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger.BuildSql(sqlProvider).Sql);
+            entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger);
             return entityTypeBuilder;
         }
 

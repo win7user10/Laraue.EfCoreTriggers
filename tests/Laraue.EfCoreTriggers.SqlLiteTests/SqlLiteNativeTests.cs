@@ -4,10 +4,10 @@ using Xunit;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
-    [Collection("PostgreSqlNativeTests")]
-    public class PostgreSqlNativeTests : BaseNativeTests
+    [Collection("SqlLiteNativeTests")]
+    public class SqlLiteNativeTests : BaseNativeTests
     {
-        public PostgreSqlNativeTests() : base(new ContextFactory().CreateDbContext())
+        public SqlLiteNativeTests() : base(new ContextFactory().CreateDbContext())
         {
             DbContext.Database.Migrate();
         }
