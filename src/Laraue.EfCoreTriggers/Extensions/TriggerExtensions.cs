@@ -27,7 +27,7 @@ namespace Laraue.EfCoreTriggers.Extensions
             _dbContextOptions = builder.Options;
         }
 
-        private ITriggerProvider GetProvider()
+        private DbProvider GetProvider()
         {
             var dbProviderOptions = _dbContextOptions.Extensions.Where(x => x.Info.IsDatabaseProvider)
                 .SingleOrDefault();
@@ -36,12 +36,7 @@ namespace Laraue.EfCoreTriggers.Extensions
 
             if (ProviderOptionTypes.TryGetValue(dbProviderOptionsType, out var provider))
             {
-                return provider switch
-                {
-                    DbProvider.PostgreSql => new PostgreSqlProvider(),
-                    DbProvider.SqlServer => new SqlServerProvider(),
-                    _ => throw new NotSupportedException($"Provider {provider} is not supported.")
-                };
+                return provider;
             }
 
             throw new NotSupportedException($"Provider with options {dbProviderOptionsType} is not supported.");
@@ -51,7 +46,7 @@ namespace Laraue.EfCoreTriggers.Extensions
 
         public void ApplyServices(IServiceCollection services)
         {
-            services.AddSingleton(GetProvider());
+            services.AddSingleton(new TriggerInitializeInfo { DbProvider = GetProvider() });
         }
 
         public void Validate(IDbContextOptions options)

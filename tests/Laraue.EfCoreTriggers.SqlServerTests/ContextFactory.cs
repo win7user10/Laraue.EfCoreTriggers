@@ -1,9 +1,6 @@
 ﻿using Laraue.EfCoreTriggers.Extensions;
-using Laraue.EfCoreTriggers.Migrations;
 using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.SqlServerTests
 {
@@ -19,14 +16,6 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
                 .Options;
 
             return new NativeDbContext(options);
-        }
-    }
-
-    public class MyDesignTimeServices : IDesignTimeServices
-    {
-        public void ConfigureDesignTimeServices(IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddSingleton<ICSharpHelper, CSharpHelper>();
         }
     }
 }

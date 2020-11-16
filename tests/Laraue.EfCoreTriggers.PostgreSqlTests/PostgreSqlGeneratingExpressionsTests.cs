@@ -5,7 +5,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
     public class PostgreSqlGeneratingExpressionsTests : BaseGeneratingExpressionsTests
     {
-        public PostgreSqlGeneratingExpressionsTests() : base(new PostgreSqlProvider(new ContextFactory().CreatePgDbContext().Model))
+        public PostgreSqlGeneratingExpressionsTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
         {
         }
 

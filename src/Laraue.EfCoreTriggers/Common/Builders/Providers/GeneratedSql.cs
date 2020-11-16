@@ -1,5 +1,4 @@
-﻿using Laraue.Core.Extensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -41,7 +40,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         public GeneratedSql MergeColumnsInfo(IEnumerable<GeneratedSql> generatedSqls)
         {
-            generatedSqls.SafeForEach(x => MergeColumnsInfo(x.AffectedColumns));
+            foreach (var generatedSql in generatedSqls)
+                MergeColumnsInfo(generatedSql.AffectedColumns);
             return this;
         }
 
@@ -50,7 +50,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         public GeneratedSql MergeColumnsInfo(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns)
         {
-            affectedColumns.SafeForEach(x => AffectedColumns[x.Key].AddRange(x.Value));
+            foreach (var affectedColumn in affectedColumns)
+                AffectedColumns[affectedColumn.Key].AddRange(affectedColumn.Value);
             return this;
         }
 
@@ -114,7 +115,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
     {
         public static HashSet<T> AddRange<T>(this HashSet<T> hashSet, IEnumerable<T> values)
         {
-            values.SafeForEach(x => hashSet.Add(x));
+            foreach (var value in values)
+                hashSet.Add(value);
             return hashSet;
         }
     }

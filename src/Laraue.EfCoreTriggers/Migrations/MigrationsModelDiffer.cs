@@ -1,5 +1,4 @@
 ﻿using Laraue.EfCoreTriggers.Common;
-using Laraue.Core.Extensions;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -13,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+using Laraue.EfCoreTriggers.Extensions;
 
 namespace Laraue.EfCoreTriggers.Migrations
 {
@@ -26,16 +26,15 @@ namespace Laraue.EfCoreTriggers.Migrations
             IChangeDetector changeDetector,
             IUpdateAdapterFactory updateAdapterFactory,
             CommandBatchPreparerDependencies commandBatchPreparerDependencies,
-            ITriggerProvider triggerProvider)
+            TriggerInitializeInfo triggerInitializeInfo,
+            IModel model)
                 : base (typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory, commandBatchPreparerDependencies)
         {
-            _triggerProvider = triggerProvider ?? throw new ArgumentNullException(nameof(triggerProvider));
+            _triggerProvider = TriggersInitializer.GetSqlProvider(model, triggerInitializeInfo.DbProvider);
         }
 
         public override IReadOnlyList<MigrationOperation> GetDifferences(IModel source, IModel target)
         {
-            _triggerProvider.SetModel(target);
-
             var deleteTriggerOperations = new List<SqlOperation>();
             var createTriggerOperations = new List<SqlOperation>();
 
@@ -48,15 +47,15 @@ namespace Laraue.EfCoreTriggers.Migrations
             foreach (var deletedTypeName in oldEntityTypeNames.Except(commonEntityTypeNames))
             {
                 var deletedEntityType = source.FindEntityType(deletedTypeName);
-                deletedEntityType.GetTriggerAnnotations()
-                    .SafeForEach(annotation => deleteTriggerOperations.AddDeleteTriggerSqlMigration(annotation, deletedEntityType.ClrType, _triggerProvider));
+                foreach (var annotation in deletedEntityType.GetTriggerAnnotations())
+                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(annotation, deletedEntityType.ClrType, _triggerProvider);
             }
 
             // Add all triggers to created entities.
             foreach (var newTypeName in newEntityTypeNames.Except(commonEntityTypeNames))
             {
-                target.FindEntityType(newTypeName).GetTriggerAnnotations()
-                    .SafeForEach(annotation => createTriggerOperations.AddCreateTriggerSqlMigration(annotation, _triggerProvider));
+                foreach (var annotation in target.FindEntityType(newTypeName).GetTriggerAnnotations())
+                    createTriggerOperations.AddCreateTriggerSqlMigration(annotation, _triggerProvider);
             }
 
             // For existing entities.

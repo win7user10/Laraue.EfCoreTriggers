@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Description>Generating native sql triggers through migrations using EFCore entity builder.</Description>
     <RepositoryUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -9,16 +9,26 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.1.2</Version>
     <PackageProjectUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</PackageProjectUrl>
+    <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Laraue.Core.Extensions.Linq" Version="1.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.10">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.10" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Condition=" '$(Language)' == 'C#' "
+             Include="$(MSBuildThisFileDirectory)Design\TriggersDesignTimeServices.cs">
+    </Compile>
   </ItemGroup>
 
 </Project>
