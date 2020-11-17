@@ -18,37 +18,41 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         protected override string OldEntityPrefix => "OLD";
 
         public override GeneratedSql GetDropTriggerSql(string triggerName, Type entityType)
-        {
-            return new GeneratedSql()
-                .Append($"DROP TRIGGER {triggerName} ON {GetTableName(entityType)};")
-                .Append($"DROP FUNCTION {triggerName}();");
-        }
+            => new GeneratedSql().Append($"DROP TRIGGER {triggerName}");
 
         public override GeneratedSql GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
         {
             var sqlResult = new GeneratedSql();
 
-            if (triggerActions.ActionConditions.Count > 0)
+            /*if (triggerActions.ActionConditions.Count > 0)
             {
                 var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
                 sqlResult.MergeColumnsInfo(conditionsSql);
-                sqlResult.Append($"IF ")
+                sqlResult.Append($"WHEN ")
                     .AppendJoin(" AND ", conditionsSql.Select(x => x.SqlBuilder))
                     .Append($" THEN ");
-            }
+            }*/
 
             var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this));
             sqlResult.MergeColumnsInfo(actionsSql)
                 .AppendJoin(", ", actionsSql.Select(x => x.SqlBuilder));
 
-            if (triggerActions.ActionConditions.Count > 0)
+            /*if (triggerActions.ActionConditions.Count > 0)
             {
                 sqlResult
-                    .Append($"END IF;");
-            }
+                    .Append($" END; ");
+            }*/
 
             return sqlResult;
         }
+
+        protected override string GetExpressionTypeSql(ExpressionType expressionType) => expressionType switch
+        {
+            ExpressionType.IsTrue => "= 1",
+            ExpressionType.IsFalse => "= 0",
+            ExpressionType.Not => "= 0",
+            _ => base.GetExpressionTypeSql(expressionType),
+        };
 
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
@@ -60,17 +64,16 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             };
 
             if (!triggerTypes.TryGetValue(trigger.TriggerType, out var triggerTypeName))
-                throw new NotSupportedException($"Trigger type {trigger.TriggerType} is not supported for {nameof(PostgreSqlProvider)}.");
+                throw new NotSupportedException($"Trigger type {trigger.TriggerType} is not supported for {nameof(SqlLiteProvider)}.");
 
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
-            return new GeneratedSql(actionsSql)
-                .Append($"CREATE FUNCTION {trigger.Name}() RETURNS trigger as ${trigger.Name}$ ")
-                .Append("BEGIN ")
-                .AppendJoin(actionsSql.Select(x => x.SqlBuilder))
-                .Append(" RETURN NEW;END;")
-                .Append($"${trigger.Name}$ LANGUAGE plpgsql;")
+            var generatedSql = new GeneratedSql(actionsSql)
                 .Append($"CREATE TRIGGER {trigger.Name} {triggerTypeName} {trigger.TriggerAction.ToString().ToUpper()} ")
-                .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
+                .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW BEGIN ")
+                .AppendJoin(actionsSql.Select(x => x.SqlBuilder))
+                .Append(" END");
+
+            return generatedSql;
         }
 
         public override GeneratedSql GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
@@ -103,11 +106,5 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
             return sqlBuilder;
         }
-
-        protected override GeneratedSql GetMethodConcatCallExpressionSql(params GeneratedSql[] concatExpressionArgsSql)
-            => new GeneratedSql(concatExpressionArgsSql)
-                .Append("CONCAT(")
-                .AppendJoin(", ", concatExpressionArgsSql.Select(x => x.SqlBuilder))
-                .Append(")");
     }
 }

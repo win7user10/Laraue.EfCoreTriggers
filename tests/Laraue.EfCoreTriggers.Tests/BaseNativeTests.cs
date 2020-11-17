@@ -18,13 +18,13 @@ namespace Laraue.EfCoreTriggers.Tests
         public BaseNativeTests(NativeDbContext dbContext)
         {
             DbContext = dbContext;
-
             LinqToDBForEFTools.Initialize();
-
+            InitializeDbContext();
             ClearTables();
-
             CreateUser();
         }
+
+        protected abstract void InitializeDbContext();
 
         protected void ClearTables() => DbContext.Users.Delete(_ => true);
 
