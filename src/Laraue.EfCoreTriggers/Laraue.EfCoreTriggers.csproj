@@ -21,14 +21,4 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Condition=" '$(Language)' == 'C#' "
-             Include="$(MSBuildThisFileDirectory)Design\TriggersDesignTimeServices.cs">
-    </Compile>
-  </ItemGroup>
-
 </Project>

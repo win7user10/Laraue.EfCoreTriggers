@@ -1,9 +1,6 @@
 ﻿using Laraue.EfCoreTriggers.Migrations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.Extensions
 {
@@ -21,11 +18,8 @@ namespace Laraue.EfCoreTriggers.Extensions
 
         private static DbContextOptionsBuilder UseTriggersInternal(this DbContextOptionsBuilder optionsBuilder)
         {
-            ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(new TriggersExtension(optionsBuilder));
+            optionsBuilder.RememberActiveDbProvider();
             return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
-                //.ReplaceService<IDesignTimeServices, MyDesignTimeServices>();
         }
-
-        
     }
 }
