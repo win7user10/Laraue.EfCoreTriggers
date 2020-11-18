@@ -2,7 +2,7 @@
 using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
 
-namespace Laraue.EfCoreTriggers.PostgreSqlTests
+namespace Laraue.EfCoreTriggers.SqlLiteTests
 {
     public class ContextFactory : BaseContextFactory<NativeDbContext>
     {

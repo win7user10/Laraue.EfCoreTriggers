@@ -9,6 +9,7 @@ EfCoreTriggers is the library to write native SQL triggers using EFCore model bu
 
 - PostgreSQL
 - SQL Server
+- Sqlite
 
 ### Configuring DB to use triggers
 
@@ -52,17 +53,17 @@ More examples of using are available in Tests/NativeDbContext.cs.
 
 #### All available triggers
 
-| Trigger | PostgreSql | SqlServer |
-| --- | --- | --- |
-| Before Insert | + | - |
-| After Insert | + | + |
-| Instead Of Insert | + | + |
-| Before Update | + | - |
-| After Update | + | + |
-| Instead Of Update | + | + |
-| Before Delete | + | - |
-| After Delete | + | + |
-| Instead Of Delete | + | + |
+| Trigger | PostgreSql | SqlServer | Sqlite |
+| --- | --- | --- | --- |
+| Before Insert | + | - | + |
+| After Insert | + | + | + |
+| Instead Of Insert | + | + | + |
+| Before Update | + | - | + |
+| After Update | + | + | + |
+| Instead Of Update | + | + | + |
+| Before Delete | + | - | + |
+| After Delete | + | + | + |
+| Instead Of Delete | + | + | + |
 
 #### Available actions after trigger has worked
 

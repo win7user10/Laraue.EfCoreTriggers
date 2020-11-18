@@ -1,13 +1,11 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
-    public class PostgreSqlProvider : BaseTriggerProvider
+    public class PostgreSqlProvider : SqlLiteProvider
     {
         public PostgreSqlProvider(IModel model) : base(model)
         {
@@ -52,15 +50,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
-            var triggerTypes = new Dictionary<TriggerType, string>
-            {
-                [TriggerType.After] = "AFTER",
-                [TriggerType.Before] = "BEFORE",
-                [TriggerType.InsteadOf] = "INSTEAD OF",
-            };
-
-            if (!triggerTypes.TryGetValue(trigger.TriggerType, out var triggerTypeName))
-                throw new NotSupportedException($"Trigger type {trigger.TriggerType} is not supported for {nameof(PostgreSqlProvider)}.");
+            var triggerTypeName = GetTriggerTypeName(trigger.TriggerType);
 
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
             return new GeneratedSql(actionsSql)
@@ -71,37 +61,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .Append($"${trigger.Name}$ LANGUAGE plpgsql;")
                 .Append($"CREATE TRIGGER {trigger.Name} {triggerTypeName} {trigger.TriggerAction.ToString().ToUpper()} ")
                 .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
-        }
-
-        public override GeneratedSql GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
-        {
-            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
-            var newExpressionColumnsSql = GetNewExpressionColumnsSql(
-                (NewExpression)triggerUpsertAction.MatchExpression.Body,
-                triggerUpsertAction.MatchExpressionPrefixes.ToDictionary(x => x.Key, x => ArgumentType.None));
-
-            var sqlBuilder = new GeneratedSql(insertStatementSql.AffectedColumns)
-                .MergeColumnsInfo(newExpressionColumnsSql)
-                .Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
-                .Append(insertStatementSql.SqlBuilder)
-                .Append($" ON CONFLICT (")
-                .AppendJoin(", ", newExpressionColumnsSql.Select(x => x.SqlBuilder))
-                .Append(")");
-
-            if (triggerUpsertAction.OnMatchExpression is null)
-            {
-                sqlBuilder.Append(" DO NOTHING;");
-            }
-            else
-            {
-                var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes);
-                sqlBuilder.MergeColumnsInfo(updateStatementSql.AffectedColumns)
-                    .Append($" DO UPDATE SET ")
-                    .Append(updateStatementSql.SqlBuilder)
-                    .Append(";");
-            }
-
-            return sqlBuilder;
         }
 
         protected override GeneratedSql GetMethodConcatCallExpressionSql(params GeneratedSql[] concatExpressionArgsSql)

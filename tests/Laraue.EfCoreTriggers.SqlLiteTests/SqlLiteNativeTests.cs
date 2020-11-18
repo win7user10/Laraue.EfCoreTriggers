@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using Xunit;
 
-namespace Laraue.EfCoreTriggers.PostgreSqlTests
+namespace Laraue.EfCoreTriggers.SqlLiteTests
 {
     [Collection("SqlLiteNativeTests")]
     public class SqlLiteNativeTests : BaseNativeTests

@@ -1,7 +1,6 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -18,61 +17,48 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         protected override string OldEntityPrefix => "OLD";
 
         public override GeneratedSql GetDropTriggerSql(string triggerName, Type entityType)
-            => new GeneratedSql().Append($"DROP TRIGGER {triggerName}");
+        {
+            return new GeneratedSql("PRAGMA writable_schema = 1; ")
+                .Append($"DELETE FROM sqlite_master WHERE type = 'trigger' AND name like '{triggerName}%';")
+                .Append("PRAGMA writable_schema = 0;");
+        }
 
         public override GeneratedSql GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
         {
             var sqlResult = new GeneratedSql();
 
-            /*if (triggerActions.ActionConditions.Count > 0)
+            if (triggerActions.ActionConditions.Count > 0)
             {
                 var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
                 sqlResult.MergeColumnsInfo(conditionsSql);
                 sqlResult.Append($"WHEN ")
-                    .AppendJoin(" AND ", conditionsSql.Select(x => x.SqlBuilder))
-                    .Append($" THEN ");
-            }*/
+                    .AppendJoin(" AND ", conditionsSql.Select(x => x.SqlBuilder));
+            }
 
             var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this));
             sqlResult.MergeColumnsInfo(actionsSql)
-                .AppendJoin(", ", actionsSql.Select(x => x.SqlBuilder));
-
-            /*if (triggerActions.ActionConditions.Count > 0)
-            {
-                sqlResult
-                    .Append($" END; ");
-            }*/
+                .Append($" BEGIN ")
+                .AppendJoin(", ", actionsSql.Select(x => x.SqlBuilder))
+                .Append($" END; ");
 
             return sqlResult;
         }
 
-        protected override string GetExpressionTypeSql(ExpressionType expressionType) => expressionType switch
-        {
-            ExpressionType.IsTrue => "= 1",
-            ExpressionType.IsFalse => "= 0",
-            ExpressionType.Not => "= 0",
-            _ => base.GetExpressionTypeSql(expressionType),
-        };
-
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
-            var triggerTypes = new Dictionary<TriggerType, string>
+            var triggerTypeName = GetTriggerTypeName(trigger.TriggerType);
+
+            var actionsSql = trigger.Actions.Select(action => action.BuildSql(this)).ToArray();
+            var generatedSql = new GeneratedSql(actionsSql);
+
+            var actionsCount = actionsSql.Length;
+            for (int i = 0; i < actionsCount; i++)
             {
-                [TriggerType.After] = "AFTER",
-                [TriggerType.Before] = "BEFORE",
-                [TriggerType.InsteadOf] = "INSTEAD OF",
-            };
-
-            if (!triggerTypes.TryGetValue(trigger.TriggerType, out var triggerTypeName))
-                throw new NotSupportedException($"Trigger type {trigger.TriggerType} is not supported for {nameof(SqlLiteProvider)}.");
-
-            var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
-            var generatedSql = new GeneratedSql(actionsSql)
-                .Append($"CREATE TRIGGER {trigger.Name} {triggerTypeName} {trigger.TriggerAction.ToString().ToUpper()} ")
-                .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW BEGIN ")
-                .AppendJoin(actionsSql.Select(x => x.SqlBuilder))
-                .Append(" END");
-
+                var postfix = actionsCount > 1 ? $"_{i + 1}" : string.Empty;
+                generatedSql.Append($"CREATE TRIGGER {trigger.Name}{postfix} {triggerTypeName} {trigger.TriggerAction.ToString().ToUpper()} ")
+                   .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW ")
+                   .Append(actionsSql[i].SqlBuilder);
+            }
             return generatedSql;
         }
 
@@ -106,5 +92,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
             return sqlBuilder;
         }
+
+        protected override GeneratedSql GetMethodConcatCallExpressionSql(params GeneratedSql[] concatExpressionArgsSql)
+            => new GeneratedSql(concatExpressionArgsSql)
+                .AppendJoin(" || ", concatExpressionArgsSql.Select(x => x.SqlBuilder));
     }
 }
