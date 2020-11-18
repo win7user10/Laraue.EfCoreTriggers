@@ -1,15 +1,15 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Tests;
 
-namespace Laraue.EfCoreTriggers.PostgreSqlTests
+namespace Laraue.EfCoreTriggers.SqlLiteTests
 {
-    public class PostgreSqlGeneratingExpressionsTests : BaseGeneratingExpressionsTests
+    public class SqlLiteGeneratingExpressionsTests : BaseGeneratingExpressionsTests
     {
-        public PostgreSqlGeneratingExpressionsTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
+        public SqlLiteGeneratingExpressionsTests() : base(new SqlLiteProvider(new ContextFactory().CreateDbContext().Model))
         {
         }
 
-        public override string ExceptedConcatSql => "INSERT INTO transactions_mirror (description) VALUES (CONCAT(NEW.description, 'abc'));";
+        public override string ExceptedConcatSql => "INSERT INTO transactions_mirror (description) VALUES (NEW.description || 'abc');";
 
         public override string ExceptedStringLowerSql => "INSERT INTO transactions_mirror (description) VALUES (LOWER(NEW.description));";
 

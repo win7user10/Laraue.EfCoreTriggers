@@ -18,19 +18,14 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected override string OldEntityPrefix => "Deleted";
 
+        protected override IEnumerable<TriggerType> AvailableTriggerTypes { get; } = new[] { TriggerType.After, TriggerType.InsteadOf };
+
         public override GeneratedSql GetDropTriggerSql(string triggerName, Type entityType)
-            => new GeneratedSql($"DROP TRIGGER {triggerName} ON {GetTableName(entityType)};");
+            => new GeneratedSql($"DROP TRIGGER {triggerName};");
 
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
-            var triggerTypes = new Dictionary<TriggerType, string>
-            {
-                [TriggerType.After] = "FOR",
-                [TriggerType.InsteadOf] = "INSTEAD OF",
-            };
-
-            if (!triggerTypes.TryGetValue(trigger.TriggerType, out var triggerTypeName))
-                throw new NotSupportedException($"Trigger type {trigger.TriggerType} is not supported for {nameof(SqlServerProvider)}.");
+            var triggerTypeName = GetTriggerTypeName(trigger.TriggerType);
 
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
 
@@ -53,7 +48,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
             return sqlBuilder;
         }
-
 
         protected override string GetExpressionTypeSql(ExpressionType expressionType) => expressionType switch
         {

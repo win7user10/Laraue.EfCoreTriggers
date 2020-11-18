@@ -20,6 +20,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 
         public virtual GeneratedSql BuildSql(ITriggerProvider visitor) => visitor.GetTriggerSql(this);
 
-        internal string Name => $"{Constants.AnnotationKey}_{TriggerAction.ToString().ToUpper()}_{TriggerType.ToString().ToUpper()}_{typeof(TTriggerEntity).Name.ToUpper()}";
+        internal string Name => $"{Constants.AnnotationKey}_{TriggerType.ToString().ToUpper()}_{TriggerAction.ToString().ToUpper()}_{typeof(TTriggerEntity).Name.ToUpper()}";
     }
 }

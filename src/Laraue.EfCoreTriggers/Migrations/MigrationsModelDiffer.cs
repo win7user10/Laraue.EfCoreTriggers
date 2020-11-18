@@ -1,5 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Common;
-using Laraue.Core.Extensions;
+using Laraue.EfCoreTriggers.Extensions;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -40,15 +40,15 @@ namespace Laraue.EfCoreTriggers.Migrations
             foreach (var deletedTypeName in oldEntityTypeNames.Except(commonEntityTypeNames))
             {
                 var deletedEntityType = source.FindEntityType(deletedTypeName);
-                deletedEntityType.GetTriggerAnnotations()
-                    .SafeForEach(annotation => deleteTriggerOperations.AddDeleteTriggerSqlMigration(annotation, deletedEntityType.ClrType, source));
+                foreach (var annotation in deletedEntityType.GetTriggerAnnotations())
+                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(annotation, deletedEntityType.ClrType, source);
             }
 
             // Add all triggers to created entities.
             foreach (var newTypeName in newEntityTypeNames.Except(commonEntityTypeNames))
             {
-                target.FindEntityType(newTypeName).GetTriggerAnnotations()
-                    .SafeForEach(annotation => createTriggerOperations.AddCreateTriggerSqlMigration(annotation));
+                foreach (var annotation in target.FindEntityType(newTypeName).GetTriggerAnnotations())
+                    createTriggerOperations.AddCreateTriggerSqlMigration(annotation);
             }
 
             // For existing entities.
@@ -56,7 +56,7 @@ namespace Laraue.EfCoreTriggers.Migrations
             {
                 var clrType = target.FindEntityType(entityTypeName).ClrType
                     ?? source.FindEntityType(entityTypeName).ClrType
-                    ?? throw new InvalidOperationException($"Unknow Clr type for entity {entityTypeName}");
+                    ?? throw new InvalidOperationException($"Unknown Clr type for entity {entityTypeName}");
 
                 var oldEntityType = source.FindEntityType(entityTypeName);
                 var newEntityType = target.FindEntityType(entityTypeName);
@@ -123,9 +123,11 @@ namespace Laraue.EfCoreTriggers.Migrations
 
         public static IList<SqlOperation> AddCreateTriggerSqlMigration(this IList<SqlOperation> list, IAnnotation annotation)
         {
+            var triggerSql = annotation.Value as string;
+
             list.Add(new SqlOperation 
             {
-                Sql = annotation.Value.ToString(),
+                Sql = triggerSql,
             });
             return list;
         }
@@ -134,7 +136,7 @@ namespace Laraue.EfCoreTriggers.Migrations
         {
             list.Add(new SqlOperation
             {
-                Sql = TriggersInitializer.GetSqlProvider(model).GetDropTriggerSql(annotation.Name, entityType).Sql,
+                Sql = TriggerExtensions.GetSqlProvider(model).GetDropTriggerSql(annotation.Name, entityType),
             });
             return list;
         }

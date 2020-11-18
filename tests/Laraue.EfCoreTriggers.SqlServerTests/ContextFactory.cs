@@ -1,18 +1,12 @@
 ﻿using Laraue.EfCoreTriggers.Extensions;
 using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 
 namespace Laraue.EfCoreTriggers.SqlServerTests
 {
-    public class ContextFactory : IDesignTimeDbContextFactory<NativeDbContext>
+    public class ContextFactory : BaseContextFactory<NativeDbContext>
     {
-        public NativeDbContext CreateDbContext(string[] args)
-        {
-            return CreateDbContext();
-        }
-
-        public NativeDbContext CreateDbContext()
+        public override NativeDbContext CreateDbContext()
         {
             var options = new DbContextOptionsBuilder<NativeDbContext>()
                 .UseSqlServer("Data Source=(LocalDb)\\v15.0;Initial Catalog=EfCoreTriggers",

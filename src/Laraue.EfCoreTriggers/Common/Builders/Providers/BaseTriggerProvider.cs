@@ -13,6 +13,22 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         {
         }
 
+        protected virtual Dictionary<TriggerType, string> TriggerTypeNames { get; } = new Dictionary<TriggerType, string>
+        {
+            [TriggerType.After] = "AFTER",
+            [TriggerType.Before] = "BEFORE",
+            [TriggerType.InsteadOf] = "INSTEAD OF",
+        };
+
+        protected virtual IEnumerable<TriggerType> AvailableTriggerTypes { get; } = new[] { TriggerType.After, TriggerType.Before, TriggerType.InsteadOf };
+
+        protected string GetTriggerTypeName(TriggerType triggerType)
+        {
+            if (!AvailableTriggerTypes.Contains(triggerType) || !TriggerTypeNames.TryGetValue(triggerType, out var triggerTypeName))
+                throw new NotSupportedException($"Trigger type {triggerType} is not supported for {GetType()}.");
+            return triggerTypeName;
+        }
+
         public abstract GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
             where TTriggerEntity : class;
 
