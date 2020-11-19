@@ -1,5 +1,4 @@
 ﻿using Laraue.EfCoreTriggers.Tests;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Laraue.EfCoreTriggers.SqlServerTests
@@ -13,7 +12,6 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
 
         protected override void InitializeDbContext()
         {
-            DbContext.Database.Migrate();
         }
     }
 }

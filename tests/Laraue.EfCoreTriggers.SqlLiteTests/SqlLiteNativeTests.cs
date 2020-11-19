@@ -1,6 +1,4 @@
 ﻿using Laraue.EfCoreTriggers.Tests;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
 using Xunit;
 
 namespace Laraue.EfCoreTriggers.SqlLiteTests
@@ -14,13 +12,6 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
 
         protected override void InitializeDbContext()
         {
-            DbContext.Database.Migrate();
-
-            var contextState = DbContext.Database.GetDbConnection().State;
-            if (contextState == ConnectionState.Closed)
-                DbContext.Database.OpenConnection();
-
-            DbContext.Database.EnsureCreated();
         }
     }
 }

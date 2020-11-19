@@ -241,3 +241,5 @@ _Pvt_Extensions
 .local-chromium
 
 tests/*/migrations/*
+
+*.db
