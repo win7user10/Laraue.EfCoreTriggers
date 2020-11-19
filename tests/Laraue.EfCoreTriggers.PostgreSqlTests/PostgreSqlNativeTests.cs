@@ -9,9 +9,5 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
         public PostgreSqlNativeTests() : base(new ContextFactory().CreateDbContext())
         {
         }
-
-        protected override void InitializeDbContext()
-        {
-        }
     }
 }

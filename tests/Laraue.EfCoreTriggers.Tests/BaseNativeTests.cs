@@ -24,7 +24,9 @@ namespace Laraue.EfCoreTriggers.Tests
             CreateUser();
         }
 
-        protected abstract void InitializeDbContext();
+        protected virtual void InitializeDbContext()
+        {
+        }
 
         protected void ClearTables() => DbContext.Users.Delete(_ => true);
 
@@ -43,6 +45,7 @@ namespace Laraue.EfCoreTriggers.Tests
                 Value = value,
                 Description = "test",
             };
+
             DbContext.Transactions.Add(transaction);
             await DbContext.SaveChangesAsync();
             return transaction.Id;

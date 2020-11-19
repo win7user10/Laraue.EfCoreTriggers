@@ -9,9 +9,5 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
         public SqlLiteNativeTests() : base(new ContextFactory().CreateDbContext())
         {
         }
-
-        protected override void InitializeDbContext()
-        {
-        }
     }
 }

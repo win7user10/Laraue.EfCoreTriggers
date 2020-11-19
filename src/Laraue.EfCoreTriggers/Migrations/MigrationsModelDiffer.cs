@@ -26,46 +26,49 @@ namespace Laraue.EfCoreTriggers.Migrations
         {
         }
 
-        public override IReadOnlyList<MigrationOperation> GetDifferences(IModel source, IModel target)
+        protected override IEnumerable<MigrationOperation> Diff(IRelationalModel source, IRelationalModel target, DiffContext diffContext)
         {
             var deleteTriggerOperations = new List<SqlOperation>();
             var createTriggerOperations = new List<SqlOperation>();
 
-            var oldEntityTypeNames = source?.GetEntityTypes().Select(x => x.Name) ?? Enumerable.Empty<string>();
-            var newEntityTypeNames = target?.GetEntityTypes().Select(x => x.Name) ?? Enumerable.Empty<string>();
+            var sourceModel = source?.Model;
+            var targetModel = target?.Model;
+
+            var oldEntityTypeNames = sourceModel?.GetEntityTypes().Select(x => x.Name) ?? Enumerable.Empty<string>();
+            var newEntityTypeNames = targetModel?.GetEntityTypes().Select(x => x.Name) ?? Enumerable.Empty<string>();
 
             var commonEntityTypeNames = oldEntityTypeNames.Intersect(newEntityTypeNames);
 
             // Drop all triggers for deleted entities.
             foreach (var deletedTypeName in oldEntityTypeNames.Except(commonEntityTypeNames))
             {
-                var deletedEntityType = source.FindEntityType(deletedTypeName);
+                var deletedEntityType = source.Model.FindEntityType(deletedTypeName);
                 foreach (var annotation in deletedEntityType.GetTriggerAnnotations())
-                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(annotation, deletedEntityType.ClrType, source);
+                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(annotation, deletedEntityType.ClrType, sourceModel);
             }
 
             // Add all triggers to created entities.
             foreach (var newTypeName in newEntityTypeNames.Except(commonEntityTypeNames))
             {
-                foreach (var annotation in target.FindEntityType(newTypeName).GetTriggerAnnotations())
+                foreach (var annotation in targetModel.FindEntityType(newTypeName).GetTriggerAnnotations())
                     createTriggerOperations.AddCreateTriggerSqlMigration(annotation);
             }
 
             // For existing entities.
             foreach (var entityTypeName in commonEntityTypeNames)
             {
-                var clrType = target.FindEntityType(entityTypeName).ClrType
-                    ?? source.FindEntityType(entityTypeName).ClrType
+                var clrType = targetModel.FindEntityType(entityTypeName).ClrType
+                    ?? sourceModel.FindEntityType(entityTypeName).ClrType
                     ?? throw new InvalidOperationException($"Unknown Clr type for entity {entityTypeName}");
 
-                var oldEntityType = source.FindEntityType(entityTypeName);
-                var newEntityType = target.FindEntityType(entityTypeName);
+                var oldEntityType = sourceModel.FindEntityType(entityTypeName);
+                var newEntityType = targetModel.FindEntityType(entityTypeName);
 
-                var oldAnnotationNames = source.FindEntityType(entityTypeName)
+                var oldAnnotationNames = sourceModel.FindEntityType(entityTypeName)
                     .GetTriggerAnnotations()
                     .Select(x => x.Name);
 
-                var newAnnotationNames = target.FindEntityType(entityTypeName)
+                var newAnnotationNames = targetModel.FindEntityType(entityTypeName)
                     .GetTriggerAnnotations()
                     .Select(x => x.Name);
 
@@ -74,11 +77,11 @@ namespace Laraue.EfCoreTriggers.Migrations
                 // If trigger was changed, recreate it.
                 foreach (var commonAnnotationName in commonAnnotationNames)
                 {
-                    var oldValue = source.FindEntityType(entityTypeName).GetAnnotation(commonAnnotationName);
-                    var newValue = target.FindEntityType(entityTypeName).GetAnnotation(commonAnnotationName);
+                    var oldValue = sourceModel.FindEntityType(entityTypeName).GetAnnotation(commonAnnotationName);
+                    var newValue = targetModel.FindEntityType(entityTypeName).GetAnnotation(commonAnnotationName);
                     if ((string)oldValue.Value != (string)newValue.Value)
                     {
-                        deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldValue, clrType, source);
+                        deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldValue, clrType, sourceModel);
                         createTriggerOperations.AddCreateTriggerSqlMigration(newValue);
                     }
                 }
@@ -87,7 +90,7 @@ namespace Laraue.EfCoreTriggers.Migrations
                 foreach (var oldTriggerName in oldAnnotationNames.Except(commonAnnotationNames))
                 {
                     var oldTriggerAnnotation = oldEntityType.GetAnnotation(oldTriggerName);
-                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldTriggerAnnotation, clrType, source);
+                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldTriggerAnnotation, clrType, sourceModel);
                 }
 
                 // If trigger was added, create it.
@@ -98,13 +101,13 @@ namespace Laraue.EfCoreTriggers.Migrations
                 }
             }
 
-            return MergeOperations(base.GetDifferences(source, target), createTriggerOperations, deleteTriggerOperations);
+            return MergeOperations(base.Diff(source, target, diffContext), createTriggerOperations, deleteTriggerOperations);
         }
 
-        private IReadOnlyList<MigrationOperation> MergeOperations(
-            IReadOnlyList<MigrationOperation> migrationOperations,
-            IReadOnlyList<MigrationOperation> createTriggersOperations,
-            IReadOnlyList<MigrationOperation> deleteTriggersOperation)
+        private IEnumerable<MigrationOperation> MergeOperations(
+            IEnumerable<MigrationOperation> migrationOperations,
+            IEnumerable<MigrationOperation> createTriggersOperations,
+            IEnumerable<MigrationOperation> deleteTriggersOperation)
         {
             return new List<MigrationOperation>(deleteTriggersOperation)
                 .Concat(migrationOperations)
