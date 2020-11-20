@@ -20,7 +20,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected override IEnumerable<TriggerType> AvailableTriggerTypes { get; } = new[] { TriggerType.After, TriggerType.InsteadOf };
 
-        public override GeneratedSql GetDropTriggerSql(string triggerName, Type entityType)
+        public override GeneratedSql GetDropTriggerSql(string triggerName)
             => new GeneratedSql($"DROP TRIGGER {triggerName};");
 
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)

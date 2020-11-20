@@ -15,11 +15,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected override string OldEntityPrefix => "OLD";
 
-        public override GeneratedSql GetDropTriggerSql(string triggerName, Type entityType)
+        public override GeneratedSql GetDropTriggerSql(string triggerName)
         {
             return new GeneratedSql()
-                .Append($"DROP TRIGGER {triggerName} ON {GetTableName(entityType)};")
-                .Append($"DROP FUNCTION {triggerName}();");
+                .Append($"DROP FUNCTION {triggerName}() CASCADE;");
         }
 
         public override GeneratedSql GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)

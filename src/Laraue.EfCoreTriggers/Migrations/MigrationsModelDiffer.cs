@@ -26,7 +26,7 @@ namespace Laraue.EfCoreTriggers.Migrations
         {
         }
 
-        protected override IEnumerable<MigrationOperation> Diff(IRelationalModel source, IRelationalModel target, DiffContext diffContext)
+        public override IReadOnlyList<MigrationOperation> GetDifferences(IRelationalModel source, IRelationalModel target)
         {
             var deleteTriggerOperations = new List<SqlOperation>();
             var createTriggerOperations = new List<SqlOperation>();
@@ -44,7 +44,7 @@ namespace Laraue.EfCoreTriggers.Migrations
             {
                 var deletedEntityType = source.Model.FindEntityType(deletedTypeName);
                 foreach (var annotation in deletedEntityType.GetTriggerAnnotations())
-                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(annotation, deletedEntityType.ClrType, sourceModel);
+                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(annotation, sourceModel);
             }
 
             // Add all triggers to created entities.
@@ -57,10 +57,6 @@ namespace Laraue.EfCoreTriggers.Migrations
             // For existing entities.
             foreach (var entityTypeName in commonEntityTypeNames)
             {
-                var clrType = targetModel.FindEntityType(entityTypeName).ClrType
-                    ?? sourceModel.FindEntityType(entityTypeName).ClrType
-                    ?? throw new InvalidOperationException($"Unknown Clr type for entity {entityTypeName}");
-
                 var oldEntityType = sourceModel.FindEntityType(entityTypeName);
                 var newEntityType = targetModel.FindEntityType(entityTypeName);
 
@@ -81,7 +77,7 @@ namespace Laraue.EfCoreTriggers.Migrations
                     var newValue = targetModel.FindEntityType(entityTypeName).GetAnnotation(commonAnnotationName);
                     if ((string)oldValue.Value != (string)newValue.Value)
                     {
-                        deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldValue, clrType, sourceModel);
+                        deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldValue, sourceModel);
                         createTriggerOperations.AddCreateTriggerSqlMigration(newValue);
                     }
                 }
@@ -90,7 +86,7 @@ namespace Laraue.EfCoreTriggers.Migrations
                 foreach (var oldTriggerName in oldAnnotationNames.Except(commonAnnotationNames))
                 {
                     var oldTriggerAnnotation = oldEntityType.GetAnnotation(oldTriggerName);
-                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldTriggerAnnotation, clrType, sourceModel);
+                    deleteTriggerOperations.AddDeleteTriggerSqlMigration(oldTriggerAnnotation, sourceModel);
                 }
 
                 // If trigger was added, create it.
@@ -101,10 +97,10 @@ namespace Laraue.EfCoreTriggers.Migrations
                 }
             }
 
-            return MergeOperations(base.Diff(source, target, diffContext), createTriggerOperations, deleteTriggerOperations);
+            return MergeOperations(base.GetDifferences(source, target), createTriggerOperations, deleteTriggerOperations);
         }
 
-        private IEnumerable<MigrationOperation> MergeOperations(
+        private IReadOnlyList<MigrationOperation> MergeOperations(
             IEnumerable<MigrationOperation> migrationOperations,
             IEnumerable<MigrationOperation> createTriggersOperations,
             IEnumerable<MigrationOperation> deleteTriggersOperation)
@@ -135,11 +131,11 @@ namespace Laraue.EfCoreTriggers.Migrations
             return list;
         }
 
-        public static IList<SqlOperation> AddDeleteTriggerSqlMigration(this IList<SqlOperation> list, IAnnotation annotation, Type entityType, IModel model)
+        public static IList<SqlOperation> AddDeleteTriggerSqlMigration(this IList<SqlOperation> list, IAnnotation annotation, IModel model)
         {
             list.Add(new SqlOperation
             {
-                Sql = TriggerExtensions.GetSqlProvider(model).GetDropTriggerSql(annotation.Name, entityType),
+                Sql = TriggerExtensions.GetSqlProvider(model).GetDropTriggerSql(annotation.Name),
             });
             return list;
         }

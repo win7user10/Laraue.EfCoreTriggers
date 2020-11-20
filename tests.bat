@@ -7,6 +7,8 @@ echo Step 1: Preparing databases
 call :UpdateDatabases
 echo Step 2: Tests executing
 call :RunTests
+echo Step 3: Rollback databases
+call :RollbackDatabases
 exit /b %errorlevel%
 
 :UpdateDatabases
@@ -22,5 +24,12 @@ exit /b %errorlevel%
 :RunTests
 for /d %%i in (%TestProjects%) do (
 	dotnet test "%TestsDir%/%%i/%%i.csproj" --no-build
+)
+exit /b %errorlevel%
+
+:RollbackDatabases
+for /d %%i in (%TestProjects%) do (
+	echo Rollback migrations for %%i
+	dotnet ef database update 0 --project="%TestsDir%/%%i"
 )
 exit /b %errorlevel%

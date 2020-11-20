@@ -32,7 +32,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         public abstract GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
             where TTriggerEntity : class;
 
-        public abstract GeneratedSql GetDropTriggerSql(string triggerName, Type entityType);
+        public abstract GeneratedSql GetDropTriggerSql(string triggerName);
 
         public virtual GeneratedSql GetTriggerConditionSql<TTriggerEntity>(TriggerCondition<TTriggerEntity> triggerCondition)
             where TTriggerEntity : class

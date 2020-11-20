@@ -16,7 +16,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected override string OldEntityPrefix => "OLD";
 
-        public override GeneratedSql GetDropTriggerSql(string triggerName, Type entityType)
+        public override GeneratedSql GetDropTriggerSql(string triggerName)
         {
             return new GeneratedSql("PRAGMA writable_schema = 1; ")
                 .Append($"DELETE FROM sqlite_master WHERE type = 'trigger' AND name like '{triggerName}%';")

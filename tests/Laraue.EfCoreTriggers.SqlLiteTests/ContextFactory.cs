@@ -9,7 +9,7 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
         public override NativeDbContext CreateDbContext()
         {
             var options = new DbContextOptionsBuilder<NativeDbContext>()
-                .UseSqlite("Filename=test.db", x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
+                .UseSqlite("Filename=D://test.db", x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                 .UseSnakeCaseNamingConvention()
                 .UseTriggers()
                 .Options;

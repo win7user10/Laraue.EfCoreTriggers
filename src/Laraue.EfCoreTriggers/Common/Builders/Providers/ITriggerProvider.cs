@@ -1,11 +1,10 @@
-﻿using System;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
     public interface ITriggerProvider
     {
-        GeneratedSql GetDropTriggerSql(string triggerName, Type entityType);
+        GeneratedSql GetDropTriggerSql(string triggerName);
 
         GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
             where TTriggerEntity : class;
