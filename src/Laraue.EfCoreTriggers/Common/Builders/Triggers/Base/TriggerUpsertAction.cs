@@ -22,7 +22,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
             OnMatchExpression = onMatchExpression;
         }
 
-        public virtual GeneratedSql BuildSql(ITriggerProvider visitor)
+        public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
             => visitor.GetTriggerUpsertActionSql(this);
 
         internal abstract Dictionary<string, ArgumentType> InsertExpressionPrefixes { get; }

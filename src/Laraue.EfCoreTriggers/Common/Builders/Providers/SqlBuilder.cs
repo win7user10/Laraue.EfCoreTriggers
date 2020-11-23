@@ -5,12 +5,17 @@ using System.Text;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
-    public class GeneratedSql
+    public class SqlBuilder
     {
-        public string Sql => SqlBuilder.ToString();
+        public string Sql => StringBuilder.ToString();
 
-        public StringBuilder SqlBuilder { get; } = new StringBuilder();
+        public StringBuilder StringBuilder { get; } = new StringBuilder();
 
+        public const string NewLine = "\r\n";
+
+        /// <summary>
+        /// Contains info about all members taking part in generated SQL.
+        /// </summary>
         public readonly Dictionary<ArgumentType, HashSet<MemberInfo>> AffectedColumns
             = new Dictionary<ArgumentType, HashSet<MemberInfo>>
             {
@@ -18,44 +23,47 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 [ArgumentType.Old] = new HashSet<MemberInfo>(),
             };
 
-
-        public GeneratedSql(IEnumerable<GeneratedSql> generatedSqls)
+        /// <summary>
+        /// Create instance of <see cref="SqlBuilder"/>, merging AffectedColumns from passed builders.
+        /// </summary>
+        /// <param name="generatedSqls"></param>
+        public SqlBuilder(IEnumerable<SqlBuilder> generatedSqls)
             => MergeColumnsInfo(generatedSqls);
 
-        public GeneratedSql(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns)
+        public SqlBuilder(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns)
             => MergeColumnsInfo(affectedColumns);
 
-        public GeneratedSql(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns, string sql)
+        public SqlBuilder(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns, string sql)
             : this(affectedColumns) => Append(sql);
 
-        public GeneratedSql(MemberInfo affectedColumn, ArgumentType argumentType)
+        public SqlBuilder(MemberInfo affectedColumn, ArgumentType argumentType)
             => MergeColumnInfo(affectedColumn, argumentType);
 
-        public GeneratedSql(string sql)
+        public SqlBuilder(string sql)
             => Append(sql);
 
-        public GeneratedSql()
+        public SqlBuilder()
         {
         }
 
-        public GeneratedSql MergeColumnsInfo(IEnumerable<GeneratedSql> generatedSqls)
+        public SqlBuilder MergeColumnsInfo(IEnumerable<SqlBuilder> generatedSqls)
         {
             foreach (var generatedSql in generatedSqls)
                 MergeColumnsInfo(generatedSql.AffectedColumns);
             return this;
         }
 
-        public GeneratedSql MergeColumnsInfo(GeneratedSql generatedSql)
+        public SqlBuilder MergeColumnsInfo(SqlBuilder generatedSql)
             => MergeColumnsInfo(new[] { generatedSql });
 
-        public GeneratedSql MergeColumnsInfo(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns)
+        public SqlBuilder MergeColumnsInfo(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns)
         {
             foreach (var affectedColumn in affectedColumns)
                 AffectedColumns[affectedColumn.Key].AddRange(affectedColumn.Value);
             return this;
         }
 
-        public GeneratedSql MergeColumnInfo(MemberInfo affectedColumn, ArgumentType argumentType)
+        public SqlBuilder MergeColumnInfo(MemberInfo affectedColumn, ArgumentType argumentType)
         {
             switch (argumentType)
             {
@@ -67,46 +75,49 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             return this;
         }
 
-        public GeneratedSql Append(StringBuilder builder)
+        public SqlBuilder Append(StringBuilder builder)
         {
-            SqlBuilder.Append(builder);
+            StringBuilder.Append(builder);
             return this;
         }
 
-        public GeneratedSql AppendJoin(IEnumerable<StringBuilder> builders)
+        public SqlBuilder AppendJoin(IEnumerable<StringBuilder> builders)
             => AppendJoin(string.Empty, builders);
 
-        public GeneratedSql AppendJoin(string separator, IEnumerable<string> values)
+        public SqlBuilder AppendJoin(string separator, IEnumerable<string> values)
         {
-            SqlBuilder.AppendJoin(separator, values);
+            StringBuilder.AppendJoin(separator, values);
             return this;
         }
 
-        public GeneratedSql AppendJoin(string separator, IEnumerable<StringBuilder> builders)
+        public SqlBuilder AppendJoin(string separator, IEnumerable<StringBuilder> builders)
         {
             var buildersArray = builders.ToArray();
             for (int i = 0; i < buildersArray.Length; i++)
             {
-                SqlBuilder.Append(buildersArray[i]);
+                StringBuilder.Append(buildersArray[i]);
                 if (i < buildersArray.Length - 1)
-                    SqlBuilder.Append(separator);
+                    StringBuilder.Append(separator);
             }
             return this;
         }
 
-        public GeneratedSql Append(string value)
+        public SqlBuilder Append(string value)
         {
-            SqlBuilder.Append(value);
+            StringBuilder.Append(value);
             return this;
         }
 
-        public GeneratedSql Append(char value)
+        public SqlBuilder AppendNewLine(string value)
+            => Append($"{NewLine}{value}");
+
+        public SqlBuilder Append(char value)
         {
-            SqlBuilder.Append(value);
+            StringBuilder.Append(value);
             return this;
         }
 
-        public static implicit operator string(GeneratedSql @this) => @this.Sql;
+        public static implicit operator string(SqlBuilder @this) => @this.Sql;
 
         public override string ToString() => Sql;
     }

@@ -1,6 +1,6 @@
 ﻿namespace Laraue.EfCoreTriggers
 {
-    public enum TriggerType
+    public enum TriggerTime
     {
         Before,
         After,

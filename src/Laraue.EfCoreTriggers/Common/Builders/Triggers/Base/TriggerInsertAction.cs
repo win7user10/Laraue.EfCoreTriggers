@@ -15,7 +15,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
             InsertExpression = insertExpression;
         }
 
-        public virtual GeneratedSql BuildSql(ITriggerProvider visitor)
+        public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
             => visitor.GetTriggerInsertActionSql(this);
 
         internal abstract Dictionary<string, ArgumentType> InsertExpressionPrefixes { get; }

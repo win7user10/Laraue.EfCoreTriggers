@@ -1,6 +1,6 @@
 ﻿namespace Laraue.EfCoreTriggers
 {
-    public enum TriggerAction
+    public enum TriggerEvent
     {
         Insert,
         Update,

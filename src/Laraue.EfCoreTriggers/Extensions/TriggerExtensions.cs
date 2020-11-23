@@ -17,6 +17,7 @@ namespace Laraue.EfCoreTriggers.Extensions
             ["NpgsqlOptionsExtension"] = DbProvider.PostgreSql,
             ["SqlServerOptionsExtension"] = DbProvider.SqlServer,
             ["SqliteOptionsExtension"] = DbProvider.SqlLite,
+            ["MySqlOptionsExtension"] = DbProvider.MySql,
         };
 
         public static DbProvider GetActiveDbProvider(this DbContextOptionsBuilder builder)
@@ -53,6 +54,7 @@ namespace Laraue.EfCoreTriggers.Extensions
                 DbProvider.PostgreSql => new PostgreSqlProvider(model),
                 DbProvider.SqlServer => new SqlServerProvider(model),
                 DbProvider.SqlLite => new SqlLiteProvider(model),
+                DbProvider.MySql => new MySqlProvider(model),
                 _ => throw new NotSupportedException($"Provider {_activeProvider} is not supported!"),
             };
         }
