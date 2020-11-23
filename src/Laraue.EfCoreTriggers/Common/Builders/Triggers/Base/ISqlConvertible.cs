@@ -4,6 +4,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 {
     internal interface ISqlConvertible
     {
-        GeneratedSql BuildSql(ITriggerProvider provider);
+        SqlBuilder BuildSql(ITriggerProvider provider);
     }
 }

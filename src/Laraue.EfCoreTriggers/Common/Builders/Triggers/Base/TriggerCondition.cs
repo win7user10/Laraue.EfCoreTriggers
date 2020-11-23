@@ -12,7 +12,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         public TriggerCondition(LambdaExpression triggerCondition)
             => Condition = triggerCondition;
 
-        public virtual GeneratedSql BuildSql(ITriggerProvider visitor)
+        public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
             => visitor.GetTriggerConditionSql(this);
 
         internal abstract Dictionary<string, ArgumentType> ConditionPrefixes { get; }

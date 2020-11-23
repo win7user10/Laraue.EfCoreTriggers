@@ -11,40 +11,40 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         {
         }
 
-        public override GeneratedSql GetDropTriggerSql(string triggerName)
+        public override SqlBuilder GetDropTriggerSql(string triggerName)
         {
-            return new GeneratedSql("PRAGMA writable_schema = 1; ")
+            return new SqlBuilder("PRAGMA writable_schema = 1; ")
                 .Append($"DELETE FROM sqlite_master WHERE type = 'trigger' AND name like '{triggerName}%';")
                 .Append("PRAGMA writable_schema = 0;");
         }
 
-        public override GeneratedSql GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
+        public override SqlBuilder GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
         {
-            var sqlResult = new GeneratedSql();
+            var sqlResult = new SqlBuilder();
 
             if (triggerActions.ActionConditions.Count > 0)
             {
                 var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
                 sqlResult.MergeColumnsInfo(conditionsSql);
                 sqlResult.Append($"WHEN ")
-                    .AppendJoin(" AND ", conditionsSql.Select(x => x.SqlBuilder));
+                    .AppendJoin(" AND ", conditionsSql.Select(x => x.StringBuilder));
             }
 
             var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this));
             sqlResult.MergeColumnsInfo(actionsSql)
                 .Append($" BEGIN ")
-                .AppendJoin(", ", actionsSql.Select(x => x.SqlBuilder))
+                .AppendJoin(", ", actionsSql.Select(x => x.StringBuilder))
                 .Append($" END; ");
 
             return sqlResult;
         }
 
-        public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
+        public override SqlBuilder GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
             var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
 
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this)).ToArray();
-            var generatedSql = new GeneratedSql(actionsSql);
+            var generatedSql = new SqlBuilder(actionsSql);
 
             var actionsCount = actionsSql.Length;
             for (int i = 0; i < actionsCount; i++)
@@ -52,24 +52,24 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 var postfix = actionsCount > 1 ? $"_{i + 1}" : string.Empty;
                 generatedSql.Append($"CREATE TRIGGER {trigger.Name}{postfix} {triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ")
                    .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW ")
-                   .Append(actionsSql[i].SqlBuilder);
+                   .Append(actionsSql[i].StringBuilder);
             }
             return generatedSql;
         }
 
-        public override GeneratedSql GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
+        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
         {
             var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
             var newExpressionColumnsSql = GetNewExpressionColumnsSql(
                 (NewExpression)triggerUpsertAction.MatchExpression.Body,
                 triggerUpsertAction.MatchExpressionPrefixes.ToDictionary(x => x.Key, x => ArgumentType.None));
 
-            var sqlBuilder = new GeneratedSql(insertStatementSql.AffectedColumns)
+            var sqlBuilder = new SqlBuilder(insertStatementSql.AffectedColumns)
                 .MergeColumnsInfo(newExpressionColumnsSql)
                 .Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
-                .Append(insertStatementSql.SqlBuilder)
+                .Append(insertStatementSql.StringBuilder)
                 .Append($" ON CONFLICT (")
-                .AppendJoin(", ", newExpressionColumnsSql.Select(x => x.SqlBuilder))
+                .AppendJoin(", ", newExpressionColumnsSql.Select(x => x.StringBuilder))
                 .Append(")");
 
             if (triggerUpsertAction.OnMatchExpression is null)
@@ -81,15 +81,15 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes);
                 sqlBuilder.MergeColumnsInfo(updateStatementSql.AffectedColumns)
                     .Append($" DO UPDATE SET ")
-                    .Append(updateStatementSql.SqlBuilder)
+                    .Append(updateStatementSql.StringBuilder)
                     .Append(";");
             }
 
             return sqlBuilder;
         }
 
-        protected override GeneratedSql GetMethodConcatCallExpressionSql(params GeneratedSql[] concatExpressionArgsSql)
-            => new GeneratedSql(concatExpressionArgsSql)
-                .AppendJoin(" || ", concatExpressionArgsSql.Select(x => x.SqlBuilder));
+        protected override SqlBuilder GetMethodConcatCallExpressionSql(params SqlBuilder[] concatExpressionArgsSql)
+            => new SqlBuilder(concatExpressionArgsSql)
+                .AppendJoin(" || ", concatExpressionArgsSql.Select(x => x.StringBuilder));
     }
 }

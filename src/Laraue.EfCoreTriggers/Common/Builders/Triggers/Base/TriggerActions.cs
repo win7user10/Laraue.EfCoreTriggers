@@ -10,7 +10,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 
         internal readonly List<ITriggerAction> ActionExpressions = new List<ITriggerAction>();
 
-        public virtual GeneratedSql BuildSql(ITriggerProvider visitor)
+        public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
             => visitor.GetTriggerActionsSql(this);
 
         internal void AddAction(ITriggerAction triggerAction)

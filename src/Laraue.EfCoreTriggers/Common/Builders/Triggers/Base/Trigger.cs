@@ -18,7 +18,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
             TriggerEvent = triggerEvent;
         }
 
-        public virtual GeneratedSql BuildSql(ITriggerProvider visitor) => visitor.GetTriggerSql(this);
+        public virtual SqlBuilder BuildSql(ITriggerProvider visitor) => visitor.GetTriggerSql(this);
 
         internal string Name => $"{Constants.AnnotationKey}_{TriggerTime.ToString().ToUpper()}_{TriggerEvent.ToString().ToUpper()}_{typeof(TTriggerEntity).Name.ToUpper()}";
     }
