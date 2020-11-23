@@ -5,5 +5,6 @@
         PostgreSql,
         SqlServer,
         SqlLite,
+        MySql,
     }
 }

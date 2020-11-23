@@ -18,21 +18,21 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected override string OldEntityPrefix => "Deleted";
 
-        protected override IEnumerable<TriggerType> AvailableTriggerTypes { get; } = new[] { TriggerType.After, TriggerType.InsteadOf };
+        protected override IEnumerable<TriggerTime> AvailableTriggerTimes { get; } = new[] { TriggerTime.After, TriggerTime.InsteadOf };
 
         public override GeneratedSql GetDropTriggerSql(string triggerName)
             => new GeneratedSql($"DROP TRIGGER {triggerName};");
 
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
-            var triggerTypeName = GetTriggerTypeName(trigger.TriggerType);
+            var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
 
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
 
             var sqlBuilder = new GeneratedSql(actionsSql);
             sqlBuilder.Append($"CREATE TRIGGER {trigger.Name} ON {GetTableName(typeof(TTriggerEntity))} ")
-                .Append(triggerTypeName)
-                .Append($" {trigger.TriggerAction} AS BEGIN ");
+                .Append(triggerTimeName)
+                .Append($" {trigger.TriggerEvent} AS BEGIN ");
 
             sqlBuilder.Append(DeclareCursorBlocksSql<TTriggerEntity>(sqlBuilder.AffectedColumns))
                 .Append(" ")

@@ -13,19 +13,19 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         {
         }
 
-        protected virtual Dictionary<TriggerType, string> TriggerTypeNames { get; } = new Dictionary<TriggerType, string>
+        protected virtual Dictionary<TriggerTime, string> TriggerTypeNames { get; } = new Dictionary<TriggerTime, string>
         {
-            [TriggerType.After] = "AFTER",
-            [TriggerType.Before] = "BEFORE",
-            [TriggerType.InsteadOf] = "INSTEAD OF",
+            [TriggerTime.After] = "AFTER",
+            [TriggerTime.Before] = "BEFORE",
+            [TriggerTime.InsteadOf] = "INSTEAD OF",
         };
 
-        protected virtual IEnumerable<TriggerType> AvailableTriggerTypes { get; } = new[] { TriggerType.After, TriggerType.Before, TriggerType.InsteadOf };
+        protected virtual IEnumerable<TriggerTime> AvailableTriggerTimes { get; } = new[] { TriggerTime.After, TriggerTime.Before, TriggerTime.InsteadOf };
 
-        protected string GetTriggerTypeName(TriggerType triggerType)
+        protected string GetTriggerTimeName(TriggerTime triggerTime)
         {
-            if (!AvailableTriggerTypes.Contains(triggerType) || !TriggerTypeNames.TryGetValue(triggerType, out var triggerTypeName))
-                throw new NotSupportedException($"Trigger type {triggerType} is not supported for {GetType()}.");
+            if (!AvailableTriggerTimes.Contains(triggerTime) || !TriggerTypeNames.TryGetValue(triggerTime, out var triggerTypeName))
+                throw new NotSupportedException($"Trigger time {triggerTime} is not supported for {GetType()}.");
             return triggerTypeName;
         }
 

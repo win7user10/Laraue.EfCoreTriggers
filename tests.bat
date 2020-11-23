@@ -1,7 +1,7 @@
 @echo off
 
 set TestsDir=tests
-set TestProjects=Laraue.EfCoreTriggers.PostgreSqlTests, Laraue.EfCoreTriggers.SqlLiteTests, Laraue.EfCoreTriggers.SqlServerTests
+set TestProjects=Laraue.EfCoreTriggers.MySqlTests
 
 echo Step 1: Preparing databases
 call :UpdateDatabases

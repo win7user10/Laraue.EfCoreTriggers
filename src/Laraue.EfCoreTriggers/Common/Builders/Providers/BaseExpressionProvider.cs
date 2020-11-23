@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -11,17 +10,17 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
     public abstract class BaseExpressionProvider
     {
-        private Dictionary<MemberInfo, string> _columnNamesCache = new Dictionary<MemberInfo, string>();
+        private readonly Dictionary<MemberInfo, string> _columnNamesCache = new Dictionary<MemberInfo, string>();
 
-        private Dictionary<Type, string> _tableNamesCache = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _tableNamesCache = new Dictionary<Type, string>();
 
-        private Dictionary<Type, string> _tableSchemasCache = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _tableSchemasCache = new Dictionary<Type, string>();
 
         protected IModel Model { get; }
 
-        protected abstract string NewEntityPrefix { get; }
+        protected virtual string NewEntityPrefix { get; } = "NEW";
 
-        protected abstract string OldEntityPrefix { get; }
+        protected virtual string OldEntityPrefix { get; } = "OLD";
 
         protected virtual char Quote { get; } = '\'';
 

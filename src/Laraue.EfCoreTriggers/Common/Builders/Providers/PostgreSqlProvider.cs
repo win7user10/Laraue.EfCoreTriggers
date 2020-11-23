@@ -11,10 +11,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         {
         }
 
-        protected override string NewEntityPrefix => "NEW";
-
-        protected override string OldEntityPrefix => "OLD";
-
         public override GeneratedSql GetDropTriggerSql(string triggerName)
         {
             return new GeneratedSql()
@@ -49,8 +45,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         public override GeneratedSql GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
-            var triggerTypeName = GetTriggerTypeName(trigger.TriggerType);
-
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
             return new GeneratedSql(actionsSql)
                 .Append($"CREATE FUNCTION {trigger.Name}() RETURNS trigger as ${trigger.Name}$ ")
@@ -58,7 +52,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .AppendJoin(actionsSql.Select(x => x.SqlBuilder))
                 .Append(" RETURN NEW;END;")
                 .Append($"${trigger.Name}$ LANGUAGE plpgsql;")
-                .Append($"CREATE TRIGGER {trigger.Name} {triggerTypeName} {trigger.TriggerAction.ToString().ToUpper()} ")
+                .Append($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()} ")
                 .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
         }
 

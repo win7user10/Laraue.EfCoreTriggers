@@ -17,7 +17,7 @@ namespace Laraue.EfCoreTriggers.Tests
             Visitor = visitor;
         }
 
-        protected OnInsertTriggerInsertAction<Transaction, TransactionMirror> NewInsertOnInsertAction(Expression<Func<Transaction, TransactionMirror>> setValues)
+        protected static OnInsertTriggerInsertAction<Transaction, TransactionMirror> NewInsertOnInsertAction(Expression<Func<Transaction, TransactionMirror>> setValues)
             => new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(setValues);
 
         public abstract string ExceptedConcatSql { get; }
