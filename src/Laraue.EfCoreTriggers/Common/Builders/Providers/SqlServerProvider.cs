@@ -96,7 +96,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             => $"DECLARE {cursorName} CURSOR FOR";
 
         private string FetchCursorsSql<TTriggerEntity>(Dictionary<ArgumentType, HashSet<MemberInfo>> members)
-            => string.Join(" ", members.Where(x => x.Value.WhereDeclaringType<TTriggerEntity>().Count() > 0).Select(x => FetchCursorSql<TTriggerEntity>(x.Key, x.Value)));
+            => string.Join(" ", members.Where(x => x.Value.WhereDeclaringType<TTriggerEntity>().Any()).Select(x => FetchCursorSql<TTriggerEntity>(x.Key, x.Value)));
 
         private string FetchCursorSql<TTriggerEntity>(ArgumentType argumentType, IEnumerable<MemberInfo> members)
             => $"FETCH NEXT FROM {CursorName(argumentType)} INTO {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(member => VariableNameSql(argumentType, member)))}";
@@ -163,7 +163,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         private SqlBuilder DeclareCursorBlocksSql<TTriggerEntity>(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedMemberPairs)
         {
             var cursorBlocksSql = affectedMemberPairs
-                .Where(x => x.Value.WhereDeclaringType<TTriggerEntity>().Count() > 0)
+                .Where(x => x.Value.WhereDeclaringType<TTriggerEntity>().Any())
                 .Select(x => DeclareCursorBlockSql<TTriggerEntity>(x.Key, x.Value));
             return new SqlBuilder()
                 .AppendJoin(" ", cursorBlocksSql.Select(x => x.StringBuilder));
