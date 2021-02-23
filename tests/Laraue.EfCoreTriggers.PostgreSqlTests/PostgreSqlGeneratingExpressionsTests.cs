@@ -22,5 +22,9 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
         public override string ExceptedDoubleSubSql => "INSERT INTO test_entities (double_value) VALUES (NEW.double_value - 3);";
 
         public override string ExceptedIntMultiplySql => "INSERT INTO test_entities (int_value) VALUES (NEW.int_value * 2);";
+
+        public override string ExceptedBooleanSql => "INSERT INTO test_entities (boolean_value) VALUES (true);";
+
+        public override string ExceptedNewGuidSql => "INSERT INTO test_entities (guid_value) VALUES (uuid_generate_v4());";
     }
 }

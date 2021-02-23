@@ -1,4 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Tests.Entities;
+using Laraue.EfCoreTriggers.Tests.Enums;
 using LinqToDB;
 using LinqToDB.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -121,6 +122,30 @@ namespace Laraue.EfCoreTriggers.Tests
             Assert.Equal(0, balance.Balance);
 
             Assert.Null(await DbContext.TransactionsMirror.Where(x => x.Id == transactionId).FirstOrDefaultAsyncLinqToDB());
+        }
+
+        [Theory]
+        [InlineData(UserRole.Moderator, false)]
+        [InlineData(UserRole.Admin, true)]
+        public async Task ConvertExpressionsShouldBeParsedCorrectly(UserRole newRole, bool shouldBeInsertedEntity)
+        {
+            var transaction = await DbContext.TransactionsMirror.SingleOrDefaultAsyncLinqToDB(x => x.UserId == UserId);
+            Assert.Null(transaction);
+
+            await DbContext.Users
+                .Where(x => x.UserId == UserId)
+                .UpdateAsync(old => new User { Role = newRole });
+
+            transaction = await DbContext.TransactionsMirror.SingleOrDefaultAsyncLinqToDB(x => x.UserId == UserId);
+
+            if (shouldBeInsertedEntity)
+            {
+                Assert.NotNull(transaction);
+            }
+            else 
+            {
+                Assert.Null(transaction);
+            }
         }
     }
 }

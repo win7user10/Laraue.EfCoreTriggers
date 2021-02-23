@@ -14,6 +14,29 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         {
         }
 
+        protected override Dictionary<Type, string> TypeMappings { get; } = new Dictionary<Type, string>
+        {
+            [typeof(bool)] = "BIT",
+            [typeof(byte)] = "TINYINT",
+            [typeof(short)] = "SMALLINT",
+            [typeof(int)] = "INT",
+            [typeof(long)] = "BIGINT",
+            [typeof(sbyte)] = "SMALLMONEY",
+            [typeof(ushort)] = "NUMERIC(20)",
+            [typeof(uint)] = "NUMERIC(28)",
+            [typeof(ulong)] = "NUMERIC(29)",
+            [typeof(decimal)] = "DECIMAL(38)",
+            [typeof(float)] = "FLOAT(24)",
+            [typeof(double)] = "FLOAT(53)",
+            [typeof(Enum)] = "INT",
+            [typeof(char)] = "CHAR(1)",
+            [typeof(string)] = "VARCHAR(MAX)",
+            [typeof(DateTime)] = "DATETIME2",
+            [typeof(DateTimeOffset)] = "DATETIMEOFFSET",
+            [typeof(TimeSpan)] = "TIME",
+            [typeof(Guid)] = "UNIQUEIDENTIFIER",
+        };
+
         protected override string NewEntityPrefix => "Inserted";
 
         protected override string OldEntityPrefix => "Deleted";
@@ -43,18 +66,18 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .Append(FetchCursorsSql<TTriggerEntity>(sqlBuilder.AffectedColumns))
                 .Append(" END ");
 
-            sqlBuilder.Append(CloseCursorsBlockSql(sqlBuilder.AffectedColumns))
+            sqlBuilder.Append(CloseCursorsBlockSql<TTriggerEntity>(sqlBuilder.AffectedColumns))
                 .Append(" END");
 
             return sqlBuilder;
         }
 
-        protected override string GetExpressionTypeSql(ExpressionType expressionType) => expressionType switch
+        protected override string GetExpressionOperandSql(Expression expression) => expression.NodeType switch
         {
-            ExpressionType.IsTrue => "= 1",
-            ExpressionType.IsFalse => "= 0",
-            ExpressionType.Not => "= 0",
-            _ => base.GetExpressionTypeSql(expressionType),
+            ExpressionType.IsTrue => $"= {GetBooleanSqlValue(true)}",
+            ExpressionType.IsFalse => $"= {GetBooleanSqlValue(false)}",
+            ExpressionType.Not => $"= {GetBooleanSqlValue(false)}",
+            _ => base.GetExpressionOperandSql(expression),
         };
 
         public override SqlBuilder GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
@@ -79,8 +102,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             return sqlResult;
         }
 
-        private string CursorName(ArgumentType argumentType)
-            => $"{TemporaryTableName(argumentType)}Cursor";
+        private string CursorName<TTriggerEntity>(ArgumentType argumentType)
+            => $"{TemporaryTableName(argumentType)}{typeof(TTriggerEntity).Name}Cursor";
 
         private string TemporaryTableName(ArgumentType argumentType)
         {
@@ -99,7 +122,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             => string.Join(" ", members.Where(x => x.Value.WhereDeclaringType<TTriggerEntity>().Any()).Select(x => FetchCursorSql<TTriggerEntity>(x.Key, x.Value)));
 
         private string FetchCursorSql<TTriggerEntity>(ArgumentType argumentType, IEnumerable<MemberInfo> members)
-            => $"FETCH NEXT FROM {CursorName(argumentType)} INTO {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(member => VariableNameSql(argumentType, member)))}";
+            => $"FETCH NEXT FROM {CursorName<TTriggerEntity>(argumentType)} INTO {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(member => VariableNameSql(argumentType, member)))}";
 
         private string SelectFromCursorSql<TTriggerEntity>(ArgumentType argumentType, IEnumerable<MemberInfo> members)
             => $"SELECT {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(x => GetColumnName(x)))} FROM {TemporaryTableName(argumentType)}";
@@ -113,10 +136,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         private string DeallocateCursorSql(string cursorName)
             => $"DEALLOCATE {cursorName}";
 
-        private string CloseCursorsBlockSql(Dictionary<ArgumentType, HashSet<MemberInfo>> members)
+        private string CloseCursorsBlockSql<TTriggerEntity>(Dictionary<ArgumentType, HashSet<MemberInfo>> members)
         {
             return string.Join(" ", members.Where(x => x.Value.Count > 0)
-                .Select(x => $"{CloseCursorSql(CursorName(x.Key))} {DeallocateCursorSql(CursorName(x.Key))}"));
+                .Select(x => $"{CloseCursorSql(CursorName<TTriggerEntity>(x.Key))} {DeallocateCursorSql(CursorName<TTriggerEntity>(x.Key))}"));
         }
 
         private string VariableNameSql(ArgumentType argumentType, MemberInfo member)
@@ -131,34 +154,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             => $"{VariableNameSql(argumentType, member)} {GetSqlServerType((PropertyInfo)member)}";
 
         private string GetSqlServerType(PropertyInfo propertyInfo)
-        {
-            var mapping = new Dictionary<Type, string>
-            {
-                [typeof(bool)] = "BIT",
-                [typeof(byte)] = "TINYINT",
-                [typeof(short)] = "SMALLINT",
-                [typeof(int)] = "INT",
-                [typeof(long)] = "BIGINT",
-                [typeof(sbyte)] = "SMALLMONEY",
-                [typeof(ushort)] = "NUMERIC(20)",
-                [typeof(uint)] = "NUMERIC(28)",
-                [typeof(ulong)] = "NUMERIC(29)",
-                [typeof(decimal)] = "DECIMAL(38)",
-                [typeof(float)] = "FLOAT(24)",
-                [typeof(double)] = "FLOAT(53)",
-                [typeof(Enum)] = "CHAR(50)",
-                [typeof(char)] = "CHAR(1)",
-                [typeof(string)] = "VARCHAR(MAX)",
-                [typeof(DateTime)] = "DATETIME2",
-                [typeof(DateTimeOffset)] = "DATETIMEOFFSET",
-                [typeof(TimeSpan)] = "TIME",
-                [typeof(Guid)] = "UNIQUEIDENTIFIER",
-            };
-
-            if (mapping.TryGetValue(propertyInfo.PropertyType, out var type))
-                return type;
-            throw new NotSupportedException($"Unknown data type {propertyInfo.PropertyType}");
-        }
+            => GetSqlType(propertyInfo.PropertyType) ?? throw new NotSupportedException($"Unknown data type {propertyInfo.PropertyType}");
 
         private SqlBuilder DeclareCursorBlocksSql<TTriggerEntity>(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedMemberPairs)
         {
@@ -171,7 +167,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         private SqlBuilder DeclareCursorBlockSql<TTriggerEntity>(ArgumentType argumentType, IEnumerable<MemberInfo> affectedMembers)
         {
-            var cursorName = CursorName(argumentType);
+            var cursorName = CursorName<TTriggerEntity>(argumentType);
             return new SqlBuilder()
                 .Append(DeclareCursorSql(cursorName))
                 .Append(" ")
@@ -224,7 +220,13 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 _ => GetColumnName(memberExpression.Member),
             };
         }
-    }
+
+        protected override string GetBooleanSqlValue(bool value) => value
+            ? "1"
+            : "0";
+
+        protected override string GetNewGuidExpressionSql() => "NEWID()";
+	}
 
     internal static class Extensions
     {

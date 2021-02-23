@@ -1,5 +1,6 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -11,6 +12,42 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         public MySqlProvider(IModel model) : base(model)
         {
         }
+
+        protected override Dictionary<Type, string> TypeMappings { get; } = new Dictionary<Type, string>
+        {
+            [typeof(bool)] = "BIT(1)",
+            [typeof(byte)] = "TINYINT UNSIGNED",
+            [typeof(short)] = "SMALLINT",
+            [typeof(int)] = "INT",
+            [typeof(long)] = "BIGINT",
+            [typeof(sbyte)] = "TINYINT",
+            [typeof(decimal)] = "DECIMAL",
+            [typeof(float)] = "FLOAT",
+            [typeof(double)] = "DOUBLE",
+            [typeof(Enum)] = "INT",
+            [typeof(char)] = "CHAR",
+            [typeof(string)] = "TEXT",
+            [typeof(DateTime)] = "DATETIME",
+            [typeof(TimeSpan)] = "TIME",
+            [typeof(Guid)] = "CHAR(36)",
+        };
+
+        /// <summary>
+        /// Casts type in mysql can be different from column types.
+        /// While casting, value is looking in this array then in <see cref="TypeMappings"/>.
+        /// </summary>
+        private Dictionary<Type, string> CastMappings { get; } = new Dictionary<Type, string>
+        {
+            [typeof(int)] = "UNSIGNED",
+            [typeof(bool)] = "BINARY",
+            [typeof(float)] = "DECIMAL",
+            [typeof(double)] = "DECIMAL",
+            [typeof(Enum)] = "UNSIGNED",
+            [typeof(char)] = "CHAR",
+            [typeof(string)] = "CHAR(512)",
+            [typeof(DateTime)] = "DATETIME",
+            [typeof(TimeSpan)] = "TIME",
+        };
 
         protected override IEnumerable<TriggerTime> AvailableTriggerTimes { get; } = new[] { TriggerTime.Before, TriggerTime.After };
 
@@ -93,5 +130,17 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .Append("CONCAT(")
                 .AppendJoin(", ", concatExpressionArgsSql.Select(x => x.StringBuilder))
                 .Append(")");
+
+        protected override string GetConvertExpressionSql(UnaryExpression unaryExpression, string member)
+        {
+            if (CastMappings.TryGetValue(unaryExpression.Type, out var sqlType))
+            {
+                return $"CAST({member} AS {sqlType})";
+            }
+
+            return base.GetConvertExpressionSql(unaryExpression, member);
+        }
+
+        protected override string GetNewGuidExpressionSql() => "UUID()";
     }
 }

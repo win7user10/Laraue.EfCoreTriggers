@@ -1,6 +1,7 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
@@ -10,6 +11,27 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         public PostgreSqlProvider(IModel model) : base(model)
         {
         }
+
+        protected override Dictionary<Type, string> TypeMappings { get; } = new Dictionary<Type, string>
+        {
+            [typeof(bool)] = "boolean",
+            [typeof(byte)] = "smallint",
+            [typeof(short)] = "smallint",
+            [typeof(int)] = "integer",
+            [typeof(long)] = "bigint",
+            [typeof(sbyte)] = "smallint",
+            [typeof(uint)] = "oid",
+            [typeof(decimal)] = "money",
+            [typeof(float)] = "real",
+            [typeof(double)] = "double precision",
+            [typeof(Enum)] = "integer",
+            [typeof(char)] = "(internal) char",
+            [typeof(string)] = "name",
+            [typeof(DateTime)] = "timestamp without time zone",
+            [typeof(DateTimeOffset)] = "time with time zone",
+            [typeof(TimeSpan)] = "time without time zone",
+            [typeof(Guid)] = "uuid",
+        };
 
         public override SqlBuilder GetDropTriggerSql(string triggerName)
         {
@@ -61,5 +83,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .Append("CONCAT(")
                 .AppendJoin(", ", concatExpressionArgsSql.Select(x => x.StringBuilder))
                 .Append(")");
+
+        protected override string GetNewGuidExpressionSql() => "uuid_generate_v4()";
     }
 }
