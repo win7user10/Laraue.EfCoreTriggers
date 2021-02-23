@@ -34,6 +34,10 @@ namespace Laraue.EfCoreTriggers.Tests
 
         public abstract string ExceptedIntMultiplySql { get; }
 
+        public abstract string ExceptedBooleanSql { get; }
+
+        public abstract string ExceptedNewGuidSql { get; }
+
         [Fact]
         public virtual void StringConcatSql()
         {
@@ -94,6 +98,22 @@ namespace Laraue.EfCoreTriggers.Tests
             var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { IntValue = t.IntValue * 2 });
             var sql = action.BuildSql(Visitor);
             Assert.Equal(ExceptedIntMultiplySql, sql);
+        }
+
+        [Fact]
+        public virtual void BooleanValueSql()
+        {
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { BooleanValue = true });
+            var sql = action.BuildSql(Visitor);
+            Assert.Equal(ExceptedBooleanSql, sql);
+        }
+
+        [Fact]
+        public virtual void NewGuid()
+        {
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { GuidValue = new Guid() });
+            var sql = action.BuildSql(Visitor);
+            Assert.Equal(ExceptedNewGuidSql, sql);
         }
     }
 }

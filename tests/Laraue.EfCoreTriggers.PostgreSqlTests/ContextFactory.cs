@@ -6,16 +6,25 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
     public class ContextFactory : BaseContextFactory<NativeDbContext>
     {
-        public override NativeDbContext CreateDbContext()
-        {
-            var options = new DbContextOptionsBuilder<NativeDbContext>()
+        public override FinalContext CreateDbContext() => new FinalContext();
+    }
+
+    public class FinalContext : NativeDbContext
+    {
+        public FinalContext() 
+            : base(new DbContextOptionsBuilder<NativeDbContext>()
                 .UseNpgsql("User ID=postgres;Password=postgres;Host=localhost;Port=5432;Database=efcoretriggers;",
                     x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                 .UseSnakeCaseNamingConvention()
                 .UseTriggers()
-                .Options;
+                .Options)
+        {
+        }
 
-            return new NativeDbContext(options);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasPostgresExtension("uuid-ossp");
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

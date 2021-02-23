@@ -15,9 +15,9 @@ exit /b %errorlevel%
 for /d %%i in (%TestProjects%) do (
 	echo Dropping old migrations folder %TestsDir%/%%i/Migrations
 	if exist "%TestsDir%/%%i/Migrations" rmdir "%TestsDir%/%%i/Migrations" /s /q
-	dotnet ef database drop --project="%TestsDir%/%%i" -f
-	dotnet ef migrations add Initial --project="%TestsDir%/%%i"
-	dotnet ef database update --project="%TestsDir%/%%i"
+	dotnet ef database drop --project="%TestsDir%/%%i" --context=FinalContext -f
+	dotnet ef migrations add Initial --project="%TestsDir%/%%i" --context=FinalContext
+	dotnet ef database update --project="%TestsDir%/%%i" --context=FinalContext
 )
 exit /b %errorlevel%
 
@@ -30,6 +30,6 @@ exit /b %errorlevel%
 :RollbackDatabases
 for /d %%i in (%TestProjects%) do (
 	echo Rollback migrations for %%i
-	dotnet ef database update 0 --project="%TestsDir%/%%i"
+	dotnet ef database update 0 --project="%TestsDir%/%%i" --context=FinalContext
 )
 exit /b %errorlevel%

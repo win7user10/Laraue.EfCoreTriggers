@@ -1,5 +1,7 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -10,6 +12,27 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         public SqlLiteProvider(IModel model) : base(model)
         {
         }
+
+        protected override Dictionary<Type, string> TypeMappings { get; } = new Dictionary<Type, string>
+        {
+            [typeof(bool)] = "NUMERIC",
+            [typeof(byte)] = "NUMERIC",
+            [typeof(short)] = "NUMERIC",
+            [typeof(int)] = "NUMERIC",
+            [typeof(long)] = "NUMERIC",
+            [typeof(sbyte)] = "NUMERIC",
+            [typeof(uint)] = "NUMERIC",
+            [typeof(decimal)] = "NUMERIC",
+            [typeof(float)] = "REAL",
+            [typeof(double)] = "REAL",
+            [typeof(Enum)] = "NUMERIC",
+            [typeof(char)] = "TEXT",
+            [typeof(string)] = "TEXT",
+            [typeof(DateTime)] = "TEXT",
+            [typeof(DateTimeOffset)] = "TEXT",
+            [typeof(TimeSpan)] = "TEXT",
+            [typeof(Guid)] = "TEXT",
+        };
 
         public override SqlBuilder GetDropTriggerSql(string triggerName)
         {
@@ -91,5 +114,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         protected override SqlBuilder GetMethodConcatCallExpressionSql(params SqlBuilder[] concatExpressionArgsSql)
             => new SqlBuilder(concatExpressionArgsSql)
                 .AppendJoin(" || ", concatExpressionArgsSql.Select(x => x.StringBuilder));
+
+        protected override string GetNewGuidExpressionSql() =>
+            "lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab', abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6)))";
     }
 }

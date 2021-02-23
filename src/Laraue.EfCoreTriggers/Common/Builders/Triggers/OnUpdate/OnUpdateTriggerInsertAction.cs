@@ -10,7 +10,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
         where TTriggerEntity : class
         where TInsertEntity : class
     {
-        public OnUpdateTriggerInsertAction(Expression<Func<TTriggerEntity, TTriggerEntity, TInsertEntity, TInsertEntity>> setValues)
+        public OnUpdateTriggerInsertAction(Expression<Func<TTriggerEntity, TTriggerEntity, TInsertEntity>> setValues)
             : base (setValues)
         {
         }

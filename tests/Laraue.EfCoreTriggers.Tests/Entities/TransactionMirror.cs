@@ -1,5 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Tests.Enums;
-using System;
+﻿using System;
 
 namespace Laraue.EfCoreTriggers.Tests.Entities
 {

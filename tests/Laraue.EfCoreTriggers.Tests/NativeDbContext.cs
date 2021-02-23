@@ -92,6 +92,19 @@ namespace Laraue.EfCoreTriggers.Tests
                             (deletedTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance - deletedTransaction.Value }))
                     .Action(action => action
                         .Delete<TransactionMirror>((deletedTransaction, mirroredTransaction) => deletedTransaction.Id == mirroredTransaction.Id )));
+
+            modelBuilder.Entity<User>()
+                .AfterUpdate(trigger => trigger.
+                    Action(action => action
+                        .Condition((@old, @new) => @new.Role > Enums.UserRole.Moderator)
+                        .Insert((oldUser, newUser) => new TransactionMirror
+                        {
+                            Id = new System.Guid(),
+                            Description = "New status reward",
+                            Value = 1000,
+                            UserId = newUser.UserId,
+                            IsVeryfied = true,
+                        })));
         }
     }
 }
