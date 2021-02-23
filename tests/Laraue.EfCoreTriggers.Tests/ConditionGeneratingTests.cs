@@ -25,11 +25,19 @@ namespace Laraue.EfCoreTriggers.Tests
         }
 
         [Fact]
-        public virtual void EnumValueConvertSql()
+        public virtual void CastingToSameTypeShouldBeIgnored()
         {
-            var action = new OnInsertTriggerCondition<User>(user => user.Role > UserRole.Usual);
+            var action = new OnInsertTriggerCondition<User>(user => user.Role > UserRole.Admin);
             var sql = action.BuildSql(_provider);
-            Assert.Equal("CAST (NEW.Role AS int) > 0", sql);
+            Assert.Equal("NEW.Role > 999", sql);
+        }
+
+        [Fact]
+        public virtual void CastingToAnotherTypeShouldBeTranslated()
+        {
+            var action = new OnInsertTriggerCondition<User>(user => (decimal)user.Role > 50m);
+            var sql = action.BuildSql(_provider);
+            Assert.Equal("CAST(NEW.Role AS DECIMAL) > 50", sql);
         }
     }
 }

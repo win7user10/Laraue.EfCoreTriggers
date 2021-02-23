@@ -38,13 +38,11 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             where TTriggerEntity : class
         {
             var conditionBody = triggerCondition.Condition.Body;
-            if (conditionBody is BinaryExpression binaryExpression)
-                return GetBinaryExpressionSql(binaryExpression, triggerCondition.ConditionPrefixes);
-            else if (conditionBody is MemberExpression memberExpression)
-                return GetUnaryExpressionSql(Expression.IsTrue(memberExpression), triggerCondition.ConditionPrefixes);
-            else if (conditionBody is UnaryExpression unaryExpression)
-                return GetUnaryExpressionSql(unaryExpression, triggerCondition.ConditionPrefixes);
-            throw new NotImplementedException($"Trigger condition of type {conditionBody.GetType()} is not supported.");
+            return conditionBody switch
+            {
+                MemberExpression memberExpression => GetUnaryExpressionSql(Expression.IsTrue(memberExpression), triggerCondition.ConditionPrefixes),
+                _ => GetExpressionSql(conditionBody, triggerCondition.ConditionPrefixes),
+            };
         }
 
         public abstract SqlBuilder GetTriggerActionsSql<TTriggerEntity>(TriggerActions<TTriggerEntity> triggerActions)
