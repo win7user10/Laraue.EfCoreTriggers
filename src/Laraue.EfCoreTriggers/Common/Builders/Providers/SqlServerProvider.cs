@@ -14,7 +14,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         {
         }
 
-        protected override Dictionary<Type, string> TypeMappings { get; } = new Dictionary<Type, string>
+        protected override Dictionary<Type, string> TypeMappings { get; } = new()
         {
             [typeof(bool)] = "BIT",
             [typeof(byte)] = "TINYINT",
@@ -41,16 +41,20 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected override string OldEntityPrefix => "Deleted";
 
-        protected override IEnumerable<TriggerTime> AvailableTriggerTimes { get; } = new[] { TriggerTime.After, TriggerTime.InsteadOf };
+        protected override IEnumerable<TriggerTime> AvailableTriggerTimes { get; } =
+            new[] { TriggerTime.After, TriggerTime.InsteadOf };
 
         public override SqlBuilder GetDropTriggerSql(string triggerName)
-            => new SqlBuilder($"DROP TRIGGER {triggerName};");
+            => new($"DROP TRIGGER {triggerName};");
 
         public override SqlBuilder GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
             var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
 
-            var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
+            var actionsSql = trigger
+                .Actions
+                .Select(action => action.BuildSql(this))
+                .ToArray();
 
             var sqlBuilder = new SqlBuilder(actionsSql);
             sqlBuilder.Append($"CREATE TRIGGER {trigger.Name} ON {GetTableName(typeof(TTriggerEntity))} ")
@@ -86,14 +90,22 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
             if (triggerActions.ActionConditions.Count > 0)
             {
-                var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
+                var conditionsSql = triggerActions
+                    .ActionConditions
+                    .Select(actionCondition => actionCondition.BuildSql(this))
+                    .ToArray();
+
                 sqlResult.MergeColumnsInfo(conditionsSql);
                 sqlResult.Append($"IF (")
                     .AppendJoin(" AND ", conditionsSql.Select(x => x.StringBuilder))
                     .Append($") ");
             }
 
-            var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this));
+            var actionsSql = triggerActions
+                .ActionExpressions
+                .Select(action => action.BuildSql(this))
+                .ToArray();
+
             sqlResult.MergeColumnsInfo(actionsSql)
                 .Append("BEGIN ")
                 .AppendJoin("; ", actionsSql.Select(x => x.StringBuilder))
@@ -119,16 +131,22 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             => $"DECLARE {cursorName} CURSOR FOR";
 
         private string FetchCursorsSql<TTriggerEntity>(Dictionary<ArgumentType, HashSet<MemberInfo>> members)
-            => string.Join(" ", members.Where(x => x.Value.WhereDeclaringType<TTriggerEntity>().Any()).Select(x => FetchCursorSql<TTriggerEntity>(x.Key, x.Value)));
+            => string.Join(" ",
+                members.Where(x => x.Value.WhereDeclaringType<TTriggerEntity>().Any())
+                    .Select(x => FetchCursorSql<TTriggerEntity>(x.Key, x.Value)));
 
         private string FetchCursorSql<TTriggerEntity>(ArgumentType argumentType, IEnumerable<MemberInfo> members)
-            => $"FETCH NEXT FROM {CursorName<TTriggerEntity>(argumentType)} INTO {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(member => VariableNameSql(argumentType, member)))}";
+            =>
+                $"FETCH NEXT FROM {CursorName<TTriggerEntity>(argumentType)} INTO {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(member => VariableNameSql(argumentType, member)))}";
 
         private string SelectFromCursorSql<TTriggerEntity>(ArgumentType argumentType, IEnumerable<MemberInfo> members)
-            => $"SELECT {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(x => GetColumnName(x)))} FROM {TemporaryTableName(argumentType)}";
+            =>
+                $"SELECT {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(GetColumnName))} FROM {TemporaryTableName(argumentType)}";
 
-        private string DeclareCursorVariablesSql<TTriggerEntity>(ArgumentType argumentType, IEnumerable<MemberInfo> members)
-            => $"DECLARE {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(member => DeclareVariableNameSql(argumentType, member)))}";
+        private string DeclareCursorVariablesSql<TTriggerEntity>(ArgumentType argumentType,
+            IEnumerable<MemberInfo> members)
+            =>
+                $"DECLARE {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(member => DeclareVariableNameSql(argumentType, member)))}";
 
         private string CloseCursorSql(string cursorName)
             => $"CLOSE {cursorName}";
@@ -139,7 +157,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         private string CloseCursorsBlockSql<TTriggerEntity>(Dictionary<ArgumentType, HashSet<MemberInfo>> members)
         {
             return string.Join(" ", members.Where(x => x.Value.Count > 0)
-                .Select(x => $"{CloseCursorSql(CursorName<TTriggerEntity>(x.Key))} {DeallocateCursorSql(CursorName<TTriggerEntity>(x.Key))}"));
+                .Select(x =>
+                    $"{CloseCursorSql(CursorName<TTriggerEntity>(x.Key))} {DeallocateCursorSql(CursorName<TTriggerEntity>(x.Key))}"));
         }
 
         private string VariableNameSql(ArgumentType argumentType, MemberInfo member)
@@ -147,16 +166,19 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             {
                 ArgumentType.New => $"@New{member.Name}",
                 ArgumentType.Old => $"@Old{member.Name}",
-                _ => throw new InvalidOperationException($"Invalid attempt to generate declaring variable SQL using argument prefix {argumentType}")
+                _ => throw new InvalidOperationException(
+                    $"Invalid attempt to generate declaring variable SQL using argument prefix {argumentType}")
             };
 
         private string DeclareVariableNameSql(ArgumentType argumentType, MemberInfo member)
             => $"{VariableNameSql(argumentType, member)} {GetSqlServerType((PropertyInfo)member)}";
 
         private string GetSqlServerType(PropertyInfo propertyInfo)
-            => GetSqlType(propertyInfo.PropertyType) ?? throw new NotSupportedException($"Unknown data type {propertyInfo.PropertyType}");
+            => GetSqlType(propertyInfo.PropertyType) ??
+               throw new NotSupportedException($"Unknown data type {propertyInfo.PropertyType}");
 
-        private SqlBuilder DeclareCursorBlocksSql<TTriggerEntity>(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedMemberPairs)
+        private SqlBuilder DeclareCursorBlocksSql<TTriggerEntity>(
+            Dictionary<ArgumentType, HashSet<MemberInfo>> affectedMemberPairs)
         {
             var cursorBlocksSql = affectedMemberPairs
                 .Where(x => x.Value.WhereDeclaringType<TTriggerEntity>().Any())
@@ -165,7 +187,8 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .AppendJoin(" ", cursorBlocksSql.Select(x => x.StringBuilder));
         }
 
-        private SqlBuilder DeclareCursorBlockSql<TTriggerEntity>(ArgumentType argumentType, IEnumerable<MemberInfo> affectedMembers)
+        private SqlBuilder DeclareCursorBlockSql<TTriggerEntity>(ArgumentType argumentType,
+            IEnumerable<MemberInfo> affectedMembers)
         {
             var cursorName = CursorName<TTriggerEntity>(argumentType);
             return new SqlBuilder()
@@ -177,9 +200,11 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .Append($" OPEN {cursorName}");
         }
 
-        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
+        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(
+            TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
         {
-            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
+            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression,
+                triggerUpsertAction.InsertExpressionPrefixes);
 
             var newExpressionArguments = ((NewExpression)triggerUpsertAction.MatchExpression.Body).Arguments
                 .Cast<MemberExpression>();
@@ -195,14 +220,16 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .Append($"MERGE {GetTableName(typeof(TUpsertEntity))} USING {GetTableName(typeof(TTriggerEntity))}")
                 .Append($" ON ")
                 .AppendJoin(" AND ", newExpressionArgumentPairs
-                    .Select(memberPair => $"{GetTableName(typeof(TUpsertEntity))}.{GetColumnName(memberPair.Key.Member)} = {memberPair.Value}"));
+                    .Select(memberPair =>
+                        $"{GetTableName(typeof(TUpsertEntity))}.{GetColumnName(memberPair.Key.Member)} = {memberPair.Value}"));
 
             sqlBuilder.Append(" WHEN NOT MATCHED THEN INSERT ")
                 .Append(insertStatementSql.StringBuilder);
 
             if (triggerUpsertAction.OnMatchExpression != null)
             {
-                var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes);
+                var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression,
+                    triggerUpsertAction.OnMatchExpressionPrefixes);
                 sqlBuilder.MergeColumnsInfo(updateStatementSql);
                 sqlBuilder.Append(" WHEN MATCHED THEN UPDATE SET ")
                     .Append(updateStatementSql.StringBuilder);
@@ -226,11 +253,11 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             : "0";
 
         protected override string GetNewGuidExpressionSql() => "NEWID()";
-	}
+    }
 
     internal static class Extensions
     {
         public static IEnumerable<MemberInfo> WhereDeclaringType<T>(this IEnumerable<MemberInfo> values)
-            => values.Where(x => x.DeclaringType == typeof(T));
+            => values.Where(x => x.DeclaringType.IsAssignableFrom(typeof(T)));
     }
 }

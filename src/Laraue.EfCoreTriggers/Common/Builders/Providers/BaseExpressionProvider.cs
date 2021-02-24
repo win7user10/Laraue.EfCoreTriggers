@@ -116,12 +116,16 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 _tableNamesCache.Add(entity, entityType.GetTableName());
             }
 
-            if (!_tableNamesCache.TryGetValue(entity, out var columnName))
+            if (!_tableNamesCache.TryGetValue(entity, out var tableName))
 			{
                 throw new InvalidOperationException($"Table name for entity {entity.FullName} is not defined in model.");
             }
 
-            return columnName;
+            var schemaName = GetTableSchemaName(entity);
+
+            return string.IsNullOrWhiteSpace(schemaName)
+                ? tableName
+                : $"{schemaName}.{tableName}";
         }
 
         /// <summary>
