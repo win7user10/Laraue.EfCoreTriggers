@@ -295,9 +295,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             var parsedArguments = methodCallExpression.Arguments.Select(argumentExpression => GetExpressionSql(argumentExpression, argumentTypes)).ToArray();
             return methodCallExpression.Method.Name switch
             {
-                "Concat" => GetMethodConcatCallExpressionSql(parsedArguments),
-                "ToLower" => GetMethodToLowerCallExpressionSql(GetExpressionSql(methodCallExpression.Object, argumentTypes)),
-                "ToUpper" => GetMethodToUpperCallExpressionSql(GetExpressionSql(methodCallExpression.Object, argumentTypes)),
+                nameof(string.Concat) => GetMethodConcatCallExpressionSql(parsedArguments),
+                nameof(string.ToLower) => GetMethodToLowerCallExpressionSql(GetExpressionSql(methodCallExpression.Object, argumentTypes)),
+                nameof(string.ToUpper) => GetMethodToUpperCallExpressionSql(GetExpressionSql(methodCallExpression.Object, argumentTypes)),
                 _ => throw new NotSupportedException($"Expression {methodCallExpression.Method.Name} is not supported"),
             };
         }
