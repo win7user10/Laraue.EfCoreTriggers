@@ -10,53 +10,37 @@ namespace Laraue.EfCoreTriggers.Extensions
 {
     public static class TriggerExtensions
     {
-        private static DbProvider _activeProvider;
-
-        private static readonly Dictionary<string, DbProvider> ProviderOptionTypes = new Dictionary<string, DbProvider>
-        {
-            ["NpgsqlOptionsExtension"] = DbProvider.PostgreSql,
-            ["SqlServerOptionsExtension"] = DbProvider.SqlServer,
-            ["SqliteOptionsExtension"] = DbProvider.SqlLite,
-            ["MySqlOptionsExtension"] = DbProvider.MySql,
-        };
-
-        public static DbProvider GetActiveDbProvider(this DbContextOptionsBuilder builder)
-        {
-            if (!builder.IsConfigured)
-                throw new InvalidOperationException("To use triggers, DB provider should be added");
-
-            var dbProviderOptions = builder.Options.Extensions;
-
-            var options = dbProviderOptions.Where(x => x.Info.IsDatabaseProvider)
-                .SingleOrDefault();
-
-            var dbProviderOptionsType = options.GetType().Name;
-
-            if (ProviderOptionTypes.TryGetValue(dbProviderOptionsType, out var provider))
-                return provider;
-
-            throw new NotSupportedException($"Provider with options {dbProviderOptionsType} is not supported.");
-        }
+        private static Type _activeProviderType;
 
         /// <summary>
         /// Bad solution, but have no idea yet, how to register current provider using DbContextOptionsBuilder.
         /// </summary>
-        /// <param name="builder"></param>
-        public static void RememberActiveDbProvider(this DbContextOptionsBuilder builder)
+        public static void RememberTriggerProviderType<TTriggerProvider>()
+            where TTriggerProvider : ITriggerProvider
         {
-            _activeProvider = builder.GetActiveDbProvider();
+            _activeProviderType = typeof(TTriggerProvider);
         }
 
         public static ITriggerProvider GetSqlProvider(IModel model)
         {
-            return _activeProvider switch
+            if (_activeProviderType is null)
             {
-                DbProvider.PostgreSql => new PostgreSqlProvider(model),
-                DbProvider.SqlServer => new SqlServerProvider(model),
-                DbProvider.SqlLite => new SqlLiteProvider(model),
-                DbProvider.MySql => new MySqlProvider(model),
-                _ => throw new NotSupportedException($"Provider {_activeProvider} is not supported!"),
-            };
+                throw new InvalidOperationException("To use triggers, DB provider should be added");
+            }
+
+            var providerConstructor = _activeProviderType.GetConstructor(new[] { typeof(IModel) });
+
+            if (providerConstructor is null)
+            {
+                throw new InvalidOperationException("Provider should contain constructor with one parameter which receive instance of IModel");
+            }
+
+            var provider = providerConstructor.Invoke(new[]
+            {
+                (object) model
+            });
+
+            return (ITriggerProvider) provider;
         }
     }
 }

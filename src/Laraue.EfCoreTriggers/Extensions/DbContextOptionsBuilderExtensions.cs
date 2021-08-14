@@ -1,4 +1,5 @@
-﻿using Laraue.EfCoreTriggers.Migrations;
+﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
+using Laraue.EfCoreTriggers.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -6,19 +7,18 @@ namespace Laraue.EfCoreTriggers.Extensions
 {
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder<TContext> UseTriggers<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder)
+        public static DbContextOptionsBuilder<TContext> UseTriggers<TTriggerProvider, TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder)
+            where TTriggerProvider : ITriggerProvider
             where TContext : DbContext
         {
-            UseTriggers((DbContextOptionsBuilder)optionsBuilder);
+            UseTriggers<TTriggerProvider>(optionsBuilder);
             return optionsBuilder;
         }
 
-        public static DbContextOptionsBuilder UseTriggers(this DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseTriggersInternal();
-
-        private static DbContextOptionsBuilder UseTriggersInternal(this DbContextOptionsBuilder optionsBuilder)
+        public static DbContextOptionsBuilder UseTriggers<TTriggerProvider>(this DbContextOptionsBuilder optionsBuilder)
+            where TTriggerProvider : ITriggerProvider
         {
-            optionsBuilder.RememberActiveDbProvider();
+            TriggerExtensions.RememberTriggerProviderType<TTriggerProvider>();
             return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
         }
     }
