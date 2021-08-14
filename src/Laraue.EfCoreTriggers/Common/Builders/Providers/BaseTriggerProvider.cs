@@ -13,7 +13,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         {
         }
 
-        protected virtual Dictionary<TriggerTime, string> TriggerTimeNames { get; } = new Dictionary<TriggerTime, string>
+        protected virtual Dictionary<TriggerTime, string> TriggerTimeNames { get; } = new()
         {
             [TriggerTime.After] = "AFTER",
             [TriggerTime.Before] = "BEFORE",

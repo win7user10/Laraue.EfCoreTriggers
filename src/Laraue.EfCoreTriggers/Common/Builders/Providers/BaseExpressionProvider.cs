@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Linq;
+using Laraue.EfCoreTriggers.Common.Converters;
+using Laraue.EfCoreTriggers.Common.Converters.ExpressionCall.String;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
@@ -98,8 +100,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         /// <returns></returns>
         protected virtual string GetConvertExpressionSql(UnaryExpression unaryExpression, string member)
 		{
-            IsNeedConvertion(unaryExpression);
-
             var sqlType = GetSqlType(unaryExpression.Type);
             return sqlType is not null
                 ? $"CAST({member} AS {sqlType})"
@@ -112,7 +112,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         /// <param name="expression"></param>
         /// <param name="argumentTypes">Prefixes for column name, such as <see cref="OldEntityPrefix"/> or <see cref="NewEntityPrefix"/>.</param>
         /// <returns></returns>
-        protected virtual SqlBuilder GetExpressionSql(Expression expression, Dictionary<string, ArgumentType> argumentTypes)
+        public virtual SqlBuilder GetExpressionSql(Expression expression, Dictionary<string, ArgumentType> argumentTypes)
         {
             return expression switch
             {
@@ -190,25 +190,16 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected virtual SqlBuilder GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
-            var parsedArguments = methodCallExpression.Arguments.Select(argumentExpression => GetExpressionSql(argumentExpression, argumentTypes)).ToArray();
-            return methodCallExpression.Method.Name switch
+            foreach (var converter in _converters.ExpressionCallConverters)
             {
-                nameof(string.Concat) => GetMethodConcatCallExpressionSql(parsedArguments),
-                nameof(string.ToLower) => GetMethodToLowerCallExpressionSql(GetExpressionSql(methodCallExpression.Object, argumentTypes)),
-                nameof(string.ToUpper) => GetMethodToUpperCallExpressionSql(GetExpressionSql(methodCallExpression.Object, argumentTypes)),
-                _ => throw new NotSupportedException($"Expression {methodCallExpression.Method.Name} is not supported"),
-            };
+                if (converter.IsApplicable(methodCallExpression))
+                {
+                    return converter.BuildSql(this, methodCallExpression, argumentTypes);
+                }
+            }
+
+            throw new NotSupportedException($"Expression {methodCallExpression.Method.Name} is not supported");
         }
-
-        protected virtual SqlBuilder GetMethodConcatCallExpressionSql(params SqlBuilder[] concatExpressionArgsSql)
-            => new SqlBuilder(concatExpressionArgsSql)
-                .AppendJoin(" + ", concatExpressionArgsSql.Select(x => x.StringBuilder));
-
-        protected virtual SqlBuilder GetMethodToLowerCallExpressionSql(SqlBuilder lowerSqlExpression)
-            => new(lowerSqlExpression.AffectedColumns, $"LOWER({lowerSqlExpression})");
-
-        protected virtual SqlBuilder GetMethodToUpperCallExpressionSql(SqlBuilder upperSqlExpression)
-            => new(upperSqlExpression.AffectedColumns, $"UPPER({upperSqlExpression})");
 
         protected virtual SqlBuilder GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
@@ -334,9 +325,15 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         /// <returns></returns>
         protected virtual string GetBooleanSqlValue(bool value) => $"{value.ToString().ToLower()}";
 
+        private readonly AvailableConverters _converters;
+
         /// <inheritdoc />
         protected BaseExpressionProvider(IModel model) : base(model)
         {
+            _converters = new AvailableConverters();
+            _converters.ExpressionCallConverters.Push(new ConcatConverter());
+            _converters.ExpressionCallConverters.Push(new ToLowerConverter());
+            _converters.ExpressionCallConverters.Push(new ToUpperConverter());
         }
     }
 }
