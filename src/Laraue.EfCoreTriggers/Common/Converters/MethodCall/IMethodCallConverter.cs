@@ -2,9 +2,9 @@
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Builders.Providers;
 
-namespace Laraue.EfCoreTriggers.Common.Converters.ExpressionCall
+namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall
 {
-    public interface IExpressionCallConverter
+    public interface IMethodCallConverter
     {
         bool IsApplicable(MethodCallExpression expression);
 

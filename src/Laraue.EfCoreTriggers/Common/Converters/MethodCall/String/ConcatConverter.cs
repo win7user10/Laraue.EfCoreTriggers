@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Extensions;
 
-namespace Laraue.EfCoreTriggers.Common.Converters.ExpressionCall.String
+namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String
 {
     public class ConcatConverter : BaseStringConverter
     {

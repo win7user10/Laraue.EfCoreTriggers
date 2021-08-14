@@ -1,4 +1,4 @@
-﻿namespace Laraue.EfCoreTriggers
+﻿namespace Laraue.EfCoreTriggers.Common
 {
     public enum TriggerEvent
     {

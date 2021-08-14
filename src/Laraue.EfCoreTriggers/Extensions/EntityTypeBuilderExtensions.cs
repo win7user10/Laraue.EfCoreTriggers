@@ -4,6 +4,7 @@ using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
+using Laraue.EfCoreTriggers.Common;
 
 namespace Laraue.EfCoreTriggers.Extensions
 {

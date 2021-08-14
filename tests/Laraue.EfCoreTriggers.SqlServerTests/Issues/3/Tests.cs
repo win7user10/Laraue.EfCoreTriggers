@@ -1,4 +1,5 @@
 ﻿using System;
+using Laraue.EfCoreTriggers.Common;
 using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
 using Laraue.EfCoreTriggers.Extensions;

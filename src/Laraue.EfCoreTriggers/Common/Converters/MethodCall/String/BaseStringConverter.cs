@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 
-namespace Laraue.EfCoreTriggers.Common.Converters.ExpressionCall.String
+namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String
 {
-    public abstract class BaseStringConverter : ExpressionCallConverter
+    public abstract class BaseStringConverter : MethodCallConverter
     {
         public abstract string MethodName { get; }
 

@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Builders.Providers;
 
-namespace Laraue.EfCoreTriggers.Common.Converters.ExpressionCall.String
+namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String
 {
     public class ToLowerConverter : BaseStringConverter
     {

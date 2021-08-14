@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.Converters;
-using Laraue.EfCoreTriggers.Common.Converters.ExpressionCall.String;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {

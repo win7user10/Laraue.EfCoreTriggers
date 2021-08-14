@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Laraue.EfCoreTriggers.Common.Converters.ExpressionCall;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall;
 
 namespace Laraue.EfCoreTriggers.Common.Converters
 {
     public class AvailableConverters
     {
-        public Stack<IExpressionCallConverter> ExpressionCallConverters = new ();
+        public Stack<IMethodCallConverter> ExpressionCallConverters = new ();
     }
 }
