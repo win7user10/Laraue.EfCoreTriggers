@@ -190,7 +190,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
         protected virtual SqlBuilder GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
-            foreach (var converter in _converters.ExpressionCallConverters)
+            foreach (var converter in Converters.ExpressionCallConverters)
             {
                 if (converter.IsApplicable(methodCallExpression))
                 {
@@ -325,15 +325,15 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         /// <returns></returns>
         protected virtual string GetBooleanSqlValue(bool value) => $"{value.ToString().ToLower()}";
 
-        private readonly AvailableConverters _converters;
+        protected AvailableConverters Converters { get; }
 
         /// <inheritdoc />
         protected BaseExpressionProvider(IModel model) : base(model)
         {
-            _converters = new AvailableConverters();
-            _converters.ExpressionCallConverters.Push(new ConcatConverter());
-            _converters.ExpressionCallConverters.Push(new ToLowerConverter());
-            _converters.ExpressionCallConverters.Push(new ToUpperConverter());
+            Converters = new AvailableConverters();
+            Converters.ExpressionCallConverters.Push(new ConcatConverter());
+            Converters.ExpressionCallConverters.Push(new ToLowerConverter());
+            Converters.ExpressionCallConverters.Push(new ToUpperConverter());
         }
     }
 }

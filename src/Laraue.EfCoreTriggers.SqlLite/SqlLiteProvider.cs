@@ -1,16 +1,19 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Builders.Providers;
+using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+using Laraue.EfCoreTriggers.SqlLite.Converters.MethodCall.String;
+using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Providers
+namespace Laraue.EfCoreTriggers.SqlLite
 {
     public class SqlLiteProvider : BaseTriggerProvider
     {
         public SqlLiteProvider(IModel model) : base(model)
         {
+            Converters.ExpressionCallConverters.Push(new ConcatConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new ()
@@ -110,10 +113,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
             return sqlBuilder;
         }
-
-        protected override SqlBuilder GetMethodConcatCallExpressionSql(params SqlBuilder[] concatExpressionArgsSql)
-            => new SqlBuilder(concatExpressionArgsSql)
-                .AppendJoin(" || ", concatExpressionArgsSql.Select(x => x.StringBuilder));
 
         protected override string GetNewGuidExpressionSql() =>
             "lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab', abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6)))";

@@ -8,9 +8,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
        where TTriggerEntity : class
        where TUpsertEntity : class
     {
-        internal LambdaExpression MatchExpression;
-        internal LambdaExpression InsertExpression;
-        internal LambdaExpression OnMatchExpression;
+        public LambdaExpression MatchExpression;
+        public LambdaExpression InsertExpression;
+        public LambdaExpression OnMatchExpression;
 
         public TriggerUpsertAction(
             LambdaExpression matchExpression,
@@ -25,10 +25,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
         public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
             => visitor.GetTriggerUpsertActionSql(this);
 
-        internal abstract Dictionary<string, ArgumentType> InsertExpressionPrefixes { get; }
+        public abstract Dictionary<string, ArgumentType> InsertExpressionPrefixes { get; }
 
-        internal abstract Dictionary<string, ArgumentType> OnMatchExpressionPrefixes { get; }
+        public abstract Dictionary<string, ArgumentType> OnMatchExpressionPrefixes { get; }
 
-        internal abstract Dictionary<string, ArgumentType> MatchExpressionPrefixes { get; }
+        public abstract Dictionary<string, ArgumentType> MatchExpressionPrefixes { get; }
     }
 }
