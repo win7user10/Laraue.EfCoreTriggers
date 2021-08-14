@@ -6,11 +6,11 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
     public abstract class Trigger<TTriggerEntity> : ISqlConvertible
         where TTriggerEntity : class
     {
-        internal TriggerEvent TriggerEvent { get; }
+        public TriggerEvent TriggerEvent { get; }
 
-        internal TriggerTime TriggerTime { get; }
+        public TriggerTime TriggerTime { get; }
 
-        internal readonly List<ISqlConvertible> Actions = new List<ISqlConvertible>();
+        public readonly List<ISqlConvertible> Actions = new ();
 
         public Trigger(TriggerEvent triggerEvent, TriggerTime triggerTime)
         {
@@ -20,6 +20,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 
         public virtual SqlBuilder BuildSql(ITriggerProvider visitor) => visitor.GetTriggerSql(this);
 
-        internal string Name => $"{Constants.AnnotationKey}_{TriggerTime}_{TriggerEvent}_{typeof(TTriggerEntity).Name}".ToUpper();
+        public string Name => $"{Constants.AnnotationKey}_{TriggerTime}_{TriggerEvent}_{typeof(TTriggerEntity).Name}".ToUpper();
     }
 }

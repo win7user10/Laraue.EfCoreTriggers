@@ -15,7 +15,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate
         {
         }
 
-        internal override Dictionary<string, ArgumentType> InsertExpressionPrefixes => new Dictionary<string, ArgumentType>
+        internal override Dictionary<string, ArgumentType> InsertExpressionPrefixes => new()
         {
             [InsertExpression.Parameters[0].Name] = ArgumentType.Old,
             [InsertExpression.Parameters[1].Name] = ArgumentType.New,

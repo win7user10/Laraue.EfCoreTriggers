@@ -9,7 +9,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
     {
         public string Sql => StringBuilder.ToString();
 
-        public StringBuilder StringBuilder { get; } = new StringBuilder();
+        public StringBuilder StringBuilder { get; } = new();
 
         public const string NewLine = "\r\n";
 
@@ -17,7 +17,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         /// Contains info about all members taking part in generated SQL.
         /// </summary>
         public readonly Dictionary<ArgumentType, HashSet<MemberInfo>> AffectedColumns
-            = new Dictionary<ArgumentType, HashSet<MemberInfo>>
+            = new()
             {
                 [ArgumentType.New] = new HashSet<MemberInfo>(),
                 [ArgumentType.Old] = new HashSet<MemberInfo>(),

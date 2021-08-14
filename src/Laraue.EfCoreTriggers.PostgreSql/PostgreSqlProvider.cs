@@ -1,10 +1,11 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Laraue.EfCoreTriggers.Common.Builders.Providers;
+using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Providers
+namespace Laraue.EfCoreTriggers.PostgreSql
 {
     public class PostgreSqlProvider : SqlLiteProvider
     {

@@ -13,17 +13,17 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         /// <summary>
         /// Cached column names for entity properties.
         /// </summary>
-        private readonly Dictionary<MemberInfo, string> _columnNamesCache = new Dictionary<MemberInfo, string>();
+        private readonly Dictionary<MemberInfo, string> _columnNamesCache = new();
 
         /// <summary>
         /// Cached table names for entities.
         /// </summary>
-        private readonly Dictionary<Type, string> _tableNamesCache = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _tableNamesCache = new();
 
         /// <summary>
         /// Cached database schema names.
         /// </summary>
-        private readonly Dictionary<Type, string> _tableSchemasCache = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _tableSchemasCache = new();
 
         /// <summary>
         /// Model used for generating SQL. From this model takes column names, table names and other meta information.
@@ -34,18 +34,18 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         /// Prefix for inserted or updated (new value) entity in triggers. E.g to get balance from inserted entity, 
         /// inPostgreSQL should be used syntax NEW.balance.
         /// </summary>
-        protected virtual string NewEntityPrefix { get; } = "NEW";
+        protected virtual string NewEntityPrefix => "NEW";
 
         /// <summary>
         /// Prefix for deleted or updated (old value) entity in triggers. E.g to get balance from deleted entity, 
         /// inPostgreSQL should be used syntax OLD.balance.
         /// </summary>
-        protected virtual string OldEntityPrefix { get; } = "OLD";
+        protected virtual string OldEntityPrefix => "OLD";
 
         /// <summary>
         /// Quote in the database.
         /// </summary>
-        protected virtual char Quote { get; } = '\'';
+        protected virtual char Quote => '\'';
 
         /// <summary>
         /// Mappings between <see cref="Type">CLR Type</see> and SQL column types.
@@ -78,7 +78,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             }
 
             if (!_columnNamesCache.TryGetValue(memberInfo, out var columnName))
+            {
                 throw new InvalidOperationException($"Column name for member {memberInfo.Name} is not defined in model");
+            }
+
             return columnName;
         }
 
@@ -307,10 +310,10 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .AppendJoin(" + ", concatExpressionArgsSql.Select(x => x.StringBuilder));
 
         protected virtual SqlBuilder GetMethodToLowerCallExpressionSql(SqlBuilder lowerSqlExpression)
-            => new SqlBuilder(lowerSqlExpression.AffectedColumns, $"LOWER({lowerSqlExpression})");
+            => new(lowerSqlExpression.AffectedColumns, $"LOWER({lowerSqlExpression})");
 
         protected virtual SqlBuilder GetMethodToUpperCallExpressionSql(SqlBuilder upperSqlExpression)
-            => new SqlBuilder(upperSqlExpression.AffectedColumns, $"UPPER({upperSqlExpression})");
+            => new(upperSqlExpression.AffectedColumns, $"UPPER({upperSqlExpression})");
 
         protected virtual SqlBuilder GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentType> argumentTypes)
         {

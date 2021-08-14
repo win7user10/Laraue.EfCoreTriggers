@@ -4,7 +4,6 @@ using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System;
 using Xunit;
 
 namespace Laraue.EfCoreTriggers.Tests

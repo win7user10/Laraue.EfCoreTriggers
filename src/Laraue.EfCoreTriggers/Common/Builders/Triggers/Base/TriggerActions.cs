@@ -6,9 +6,9 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
     public abstract class TriggerActions<TTriggerEntity> : ISqlConvertible
         where TTriggerEntity : class
     {
-        internal readonly List<ISqlConvertible> ActionConditions = new List<ISqlConvertible>();
+        public readonly List<ISqlConvertible> ActionConditions = new ();
 
-        internal readonly List<ITriggerAction> ActionExpressions = new List<ITriggerAction>();
+        public readonly List<ITriggerAction> ActionExpressions = new ();
 
         public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
             => visitor.GetTriggerActionsSql(this);

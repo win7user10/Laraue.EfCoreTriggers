@@ -15,7 +15,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete
         {
         }
 
-        internal override Dictionary<string, ArgumentType> DeleteFilterPrefixes => new Dictionary<string, ArgumentType>
+        internal override Dictionary<string, ArgumentType> DeleteFilterPrefixes => new()
         {
             [DeleteFilter.Parameters[0].Name] = ArgumentType.Old,
         };

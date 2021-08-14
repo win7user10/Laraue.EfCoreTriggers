@@ -2,7 +2,7 @@
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Triggers.Base
 {
-    internal interface ISqlConvertible
+    public interface ISqlConvertible
     {
         SqlBuilder BuildSql(ITriggerProvider provider);
     }

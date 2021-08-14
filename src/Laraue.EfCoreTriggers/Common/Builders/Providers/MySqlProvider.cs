@@ -13,7 +13,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         {
         }
 
-        protected override Dictionary<Type, string> TypeMappings { get; } = new Dictionary<Type, string>
+        protected override Dictionary<Type, string> TypeMappings { get; } = new()
         {
             [typeof(bool)] = "BIT(1)",
             [typeof(byte)] = "TINYINT UNSIGNED",
@@ -36,7 +36,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         /// Casts type in mysql can be different from column types.
         /// While casting, value is looking in this array then in <see cref="TypeMappings"/>.
         /// </summary>
-        private Dictionary<Type, string> CastMappings { get; } = new Dictionary<Type, string>
+        private Dictionary<Type, string> CastMappings { get; } = new()
         {
             [typeof(int)] = "UNSIGNED",
             [typeof(bool)] = "BINARY",

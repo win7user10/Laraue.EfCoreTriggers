@@ -13,7 +13,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         {
         }
 
-        protected override Dictionary<Type, string> TypeMappings { get; } = new Dictionary<Type, string>
+        protected override Dictionary<Type, string> TypeMappings { get; } = new ()
         {
             [typeof(bool)] = "NUMERIC",
             [typeof(byte)] = "NUMERIC",
@@ -70,7 +70,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             var generatedSql = new SqlBuilder(actionsSql);
 
             var actionsCount = actionsSql.Length;
-            for (int i = 0; i < actionsCount; i++)
+            for (var i = 0; i < actionsCount; i++)
             {
                 var postfix = actionsCount > 1 ? $"_{i + 1}" : string.Empty;
                 generatedSql.Append($"CREATE TRIGGER {trigger.Name}{postfix} {triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ")
@@ -91,7 +91,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
                 .MergeColumnsInfo(newExpressionColumnsSql)
                 .Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
                 .Append(insertStatementSql.StringBuilder)
-                .Append($" ON CONFLICT (")
+                .Append(" ON CONFLICT (")
                 .AppendJoin(", ", newExpressionColumnsSql.Select(x => x.StringBuilder))
                 .Append(")");
 
@@ -103,7 +103,7 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             {
                 var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes);
                 sqlBuilder.MergeColumnsInfo(updateStatementSql.AffectedColumns)
-                    .Append($" DO UPDATE SET ")
+                    .Append(" DO UPDATE SET ")
                     .Append(updateStatementSql.StringBuilder)
                     .Append(";");
             }

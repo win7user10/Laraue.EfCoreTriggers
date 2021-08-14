@@ -6,7 +6,7 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
 {
     public class ContextFactory : BaseContextFactory<NativeDbContext>
     {
-        public override FinalContext CreateDbContext() => new FinalContext();
+        public override FinalContext CreateDbContext() => new();
 
         public class FinalContext : NativeDbContext
         {

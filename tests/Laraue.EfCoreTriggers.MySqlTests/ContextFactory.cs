@@ -2,7 +2,6 @@
 using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
 using System;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace Laraue.EfCoreTriggers.MySqlTests
 {

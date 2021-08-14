@@ -18,7 +18,7 @@ namespace Laraue.EfCoreTriggers.Tests
         }
 
         protected static OnInsertTriggerInsertAction<Transaction, TransactionMirror> NewInsertOnInsertAction(Expression<Func<Transaction, TransactionMirror>> setValues)
-            => new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(setValues);
+            => new(setValues);
 
         public abstract string ExceptedConcatSql { get; }
 
