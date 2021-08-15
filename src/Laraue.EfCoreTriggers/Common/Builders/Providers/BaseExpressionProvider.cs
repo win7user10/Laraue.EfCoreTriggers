@@ -6,10 +6,6 @@ using System.Reflection;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.Converters;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {

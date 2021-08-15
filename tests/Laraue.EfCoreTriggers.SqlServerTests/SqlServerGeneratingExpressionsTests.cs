@@ -1,5 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
-using Laraue.EfCoreTriggers.SqlServer;
+﻿using Laraue.EfCoreTriggers.SqlServer;
 using Laraue.EfCoreTriggers.Tests;
 
 namespace Laraue.EfCoreTriggers.SqlServerTests
