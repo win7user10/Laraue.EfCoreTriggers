@@ -1,5 +1,5 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
-using Laraue.EfCoreTriggers.Migrations;
+﻿using Laraue.EfCoreTriggers.Migrations;
+using Laraue.EfCoreTriggers.SqlGeneration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 

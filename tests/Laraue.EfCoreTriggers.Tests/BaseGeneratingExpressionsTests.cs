@@ -1,9 +1,9 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
-using Laraue.EfCoreTriggers.Common.Builders.Providers;
-using Laraue.EfCoreTriggers.Tests.Entities;
+﻿using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using System;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.SqlGeneration;
+using Laraue.EfCoreTriggers.TriggerBuilders.OnInsert;
 using Xunit;
 
 namespace Laraue.EfCoreTriggers.Tests

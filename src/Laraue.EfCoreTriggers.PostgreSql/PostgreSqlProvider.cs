@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Laraue.EfCoreTriggers.Common.Builders.Providers;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
+using Laraue.EfCoreTriggers.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Converters.MethodCall.String.ToLower;
+using Laraue.EfCoreTriggers.Converters.MethodCall.String.ToUpper;
+using Laraue.EfCoreTriggers.SqlGeneration;
+using Laraue.EfCoreTriggers.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.PostgreSql

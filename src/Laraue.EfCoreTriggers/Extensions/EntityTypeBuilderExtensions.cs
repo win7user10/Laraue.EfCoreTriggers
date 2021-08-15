@@ -1,10 +1,10 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnDelete;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnUpdate;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
-using Laraue.EfCoreTriggers.Common;
+using Laraue.EfCoreTriggers.TriggerBuilders;
+using Laraue.EfCoreTriggers.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.TriggerBuilders.OnDelete;
+using Laraue.EfCoreTriggers.TriggerBuilders.OnInsert;
+using Laraue.EfCoreTriggers.TriggerBuilders.OnUpdate;
 
 namespace Laraue.EfCoreTriggers.Extensions
 {

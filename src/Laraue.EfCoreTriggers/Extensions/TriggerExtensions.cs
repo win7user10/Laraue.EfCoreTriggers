@@ -1,6 +1,6 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
 using System;
+using Laraue.EfCoreTriggers.SqlGeneration;
 
 namespace Laraue.EfCoreTriggers.Extensions
 {

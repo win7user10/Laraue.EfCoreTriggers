@@ -1,14 +1,14 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common;
-using Laraue.EfCoreTriggers.Common.Builders.Providers;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
+using Laraue.EfCoreTriggers.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Converters.MethodCall.String.ToLower;
+using Laraue.EfCoreTriggers.Converters.MethodCall.String.ToUpper;
+using Laraue.EfCoreTriggers.SqlGeneration;
+using Laraue.EfCoreTriggers.TriggerBuilders;
+using Laraue.EfCoreTriggers.TriggerBuilders.Base;
 
 namespace Laraue.EfCoreTriggers.MySql
 {

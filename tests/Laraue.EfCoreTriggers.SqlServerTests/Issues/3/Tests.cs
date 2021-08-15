@@ -1,9 +1,9 @@
 ﻿using System;
-using Laraue.EfCoreTriggers.Common;
-using Laraue.EfCoreTriggers.Common.Builders.Providers;
-using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
+using Laraue.EfCoreTriggers.SqlGeneration;
 using Laraue.EfCoreTriggers.SqlServer;
 using Laraue.EfCoreTriggers.SqlServer.Extensions;
+using Laraue.EfCoreTriggers.TriggerBuilders;
+using Laraue.EfCoreTriggers.TriggerBuilders.OnInsert;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
