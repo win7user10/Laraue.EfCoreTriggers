@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.Converters;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
@@ -325,15 +328,16 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
         /// <returns></returns>
         protected virtual string GetBooleanSqlValue(bool value) => $"{value.ToString().ToLower()}";
 
-        protected AvailableConverters Converters { get; }
+        protected AvailableConverters Converters { get; } = new ();
 
         /// <inheritdoc />
         protected BaseExpressionProvider(IModel model) : base(model)
         {
-            Converters = new AvailableConverters();
-            Converters.ExpressionCallConverters.Push(new ConcatConverter());
-            Converters.ExpressionCallConverters.Push(new ToLowerConverter());
-            Converters.ExpressionCallConverters.Push(new ToUpperConverter());
+        }
+
+        public void AddConverter(IMethodCallConverter converter)
+        {
+            Converters.ExpressionCallConverters.Push(converter);
         }
     }
 }

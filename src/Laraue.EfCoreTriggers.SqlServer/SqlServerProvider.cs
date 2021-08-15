@@ -1,17 +1,25 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Laraue.EfCoreTriggers.Common;
+using Laraue.EfCoreTriggers.Common.Builders.Providers;
+using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
+using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Providers
+namespace Laraue.EfCoreTriggers.SqlServer
 {
     public class SqlServerProvider : BaseTriggerProvider
     {
         public SqlServerProvider(IModel model) : base(model)
         {
+            AddConverter(new ConcatStringViaPlusConverter());
+            AddConverter(new StringToUpperViaUpperFuncConverter());
+            AddConverter(new StringToLowerViaLowerFuncConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new()

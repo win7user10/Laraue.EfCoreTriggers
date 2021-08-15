@@ -4,13 +4,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common;
+using Laraue.EfCoreTriggers.Common.Builders.Providers;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 
-namespace Laraue.EfCoreTriggers.Common.Builders.Providers
+namespace Laraue.EfCoreTriggers.MySql
 {
-    public class MySqlProvider : SqlLiteProvider
+    public class MySqlProvider : BaseTriggerProvider
     {
         public MySqlProvider(IModel model) : base(model)
         {
+            AddConverter(new ConcatStringViaConcatFuncConverter());
+            AddConverter(new StringToUpperViaUpperFuncConverter());
+            AddConverter(new StringToLowerViaLowerFuncConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new()
@@ -124,12 +132,6 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 
             return sqlBuilder;
         }
-
-        protected override SqlBuilder GetMethodConcatCallExpressionSql(params SqlBuilder[] concatExpressionArgsSql)
-            => new SqlBuilder(concatExpressionArgsSql)
-                .Append("CONCAT(")
-                .AppendJoin(", ", concatExpressionArgsSql.Select(x => x.StringBuilder))
-                .Append(")");
 
         protected override string GetConvertExpressionSql(UnaryExpression unaryExpression, string member)
         {

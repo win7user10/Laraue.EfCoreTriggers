@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.PostgreSql
 {
-    public class PostgreSqlProvider : SqlLiteProvider
+    public class PostgreSqlProvider : BaseTriggerProvider
     {
         public PostgreSqlProvider(IModel model) : base(model)
         {
+            AddConverter(new ConcatStringViaConcatFuncConverter());
+            AddConverter(new StringToUpperViaUpperFuncConverter());
+            AddConverter(new StringToLowerViaLowerFuncConverter());
         }
 
-        protected override Dictionary<Type, string> TypeMappings { get; } = new Dictionary<Type, string>
+        protected override Dictionary<Type, string> TypeMappings { get; } = new ()
         {
             [typeof(bool)] = "boolean",
             [typeof(byte)] = "smallint",
@@ -66,6 +72,12 @@ namespace Laraue.EfCoreTriggers.PostgreSql
             return sqlResult;
         }
 
+        /// <inheritdoc />
+        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
+        {
+            throw new NotImplementedException();
+        }
+
         public override SqlBuilder GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
@@ -78,12 +90,6 @@ namespace Laraue.EfCoreTriggers.PostgreSql
                 .Append($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()} ")
                 .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
         }
-
-        protected override SqlBuilder GetMethodConcatCallExpressionSql(params SqlBuilder[] concatExpressionArgsSql)
-            => new SqlBuilder(concatExpressionArgsSql)
-                .Append("CONCAT(")
-                .AppendJoin(", ", concatExpressionArgsSql.Select(x => x.StringBuilder))
-                .Append(")");
 
         protected override string GetNewGuidExpressionSql() => "uuid_generate_v4()";
     }

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
-using Laraue.EfCoreTriggers.SqlLite.Converters.MethodCall.String;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.SqlLite
@@ -13,7 +15,9 @@ namespace Laraue.EfCoreTriggers.SqlLite
     {
         public SqlLiteProvider(IModel model) : base(model)
         {
-            Converters.ExpressionCallConverters.Push(new ConcatConverter());
+            AddConverter(new ConcatStringViaDoubleVerticalLineConverter());
+            AddConverter(new StringToUpperViaUpperFuncConverter());
+            AddConverter(new StringToLowerViaLowerFuncConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new ()

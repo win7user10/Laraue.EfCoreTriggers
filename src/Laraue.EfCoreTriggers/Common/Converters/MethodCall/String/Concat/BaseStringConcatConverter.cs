@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Extensions;
 
-namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String
+namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat
 {
-    public class ConcatConverter : BaseStringConverter
+    public abstract class BaseStringConcatConverter : BaseStringConverter
     {
         /// <inheritdoc />
         public override string MethodName => nameof(string.Concat);
@@ -14,10 +13,11 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String
         /// <inheritdoc />
         public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression, Dictionary<string, ArgumentType> argumentTypes)
         {
-            var concatExpressionArgsSql = provider.GetMethodCallArgumentsSql(expression, argumentTypes);
+            var argumentsSql = provider.GetMethodCallArgumentsSql(expression, argumentTypes);
 
-            return new SqlBuilder(concatExpressionArgsSql)
-                .AppendJoin(" + ", concatExpressionArgsSql.Select(x => x.StringBuilder));
+            return BuildSql(argumentsSql);
         }
+
+        public abstract SqlBuilder BuildSql(SqlBuilder[] argumentsSql);
     }
 }
