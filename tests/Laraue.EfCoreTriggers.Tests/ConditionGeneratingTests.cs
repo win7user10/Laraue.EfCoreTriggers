@@ -1,5 +1,6 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
+using Laraue.EfCoreTriggers.MySql;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using Microsoft.EntityFrameworkCore;

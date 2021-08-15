@@ -2,6 +2,7 @@
 using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Laraue.EfCoreTriggers.MySql.Extensions;
 
 namespace Laraue.EfCoreTriggers.MySqlTests
 {

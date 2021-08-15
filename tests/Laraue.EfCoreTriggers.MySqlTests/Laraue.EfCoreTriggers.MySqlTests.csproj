@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Laraue.EfCoreTriggers.Tests\Laraue.EfCoreTriggers.Tests.csproj" />
+    <ProjectReference Include="..\..\src\Laraue.EfCoreTriggers.MySql\Laraue.EfCoreTriggers.MySql.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Common.Builders.Providers;
+using Laraue.EfCoreTriggers.MySql;
 using Laraue.EfCoreTriggers.Tests;
 
 namespace Laraue.EfCoreTriggers.MySqlTests

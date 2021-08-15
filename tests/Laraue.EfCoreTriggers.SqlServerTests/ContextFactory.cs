@@ -1,4 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Extensions;
+using Laraue.EfCoreTriggers.SqlServer.Extensions;
 using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
 

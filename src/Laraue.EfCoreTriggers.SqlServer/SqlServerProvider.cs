@@ -263,7 +263,7 @@ namespace Laraue.EfCoreTriggers.SqlServer
         protected override string GetNewGuidExpressionSql() => "NEWID()";
     }
 
-    internal static class Extensions
+    internal static class SqlServerProviderExtensions
     {
         public static IEnumerable<MemberInfo> WhereDeclaringType<T>(this IEnumerable<MemberInfo> values)
             => values.Where(x => x.DeclaringType.IsAssignableFrom(typeof(T)));
