@@ -4,7 +4,7 @@ using Laraue.EfCoreTriggers.Common.Builders.Providers;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper
 {
-    public class ToUpperConverter : BaseStringConverter
+    public class StringToUpperViaUpperFuncConverter : BaseStringConverter
     {
         /// <inheritdoc />
         public override string MethodName => nameof(string.ToUpper);

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.SqlLite
 {
-    public class SqlLiteProvider : BaseTriggerProvider
+    public class SqlLiteProvider : BaseSqlProvider
     {
         public SqlLiteProvider(IModel model) : base(model)
         {

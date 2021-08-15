@@ -12,7 +12,7 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 
 namespace Laraue.EfCoreTriggers.MySql
 {
-    public class MySqlProvider : BaseTriggerProvider
+    public class MySqlProvider : BaseSqlProvider
     {
         public MySqlProvider(IModel model) : base(model)
         {

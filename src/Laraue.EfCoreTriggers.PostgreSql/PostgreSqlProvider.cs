@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.PostgreSql
 {
-    public class PostgreSqlProvider : BaseTriggerProvider
+    public class PostgreSqlProvider : BaseSqlProvider
     {
         public PostgreSqlProvider(IModel model) : base(model)
         {

@@ -7,9 +7,9 @@ using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.Builders.Providers
 {
-    public abstract class BaseTriggerProvider : BaseExpressionProvider, ITriggerProvider
+    public abstract class BaseSqlProvider : BaseExpressionProvider, ITriggerProvider
     {
-        public BaseTriggerProvider(IModel model) : base(model)
+        protected BaseSqlProvider(IModel model) : base(model)
         {
         }
 
@@ -20,12 +20,21 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             [TriggerTime.InsteadOf] = "INSTEAD OF",
         };
 
-        protected virtual IEnumerable<TriggerTime> AvailableTriggerTimes { get; } = new[] { TriggerTime.After, TriggerTime.Before, TriggerTime.InsteadOf };
+        protected virtual IEnumerable<TriggerTime> AvailableTriggerTimes { get; } = new[]
+        {
+            TriggerTime.After,
+            TriggerTime.Before, 
+            TriggerTime.InsteadOf
+        };
 
         protected string GetTriggerTimeName(TriggerTime triggerTime)
         {
-            if (!AvailableTriggerTimes.Contains(triggerTime) || !TriggerTimeNames.TryGetValue(triggerTime, out var triggerTypeName))
+            if (!AvailableTriggerTimes.Contains(triggerTime) ||
+                !TriggerTimeNames.TryGetValue(triggerTime, out var triggerTypeName))
+            {
                 throw new NotSupportedException($"Trigger time {triggerTime} is not supported for {GetType()}.");
+            }
+
             return triggerTypeName;
         }
 

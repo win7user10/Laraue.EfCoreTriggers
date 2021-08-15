@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.SqlServer
 {
-    public class SqlServerProvider : BaseTriggerProvider
+    public class SqlServerProvider : BaseSqlProvider
     {
         public SqlServerProvider(IModel model) : base(model)
         {
