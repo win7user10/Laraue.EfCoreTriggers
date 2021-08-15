@@ -15,7 +15,7 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
                     .UseSqlServer("Data Source=(LocalDb)\\v15.0;Database=EfCoreTriggers;Integrated Security=SSPI;",
                         x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                     .UseSnakeCaseNamingConvention()
-                    .UseTriggers()
+                    .UseSqlServerTriggers()
                     .Options)
             {
             }

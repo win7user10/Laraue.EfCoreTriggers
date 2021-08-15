@@ -47,7 +47,7 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Issues._3
 		{
 			_context = new TestDbContext(new DbContextOptionsBuilder<TestDbContext>()
 				.UseSqlServer()
-				.UseTriggers()
+				.UseSqlServerTriggers()
 				.Options);
 
 			_provider = new SqlServerProvider(_context.Model); 

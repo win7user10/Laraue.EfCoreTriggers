@@ -17,7 +17,7 @@ namespace Laraue.EfCoreTriggers.MySqlTests
                         x => x
                             .MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                     .UseSnakeCaseNamingConvention()
-                    .UseTriggers()
+                    .UseMySqlTriggers()
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors()
                     .Options)

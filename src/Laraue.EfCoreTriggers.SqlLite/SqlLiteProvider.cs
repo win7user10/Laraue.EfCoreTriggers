@@ -55,15 +55,15 @@ namespace Laraue.EfCoreTriggers.SqlLite
             {
                 var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
                 sqlResult.MergeColumnsInfo(conditionsSql);
-                sqlResult.Append($"WHEN ")
+                sqlResult.Append("WHEN ")
                     .AppendJoin(" AND ", conditionsSql.Select(x => x.StringBuilder));
             }
 
             var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this));
             sqlResult.MergeColumnsInfo(actionsSql)
-                .Append($" BEGIN ")
+                .Append(" BEGIN ")
                 .AppendJoin(", ", actionsSql.Select(x => x.StringBuilder))
-                .Append($" END; ");
+                .Append(" END; ");
 
             return sqlResult;
         }

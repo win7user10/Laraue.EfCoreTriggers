@@ -16,7 +16,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
                 .UseNpgsql("User ID=postgres;Password=postgres;Host=localhost;Port=5432;Database=efcoretriggers;",
                     x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                 .UseSnakeCaseNamingConvention()
-                .UseTriggers()
+                .UsePostgreSqlTriggers()
                 .Options)
         {
         }
