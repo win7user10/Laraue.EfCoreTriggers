@@ -72,12 +72,6 @@ namespace Laraue.EfCoreTriggers.PostgreSql
             return sqlResult;
         }
 
-        /// <inheritdoc />
-        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
-        {
-            throw new NotImplementedException();
-        }
-
         public override SqlBuilder GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
             var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));

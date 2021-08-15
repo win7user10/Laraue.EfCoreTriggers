@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Builders.Providers;
 using Laraue.EfCoreTriggers.Common.Builders.Triggers.Base;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
@@ -85,37 +84,6 @@ namespace Laraue.EfCoreTriggers.SqlLite
                    .Append(actionsSql[i].StringBuilder);
             }
             return generatedSql;
-        }
-
-        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
-        {
-            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
-            var newExpressionColumnsSql = GetNewExpressionColumnsSql(
-                (NewExpression)triggerUpsertAction.MatchExpression.Body,
-                triggerUpsertAction.MatchExpressionPrefixes.ToDictionary(x => x.Key, x => ArgumentType.None));
-
-            var sqlBuilder = new SqlBuilder(insertStatementSql.AffectedColumns)
-                .MergeColumnsInfo(newExpressionColumnsSql)
-                .Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
-                .Append(insertStatementSql.StringBuilder)
-                .Append(" ON CONFLICT (")
-                .AppendJoin(", ", newExpressionColumnsSql.Select(x => x.StringBuilder))
-                .Append(")");
-
-            if (triggerUpsertAction.OnMatchExpression is null)
-            {
-                sqlBuilder.Append(" DO NOTHING;");
-            }
-            else
-            {
-                var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes);
-                sqlBuilder.MergeColumnsInfo(updateStatementSql.AffectedColumns)
-                    .Append(" DO UPDATE SET ")
-                    .Append(updateStatementSql.StringBuilder)
-                    .Append(";");
-            }
-
-            return sqlBuilder;
         }
 
         protected override string GetNewGuidExpressionSql() =>

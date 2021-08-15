@@ -97,9 +97,38 @@ namespace Laraue.EfCoreTriggers.Common.Builders.Providers
             return sqlResult;
         }
 
-        public abstract SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
+        public virtual SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
             where TTriggerEntity : class
-            where TUpsertEntity : class;
+            where TUpdateEntity : class
+        {
+            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
+            var newExpressionColumnsSql = GetNewExpressionColumnsSql(
+                (NewExpression)triggerUpsertAction.MatchExpression.Body,
+                triggerUpsertAction.MatchExpressionPrefixes.ToDictionary(x => x.Key, x => ArgumentType.None));
+
+            var sqlBuilder = new SqlBuilder(insertStatementSql.AffectedColumns)
+                .MergeColumnsInfo(newExpressionColumnsSql)
+                .Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
+                .Append(insertStatementSql.StringBuilder)
+                .Append(" ON CONFLICT (")
+                .AppendJoin(", ", newExpressionColumnsSql.Select(x => x.StringBuilder))
+                .Append(")");
+
+            if (triggerUpsertAction.OnMatchExpression is null)
+            {
+                sqlBuilder.Append(" DO NOTHING;");
+            }
+            else
+            {
+                var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes);
+                sqlBuilder.MergeColumnsInfo(updateStatementSql.AffectedColumns)
+                    .Append(" DO UPDATE SET ")
+                    .Append(updateStatementSql.StringBuilder)
+                    .Append(";");
+            }
+
+            return sqlBuilder;
+        }
 
         public SqlBuilder GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)
             where TTriggerEntity : class
