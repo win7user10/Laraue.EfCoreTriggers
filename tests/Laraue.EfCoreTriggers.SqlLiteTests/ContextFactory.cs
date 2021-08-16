@@ -1,4 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Extensions;
+﻿using Laraue.EfCoreTriggers.SqlLite.Extensions;
 using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +6,7 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
 {
     public class ContextFactory : BaseContextFactory<NativeDbContext>
     {
-        public override FinalContext CreateDbContext() => new FinalContext();
+        public override FinalContext CreateDbContext() => new();
 
         public class FinalContext : NativeDbContext
         {
@@ -14,7 +14,7 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
                 : base(new DbContextOptionsBuilder<NativeDbContext>()
                     .UseSqlite("Filename=D://test.db", x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                     .UseSnakeCaseNamingConvention()
-                    .UseTriggers()
+                    .UseSqlLiteTriggers()
                     .Options)
             {
             }

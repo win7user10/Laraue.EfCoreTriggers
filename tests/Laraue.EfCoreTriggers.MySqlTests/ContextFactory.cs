@@ -1,8 +1,7 @@
-﻿using Laraue.EfCoreTriggers.Extensions;
-using Laraue.EfCoreTriggers.Tests;
+﻿using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
 using System;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Laraue.EfCoreTriggers.MySql.Extensions;
 
 namespace Laraue.EfCoreTriggers.MySqlTests
 {
@@ -18,7 +17,7 @@ namespace Laraue.EfCoreTriggers.MySqlTests
                         x => x
                             .MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                     .UseSnakeCaseNamingConvention()
-                    .UseTriggers()
+                    .UseMySqlTriggers()
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors()
                     .Options)

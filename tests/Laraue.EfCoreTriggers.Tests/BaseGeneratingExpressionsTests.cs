@@ -1,9 +1,9 @@
-﻿using Laraue.EfCoreTriggers.Common.Builders.Triggers.OnInsert;
-using Laraue.EfCoreTriggers.Common.Builders.Providers;
-using Laraue.EfCoreTriggers.Tests.Entities;
+﻿using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using System;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
 using Xunit;
 
 namespace Laraue.EfCoreTriggers.Tests
@@ -18,7 +18,7 @@ namespace Laraue.EfCoreTriggers.Tests
         }
 
         protected static OnInsertTriggerInsertAction<Transaction, TransactionMirror> NewInsertOnInsertAction(Expression<Func<Transaction, TransactionMirror>> setValues)
-            => new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(setValues);
+            => new(setValues);
 
         public abstract string ExceptedConcatSql { get; }
 

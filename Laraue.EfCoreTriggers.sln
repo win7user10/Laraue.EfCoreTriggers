@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers", "src\Laraue.EfCoreTriggers\Laraue.EfCoreTriggers.csproj", "{ECCF70FF-4296-4680-AD53-AA8352C4D663}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.Common", "src\Laraue.EfCoreTriggers.Common\Laraue.EfCoreTriggers.Common.csproj", "{ECCF70FF-4296-4680-AD53-AA8352C4D663}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.PostgreSqlTests", "tests\Laraue.EfCoreTriggers.PostgreSqlTests\Laraue.EfCoreTriggers.PostgreSqlTests.csproj", "{6D06F2CF-1D9D-43DA-AD0D-1EE0BE986481}"
 EndProject
@@ -17,7 +17,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7EE4BD3E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9CDC27E2-01F4-4AA6-972C-D140415AA103}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.EfCoreTriggers.MySqlTests", "tests\Laraue.EfCoreTriggers.MySqlTests\Laraue.EfCoreTriggers.MySqlTests.csproj", "{F29864A8-ED88-4B3C-A340-15299FD90A56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.MySqlTests", "tests\Laraue.EfCoreTriggers.MySqlTests\Laraue.EfCoreTriggers.MySqlTests.csproj", "{F29864A8-ED88-4B3C-A340-15299FD90A56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.PostgreSql", "src\Laraue.EfCoreTriggers.PostgreSql\Laraue.EfCoreTriggers.PostgreSql.csproj", "{95D6BB4B-77E8-42F2-B9FC-E6740DC89437}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.SqlLite", "src\Laraue.EfCoreTriggers.SqlLite\Laraue.EfCoreTriggers.SqlLite.csproj", "{EAF57617-5657-47D1-A719-424E1D6A63E8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.MySql", "src\Laraue.EfCoreTriggers.MySql\Laraue.EfCoreTriggers.MySql.csproj", "{7B377F09-D92F-4844-AFC7-6642AC6174D1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.SqlServer", "src\Laraue.EfCoreTriggers.SqlServer\Laraue.EfCoreTriggers.SqlServer.csproj", "{FBB5388A-4AFD-4891-A90A-51E59E364278}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +57,22 @@ Global
 		{F29864A8-ED88-4B3C-A340-15299FD90A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F29864A8-ED88-4B3C-A340-15299FD90A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F29864A8-ED88-4B3C-A340-15299FD90A56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95D6BB4B-77E8-42F2-B9FC-E6740DC89437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D6BB4B-77E8-42F2-B9FC-E6740DC89437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D6BB4B-77E8-42F2-B9FC-E6740DC89437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D6BB4B-77E8-42F2-B9FC-E6740DC89437}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAF57617-5657-47D1-A719-424E1D6A63E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAF57617-5657-47D1-A719-424E1D6A63E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAF57617-5657-47D1-A719-424E1D6A63E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAF57617-5657-47D1-A719-424E1D6A63E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B377F09-D92F-4844-AFC7-6642AC6174D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B377F09-D92F-4844-AFC7-6642AC6174D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B377F09-D92F-4844-AFC7-6642AC6174D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B377F09-D92F-4844-AFC7-6642AC6174D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBB5388A-4AFD-4891-A90A-51E59E364278}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBB5388A-4AFD-4891-A90A-51E59E364278}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBB5388A-4AFD-4891-A90A-51E59E364278}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBB5388A-4AFD-4891-A90A-51E59E364278}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +84,10 @@ Global
 		{D1C6E7C5-3018-41AC-AD56-A054FF310B57} = {7EE4BD3E-BA14-4823-A5E7-1464B3591407}
 		{A2D4331D-EA4B-4F01-83EF-D2EE4A8097A7} = {7EE4BD3E-BA14-4823-A5E7-1464B3591407}
 		{F29864A8-ED88-4B3C-A340-15299FD90A56} = {7EE4BD3E-BA14-4823-A5E7-1464B3591407}
+		{95D6BB4B-77E8-42F2-B9FC-E6740DC89437} = {9CDC27E2-01F4-4AA6-972C-D140415AA103}
+		{EAF57617-5657-47D1-A719-424E1D6A63E8} = {9CDC27E2-01F4-4AA6-972C-D140415AA103}
+		{7B377F09-D92F-4844-AFC7-6642AC6174D1} = {9CDC27E2-01F4-4AA6-972C-D140415AA103}
+		{FBB5388A-4AFD-4891-A90A-51E59E364278} = {9CDC27E2-01F4-4AA6-972C-D140415AA103}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3167DB00-67A4-49E7-A52F-CE3B5DBE02A6}

@@ -1,4 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Extensions;
+﻿using Laraue.EfCoreTriggers.PostgreSql.Extensions;
 using Laraue.EfCoreTriggers.Tests;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +6,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
     public class ContextFactory : BaseContextFactory<NativeDbContext>
     {
-        public override FinalContext CreateDbContext() => new FinalContext();
+        public override FinalContext CreateDbContext() => new();
     }
 
     public class FinalContext : NativeDbContext
@@ -16,7 +16,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
                 .UseNpgsql("User ID=postgres;Password=postgres;Host=localhost;Port=5432;Database=efcoretriggers;",
                     x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                 .UseSnakeCaseNamingConvention()
-                .UseTriggers()
+                .UsePostgreSqlTriggers()
                 .Options)
         {
         }

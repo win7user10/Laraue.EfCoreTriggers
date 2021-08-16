@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Laraue.EfCoreTriggers.Tests\Laraue.EfCoreTriggers.Tests.csproj" />
+    <ProjectReference Include="..\..\src\Laraue.EfCoreTriggers.PostgreSql\Laraue.EfCoreTriggers.PostgreSql.csproj" />
   </ItemGroup>
 
 </Project>
