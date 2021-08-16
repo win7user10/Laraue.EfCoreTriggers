@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Laraue.EfCoreTriggers.Extensions;
+﻿using Laraue.EfCoreTriggers.Common.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Laraue.EfCoreTriggers.SqlServer.Extensions
 {

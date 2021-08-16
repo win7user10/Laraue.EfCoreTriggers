@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Laraue.EfCoreTriggers.Converters.MethodCall.String.Concat;
-using Laraue.EfCoreTriggers.Converters.MethodCall.String.ToLower;
-using Laraue.EfCoreTriggers.Converters.MethodCall.String.ToUpper;
-using Laraue.EfCoreTriggers.SqlGeneration;
-using Laraue.EfCoreTriggers.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.SqlLite

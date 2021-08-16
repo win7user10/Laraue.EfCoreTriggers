@@ -1,8 +1,8 @@
-﻿using Laraue.EfCoreTriggers.MySql;
-using Laraue.EfCoreTriggers.SqlGeneration;
+﻿using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
+using Laraue.EfCoreTriggers.MySql;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
-using Laraue.EfCoreTriggers.TriggerBuilders.OnInsert;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
