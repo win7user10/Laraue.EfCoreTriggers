@@ -6,6 +6,7 @@ using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
@@ -20,6 +21,7 @@ namespace Laraue.EfCoreTriggers.SqlServer
             AddConverter(new ConcatStringViaPlusConverter());
             AddConverter(new StringToUpperViaUpperFuncConverter());
             AddConverter(new StringToLowerViaLowerFuncConverter());
+            AddConverter(new StringTrimViaTrimFuncConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new()

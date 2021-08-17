@@ -26,5 +26,8 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
         public override string ExceptedBooleanSql => "INSERT INTO test_entities (boolean_value) VALUES (true);";
 
         public override string ExceptedNewGuidSql => "INSERT INTO test_entities (guid_value) VALUES (lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab', abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6))));";
+
+        public override string ExceptedStringTrimSql => "INSERT INTO transactions_mirror (description) VALUES (TRIM(NEW.description));";
+
     }
 }
