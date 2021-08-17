@@ -325,7 +325,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <returns></returns>
         protected virtual string GetBooleanSqlValue(bool value) => $"{value.ToString().ToLower()}";
 
-        protected AvailableConverters Converters { get; } = new ();
+        public AvailableConverters Converters { get; } = new ();
 
         /// <inheritdoc />
         protected BaseExpressionProvider(IModel model) : base(model)
