@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
@@ -22,6 +23,7 @@ namespace Laraue.EfCoreTriggers.SqlServer
             AddConverter(new StringToUpperViaUpperFuncConverter());
             AddConverter(new StringToLowerViaLowerFuncConverter());
             AddConverter(new StringTrimViaTrimFuncConverter());
+            AddConverter(new StringContainsViaCharindexFuncConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new()

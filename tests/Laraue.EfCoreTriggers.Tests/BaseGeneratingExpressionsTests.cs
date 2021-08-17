@@ -40,6 +40,8 @@ namespace Laraue.EfCoreTriggers.Tests
 
         public abstract string ExceptedStringTrimSql { get; }
 
+        public abstract string ExceptedContainsSql { get; }
+
         [Fact]
         public virtual void StringConcatSql()
         {
@@ -126,6 +128,16 @@ namespace Laraue.EfCoreTriggers.Tests
                 Description = transaction.Description.Trim()
             }).BuildSql(Visitor);
             Assert.Equal(ExceptedStringTrimSql, sql);
+        }
+
+        [Fact]
+        public virtual void StringContainsSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                IsVeryfied = transaction.Description.Contains("abc"),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedContainsSql, sql);
         }
     }
 }

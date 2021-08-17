@@ -29,5 +29,7 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
 
         public override string ExceptedStringTrimSql => "INSERT INTO transactions_mirror (description) VALUES (TRIM(@NewDescription));";
 
+        public override string ExceptedContainsSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (CHARINDEX(@NewDescription, 'abc') > 0);";
+
     }
 }
