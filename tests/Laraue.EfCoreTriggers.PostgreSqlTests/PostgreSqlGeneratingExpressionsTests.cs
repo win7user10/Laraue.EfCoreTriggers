@@ -26,5 +26,9 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
         public override string ExceptedBooleanSql => "INSERT INTO test_entities (boolean_value) VALUES (true);";
 
         public override string ExceptedNewGuidSql => "INSERT INTO test_entities (guid_value) VALUES (uuid_generate_v4());";
+
+        public override string ExceptedStringTrimSql => "INSERT INTO transactions_mirror (description) VALUES (BTRIM(NEW.description));";
+
+        public override string ExceptedContainsSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (STRPOS(NEW.description, 'abc') > 0);";
     }
 }

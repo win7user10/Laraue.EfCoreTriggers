@@ -9,7 +9,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String
         /// <inheritdoc />
         public override bool IsApplicable(MethodCallExpression expression)
         {
-            return expression.Type == typeof(string) && MethodName == expression.Method.Name;
+            return (expression.Type == typeof(string) || expression?.Object.Type == typeof(string)) && MethodName == expression.Method.Name;
         }
     }
 }

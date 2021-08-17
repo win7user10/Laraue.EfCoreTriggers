@@ -38,6 +38,10 @@ namespace Laraue.EfCoreTriggers.Tests
 
         public abstract string ExceptedNewGuidSql { get; }
 
+        public abstract string ExceptedStringTrimSql { get; }
+
+        public abstract string ExceptedContainsSql { get; }
+
         [Fact]
         public virtual void StringConcatSql()
         {
@@ -114,6 +118,26 @@ namespace Laraue.EfCoreTriggers.Tests
             var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { GuidValue = new Guid() });
             var sql = action.BuildSql(Visitor);
             Assert.Equal(ExceptedNewGuidSql, sql);
+        }
+
+        [Fact]
+        public virtual void StringTrimSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                Description = transaction.Description.Trim()
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedStringTrimSql, sql);
+        }
+
+        [Fact]
+        public virtual void StringContainsSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                IsVeryfied = transaction.Description.Contains("abc"),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedContainsSql, sql);
         }
     }
 }

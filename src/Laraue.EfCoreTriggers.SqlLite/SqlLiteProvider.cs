@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -17,6 +19,8 @@ namespace Laraue.EfCoreTriggers.SqlLite
             AddConverter(new ConcatStringViaDoubleVerticalLineConverter());
             AddConverter(new StringToUpperViaUpperFuncConverter());
             AddConverter(new StringToLowerViaLowerFuncConverter());
+            AddConverter(new StringTrimViaTrimFuncConverter());
+            AddConverter(new StringContainsViaInstrFuncConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new ()
