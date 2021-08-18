@@ -1,4 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Tests;
 using Xunit;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
