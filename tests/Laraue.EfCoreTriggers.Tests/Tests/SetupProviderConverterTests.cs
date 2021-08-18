@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
 using Laraue.EfCoreTriggers.MySql;
 using Laraue.EfCoreTriggers.Tests.Entities;
-using Laraue.EfCoreTriggers.Tests.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
