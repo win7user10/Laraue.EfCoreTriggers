@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
 
-namespace Laraue.EfCoreTriggers.Tests
+namespace Laraue.EfCoreTriggers.Tests.Tests
 {
 	public class ConditionGeneratingTests
     {

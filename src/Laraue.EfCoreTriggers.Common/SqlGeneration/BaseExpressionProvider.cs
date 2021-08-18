@@ -257,16 +257,14 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 return parts;
             };
 
-            if (binaryExpression.Method?.Name == "Concat")
+            if (binaryExpression.Method?.Name == nameof(string.Concat))
             {
                 return GetMethodCallExpressionSql(Expression.Call(null, binaryExpression.Method, binaryExpression.Left, binaryExpression.Right), argumentTypes);
             }
-            else
-            {
-                var binaryParts = GetBinaryExpressionParts().Select(part => GetExpressionSql(part, argumentTypes));
-                return new SqlBuilder(binaryParts)
-                    .AppendJoin($" {GetExpressionOperandSql(binaryExpression)} ", binaryParts.Select(x => x.StringBuilder));
-            }
+
+            var binaryParts = GetBinaryExpressionParts().Select(part => GetExpressionSql(part, argumentTypes));
+            return new SqlBuilder(binaryParts)
+                .AppendJoin($" {GetExpressionOperandSql(binaryExpression)} ", binaryParts.Select(x => x.StringBuilder));
         }
 
         /// <summary>
@@ -325,7 +323,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <returns></returns>
         protected virtual string GetBooleanSqlValue(bool value) => $"{value.ToString().ToLower()}";
 
-        protected AvailableConverters Converters { get; } = new ();
+        public AvailableConverters Converters { get; } = new ();
 
         /// <inheritdoc />
         protected BaseExpressionProvider(IModel model) : base(model)
