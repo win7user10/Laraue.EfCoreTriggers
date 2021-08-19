@@ -133,19 +133,30 @@ var dbContext = new TestDbContext(options);
 Using custom provider to extend additional functionality
 
 ```cs
-private class MySqlProvider : PostgreSqlProvider
+private class MyCustomSqlProvider : PostgreSqlProvider // Or another used provider
 {
     /// Provider will be created via reflection, so constructor only with this argument is allowed 
     public MySqlProvider(IModel model) : base(model)
     {
     }
 
-    /// <inheritdoc />
     protected override string GetColumnName(MemberInfo memberInfo)
     {
+        // Change strategy of naming some column
         return 'c_' + base.GetColumnName(memberInfo);
     }
 }
+```
+
+Adding this provider to a container
+
+```cs
+var options = new DbContextOptionsBuilder<TestDbContext>()
+    .UseNpgsql("User ID=test;Password=test;Host=localhost;Port=5432;Database=test;")
+    .UseTriggers<MyCustomSqlProvider>()
+    .Options;
+
+var dbContext = new TestDbContext(options);
 ```
 
 ### Adding translation of some custom function into sql code
@@ -183,7 +194,7 @@ public abstract class StringExtensionsLikeConverter : MethodCallConverter
         var sqlBuilder = provider.GetExpressionSql(expression.Object, argumentTypes);
         
         // Combine SQL for object and SQL for arguments
-        // Output will be like "columnName LIKE 'passedArgumentValue'"
+        // Output will be like "thisValueSql LIKE 'passedArgumentValueSql'"
         return new(sqlBuilder.AffectedColumns, $"{sqlBuilder} LIKE {argumentSql}");
     }
 }
