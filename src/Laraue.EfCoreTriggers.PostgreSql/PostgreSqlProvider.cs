@@ -9,6 +9,7 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith;
 
 namespace Laraue.EfCoreTriggers.PostgreSql
 {
@@ -21,6 +22,7 @@ namespace Laraue.EfCoreTriggers.PostgreSql
             AddConverter(new StringToLowerViaLowerFuncConverter());
             AddConverter(new StringTrimViaBtrimFuncConverter());
             AddConverter(new StringContainsViaStrposFuncConverter());
+            AddConverter(new StringEndsWithViaDoubleVerticalLineConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new ()
