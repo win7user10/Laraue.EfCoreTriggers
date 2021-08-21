@@ -1,5 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.MySql;
-using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Tests;
 
 namespace Laraue.EfCoreTriggers.MySqlTests
 {

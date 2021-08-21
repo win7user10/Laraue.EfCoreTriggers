@@ -1,12 +1,11 @@
-﻿using Laraue.EfCoreTriggers.Tests.Entities;
-using Laraue.EfCoreTriggers.Tests.Enums;
-using System;
-using System.Linq.Expressions;
+﻿using System;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
+using Laraue.EfCoreTriggers.Tests.Entities;
+using Laraue.EfCoreTriggers.Tests.Enums;
 using Xunit;
 
-namespace Laraue.EfCoreTriggers.Tests
+namespace Laraue.EfCoreTriggers.Tests.Tests
 {
     public abstract class BaseGeneratingExpressionsTests
     {
@@ -16,9 +15,6 @@ namespace Laraue.EfCoreTriggers.Tests
         {
             Visitor = visitor;
         }
-
-        protected static OnInsertTriggerInsertAction<Transaction, TransactionMirror> NewInsertOnInsertAction(Expression<Func<Transaction, TransactionMirror>> setValues)
-            => new(setValues);
 
         public abstract string ExceptedConcatSql { get; }
 

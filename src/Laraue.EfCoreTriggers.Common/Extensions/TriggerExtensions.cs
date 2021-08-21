@@ -1,4 +1,5 @@
 ﻿using System;
+using Laraue.EfCoreTriggers.Common.Converters;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -7,14 +8,16 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
     public static class TriggerExtensions
     {
         private static Type _activeProviderType;
+        private static Action<AvailableConverters> _setupProviderConverters;
 
         /// <summary>
         /// Bad solution, but have no idea yet, how to register current provider using DbContextOptionsBuilder.
         /// </summary>
-        public static void RememberTriggerProviderType<TTriggerProvider>()
+        public static void RememberTriggerProvider<TTriggerProvider>(Action<AvailableConverters> setupConverters)
             where TTriggerProvider : ITriggerProvider
         {
             _activeProviderType = typeof(TTriggerProvider);
+            _setupProviderConverters = setupConverters;
         }
 
         public static ITriggerProvider GetSqlProvider(IModel model)
@@ -31,12 +34,14 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
                 throw new InvalidOperationException("Provider should contain constructor with one parameter which receive instance of IModel");
             }
 
-            var provider = providerConstructor.Invoke(new[]
+            var provider = (ITriggerProvider)providerConstructor.Invoke(new[]
             {
                 (object) model
             });
 
-            return (ITriggerProvider) provider;
+            _setupProviderConverters?.Invoke(provider.Converters);
+
+            return provider;
         }
     }
 }

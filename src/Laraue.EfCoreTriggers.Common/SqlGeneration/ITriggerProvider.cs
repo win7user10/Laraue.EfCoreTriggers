@@ -1,9 +1,12 @@
-﻿using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+﻿using Laraue.EfCoreTriggers.Common.Converters;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
 namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 {
     public interface ITriggerProvider
     {
+        AvailableConverters Converters { get; }
+
         SqlBuilder GetDropTriggerSql(string triggerName);
 
         SqlBuilder GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)

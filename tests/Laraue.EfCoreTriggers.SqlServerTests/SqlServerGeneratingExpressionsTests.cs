@@ -1,5 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.SqlServer;
-using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Tests;
 
 namespace Laraue.EfCoreTriggers.SqlServerTests
 {
