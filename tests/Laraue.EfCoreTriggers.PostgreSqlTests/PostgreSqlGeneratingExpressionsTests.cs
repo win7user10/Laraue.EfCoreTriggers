@@ -30,5 +30,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
         public override string ExceptedStringTrimSql => "INSERT INTO transactions_mirror (description) VALUES (BTRIM(NEW.description));";
 
         public override string ExceptedContainsSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (STRPOS(NEW.description, 'abc') > 0);";
+
+        public override string ExceptedEndsWithSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (NEW.description LIKE ('%' || 'abc'));";
     }
 }

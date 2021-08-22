@@ -30,6 +30,8 @@ namespace Laraue.EfCoreTriggers.MySqlTests
         public override string ExceptedStringTrimSql => "INSERT INTO transactions_mirror (description) VALUES (TRIM(NEW.description));";
 
         public override string ExceptedContainsSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (INSTR(NEW.description, 'abc') > 0);";
+       
+        public override string ExceptedEndsWithSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (NEW.description LIKE CONCAT('%', 'abc'));";
 
     }
 }
