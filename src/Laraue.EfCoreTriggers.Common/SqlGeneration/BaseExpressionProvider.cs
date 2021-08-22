@@ -122,6 +122,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 NewExpression newExpression => GetNewExpressionSql(newExpression),
                 ConstantExpression constantExpression => GetConstantExpressionSql(constantExpression),
                 MethodCallExpression methodCallExpression => GetMethodCallExpressionSql(methodCallExpression, argumentTypes),
+                null => throw new ArgumentNullException(nameof(expression)),
                 _ => throw new NotSupportedException($"Expression of type {expression.GetType()} for {expression} is not supported."),
             };
         }

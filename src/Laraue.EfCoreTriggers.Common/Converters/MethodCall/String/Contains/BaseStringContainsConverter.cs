@@ -19,7 +19,8 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains
             var argumentSql = provider.GetMethodCallArgumentsSql(expression, argumentTypes)[0];
 
             var sqlBuilder = provider.GetExpressionSql(expression.Object, argumentTypes);
-            return new(sqlBuilder.AffectedColumns, $"{SqlFunctionName}({sqlBuilder}, {argumentSql}) > 0");
+            return new SqlBuilder(sqlBuilder.AffectedColumns, $"{SqlFunctionName}({sqlBuilder}, {argumentSql}) > 0")
+                .MergeColumnsInfo(argumentSql);
         }
     }
 }
