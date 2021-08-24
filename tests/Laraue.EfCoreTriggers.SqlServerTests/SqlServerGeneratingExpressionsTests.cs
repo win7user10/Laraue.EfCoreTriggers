@@ -32,6 +32,8 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
         public override string ExceptedContainsSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (CHARINDEX(@NewDescription, 'abc') > 0);";
 
         public override string ExceptedEndsWithSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (@NewDescription LIKE ('%' + 'abc'));";
+        
+        public override string ExceptedIsNullOrEmptySql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (@NewDescription IS NULL OR @NewDescription = '');";
 
     }
 }

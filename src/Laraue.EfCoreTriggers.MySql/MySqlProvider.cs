@@ -12,6 +12,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.IsNullOrEmpty;
 
 namespace Laraue.EfCoreTriggers.MySql
 {
@@ -25,6 +26,7 @@ namespace Laraue.EfCoreTriggers.MySql
             AddConverter(new StringTrimViaTrimFuncConverter());
             AddConverter(new StringContainsViaInstrFuncConverter());
             AddConverter(new StringEndsWithViaConcatFuncConverter());
+            AddConverter(new StringIsNullOrEmptyConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new()

@@ -10,6 +10,7 @@ using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.IsNullOrEmpty;
 
 namespace Laraue.EfCoreTriggers.PostgreSql
 {
@@ -23,6 +24,7 @@ namespace Laraue.EfCoreTriggers.PostgreSql
             AddConverter(new StringTrimViaBtrimFuncConverter());
             AddConverter(new StringContainsViaStrposFuncConverter());
             AddConverter(new StringEndsWithViaDoubleVerticalLineConverter());
+            AddConverter(new StringIsNullOrEmptyConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new ()
