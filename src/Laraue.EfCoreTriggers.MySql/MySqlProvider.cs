@@ -7,6 +7,7 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.AtanTwo;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
@@ -35,6 +36,7 @@ namespace Laraue.EfCoreTriggers.MySql
             AddConverter(new MathAcosConverter());
             AddConverter(new MathAsinConverter());
             AddConverter(new MathAtanConverter());
+            AddConverter(new MathAtanTwoConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new()

@@ -50,6 +50,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
         public abstract string ExceptedAtanSql { get; }
 
+        public abstract string ExceptedAtanTwoSql { get; }
+
 
         [Fact]
         public virtual void StringConcatSql()
@@ -209,5 +211,14 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             Assert.Equal(ExceptedAtanSql, sql);
         }
 
+        [Fact]
+        public virtual void MathAtanTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Atan2(transaction.DoubleValue, transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedAtanTwoSql, sql);
+        }
     }
 }
