@@ -40,6 +40,8 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
         public override string ExceptedAbsSql => "INSERT INTO transactions_mirror (value) VALUES (ABS(@NewValue));";
 
         public override string ExceptedAcosSql => "INSERT INTO transactions_mirror (double_value) VALUES (ACOS(@NewDoubleValue));";
+      
+        public override string ExceptedAsinSql => "INSERT INTO transactions_mirror (double_value) VALUES (ASIN(@NewDoubleValue));";
 
     }
 }

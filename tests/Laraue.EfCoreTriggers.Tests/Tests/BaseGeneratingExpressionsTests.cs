@@ -46,6 +46,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
         public abstract string ExceptedAcosSql { get; }
 
+        public abstract string ExceptedAsinSql { get; }
+
 
         [Fact]
         public virtual void StringConcatSql()
@@ -184,6 +186,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             }).BuildSql(Visitor);
             Assert.Equal(ExceptedAcosSql, sql);
         }
-        
+
+        [Fact]
+        public virtual void MathAsinSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Asin(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedAsinSql, sql);
+        }
+
     }
 }

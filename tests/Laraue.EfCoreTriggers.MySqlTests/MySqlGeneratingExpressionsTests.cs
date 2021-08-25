@@ -41,5 +41,7 @@ namespace Laraue.EfCoreTriggers.MySqlTests
 
         public override string ExceptedAcosSql => "INSERT INTO transactions_mirror (double_value) VALUES (ACOS(NEW.double_value));";
 
+        public override string ExceptedAsinSql => "INSERT INTO transactions_mirror (double_value) VALUES (ASIN(NEW.double_value));";
+
     }
 }
