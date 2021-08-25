@@ -1,8 +1,10 @@
 ﻿using Laraue.EfCoreTriggers.MySql;
 using Laraue.EfCoreTriggers.Tests.Tests;
+using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.MySqlTests
 {
+    [UnitTest]
     public class MySqlGeneratingExpressionsTests : BaseGeneratingExpressionsTests
     {
         public MySqlGeneratingExpressionsTests() : base(new MySqlProvider(new ContextFactory().CreateDbContext().Model))

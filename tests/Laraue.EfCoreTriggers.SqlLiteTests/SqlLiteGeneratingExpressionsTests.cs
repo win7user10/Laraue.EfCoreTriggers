@@ -1,8 +1,10 @@
 ﻿using Laraue.EfCoreTriggers.SqlLite;
 using Laraue.EfCoreTriggers.Tests.Tests;
+using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.SqlLiteTests
 {
+    [UnitTest]
     public class SqlLiteGeneratingExpressionsTests : BaseGeneratingExpressionsTests
     {
         public SqlLiteGeneratingExpressionsTests() : base(new SqlLiteProvider(new ContextFactory().CreateDbContext().Model))

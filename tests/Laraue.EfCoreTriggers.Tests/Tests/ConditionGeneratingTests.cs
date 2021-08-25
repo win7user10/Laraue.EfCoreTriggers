@@ -6,9 +6,11 @@ using Laraue.EfCoreTriggers.Tests.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
+using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.Tests.Tests
 {
+    [UnitTest]
 	public class ConditionGeneratingTests
     {
         private readonly ITriggerProvider _provider;

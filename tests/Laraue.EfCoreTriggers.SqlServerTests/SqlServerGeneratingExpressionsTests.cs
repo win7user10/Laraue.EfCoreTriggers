@@ -1,8 +1,10 @@
 ﻿using Laraue.EfCoreTriggers.SqlServer;
 using Laraue.EfCoreTriggers.Tests.Tests;
+using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.SqlServerTests
 {
+    [UnitTest]
     public class SqlServerGeneratingExpressionsTests : BaseGeneratingExpressionsTests
     {
         public SqlServerGeneratingExpressionsTests() : base(new SqlServerProvider(new ContextFactory().CreateDbContext().Model))

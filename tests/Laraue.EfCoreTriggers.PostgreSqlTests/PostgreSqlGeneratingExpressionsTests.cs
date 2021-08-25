@@ -1,8 +1,10 @@
 ﻿using Laraue.EfCoreTriggers.PostgreSql;
 using Laraue.EfCoreTriggers.Tests.Tests;
+using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
+    [UnitTest]
     public class PostgreSqlGeneratingExpressionsTests : BaseGeneratingExpressionsTests
     {
         public PostgreSqlGeneratingExpressionsTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
