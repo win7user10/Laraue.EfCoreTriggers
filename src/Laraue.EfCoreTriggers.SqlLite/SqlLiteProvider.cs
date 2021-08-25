@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith;
@@ -27,6 +28,7 @@ namespace Laraue.EfCoreTriggers.SqlLite
             AddConverter(new StringEndsWithViaDoubleVerticalLineConverter());
             AddConverter(new StringIsNullOrEmptyConverter());
             AddConverter(new MathAbsConverter());
+            AddConverter(new MathAcosConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new ()

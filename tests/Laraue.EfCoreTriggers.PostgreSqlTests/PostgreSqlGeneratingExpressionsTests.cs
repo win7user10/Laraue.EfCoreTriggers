@@ -38,5 +38,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
         public override string ExceptedIsNullOrEmptySql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (NEW.description IS NULL OR NEW.description = '');";
         
         public override string ExceptedAbsSql => "INSERT INTO transactions_mirror (value) VALUES (ABS(NEW.value));";
+
+        public override string ExceptedAcosSql => "INSERT INTO transactions_mirror (double_value) VALUES (ACOS(NEW.double_value));";
     }
 }
