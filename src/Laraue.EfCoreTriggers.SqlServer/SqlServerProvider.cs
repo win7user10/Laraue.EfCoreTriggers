@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith;
@@ -28,6 +29,7 @@ namespace Laraue.EfCoreTriggers.SqlServer
             AddConverter(new StringContainsViaCharindexFuncConverter());
             AddConverter(new StringEndsWithViaPlusConverter());
             AddConverter(new StringIsNullOrEmptyConverter());
+            AddConverter(new MathAbsConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new()

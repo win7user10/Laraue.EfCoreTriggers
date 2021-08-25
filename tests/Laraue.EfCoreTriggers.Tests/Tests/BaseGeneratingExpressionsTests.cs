@@ -41,6 +41,10 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         public abstract string ExceptedEndsWithSql { get; }
 
         public abstract string ExceptedIsNullOrEmptySql { get; }
+
+        public abstract string ExceptedAbsSql { get; }
+
+
         [Fact]
         public virtual void StringConcatSql()
         {
@@ -157,6 +161,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
                 IsVeryfied = string.IsNullOrEmpty(transaction.Description),
             }).BuildSql(Visitor);
             Assert.Equal(ExceptedIsNullOrEmptySql, sql);
+        }
+
+        [Fact]
+        public virtual void MathAbsSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                Value = Math.Abs(transaction.Value),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedAbsSql, sql);
         }
     }
 }
