@@ -56,6 +56,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
         public abstract string ExceptedCosSql { get; }
 
+        public abstract string ExceptedExpSql { get; }
+
 
 
         [Fact]
@@ -244,6 +246,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
                 DoubleValue = Math.Cos(transaction.DoubleValue),
             }).BuildSql(Visitor);
             Assert.Equal(ExceptedCosSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathExpTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Exp(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedExpSql, sql);
         }
     }
 }
