@@ -52,6 +52,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
         public abstract string ExceptedAtanTwoSql { get; }
 
+        public abstract string ExceptedCeilingSql { get; }
+
 
         [Fact]
         public virtual void StringConcatSql()
@@ -219,6 +221,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
                 DoubleValue = Math.Atan2(transaction.DoubleValue, transaction.DoubleValue),
             }).BuildSql(Visitor);
             Assert.Equal(ExceptedAtanTwoSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathCeilingTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Ceiling(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedCeilingSql, sql);
         }
     }
 }
