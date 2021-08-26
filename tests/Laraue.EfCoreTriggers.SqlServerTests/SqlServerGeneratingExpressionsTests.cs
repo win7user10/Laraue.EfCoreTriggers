@@ -46,8 +46,10 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
         public override string ExceptedAtanSql => "INSERT INTO transactions_mirror (double_value) VALUES (ATAN(@NewDoubleValue));";
         
         public override string ExceptedAtanTwoSql => "INSERT INTO transactions_mirror (double_value) VALUES (ATAN2(@NewDoubleValue, @NewDoubleValue));";
-        
+      
         public override string ExceptedCeilingSql => "INSERT INTO transactions_mirror (double_value) VALUES (CEILING(@NewDoubleValue));";
+        
+        public override string ExceptedCosSql => "INSERT INTO transactions_mirror (double_value) VALUES (COS(@NewDoubleValue));";
 
     }
 }

@@ -54,6 +54,9 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
         public abstract string ExceptedCeilingSql { get; }
 
+        public abstract string ExceptedCosSql { get; }
+
+
 
         [Fact]
         public virtual void StringConcatSql()
@@ -231,6 +234,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
                 DoubleValue = Math.Ceiling(transaction.DoubleValue),
             }).BuildSql(Visitor);
             Assert.Equal(ExceptedCeilingSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathCosTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Cos(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedCosSql, sql);
         }
     }
 }
