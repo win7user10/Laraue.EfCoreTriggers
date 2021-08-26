@@ -58,6 +58,9 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
         public abstract string ExceptedExpSql { get; }
 
+        public abstract string ExceptedFloorSql { get; }
+
+
 
 
         [Fact]
@@ -256,6 +259,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
                 DoubleValue = Math.Exp(transaction.DoubleValue),
             }).BuildSql(Visitor);
             Assert.Equal(ExceptedExpSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathFloorTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Floor(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedFloorSql, sql);
         }
     }
 }

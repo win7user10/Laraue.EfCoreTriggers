@@ -9,6 +9,7 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.AtanTwo;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Cos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Floor;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith;
@@ -41,6 +42,7 @@ namespace Laraue.EfCoreTriggers.SqlLite
             AddConverter(new MathCeilingConverter());
             AddConverter(new MathCosConverter());
             AddConverter(new MathExpConverter());
+            AddConverter(new MathFloorConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new ()

@@ -53,5 +53,7 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
 
         public override string ExceptedExpSql => "INSERT INTO transactions_mirror (double_value) VALUES (EXP(NEW.double_value));";
 
+        public override string ExceptedFloorSql => "INSERT INTO transactions_mirror (double_value) VALUES (FLOOR(NEW.double_value));";
+
     }
 }
