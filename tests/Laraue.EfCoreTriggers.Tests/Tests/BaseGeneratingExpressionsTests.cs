@@ -40,6 +40,29 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
         public abstract string ExceptedEndsWithSql { get; }
 
+        public abstract string ExceptedIsNullOrEmptySql { get; }
+
+        public abstract string ExceptedAbsSql { get; }
+
+        public abstract string ExceptedAcosSql { get; }
+
+        public abstract string ExceptedAsinSql { get; }
+
+        public abstract string ExceptedAtanSql { get; }
+
+        public abstract string ExceptedAtanTwoSql { get; }
+
+        public abstract string ExceptedCeilingSql { get; }
+
+        public abstract string ExceptedCosSql { get; }
+
+        public abstract string ExceptedExpSql { get; }
+
+        public abstract string ExceptedFloorSql { get; }
+
+
+
+
         [Fact]
         public virtual void StringConcatSql()
         {
@@ -146,6 +169,106 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
                 IsVeryfied = transaction.Description.EndsWith("abc"),
             }).BuildSql(Visitor);
             Assert.Equal(ExceptedEndsWithSql, sql);
+        }
+
+        [Fact]
+        public virtual void StringIsNullOrEmptySql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                IsVeryfied = string.IsNullOrEmpty(transaction.Description),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedIsNullOrEmptySql, sql);
+        }
+
+        [Fact]
+        public virtual void MathAbsSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                Value = Math.Abs(transaction.Value),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedAbsSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathAcosSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Acos(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedAcosSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathAsinSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Asin(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedAsinSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathAtanSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Atan(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedAtanSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathAtanTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Atan2(transaction.DoubleValue, transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedAtanTwoSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathCeilingTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Ceiling(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedCeilingSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathCosTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Cos(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedCosSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathExpTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Exp(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedExpSql, sql);
+        }
+
+        [Fact]
+        public virtual void MathFloorTwoSql()
+        {
+            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            {
+                DoubleValue = Math.Floor(transaction.DoubleValue),
+            }).BuildSql(Visitor);
+            Assert.Equal(ExceptedFloorSql, sql);
         }
     }
 }

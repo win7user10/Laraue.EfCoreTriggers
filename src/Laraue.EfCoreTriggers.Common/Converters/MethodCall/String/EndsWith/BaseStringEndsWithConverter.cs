@@ -16,7 +16,8 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith
         {
             var argumentSql = provider.GetMethodCallArgumentsSql(expression, argumentTypes)[0];
             var sqlBuilder = provider.GetExpressionSql(expression.Object, argumentTypes);
-            return new(sqlBuilder.AffectedColumns, $"{sqlBuilder} LIKE {BuildEndSql(argumentSql)}");
+            return new SqlBuilder(sqlBuilder.AffectedColumns, $"{sqlBuilder} LIKE {BuildEndSql(argumentSql)}")
+                .MergeColumnsInfo(argumentSql);
         }
 
         public abstract string BuildEndSql(string argumentSql);

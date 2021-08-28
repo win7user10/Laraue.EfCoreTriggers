@@ -1,15 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using System;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String
 {
     public abstract class BaseStringConverter : MethodCallConverter
     {
-        public abstract string MethodName { get; }
-
-        /// <inheritdoc />
-        public override bool IsApplicable(MethodCallExpression expression)
-        {
-            return expression.Method.ReflectedType == typeof(string) && MethodName == expression.Method.Name;
-        }
+        public override Type ReflectedType => typeof(string);
     }
 }

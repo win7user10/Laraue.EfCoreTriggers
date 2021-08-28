@@ -9,9 +9,11 @@ using Laraue.EfCoreTriggers.Tests.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
+using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.Tests.Tests
 {
+    [UnitTest]
 	public class SetupProviderConverterTests
     {
         private readonly ITriggerProvider _provider;

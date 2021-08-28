@@ -122,6 +122,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 NewExpression newExpression => GetNewExpressionSql(newExpression),
                 ConstantExpression constantExpression => GetConstantExpressionSql(constantExpression),
                 MethodCallExpression methodCallExpression => GetMethodCallExpressionSql(methodCallExpression, argumentTypes),
+                null => throw new ArgumentNullException(nameof(expression)),
                 _ => throw new NotSupportedException($"Expression of type {expression.GetType()} for {expression} is not supported."),
             };
         }
@@ -262,7 +263,24 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 return GetMethodCallExpressionSql(Expression.Call(null, binaryExpression.Method, binaryExpression.Left, binaryExpression.Right), argumentTypes);
             }
 
-            var binaryParts = GetBinaryExpressionParts().Select(part => GetExpressionSql(part, argumentTypes));
+            var binaryExpressionParts = GetBinaryExpressionParts();
+
+            // Check, if one arument is null, should be generated expression "value IS NULL"
+            if (binaryExpression.NodeType is ExpressionType.Equal || binaryExpression.NodeType is ExpressionType.NotEqual)
+            {
+                if (binaryExpressionParts.Any(x => x is ConstantExpression constExpr && constExpr.Value == null))
+                {
+                    var secondArgument = binaryExpressionParts.First(x => x is ConstantExpression constExpr && constExpr.Value == null);
+                    var firstArgument = binaryExpressionParts.Except(new[] { secondArgument }).First();
+                    var argumentsSql = new[] { firstArgument, secondArgument }.Select(part => GetExpressionSql(part, argumentTypes)).ToArray();
+                    return new SqlBuilder(argumentsSql)
+                        .Append(argumentsSql[0].StringBuilder)
+                        .Append(" IS NULL");
+                }
+            }
+
+            var binaryParts = binaryExpressionParts.Select(part => GetExpressionSql(part, argumentTypes)).ToArray();
+
             return new SqlBuilder(binaryParts)
                 .AppendJoin($" {GetExpressionOperandSql(binaryExpression)} ", binaryParts.Select(x => x.StringBuilder));
         }
@@ -297,6 +315,8 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                     return new SqlBuilder(GetEnumSqlValue(enumValue));
                 case bool boolValue:
                     return new SqlBuilder(GetBooleanSqlValue(boolValue));
+                case null:
+                    return new SqlBuilder("NULL");
                 default:
                     return new SqlBuilder(constantExpression.Value.ToString().ToLower());
             }

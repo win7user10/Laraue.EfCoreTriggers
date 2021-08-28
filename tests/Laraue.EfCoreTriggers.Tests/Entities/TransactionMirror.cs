@@ -8,6 +8,8 @@ namespace Laraue.EfCoreTriggers.Tests.Entities
 
         public decimal Value { get; set; }
 
+        public double DoubleValue { get; set; }
+
         public bool IsVeryfied { get; set; }
 
         public string Description { get; set; }

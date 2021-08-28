@@ -3,6 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.AtanTwo;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Cos;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Floor;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
@@ -12,6 +21,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.IsNullOrEmpty;
 
 namespace Laraue.EfCoreTriggers.MySql
 {
@@ -25,6 +35,16 @@ namespace Laraue.EfCoreTriggers.MySql
             AddConverter(new StringTrimViaTrimFuncConverter());
             AddConverter(new StringContainsViaInstrFuncConverter());
             AddConverter(new StringEndsWithViaConcatFuncConverter());
+            AddConverter(new StringIsNullOrEmptyConverter());
+            AddConverter(new MathAbsConverter());
+            AddConverter(new MathAcosConverter());
+            AddConverter(new MathAsinConverter());
+            AddConverter(new MathAtanConverter());
+            AddConverter(new MathAtanTwoConverter());
+            AddConverter(new MathCeilingConverter());
+            AddConverter(new MathCosConverter());
+            AddConverter(new MathExpConverter());
+            AddConverter(new MathFloorConverter());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new()
