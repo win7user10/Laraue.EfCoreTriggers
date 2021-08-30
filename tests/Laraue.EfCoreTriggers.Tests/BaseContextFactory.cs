@@ -9,6 +9,12 @@ namespace Laraue.EfCoreTriggers.Tests
         TContext CreateDbContext();
     }
 
+    public interface IContextOptionsFactory<TContext>
+        where TContext : DbContext
+    {
+        DbContextOptions<TContext> CreateDbContextOptions();
+    }
+
     public abstract class BaseContextFactory<TContext> : IContextFactory<TContext>
         where TContext : DbContext
     {

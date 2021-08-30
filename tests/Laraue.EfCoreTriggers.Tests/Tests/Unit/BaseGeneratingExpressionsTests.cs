@@ -5,7 +5,7 @@ using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using Xunit;
 
-namespace Laraue.EfCoreTriggers.Tests.Tests
+namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
 {
     public abstract class BaseGeneratingExpressionsTests
     {
@@ -59,9 +59,6 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         public abstract string ExceptedExpSql { get; }
 
         public abstract string ExceptedFloorSql { get; }
-
-
-
 
         [Fact]
         public virtual void StringConcatSql()

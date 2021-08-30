@@ -27,4 +27,8 @@
     <ProjectReference Include="..\..\src\Laraue.EfCoreTriggers.Common\Laraue.EfCoreTriggers.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Tests\Native\" />
+  </ItemGroup>
+
 </Project>
