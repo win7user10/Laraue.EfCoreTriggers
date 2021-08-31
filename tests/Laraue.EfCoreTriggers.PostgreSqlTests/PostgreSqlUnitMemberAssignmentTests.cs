@@ -5,9 +5,9 @@ using Xunit.Categories;
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
     [UnitTest]
-    public class PostgreMemberAssignmentUnitTests : BaseMemberAssignmentUnitTests
+    public class PostgreUnitMemberAssignmentTests : BaseMemberAssignmentUnitTests
     {
-        public PostgreMemberAssignmentUnitTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
+        public PostgreUnitMemberAssignmentTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
         {
         }
         public override string ExceptedEnumValueSql => "INSERT INTO users (role) VALUES (999);";

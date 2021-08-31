@@ -14,7 +14,7 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
         public DbSet<SourceEntity> SourceEntities { get; set; }
         public DbSet<DestinationEntity> DestinationEntities { get; set; }
 
-        public DynamicDbContext(DbContextOptions<DynamicDbContext> options, Action<ModelBuilder> setupDbContext)
+        public DynamicDbContext(DbContextOptions<DynamicDbContext> options, Action<ModelBuilder> setupDbContext = null)
             : base(options)
         {
             _setupDbContext = setupDbContext;
@@ -22,7 +22,7 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            _setupDbContext(modelBuilder);
+            _setupDbContext?.Invoke(modelBuilder);
         }
 
         public override async ValueTask DisposeAsync()

@@ -1,12 +1,13 @@
 ﻿using Laraue.EfCoreTriggers.PostgreSql.Extensions;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
     public class ContextFactory : BaseContextFactory<FinalContext>
     {
-        public override FinalContext CreateDbContext() => new(new ContextOptionsFactory<NativeDbContext>().CreateDbContextOptions());
+        public override FinalContext CreateDbContext() => new(new ContextOptionsFactory<DynamicDbContext>().CreateDbContextOptions());
     }
 
     public class ContextOptionsFactory<TContext> : IContextOptionsFactory<TContext> where TContext : DbContext
@@ -22,9 +23,9 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
         }
     }
 
-    public class FinalContext : NativeDbContext
+    public class FinalContext : DynamicDbContext
     {
-        public FinalContext(DbContextOptions<NativeDbContext> options) 
+        public FinalContext(DbContextOptions<DynamicDbContext> options) 
             : base(options)
         {
         }

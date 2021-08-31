@@ -5,9 +5,9 @@ using Xunit.Categories;
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
     [UnitTest]
-    public class PostgreMathFunctionsUnitTests : UnitMathFunctionsTests
+    public class PostgreSqlUnitMathFunctionsTests : UnitMathFunctionsTests
     {
-        public PostgreMathFunctionsUnitTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
+        public PostgreSqlUnitMathFunctionsTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
         {
         }
         public override string ExceptedAbsSql => "INSERT INTO transactions_mirror (value) VALUES (ABS(NEW.value));";
