@@ -11,19 +11,19 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
         {
         }
 
-        public override string ExceptedConcatSql => "INSERT INTO transactions_mirror (description) VALUES (NEW.description || 'abc');";
+        public override string ExceptedConcatSql => "INSERT INTO destination_entities (string_field) VALUES (NEW.string_field || 'abc');";
 
-        public override string ExceptedStringLowerSql => "INSERT INTO transactions_mirror (description) VALUES (LOWER(NEW.description));";
+        public override string ExceptedStringLowerSql => "INSERT INTO destination_entities (string_field) VALUES (LOWER(NEW.string_field));";
 
-        public override string ExceptedStringUpperSql => "INSERT INTO transactions_mirror (description) VALUES (UPPER(NEW.description));";
+        public override string ExceptedStringUpperSql => "INSERT INTO destination_entities (string_field) VALUES (UPPER(NEW.string_field));";
 
-        public override string ExceptedStringTrimSql => "INSERT INTO transactions_mirror (description) VALUES (TRIM(NEW.description));";
+        public override string ExceptedStringTrimSql => "INSERT INTO destination_entities (string_field) VALUES (TRIM(NEW.string_field));";
 
-        public override string ExceptedContainsSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (INSTR(NEW.description, 'abc') > 0);";
+        public override string ExceptedContainsSql => "INSERT INTO destination_entities (boolean_value) VALUES (INSTR(NEW.string_field, 'abc') > 0);";
 
-        public override string ExceptedEndsWithSql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (NEW.description LIKE ('%' || 'abc'));";
+        public override string ExceptedEndsWithSql => "INSERT INTO destination_entities (boolean_value) VALUES (NEW.string_field LIKE ('%' || 'abc'));";
 
-        public override string ExceptedIsNullOrEmptySql => "INSERT INTO transactions_mirror (is_veryfied) VALUES (NEW.description IS NULL OR NEW.description = '');";
+        public override string ExceptedIsNullOrEmptySql => "INSERT INTO destination_entities (boolean_value) VALUES (NEW.string_field IS NULL OR NEW.string_field = '');";
 
 
     }

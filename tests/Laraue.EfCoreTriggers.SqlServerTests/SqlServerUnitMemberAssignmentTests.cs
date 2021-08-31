@@ -11,17 +11,17 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
         public SqlServerUnitMemberAssignmentTests() : base(new SqlServerProvider(new ContextFactory().CreateDbContext().Model))
         {
         }
-        public override string ExceptedEnumValueSql => "INSERT INTO users (role) VALUES (999);";
+        public override string ExceptedEnumValueSql => "INSERT INTO destination_entities (enum_value) VALUES (@NewEnumValue);";
 
-        public override string ExceptedDecimalAddSql => "INSERT INTO test_entities (decimal_value) VALUES (@NewDecimalValue + 3);";
+        public override string ExceptedDecimalAddSql => "INSERT INTO destination_entities (decimal_value) VALUES (@NewDecimalValue + 3);";
 
-        public override string ExceptedDoubleSubSql => "INSERT INTO test_entities (double_value) VALUES (@NewDoubleValue - 3);";
+        public override string ExceptedDoubleSubSql => "INSERT INTO destination_entities (double_value) VALUES (@NewDoubleValue + 3);";
 
-        public override string ExceptedIntMultiplySql => "INSERT INTO test_entities (int_value) VALUES (@NewIntValue * 2);";
+        public override string ExceptedIntMultiplySql => "INSERT INTO destination_entities (int_value) VALUES (@NewIntValue * 2);";
 
-        public override string ExceptedBooleanSql => "INSERT INTO test_entities (boolean_value) VALUES (1);";
+        public override string ExceptedBooleanSql => "INSERT INTO destination_entities (boolean_value) VALUES (@NewBooleanValue = 0);";
 
-        public override string ExceptedNewGuidSql => "INSERT INTO test_entities (guid_value) VALUES (NEWID());";
+        public override string ExceptedNewGuidSql => "INSERT INTO destination_entities (guid_value) VALUES (NEWID());";
 
        
         

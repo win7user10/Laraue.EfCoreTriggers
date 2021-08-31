@@ -33,7 +33,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         public abstract void DecimalAddSql();
 
         /// <summary>
-        /// DoubleValue = Old.DoubleValue - 3
+        /// DoubleValue = Old.DoubleValue + 3
         /// </summary>
         protected Expression<Func<SourceEntity, DestinationEntity>> SubDoubleValueExpression = sourceEntity => new DestinationEntity
         {
@@ -44,7 +44,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         public abstract void DoubleSubSql();
 
         /// <summary>
-        /// NEW.DoubleValue = Old.DoubleValue - 3
+        /// NEW.DoubleValue = Old.DoubleValue + 3
         /// </summary>
         protected Expression<Func<SourceEntity, DestinationEntity>> MultiplyIntValueExpression = sourceEntity => new DestinationEntity
         {
