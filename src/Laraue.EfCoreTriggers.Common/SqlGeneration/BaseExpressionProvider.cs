@@ -43,7 +43,13 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <param name="type"></param>
         /// <returns></returns>
         protected string GetSqlType(Type type)
-		{
+        {
+            var nullableUnderlyingType = Nullable.GetUnderlyingType(type);
+            if (nullableUnderlyingType != null)
+            {
+                type = nullableUnderlyingType;
+            }
+            
             type = type.IsEnum ? typeof(Enum) : type;
             TypeMappings.TryGetValue(type, out var sqlType);
             return sqlType;
@@ -204,15 +210,9 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
         protected virtual SqlBuilder GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
+            var internalSql = GetExpressionSql(unaryExpression.Operand, argumentTypes);
+
             var sqlBuilder = new SqlBuilder();
-
-            var internalSql = unaryExpression.Operand switch
-            {
-                MemberExpression memberExpression => GetMemberExpressionSql(memberExpression, argumentTypes),
-                UnaryExpression internalUnaryExpression => GetUnaryExpressionSql(internalUnaryExpression, argumentTypes),
-                _ => throw new NotSupportedException($"Operand {unaryExpression.Operand.Type} is not supported for UnaryExpression")
-            };
-
             sqlBuilder.MergeColumnsInfo(internalSql.AffectedColumns);
             sqlBuilder.Append(GetUnaryExpressionSql(unaryExpression, internalSql.Sql));
 
