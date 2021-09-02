@@ -19,9 +19,9 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
         }
 
 
-        public DestinationEntity ExecuteTest(Expression<Func<SourceEntity,DestinationEntity>> triggerExpression, SourceEntity source)
+        public static DestinationEntity ExecuteTest(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory, Expression<Func<SourceEntity,DestinationEntity>> triggerExpression, SourceEntity source)
         {
-            using var dbContext = ContextOptionsFactory.GetDbContext(triggerExpression);
+            using var dbContext = contextOptionsFactory.GetDbContext(triggerExpression);
 
             dbContext.SourceEntities.Add(source);
             dbContext.SaveChanges();
@@ -31,7 +31,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAbsDecimalSql()
         {
-            var insertedEntity = ExecuteTest(MathAbsDecimalValueExpression, new SourceEntity
+            var insertedEntity = ExecuteTest(ContextOptionsFactory, MathAbsDecimalValueExpression, new SourceEntity
             {
                 DecimalValue = -2.04M,
             });
@@ -41,7 +41,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAcosSql()
         {
-            var insertedEntity = ExecuteTest(MathAcosDoubleValueExpression, new SourceEntity
+            var insertedEntity = ExecuteTest(ContextOptionsFactory, MathAcosDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
@@ -51,7 +51,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAsinSql()
         {
-            var insertedEntity = ExecuteTest(MathAsinDoubleValueExpression, new SourceEntity
+            var insertedEntity = ExecuteTest(ContextOptionsFactory, MathAsinDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 0,
             });
@@ -61,7 +61,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAtanSql()
         {
-            var insertedEntity = ExecuteTest(MathAtanDoubleValueExpression, new SourceEntity
+            var insertedEntity = ExecuteTest(ContextOptionsFactory, MathAtanDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 0,
             });
@@ -71,7 +71,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAtan2Sql()
         {
-            var insertedEntity = ExecuteTest(MathAtan2DoubleValueExpression, new SourceEntity
+            var insertedEntity = ExecuteTest(ContextOptionsFactory, MathAtan2DoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
