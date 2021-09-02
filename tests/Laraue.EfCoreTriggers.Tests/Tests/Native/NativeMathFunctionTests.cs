@@ -20,7 +20,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAbsDecimalSql()
         {
-            var insertedEntity = ContextOptionsFactory.ExecuteTest(MathAbsDecimalValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.TestTrigger(MathAbsDecimalValueExpression, new SourceEntity
             {
                 DecimalValue = -2.04M,
             });
@@ -30,7 +30,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAcosSql()
         {
-            var insertedEntity = ContextOptionsFactory.ExecuteTest(MathAcosDoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.TestTrigger(MathAcosDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
@@ -40,7 +40,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAsinSql()
         {
-            var insertedEntity = ContextOptionsFactory.ExecuteTest(MathAsinDoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.TestTrigger(MathAsinDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 0,
             });
@@ -50,7 +50,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAtanSql()
         {
-            var insertedEntity = ContextOptionsFactoryExtensions.ExecuteTest(ContextOptionsFactory, MathAtanDoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactoryExtensions.TestTrigger(ContextOptionsFactory, MathAtanDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 0,
             });
@@ -60,7 +60,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAtan2Sql()
         {
-            var insertedEntity = ContextOptionsFactory.ExecuteTest(MathAtan2DoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.TestTrigger(MathAtan2DoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
