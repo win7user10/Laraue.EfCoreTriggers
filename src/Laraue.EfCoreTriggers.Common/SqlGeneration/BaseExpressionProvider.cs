@@ -265,7 +265,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
             var binaryExpressionParts = GetBinaryExpressionParts();
 
-            // Check, if one arument is null, should be generated expression "value IS NULL"
+            // Check, if one argument is null, should be generated expression "value IS NULL"
             if (binaryExpression.NodeType is ExpressionType.Equal || binaryExpression.NodeType is ExpressionType.NotEqual)
             {
                 if (binaryExpressionParts.Any(x => x is ConstantExpression constExpr && constExpr.Value == null))

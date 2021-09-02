@@ -30,5 +30,11 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
             await Database.EnsureDeletedAsync();
             await base.DisposeAsync();
         }
+
+        public override void Dispose()
+        {
+            Database.EnsureDeleted();
+            base.Dispose();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Laraue.EfCoreTriggers.Tests.Infrastructure;
+﻿using System;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
@@ -32,22 +33,59 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAcosSql()
         {
-            throw new System.NotImplementedException();
+            using var dbContext = ContextOptionsFactory.GetDbContext(MathAcosDoubleValueExpression);
+
+            dbContext.SourceEntities.Add(new SourceEntity
+            {
+                DoubleValue = 1,
+            });
+            dbContext.SaveChanges();
+
+            var insertedEntity = Assert.Single(dbContext.DestinationEntities);
+            Assert.Equal(0, insertedEntity.DoubleValue);
+
         }
 
         public override void MathAsinSql()
         {
-            throw new System.NotImplementedException();
+            using var dbContext = ContextOptionsFactory.GetDbContext(MathAsinDoubleValueExpression);
+
+            dbContext.SourceEntities.Add(new SourceEntity
+            {
+                DoubleValue = 0,
+            });
+            dbContext.SaveChanges();
+
+            var insertedEntity = Assert.Single(dbContext.DestinationEntities);
+            Assert.Equal(0, insertedEntity.DoubleValue);
         }
 
         public override void MathAtanSql()
         {
-            throw new System.NotImplementedException();
+            using var dbContext = ContextOptionsFactory.GetDbContext(MathAtanDoubleValueExpression);
+
+            dbContext.SourceEntities.Add(new SourceEntity
+            {
+                DoubleValue = 0,
+            });
+            dbContext.SaveChanges();
+
+            var insertedEntity = Assert.Single(dbContext.DestinationEntities);
+            Assert.Equal(0, insertedEntity.DoubleValue);
         }
 
         public override void MathAtan2Sql()
         {
-            throw new System.NotImplementedException();
+            using var dbContext = ContextOptionsFactory.GetDbContext(MathAtan2DoubleValueExpression);
+
+            dbContext.SourceEntities.Add(new SourceEntity
+            {
+                DoubleValue = 1,
+            });
+            dbContext.SaveChanges();
+
+            var insertedEntity = Assert.Single(dbContext.DestinationEntities);
+            Assert.Equal(0.7853, Math.Round(insertedEntity.DoubleValue.Value, 4, MidpointRounding.ToNegativeInfinity));
         }
 
         public override void MathCeilingDoubleSql()
