@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
@@ -17,74 +18,64 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
             ContextOptionsFactory = contextOptionsFactory;
         }
 
+
+        public DestinationEntity ExecuteTest(Expression<Func<SourceEntity,DestinationEntity>> triggerExpression, SourceEntity source)
+        {
+            using var dbContext = ContextOptionsFactory.GetDbContext(triggerExpression);
+
+            dbContext.SourceEntities.Add(source);
+            dbContext.SaveChanges();
+
+            return Assert.Single(dbContext.DestinationEntities);
+        }
+
         public override void MathAbsDecimalSql()
         {
-            using var dbContext = ContextOptionsFactory.GetDbContext(MathAbsDecimalValueExpression);
-
-            dbContext.SourceEntities.Add(new SourceEntity
+            var insertedEntity = ExecuteTest(MathAbsDecimalValueExpression, new SourceEntity
             {
                 DecimalValue = -2.04M,
             });
-            dbContext.SaveChanges();
 
-            var insertedEntity = Assert.Single(dbContext.DestinationEntities);
             Assert.Equal(2.04M, insertedEntity.DecimalValue);
         }
 
         public override void MathAcosSql()
         {
-            using var dbContext = ContextOptionsFactory.GetDbContext(MathAcosDoubleValueExpression);
-
-            dbContext.SourceEntities.Add(new SourceEntity
+            var insertedEntity = ExecuteTest(MathAcosDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
-            dbContext.SaveChanges();
-
-            var insertedEntity = Assert.Single(dbContext.DestinationEntities);
+            
             Assert.Equal(0, insertedEntity.DoubleValue);
-
         }
 
         public override void MathAsinSql()
         {
-            using var dbContext = ContextOptionsFactory.GetDbContext(MathAsinDoubleValueExpression);
-
-            dbContext.SourceEntities.Add(new SourceEntity
+            var insertedEntity = ExecuteTest(MathAsinDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 0,
             });
-            dbContext.SaveChanges();
 
-            var insertedEntity = Assert.Single(dbContext.DestinationEntities);
             Assert.Equal(0, insertedEntity.DoubleValue);
         }
 
         public override void MathAtanSql()
         {
-            using var dbContext = ContextOptionsFactory.GetDbContext(MathAtanDoubleValueExpression);
-
-            dbContext.SourceEntities.Add(new SourceEntity
+            var insertedEntity = ExecuteTest(MathAtanDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 0,
             });
-            dbContext.SaveChanges();
 
-            var insertedEntity = Assert.Single(dbContext.DestinationEntities);
             Assert.Equal(0, insertedEntity.DoubleValue);
         }
 
         public override void MathAtan2Sql()
         {
-            using var dbContext = ContextOptionsFactory.GetDbContext(MathAtan2DoubleValueExpression);
-
-            dbContext.SourceEntities.Add(new SourceEntity
+            var insertedEntity = ExecuteTest(MathAtan2DoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
-            dbContext.SaveChanges();
 
-            var insertedEntity = Assert.Single(dbContext.DestinationEntities);
             Assert.Equal(0.7853, Math.Round(insertedEntity.DoubleValue.Value, 4, MidpointRounding.ToNegativeInfinity));
         }
 
