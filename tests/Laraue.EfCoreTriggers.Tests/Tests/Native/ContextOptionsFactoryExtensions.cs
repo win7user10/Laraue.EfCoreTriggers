@@ -6,9 +6,9 @@ using Xunit;
 
 namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 {
-    public class ContextOptionsFactoryExtensions
+    public static class ContextOptionsFactoryExtensions
     {
-        public static DestinationEntity ExecuteTest(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory, Expression<Func<SourceEntity, DestinationEntity>> triggerExpression, SourceEntity source)
+        public static DestinationEntity ExecuteTest(this IContextOptionsFactory<DynamicDbContext> contextOptionsFactory, Expression<Func<SourceEntity, DestinationEntity>> triggerExpression, SourceEntity source)
         {
             using var dbContext = contextOptionsFactory.GetDbContext(triggerExpression);
 

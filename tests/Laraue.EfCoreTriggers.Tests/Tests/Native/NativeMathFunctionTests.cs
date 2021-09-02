@@ -20,7 +20,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAbsDecimalSql()
         {
-            var insertedEntity = ContextOptionsFactoryExtensions.ExecuteTest(ContextOptionsFactory, MathAbsDecimalValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.ExecuteTest(MathAbsDecimalValueExpression, new SourceEntity
             {
                 DecimalValue = -2.04M,
             });
@@ -30,7 +30,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAcosSql()
         {
-            var insertedEntity = ContextOptionsFactoryExtensions.ExecuteTest(ContextOptionsFactory, MathAcosDoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.ExecuteTest(MathAcosDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
@@ -40,7 +40,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAsinSql()
         {
-            var insertedEntity = ContextOptionsFactoryExtensions.ExecuteTest(ContextOptionsFactory, MathAsinDoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.ExecuteTest(MathAsinDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 0,
             });
@@ -60,7 +60,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAtan2Sql()
         {
-            var insertedEntity = ContextOptionsFactoryExtensions.ExecuteTest(ContextOptionsFactory, MathAtan2DoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.ExecuteTest(MathAtan2DoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
