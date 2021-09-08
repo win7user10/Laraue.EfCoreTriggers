@@ -39,7 +39,7 @@ namespace Laraue.EfCoreTriggers.SqlLite
             AddConverter(new MathAsinConverter());
             AddConverter(new MathAtanConverter());
             AddConverter(new MathAtanTwoConverter());
-            AddConverter(new MathCeilingConverter());
+            AddConverter(new MathCeilConverter());
             AddConverter(new MathCosConverter());
             AddConverter(new MathExpConverter());
             AddConverter(new MathFloorConverter());

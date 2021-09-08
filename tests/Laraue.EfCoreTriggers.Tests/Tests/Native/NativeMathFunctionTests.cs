@@ -18,9 +18,14 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
             ContextOptionsFactory = contextOptionsFactory;
         }
 
+        public static double CustomMathRound(double value)
+        {
+            return Math.Round(value, 4, MidpointRounding.ToNegativeInfinity);
+        }
+
         public override void MathAbsDecimalSql()
         {
-            var insertedEntity = ContextOptionsFactory.TestTrigger(MathAbsDecimalValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAbsDecimalValueExpression, new SourceEntity
             {
                 DecimalValue = -2.04M,
             });
@@ -30,7 +35,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAcosSql()
         {
-            var insertedEntity = ContextOptionsFactory.TestTrigger(MathAcosDoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAcosDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
@@ -40,7 +45,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAsinSql()
         {
-            var insertedEntity = ContextOptionsFactory.TestTrigger(MathAsinDoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAsinDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 0,
             });
@@ -50,7 +55,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAtanSql()
         {
-            var insertedEntity = ContextOptionsFactoryExtensions.TestTrigger(ContextOptionsFactory, MathAtanDoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAtanDoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 0,
             });
@@ -60,17 +65,22 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAtan2Sql()
         {
-            var insertedEntity = ContextOptionsFactory.TestTrigger(MathAtan2DoubleValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAtan2DoubleValueExpression, new SourceEntity
             {
                 DoubleValue = 1,
             });
 
-            Assert.Equal(0.7853, Math.Round(insertedEntity.DoubleValue.Value, 4, MidpointRounding.ToNegativeInfinity));
+            Assert.Equal(0.7853, CustomMathRound(insertedEntity.DoubleValue.Value));
         }
 
         public override void MathCeilingDoubleSql()
         {
-            throw new System.NotImplementedException();
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathCeilingDoubleValueExpression, new SourceEntity
+            {
+                DoubleValue = -1.36,
+            });
+
+            Assert.Equal(-1, insertedEntity.DoubleValue);
         }
 
         public override void MathCosSql()
