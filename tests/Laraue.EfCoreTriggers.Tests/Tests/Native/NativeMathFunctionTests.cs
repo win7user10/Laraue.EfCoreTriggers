@@ -85,17 +85,32 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathCosSql()
         {
-            throw new System.NotImplementedException();
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathCosDoubleValueExpression, new SourceEntity
+            {
+                DoubleValue = -1,
+            });
+
+            Assert.Equal(0.5403, CustomMathRound(insertedEntity.DoubleValue.Value));
         }
 
         public override void MathExpSql()
         {
-            throw new System.NotImplementedException();
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathExpDoubleValueExpression, new SourceEntity
+            {
+                DoubleValue = 1.2,
+            });
+
+            Assert.Equal(3.3201, CustomMathRound(insertedEntity.DoubleValue.Value));
         }
 
         public override void MathFloorDoubleSql()
         {
-            throw new System.NotImplementedException();
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathFloorDoubleValueExpression, new SourceEntity
+            {
+                DoubleValue = -1.2,
+            });
+
+            Assert.Equal(-2, insertedEntity.DoubleValue);
         }
     }
 }
