@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Laraue.EfCoreTriggers.MySqlTests
 {
@@ -21,6 +22,7 @@ namespace Laraue.EfCoreTriggers.MySqlTests
                     .UseMySqlTriggers()
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors()
+                    .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
                     .Options)
             {
             }

@@ -2,6 +2,7 @@
 using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Laraue.EfCoreTriggers.SqlLiteTests
 {
@@ -16,6 +17,7 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
                     .UseSqlite("Filename=D://test.db", x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                     .UseSnakeCaseNamingConvention()
                     .UseSqlLiteTriggers()
+                    .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
                     .Options)
             {
             }

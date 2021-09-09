@@ -2,6 +2,7 @@
 using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Laraue.EfCoreTriggers.SqlServerTests
 {
@@ -17,6 +18,7 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
                         x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                     .UseSnakeCaseNamingConvention()
                     .UseSqlServerTriggers()
+                    .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
                     .Options)
             {
             }
