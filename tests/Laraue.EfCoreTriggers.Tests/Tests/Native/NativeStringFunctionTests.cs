@@ -71,35 +71,35 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         protected override void StringEndsWithSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(EndsWithStringValueExpression, SetupDbContext, new SourceEntity
+            var sourceEntities = new[]
             {
-                StringField = "  abs abcid abc"
-            });
-            Assert.Equal(true, insertedEntity.BooleanValue);
-            insertedEntity = ContextOptionsFactory.CheckTrigger(EndsWithStringValueExpression, SetupDbContext, new SourceEntity
-            {
-                StringField = "  abc dknjp;;s jd"
-            });
-            Assert.Equal(false, insertedEntity.BooleanValue);
+                new SourceEntity { StringField = "  abs abcid abc" },
+                new SourceEntity { StringField = "  abc dknjp;;s jd" }
+            };
+
+            var insertedEntities = ContextOptionsFactory.CheckTrigger(EndsWithStringValueExpression, SetupDbContext, sourceEntities);
+
+
+            Assert.Equal(2, insertedEntities.Length);
+            Assert.True(insertedEntities[0].BooleanValue);
+            Assert.False(insertedEntities[1].BooleanValue);
         }
 
         protected override void StringIsNullOrEmptySql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, SetupDbContext, new SourceEntity
+            var sourceEntities = new[]
             {
-                StringField = "  abc dknjp;;s jd"
-            });
-            Assert.Equal(false, insertedEntity.BooleanValue);
-            insertedEntity = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, SetupDbContext, new SourceEntity
-            {
-                StringField = ""
-            });
-            Assert.Equal(true, insertedEntity.BooleanValue);
-            insertedEntity = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, SetupDbContext, new SourceEntity
-            {
-                StringField = null
-            });
-            Assert.Equal(true, insertedEntity.BooleanValue);
+                new SourceEntity { StringField = "  abc dknjp;;s jd" },
+                new SourceEntity { StringField = "" },
+                new SourceEntity { StringField = null }
+            };
+
+            var insertedEntities = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, SetupDbContext, sourceEntities);
+
+            Assert.Equal(3, insertedEntities.Length);
+            Assert.False(insertedEntities[0].BooleanValue);
+            Assert.True(insertedEntities[1].BooleanValue);
+            Assert.True(insertedEntities[2].BooleanValue);
         }
     }
 }
