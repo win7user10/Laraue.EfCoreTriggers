@@ -32,4 +32,14 @@
     <ProjectReference Include="..\..\src\Laraue.EfCoreTriggers.SqlLite\Laraue.EfCoreTriggers.SqlLite.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Extensions\math.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

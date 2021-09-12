@@ -1,9 +1,5 @@
-﻿using Laraue.EfCoreTriggers.Tests.Tests.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Xunit;
 using Xunit.Categories;
@@ -15,14 +11,17 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
     public abstract class NativeStringFunctionTests : BaseStringFunctionsTests
     {
         protected IContextOptionsFactory<DynamicDbContext> ContextOptionsFactory { get; }
+        protected Action<DynamicDbContext> SetupDbContext { get; }
 
-        protected NativeStringFunctionTests(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory)
+        protected NativeStringFunctionTests(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory, Action<DynamicDbContext> setupDbContext = null)
         {
             ContextOptionsFactory = contextOptionsFactory;
+            SetupDbContext = setupDbContext;
         }
+
         protected override void StringConcatSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(ConcatStringExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(ConcatStringExpression, SetupDbContext, new SourceEntity
             {
                 StringField = "daw "
             });
@@ -31,7 +30,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         protected override void StringLowerSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(StringToLowerExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(StringToLowerExpression, SetupDbContext, new SourceEntity
             {
                 StringField = "AbS"
             });
@@ -40,7 +39,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         protected override void StringUpperSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(StringToUpperExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(StringToUpperExpression, SetupDbContext, new SourceEntity
             {
                 StringField = "AbS"
             });
@@ -49,7 +48,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         protected override void StringTrimSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(TrimStringValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(TrimStringValueExpression, SetupDbContext, new SourceEntity
             {
                 StringField = "              AbS"
             });
@@ -58,12 +57,12 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         protected override void StringContainsSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(ContainsStringValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(ContainsStringValueExpression, SetupDbContext, new SourceEntity
             {
                 StringField = "    abs    abc      AbS"
             });
             Assert.Equal(true, insertedEntity.BooleanValue);
-            insertedEntity = ContextOptionsFactory.CheckTrigger(ContainsStringValueExpression, new SourceEntity
+            insertedEntity = ContextOptionsFactory.CheckTrigger(ContainsStringValueExpression, SetupDbContext, new SourceEntity
             {
                 StringField = "   dknjp;;s jd"
             });
@@ -72,12 +71,12 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         protected override void StringEndsWithSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(EndsWithStringValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(EndsWithStringValueExpression, SetupDbContext, new SourceEntity
             {
                 StringField = "  abs abcid abc"
             });
             Assert.Equal(true, insertedEntity.BooleanValue);
-            insertedEntity = ContextOptionsFactory.CheckTrigger(EndsWithStringValueExpression, new SourceEntity
+            insertedEntity = ContextOptionsFactory.CheckTrigger(EndsWithStringValueExpression, SetupDbContext, new SourceEntity
             {
                 StringField = "  abc dknjp;;s jd"
             });
@@ -86,17 +85,17 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         protected override void StringIsNullOrEmptySql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, SetupDbContext, new SourceEntity
             {
                 StringField = "  abc dknjp;;s jd"
             });
             Assert.Equal(false, insertedEntity.BooleanValue);
-            insertedEntity = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, new SourceEntity
+            insertedEntity = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, SetupDbContext, new SourceEntity
             {
                 StringField = ""
             });
             Assert.Equal(true, insertedEntity.BooleanValue);
-            insertedEntity = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, new SourceEntity
+            insertedEntity = ContextOptionsFactory.CheckTrigger(IsNullOrEmptyStringValueExpression, SetupDbContext, new SourceEntity
             {
                 StringField = null
             });

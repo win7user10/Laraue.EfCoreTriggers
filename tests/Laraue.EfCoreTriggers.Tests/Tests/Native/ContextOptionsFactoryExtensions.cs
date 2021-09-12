@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
@@ -15,16 +16,31 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
         /// <param name="contextOptionsFactory">Factory to initialize new <see cref="DynamicDbContext"/></param>
         /// <param name="triggerExpression">Expression which describe how to create entity in the table with <see cref="DestinationEntity"/>
         ///     basing on passed <see cref="SourceEntity"/></param>
-        /// <param name="source">Entity to insert in the table with <see cref="SourceEntity"/></param>
+        /// <param name="setupDbContext">Actions with DbContext before a test will start</param>
+        /// <param name="sourceEntities">Entities to insert in the table</param>
         /// <returns>Entity inserted by trigger</returns>
-        public static DestinationEntity CheckTrigger(this IContextOptionsFactory<DynamicDbContext> contextOptionsFactory, Expression<Func<SourceEntity, DestinationEntity>> triggerExpression, SourceEntity source)
+        public static DestinationEntity[] CheckTrigger(
+            this IContextOptionsFactory<DynamicDbContext> contextOptionsFactory, 
+            Expression<Func<SourceEntity, DestinationEntity>> triggerExpression,
+            Action<DynamicDbContext> setupDbContext,
+            params SourceEntity[] sourceEntities)
         {
             using var dbContext = contextOptionsFactory.GetDbContext(triggerExpression);
 
-            dbContext.SourceEntities.Add(source);
+            setupDbContext?.Invoke(dbContext);
+            dbContext.SourceEntities.AddRange(sourceEntities);
             dbContext.SaveChanges();
 
-            return Assert.Single(dbContext.DestinationEntities);
+            return dbContext.DestinationEntities.ToArray();
+        }
+
+        public static DestinationEntity CheckTrigger(
+            this IContextOptionsFactory<DynamicDbContext> contextOptionsFactory,
+            Expression<Func<SourceEntity, DestinationEntity>> triggerExpression,
+            Action<DynamicDbContext> setupDbContext,
+            SourceEntity source)
+        {
+            return Assert.Single(contextOptionsFactory.CheckTrigger(triggerExpression, setupDbContext, new [] { source }));
         }
     }
 }
