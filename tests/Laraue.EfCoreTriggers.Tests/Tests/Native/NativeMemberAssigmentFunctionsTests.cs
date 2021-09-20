@@ -22,6 +22,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
         {
             ContextOptionsFactory = contextOptionsFactory;
             SetupDbContext = setupDbContext;
+            SetupModelBuilder = setupModelBuilder;
         }
 
         public override void EnumValueSql()
