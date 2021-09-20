@@ -23,6 +23,7 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             _setupDbContext?.Invoke(modelBuilder);
+            base.OnModelCreating(modelBuilder);
         }
 
         public override async ValueTask DisposeAsync()

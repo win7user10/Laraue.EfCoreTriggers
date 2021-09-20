@@ -66,7 +66,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         public abstract void BooleanValueSql();
 
         /// <summary>
-        /// GuidValue = true
+        /// GuidValue = xxxxxxxx-xxxxxx-xxxxxx-xxxxxxxx
         /// </summary>
         protected Expression<Func<SourceEntity, DestinationEntity>> SetNewGuidValueExpression = sourceEntity => new DestinationEntity
         {

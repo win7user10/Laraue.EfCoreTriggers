@@ -18,14 +18,5 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
 
             Assert.Equal(sql, generatedSql);
         }
-
-        public static DynamicDbContext GetDbContext(this IContextOptionsFactory<DynamicDbContext> optionsFactory, Expression<Func<SourceEntity, DestinationEntity>> insertDestinationEntityBasedOnSourceEntityFunc)
-        {
-            return DynamicDbContextFactory.GetDbContext(
-                optionsFactory,
-                builder => builder.Entity<SourceEntity>()
-                    .AfterInsert(trigger => trigger.Action(
-                        action => action.Insert(insertDestinationEntityBasedOnSourceEntityFunc))));
-        }
     }
 }

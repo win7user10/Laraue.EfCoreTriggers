@@ -1,6 +1,7 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Categories;
 
@@ -12,6 +13,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
     {
         protected IContextOptionsFactory<DynamicDbContext> ContextOptionsFactory { get; }
         protected Action<DynamicDbContext> SetupDbContext { get; }
+        protected Action<ModelBuilder> SetupModelBuilder { get; }
 
         protected NativeMathFunctionTests(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory, Action<DynamicDbContext> setupDbContext = null)
         {
@@ -26,7 +28,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAbsDecimalSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAbsDecimalValueExpression, SetupDbContext, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAbsDecimalValueExpression, SetupDbContext, SetupModelBuilder,  new SourceEntity
             {
                 DecimalValue = -2.04M,
             });
@@ -36,7 +38,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAcosSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAcosDoubleValueExpression, SetupDbContext, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAcosDoubleValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
             {
                 DoubleValue = 1,
             });
@@ -46,7 +48,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAsinSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAsinDoubleValueExpression, SetupDbContext, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAsinDoubleValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
             {
                 DoubleValue = 0,
             });
@@ -56,7 +58,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAtanSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAtanDoubleValueExpression, SetupDbContext, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAtanDoubleValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
             {
                 DoubleValue = 0,
             });
@@ -66,7 +68,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathAtan2Sql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAtan2DoubleValueExpression, SetupDbContext, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathAtan2DoubleValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
             {
                 DoubleValue = 1,
             });
@@ -76,7 +78,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathCeilingDoubleSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathCeilingDoubleValueExpression, SetupDbContext, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathCeilingDoubleValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
             {
                 DoubleValue = -1.36,
             });
@@ -86,7 +88,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathCosSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathCosDoubleValueExpression, SetupDbContext, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathCosDoubleValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
             {
                 DoubleValue = -1,
             });
@@ -96,7 +98,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathExpSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathExpDoubleValueExpression, SetupDbContext, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathExpDoubleValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
             {
                 DoubleValue = 1.2,
             });
@@ -106,7 +108,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public override void MathFloorDoubleSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathFloorDoubleValueExpression, SetupDbContext, new SourceEntity
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(MathFloorDoubleValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
             {
                 DoubleValue = -1.2,
             });
