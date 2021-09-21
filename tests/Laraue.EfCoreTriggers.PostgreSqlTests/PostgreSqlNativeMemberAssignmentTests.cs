@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
-    public class PostgreSqlNativeMemberAssignmentTests : NativeMemberAssigmentFunctionsTests
+    public class PostgreSqlNativeMemberAssignmentTests : NativeMemberAssignmentFunctionsTests
     {
         public PostgreSqlNativeMemberAssignmentTests(): base(new ContextOptionsFactory<DynamicDbContext>(), setupModelBuilder:
             builder =>

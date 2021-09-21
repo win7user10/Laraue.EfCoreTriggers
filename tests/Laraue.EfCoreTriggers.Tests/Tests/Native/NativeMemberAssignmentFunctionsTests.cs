@@ -9,13 +9,13 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 {
     [IntegrationTest]
     [Collection("IntegrationTests")]
-    public abstract class NativeMemberAssigmentFunctionsTests : BaseMemberAssignmentTests
+    public abstract class NativeMemberAssignmentFunctionsTests : BaseMemberAssignmentTests
     {
         protected IContextOptionsFactory<DynamicDbContext> ContextOptionsFactory { get; }
         protected Action<DynamicDbContext> SetupDbContext { get; }
         protected Action<ModelBuilder> SetupModelBuilder { get; }
 
-        protected NativeMemberAssigmentFunctionsTests(
+        protected NativeMemberAssignmentFunctionsTests(
             IContextOptionsFactory<DynamicDbContext> contextOptionsFactory, 
             Action<DynamicDbContext> setupDbContext = null,
             Action<ModelBuilder> setupModelBuilder = null)

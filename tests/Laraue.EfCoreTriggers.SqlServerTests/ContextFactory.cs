@@ -8,20 +8,30 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
 {
     public class ContextFactory : BaseContextFactory<DynamicDbContext>
     {
-        public override FinalContext CreateDbContext() => new();
+        public override FinalContext CreateDbContext() => new( new ContextOptionsFactory<DynamicDbContext>().CreateDbContextOptions());
 
-        public class FinalContext : DynamicDbContext
+        
+    }
+
+    public class FinalContext : DynamicDbContext
+    {
+        public FinalContext(DbContextOptions<DynamicDbContext> options)
+            : base(options)
         {
-            public FinalContext()
-                : base(new DbContextOptionsBuilder<DynamicDbContext>()
-                    .UseSqlServer("Data Source=(LocalDb)\\v15.0;Database=EfCoreTriggers;Integrated Security=SSPI;",
-                        x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
-                    .UseSnakeCaseNamingConvention()
-                    .UseSqlServerTriggers()
-                    .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
-                    .Options)
-            {
-            }
+        }
+    }
+
+    public class ContextOptionsFactory<TContext> : IContextOptionsFactory<TContext> where TContext : DbContext
+    {
+        public DbContextOptions<TContext> CreateDbContextOptions()
+        {
+            return new DbContextOptionsBuilder<TContext>()
+                .UseSqlServer("Data Source=(LocalDb)\\v15.0;Database=EfCoreTriggers;Integrated Security=SSPI;",
+                    x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
+                .UseSnakeCaseNamingConvention()
+                .UseSqlServerTriggers()
+                .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
+                .Options;
         }
     }
 }

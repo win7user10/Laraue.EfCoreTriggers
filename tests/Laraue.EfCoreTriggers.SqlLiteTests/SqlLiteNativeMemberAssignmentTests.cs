@@ -8,7 +8,7 @@ using Laraue.EfCoreTriggers.Tests.Tests.Native;
 
 namespace Laraue.EfCoreTriggers.SqlLiteTests
 {
-    public class SqlLiteNativeMemberAssignmentTests : NativeMemberAssigmentFunctionsTests
+    public class SqlLiteNativeMemberAssignmentTests : NativeMemberAssignmentFunctionsTests
     {
         public SqlLiteNativeMemberAssignmentTests(): base(new ContextOptionsFactory<DynamicDbContext>()){}
     }
