@@ -18,7 +18,7 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
 
         public override string ExceptedAtanSql => "INSERT INTO destination_entities (double_value) VALUES (ATAN(@NewDoubleValue));";
 
-        public override string ExceptedAtan2Sql => "INSERT INTO destination_entities (double_value) VALUES (ATAN2(@NewDoubleValue, @NewDoubleValue));";
+        public override string ExceptedAtan2Sql => "INSERT INTO destination_entities (double_value) VALUES (ATN2(@NewDoubleValue, @NewDoubleValue));";
 
         public override string ExceptedCeilingSql => "INSERT INTO destination_entities (double_value) VALUES (CEILING(@NewDoubleValue));";
 

@@ -8,9 +8,7 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
 {
     public class ContextFactory : BaseContextFactory<DynamicDbContext>
     {
-        public override FinalContext CreateDbContext() => new( new ContextOptionsFactory<DynamicDbContext>().CreateDbContextOptions());
-
-        
+        public override FinalContext CreateDbContext() => new(new ContextOptionsFactory<DynamicDbContext>().CreateDbContextOptions());
     }
 
     public class FinalContext : DynamicDbContext
@@ -26,7 +24,7 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
         public DbContextOptions<TContext> CreateDbContextOptions()
         {
             return new DbContextOptionsBuilder<TContext>()
-                .UseSqlServer("Data Source=(LocalDb)\\v15.0;Database=EfCoreTriggers;Integrated Security=SSPI;",
+                .UseSqlServer("Data Source=(LocalDb)\\v15.0;Database=EfCoreTriggers;Integrated Security=SSPI;Connection Timeout=5",
                     x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                 .UseSnakeCaseNamingConvention()
                 .UseSqlServerTriggers()

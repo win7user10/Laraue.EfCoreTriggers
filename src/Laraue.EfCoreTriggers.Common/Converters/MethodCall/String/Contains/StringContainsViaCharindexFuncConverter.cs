@@ -2,6 +2,9 @@
 {
     public class StringContainsViaCharindexFuncConverter : BaseStringContainsConverter
     {
-        public override string SqlFunctionName => "CHARINDEX";
+        protected override string CombineSql(string expressionToSearchSql, string expressionToFindSql)
+        {
+            return $"CHARINDEX({expressionToFindSql}, {expressionToSearchSql}) > 0";
+        }
     }
 }

@@ -44,16 +44,17 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <returns></returns>
         protected string GetSqlType(Type type)
         {
-            var nullableUnderlyingType = Nullable.GetUnderlyingType(type);
-            if (nullableUnderlyingType != null)
-            {
-                type = nullableUnderlyingType;
-            }
-            
+            type = GetNotNullableType(type);
             type = type.IsEnum ? typeof(Enum) : type;
             TypeMappings.TryGetValue(type, out var sqlType);
             return sqlType;
 		}
+        
+        protected Type GetNotNullableType(Type type)
+        {
+            var nullableUnderlyingType = Nullable.GetUnderlyingType(type);
+            return nullableUnderlyingType ?? type;
+        }
 
         /// <summary>
         /// Get expression operand based on <see cref="ExpressionType"/> property.
@@ -210,34 +211,32 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
         protected virtual SqlBuilder GetUnaryExpressionSql(UnaryExpression unaryExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
-            var internalSql = GetExpressionSql(unaryExpression.Operand, argumentTypes);
+            var internalExpressionSql = GetExpressionSql(unaryExpression.Operand, argumentTypes);
+            var sqlBuilder = new SqlBuilder(internalExpressionSql.AffectedColumns);
+            
+            if (unaryExpression.NodeType == ExpressionType.Convert)
+            {
+                if (IsNeedConvertion(unaryExpression))
+                {
+                    sqlBuilder.Append(GetConvertExpressionSql(unaryExpression, internalExpressionSql));
+                }
+                else
+                {
+                    sqlBuilder = internalExpressionSql;
+                }
 
-            var sqlBuilder = new SqlBuilder();
-            sqlBuilder.MergeColumnsInfo(internalSql.AffectedColumns);
-            sqlBuilder.Append(GetUnaryExpressionSql(unaryExpression, internalSql.Sql));
+                return sqlBuilder;
+            }
+            
+            var operand = GetExpressionOperandSql(unaryExpression);
+            
+            var sql = unaryExpression.NodeType == ExpressionType.Negate 
+                ? $"{operand}{internalExpressionSql}" 
+                : $"{internalExpressionSql} {operand}";
 
+            sqlBuilder.Append(sql);
+            
             return sqlBuilder;
-        }
-
-
-        protected virtual string GetUnaryExpressionSql(Expression expression, string member)
-        {
-            if (expression.NodeType == ExpressionType.Convert)
-            {
-                var unaryExpression = expression as UnaryExpression;
-                return IsNeedConvertion(unaryExpression)
-                    ? GetConvertExpressionSql(unaryExpression, member)
-                    : member;
-            }
-            var operand = GetExpressionOperandSql(expression);
-            if (expression.NodeType == ExpressionType.Negate)
-            {
-                return $"{operand}{member}";
-            }
-            else
-            {
-                return $"{member} {operand}";
-            }
         }
 
         protected virtual SqlBuilder[] GetNewExpressionColumnsSql(NewExpression newExpression, Dictionary<string, ArgumentType> argumentTypes)

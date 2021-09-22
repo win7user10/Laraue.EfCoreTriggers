@@ -108,6 +108,12 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             StringBuilder.Append(value);
             return this;
         }
+        
+        public SqlBuilder Prepend(string value)
+        {
+            StringBuilder.Insert(0, value);
+            return this;
+        }
 
         public SqlBuilder AppendNewLine(string value)
             => Append($"{NewLine}{value}");

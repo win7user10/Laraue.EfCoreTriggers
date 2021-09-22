@@ -21,13 +21,13 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
 
         public override string ExceptedStringUpperSql => "INSERT INTO destination_entities (string_field) VALUES (UPPER(@NewStringField));";
 
-        public override string ExceptedStringTrimSql => "INSERT INTO destination_entities (string_field) VALUES (TRIM(@NewStringField));";
+        public override string ExceptedStringTrimSql => "INSERT INTO destination_entities (string_field) VALUES (LTRIM(RTRIM(@NewStringField)));";
 
-        public override string ExceptedContainsSql => "INSERT INTO destination_entities (boolean_value) VALUES (CHARINDEX(@NewStringField, 'abc') > 0);";
+        public override string ExceptedContainsSql => "INSERT INTO destination_entities (boolean_value) VALUES (CASE WHEN CHARINDEX('abc', @NewStringField) > 0 THEN 1 ELSE 0 END);";
 
-        public override string ExceptedEndsWithSql => "INSERT INTO destination_entities (boolean_value) VALUES (@NewStringField LIKE ('%' + 'abc'));";
+        public override string ExceptedEndsWithSql => "INSERT INTO destination_entities (boolean_value) VALUES (CASE WHEN @NewStringField LIKE ('%' + 'abc') THEN 1 ELSE 0 END);";
 
-        public override string ExceptedIsNullOrEmptySql => "INSERT INTO destination_entities (boolean_value) VALUES (@NewStringField IS NULL OR @NewStringField = '');";
+        public override string ExceptedIsNullOrEmptySql => "INSERT INTO destination_entities (boolean_value) VALUES (CASE WHEN @NewStringField IS NULL OR @NewStringField = '' THEN 1 ELSE 0 END);";
 
     }
 }
