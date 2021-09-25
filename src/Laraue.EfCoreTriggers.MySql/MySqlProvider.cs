@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan2;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.AtanTwo;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Cos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp;
@@ -130,15 +130,13 @@ namespace Laraue.EfCoreTriggers.MySql
             return sql;
         }
 
-        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
+        protected override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction,
+            IDictionary<MemberInfo, SqlBuilder> matchExpressionParts)
         {
             var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
-            var newExpressionColumnsSql = GetNewExpressionColumnsSql(
-                (NewExpression)triggerUpsertAction.MatchExpression.Body,
-                triggerUpsertAction.MatchExpressionPrefixes.ToDictionary(x => x.Key, x => ArgumentType.None));
 
             var sqlBuilder = new SqlBuilder(insertStatementSql.AffectedColumns)
-                .MergeColumnsInfo(newExpressionColumnsSql);
+                .MergeColumnsInfo(matchExpressionParts.Values);
 
             if (triggerUpsertAction.OnMatchExpression is null)
             {

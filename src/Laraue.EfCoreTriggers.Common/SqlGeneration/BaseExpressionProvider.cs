@@ -174,12 +174,17 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
         protected virtual string GetMemberExpressionSql(MemberExpression memberExpression, ArgumentType argumentType)
         {
+            return GetColumnSql(memberExpression.Member, argumentType);
+        }
+        
+        protected virtual string GetColumnSql(MemberInfo memberInfo, ArgumentType argumentType)
+        {
             return argumentType switch
             {
-                ArgumentType.New => $"{NewEntityPrefix}.{GetColumnName(memberExpression.Member)}", 
-                ArgumentType.Old => $"{OldEntityPrefix}.{GetColumnName(memberExpression.Member)}", 
-                ArgumentType.None => GetColumnName(memberExpression.Member), 
-                _ => $"{GetTableName(memberExpression.Member)}.{GetColumnName(memberExpression.Member)}",
+                ArgumentType.New => $"{NewEntityPrefix}.{GetColumnName(memberInfo)}", 
+                ArgumentType.Old => $"{OldEntityPrefix}.{GetColumnName(memberInfo)}", 
+                ArgumentType.None => GetColumnName(memberInfo), 
+                _ => $"{GetTableName(memberInfo)}.{GetColumnName(memberInfo)}",
             };
         }
 
@@ -189,11 +194,11 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <param name="memberAssignment"></param>
         /// <param name="argumentTypes"></param>
         /// <returns></returns>
-        protected virtual (MemberInfo MemberInfo, SqlBuilder AssignmentSqlResult) GetMemberAssignmentParts(
+        protected virtual (MemberAssignment MemberAssignment, SqlBuilder AssignmentSqlResult) GetMemberAssignmentParts(
             MemberAssignment memberAssignment, Dictionary<string, ArgumentType> argumentTypes)
         {
             var sqlExtendedResult = GetExpressionSql(memberAssignment.Expression, argumentTypes);
-            return (memberAssignment.Member, sqlExtendedResult);
+            return (memberAssignment, sqlExtendedResult);
         }
 
         protected virtual SqlBuilder GetMethodCallExpressionSql(MethodCallExpression methodCallExpression, Dictionary<string, ArgumentType> argumentTypes)
@@ -290,13 +295,20 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <param name="memberInitExpression"></param>
         /// <param name="argumentTypes"></param>
         /// <returns></returns>
-        protected Dictionary<MemberInfo, SqlBuilder> GetMemberInitExpressionAssignmentParts(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentType> argumentTypes)
+        protected Dictionary<MemberAssignment, SqlBuilder> GetMemberInitExpressionAssignmentParts(MemberInitExpression memberInitExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
             return memberInitExpression.Bindings.Select(memberBinding =>
             {
                 var memberAssignmentExpression = (MemberAssignment)memberBinding;
                 return GetMemberAssignmentParts(memberAssignmentExpression, argumentTypes);
-            }).ToDictionary(x => x.MemberInfo, x => x.AssignmentSqlResult);
+            }).ToDictionary(x => x.MemberAssignment, x => x.AssignmentSqlResult);
+        }
+        
+        protected Dictionary<MemberExpression, SqlBuilder> GetNewExpressionAssignmentParts(NewExpression newExpression, Dictionary<string, ArgumentType> argumentTypes)
+        {
+            return newExpression.Arguments.ToDictionary(
+                argument => (MemberExpression)argument,
+                argument => GetExpressionSql(argument, argumentTypes));
         }
 
         /// <summary>

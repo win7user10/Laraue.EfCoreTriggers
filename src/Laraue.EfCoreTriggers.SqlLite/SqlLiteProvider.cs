@@ -6,7 +6,6 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan2;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.AtanTwo;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Cos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp;

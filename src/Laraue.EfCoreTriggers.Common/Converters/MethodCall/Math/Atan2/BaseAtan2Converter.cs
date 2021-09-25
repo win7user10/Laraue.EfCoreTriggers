@@ -4,7 +4,7 @@ using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
-namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.AtanTwo
+namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan2
 {
     public abstract class BaseAtan2Converter : BaseMathConverter
     {

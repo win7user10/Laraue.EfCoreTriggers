@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -81,20 +82,30 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 .Append(binaryExpressionSql.StringBuilder);
         }
 
-        public virtual SqlBuilder GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentType> argumentTypees)
+        public virtual SqlBuilder GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
-            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)updateExpression.Body, argumentTypees);
+            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)updateExpression.Body, argumentTypes);
             var sqlResult = new SqlBuilder(assignmentParts.Values);
-            sqlResult.Append(string.Join(", ", assignmentParts.Select(expressionPart => $"{GetColumnName(expressionPart.Key)} = {expressionPart.Value}")));
+            var assignmentPartsSql = assignmentParts
+                .Select(expressionPart => $"{GetColumnName(expressionPart.Key.Member)} = {expressionPart.Value}")
+                .ToArray();
+            sqlResult.AppendJoin(", ", assignmentPartsSql);
             return sqlResult;
         }
 
-        public virtual SqlBuilder GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentType> argumentTypees)
+        public virtual SqlBuilder GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
-            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)insertExpression.Body, argumentTypees);
+            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)insertExpression.Body, argumentTypes);
             var sqlResult = new SqlBuilder(assignmentParts.Values);
-            sqlResult.Append($"({string.Join(", ", assignmentParts.Select(x => GetColumnName(x.Key)))})")
-                .Append($" VALUES ({string.Join(", ", assignmentParts.Select(x => x.Value))})");
+            
+            // TODO - insert via table/column name
+            
+            sqlResult.Append("(")
+                .AppendJoin(", ", assignmentParts.Select(x => GetColumnName(x.Key.Member)))
+                .Append(") VALUES (")
+                .AppendJoin(", ", assignmentParts.Select(x => x.Value.ToString()))
+                .Append(")");
+            
             return sqlResult;
         }
 
@@ -102,17 +113,35 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             where TTriggerEntity : class
             where TUpdateEntity : class
         {
-            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
-            var newExpressionColumnsSql = GetNewExpressionColumnsSql(
-                (NewExpression)triggerUpsertAction.MatchExpression.Body,
-                triggerUpsertAction.MatchExpressionPrefixes.ToDictionary(x => x.Key, x => ArgumentType.None));
+            var matchExpressionParts =
+                triggerUpsertAction.MatchExpression.Body switch
+                {
+                    MemberInitExpression memberInitExpression => GetMemberInitExpressionAssignmentParts(
+                            memberInitExpression, triggerUpsertAction.InsertExpressionPrefixes)
+                        .ToDictionary(x => x.Key.Member, x => x.Value),
+                    NewExpression newExpression => GetNewExpressionAssignmentParts(newExpression,
+                            triggerUpsertAction.InsertExpressionPrefixes)
+                        .ToDictionary(x => x.Key.Member, x => x.Value),
+                    _ => throw new NotImplementedException()
+                };
 
+            return GetTriggerUpsertActionSql(triggerUpsertAction, matchExpressionParts);
+        }
+        
+        protected virtual SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(
+            TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction,
+            IDictionary<MemberInfo, SqlBuilder> matchExpressionParts)
+            where TTriggerEntity : class
+            where TUpdateEntity : class
+        {
+            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
+            
             var sqlBuilder = new SqlBuilder(insertStatementSql.AffectedColumns)
-                .MergeColumnsInfo(newExpressionColumnsSql)
+                .MergeColumnsInfo(matchExpressionParts.Values)
                 .Append($"INSERT INTO {GetTableName(typeof(TUpdateEntity))} ")
                 .Append(insertStatementSql.StringBuilder)
                 .Append(" ON CONFLICT (")
-                .AppendJoin(", ", newExpressionColumnsSql.Select(x => x.StringBuilder))
+                .AppendJoin(", ", matchExpressionParts.Select(x => GetColumnName(x.Key)))
                 .Append(")");
 
             if (triggerUpsertAction.OnMatchExpression is null)

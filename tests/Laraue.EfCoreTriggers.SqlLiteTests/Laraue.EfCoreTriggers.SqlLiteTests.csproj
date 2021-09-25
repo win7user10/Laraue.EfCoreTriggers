@@ -33,10 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Extensions\math.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

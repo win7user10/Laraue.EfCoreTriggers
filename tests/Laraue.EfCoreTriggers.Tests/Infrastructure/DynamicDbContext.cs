@@ -22,6 +22,10 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<DestinationEntity>()
+                .HasIndex(x => x.UniqueIdentifier)
+                .IsUnique();
+            
             _setupDbContext?.Invoke(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }

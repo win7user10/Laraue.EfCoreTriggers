@@ -8,7 +8,6 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan2;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.AtanTwo;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Cos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp;
@@ -96,6 +95,12 @@ namespace Laraue.EfCoreTriggers.SqlServer
                 .Append(triggerTimeName)
                 .Append($" {trigger.TriggerEvent} AS BEGIN ");
 
+            if (sqlBuilder.AffectedColumns.Any(x => x.Value.Any()))
+            {
+                sqlBuilder.Append(DeclareVariablesSql<TTriggerEntity>(sqlBuilder.AffectedColumns))
+                    .Append(" ");
+            }
+
             sqlBuilder.Append(DeclareCursorsSql<TTriggerEntity>(sqlBuilder.AffectedColumns, trigger.TriggerEvent))
                 .Append(" ")
                 .Append(FetchCursorsSql<TTriggerEntity>(sqlBuilder.AffectedColumns, trigger.TriggerEvent))
@@ -173,10 +178,13 @@ namespace Laraue.EfCoreTriggers.SqlServer
         private SqlBuilder FetchCursorSql<TTriggerEntity>(ArgumentType argumentType, MemberInfo[] members)
         {
             var sqlBuilder = new SqlBuilder($"FETCH NEXT FROM {CursorName<TTriggerEntity>(argumentType)}");
+
+            members = members.WhereDeclaringType<TTriggerEntity>().ToArray();
+            
             if (members.Any())
             {
                 sqlBuilder.Append(" INTO ")
-                    .AppendJoin(", ", members.WhereDeclaringType<TTriggerEntity>().Select(member => VariableNameSql(argumentType, member)));
+                    .AppendJoin(", ", members.Select(member => VariableNameSql(argumentType, member)));
             }
 
             return sqlBuilder;
@@ -184,17 +192,33 @@ namespace Laraue.EfCoreTriggers.SqlServer
 
         private string SelectFromCursorSql<TTriggerEntity>(ArgumentType argumentType, MemberInfo[] members)
         {
+            members = members.WhereDeclaringType<TTriggerEntity>().ToArray();
+            
             var columns = members.Any()
-                ? string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(GetColumnName))
+                ? string.Join(", ", members.Select(GetColumnName))
                 : "*";
             
             return $"SELECT {columns} FROM {TemporaryTableName(argumentType)}";
         }
 
-        private string DeclareCursorVariablesSql<TTriggerEntity>(ArgumentType argumentType,
-            IEnumerable<MemberInfo> members)
-            =>
-                $"DECLARE {string.Join(", ", members.WhereDeclaringType<TTriggerEntity>().Select(member => DeclareVariableNameSql(argumentType, member)))}";
+        private string DeclareVariablesSql(ArgumentType argumentType, IEnumerable<MemberInfo> members)
+        {
+            return $"DECLARE {string.Join(", ", members.Select(member => DeclareVariableNameSql(argumentType, member)))}";
+        }
+        
+        private string DeclareVariablesSql<TTriggerEntity>(Dictionary<ArgumentType, HashSet<MemberInfo>> members)
+        {
+            var sqlBuilder = new SqlBuilder();
+            
+            var variablesSql = members
+                .ToDictionary(x => x.Key, x => x.Value.WhereDeclaringType<TTriggerEntity>())
+                .Where(x => x.Value.Any())
+                .Select(x => DeclareVariablesSql(x.Key, x.Value))
+                .ToArray();
+
+            sqlBuilder.AppendJoin(", ", variablesSql);
+            return sqlBuilder;
+        }
 
         private string CloseCursorSql(string cursorName)
             => $"CLOSE {cursorName}";
@@ -267,63 +291,58 @@ namespace Laraue.EfCoreTriggers.SqlServer
                 .Append(" ")
                 .Append(SelectFromCursorSql<TTriggerEntity>(argumentType, affectedMembers));
 
-            // Define local variables for a cursor only if they are exist
-            if (affectedMembers.Any())
-            {
-                sqlBuilder.Append(" ")
-                    .Append(DeclareCursorVariablesSql<TTriggerEntity>(argumentType, affectedMembers));
-            }
-            
             sqlBuilder.Append($" OPEN {cursorName}");
 
             return sqlBuilder;
         }
 
-        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(
-            TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
+        protected override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(
+            TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction,
+            IDictionary<MemberInfo, SqlBuilder> matchExpressionParts)
         {
-            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression,
-                triggerUpsertAction.InsertExpressionPrefixes);
+            var sqlBuilder = new SqlBuilder(matchExpressionParts.Select(x => x.Value));
+            var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
 
-            var newExpressionArguments = ((NewExpression)triggerUpsertAction.MatchExpression.Body).Arguments
-                .Cast<MemberExpression>();
-
-            var newExpressionArgumentPairs = newExpressionArguments.ToDictionary(
-                argument => argument,
-                argument => GetMemberExpressionSql(argument, triggerUpsertAction.MatchExpressionPrefixes));
-
-            var sqlBuilder = new SqlBuilder(newExpressionArgumentPairs.Select(x => x.Value));
-
-            sqlBuilder
-                .Append("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;")
-                .Append($"MERGE {GetTableName(typeof(TUpsertEntity))} USING {GetTableName(typeof(TTriggerEntity))}")
-                .Append($" ON ")
-                .AppendJoin(" AND ", newExpressionArgumentPairs
-                    .Select(memberPair =>
-                        $"{GetTableName(typeof(TUpsertEntity))}.{GetColumnName(memberPair.Key.Member)} = {memberPair.Value}"));
-
-            sqlBuilder.Append(" WHEN NOT MATCHED THEN INSERT ")
-                .Append(insertStatementSql.StringBuilder);
-
+            sqlBuilder.MergeColumnsInfo(insertStatementSql)
+                .Append("BEGIN TRANSACTION;");
+            
             if (triggerUpsertAction.OnMatchExpression != null)
             {
-                var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression,
-                    triggerUpsertAction.OnMatchExpressionPrefixes);
-                sqlBuilder.MergeColumnsInfo(updateStatementSql);
-                sqlBuilder.Append(" WHEN MATCHED THEN UPDATE SET ")
-                    .Append(updateStatementSql.StringBuilder);
+                var updateStatementSql = GetUpdateStatementBodySql(triggerUpsertAction.OnMatchExpression, triggerUpsertAction.OnMatchExpressionPrefixes);
+                
+                sqlBuilder.MergeColumnsInfo(updateStatementSql)
+                    .Append($"UPDATE {GetTableName(typeof(TUpsertEntity))} WITH (UPDLOCK, SERIALIZABLE) SET ")
+                    .Append(updateStatementSql.StringBuilder)
+                    .Append(" WHERE ")
+                    .AppendJoin(" AND ", matchExpressionParts
+                        .Select(memberPair => $"{GetColumnSql(memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
+                    .Append($" IF @@ROWCOUNT = 0 ");
+            }
+            else
+            {
+                sqlBuilder.Append($"IF NOT EXISTS(SELECT 1 FROM {GetTableName(typeof(TUpsertEntity))} WITH (UPDLOCK, SERIALIZABLE) ")
+                    .Append(" WHERE ")
+                    .AppendJoin(" AND ", matchExpressionParts
+                        .Select(memberPair => $"{GetColumnSql(memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
+                    .Append(")");
             }
 
-            return sqlBuilder.Append(";");
+            sqlBuilder
+                .Append($"BEGIN INSERT INTO {GetTableName(typeof(TUpsertEntity))} ")
+                .Append(insertStatementSql.StringBuilder)
+                .Append("; END COMMIT TRANSACTION;");
+
+            return sqlBuilder;
         }
 
         protected override string GetMemberExpressionSql(MemberExpression memberExpression, ArgumentType argumentType)
         {
+            var memberInfo = memberExpression.Member;
             return argumentType switch
             {
-                ArgumentType.New => VariableNameSql(argumentType, memberExpression.Member),
-                ArgumentType.Old => VariableNameSql(argumentType, memberExpression.Member),
-                _ => GetColumnName(memberExpression.Member),
+                ArgumentType.New => VariableNameSql(argumentType, memberInfo),
+                ArgumentType.Old => VariableNameSql(argumentType, memberInfo),
+                _ => base.GetMemberExpressionSql(memberExpression, argumentType)
             };
         }
 
