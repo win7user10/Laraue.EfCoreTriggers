@@ -37,6 +37,30 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
             context.ChangeTracker.Clear();
         }
         
+        public static void Delete<TEntity, TDbContext>(this TDbContext dbContext, 
+            Func<TDbContext, DbSet<TEntity>> dbSetGetter, Expression<Func<TEntity, bool>> predicate)
+            where TEntity : class
+            where TDbContext : DbContext
+        {
+            var dbSet = dbSetGetter.Invoke(dbContext);
+            var entities = dbSet.Where(predicate).ToArray();
+            foreach (var entity in entities)
+            {
+                dbSet.Remove(entity);
+            }
+            
+            dbContext.SaveChanges();
+            dbContext.ChangeTracker.Clear();
+        }
+        
+        public static void Delete<TEntity, TDbContext>(this TDbContext dbContext, 
+            Func<TDbContext, DbSet<TEntity>> dbSetGetter)
+            where TEntity : class
+            where TDbContext : DbContext
+        {
+            Delete<TEntity, TDbContext>(dbContext, dbSetGetter, _ => true);
+        }
+        
         public static void Update<TEntity, TDbContext>(
             this TDbContext dbContext, 
             Func<TDbContext, DbSet<TEntity>> dbSetGetter, 

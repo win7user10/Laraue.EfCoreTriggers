@@ -1,8 +1,10 @@
 ﻿using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
+using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
 {
+    [UnitTest]
     public abstract class UnitMathFunctionsTests : BaseMathFunctionsTests
     {
         protected readonly ITriggerProvider Provider;

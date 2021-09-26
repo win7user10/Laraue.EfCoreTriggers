@@ -117,10 +117,10 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 triggerUpsertAction.MatchExpression.Body switch
                 {
                     MemberInitExpression memberInitExpression => GetMemberInitExpressionAssignmentParts(
-                            memberInitExpression, triggerUpsertAction.InsertExpressionPrefixes)
+                            memberInitExpression, triggerUpsertAction.MatchExpressionPrefixes)
                         .ToDictionary(x => x.Key.Member, x => x.Value),
                     NewExpression newExpression => GetNewExpressionAssignmentParts(newExpression,
-                            triggerUpsertAction.InsertExpressionPrefixes)
+                            triggerUpsertAction.MatchExpressionPrefixes)
                         .ToDictionary(x => x.Key.Member, x => x.Value),
                     _ => throw new NotImplementedException()
                 };

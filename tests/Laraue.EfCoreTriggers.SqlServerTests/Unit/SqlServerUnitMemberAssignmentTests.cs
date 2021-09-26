@@ -1,10 +1,12 @@
 ﻿using Laraue.EfCoreTriggers.SqlServer;
+using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
+using Xunit;
 using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.SqlServerTests.Unit
 {
-    [UnitTest]
+    [Collection(CollectionNames.SqlServer)]
     public class SqlServerUnitMemberAssignmentTests : BaseMemberAssignmentUnitTests
     {
         public SqlServerUnitMemberAssignmentTests() : base(new SqlServerProvider(new ContextFactory().CreateDbContext().Model))

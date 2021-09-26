@@ -1,10 +1,12 @@
 ﻿using Laraue.EfCoreTriggers.SqlLite;
+using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
+using Xunit;
 using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.SqlLiteTests.Unit
 {
-    [UnitTest]
+    [Collection(CollectionNames.Sqlite)]
     public class SqlLiteUnitMemberAssignmentTests : BaseMemberAssignmentUnitTests
     {
         public SqlLiteUnitMemberAssignmentTests() : base(new SqlLiteProvider(new ContextFactory().CreateDbContext().Model))

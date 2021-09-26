@@ -5,10 +5,13 @@ using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using LinqToDB;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Xunit;
+using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
 {
-    public class UpdateTests : BaseTriggerTests
+    [IntegrationTest]
+    [Collection("IntegrationTests")]
+    public abstract class UpdateTests : BaseTriggerTests
     {
         protected UpdateTests(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory) : base(contextOptionsFactory)
         {

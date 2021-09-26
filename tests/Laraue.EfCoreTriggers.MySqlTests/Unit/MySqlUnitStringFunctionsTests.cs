@@ -1,10 +1,12 @@
 ﻿using Laraue.EfCoreTriggers.MySql;
+using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
+using Xunit;
 using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.MySqlTests.Unit
 {
-    [UnitTest]
+    [Collection(CollectionNames.MySql)]
     public class MySqlUnitStringFunctionsTests : UnitStringFunctionsTests
     {
         public MySqlUnitStringFunctionsTests() : base(new MySqlProvider(new ContextFactory().CreateDbContext().Model))

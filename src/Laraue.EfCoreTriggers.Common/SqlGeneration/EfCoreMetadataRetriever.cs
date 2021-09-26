@@ -50,6 +50,11 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             if (!_columnNamesCache.ContainsKey(memberInfo))
             {
                 var entityType = Model.FindEntityType(memberInfo.DeclaringType);
+                if (entityType == null)
+                {
+                    var missingType = memberInfo.DeclaringType.GetType();
+                    throw new InvalidOperationException($"To use entity of type {missingType}, DbSet<{missingType}> should be added to the DbContext");
+                }
                 var property = entityType.FindProperty(memberInfo.Name);
                 var identifier = (StoreObjectIdentifier)StoreObjectIdentifier.Create(entityType, StoreObjectType.Table);
                 _columnNamesCache.Add(memberInfo, property.GetColumnName(identifier));

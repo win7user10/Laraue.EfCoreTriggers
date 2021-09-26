@@ -6,8 +6,8 @@ using Xunit;
 namespace Laraue.EfCoreTriggers.PostgreSqlTests.Native
 {
     [Collection(CollectionNames.PostgreSql)]
-    public class PostgreSqlNativeUpdateTests: UpdateTests
+    public class PostgreSqlNativeDeleteTests: DeleteTests
     {
-        public PostgreSqlNativeUpdateTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
+        public PostgreSqlNativeDeleteTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Laraue.EfCoreTriggers.PostgreSql;
+using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
+using Xunit;
 using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
 {
-    [UnitTest]
+    [Collection(CollectionNames.PostgreSql)]
     public class PostgreUnitMemberAssignmentTests : BaseMemberAssignmentUnitTests
     {
         public PostgreUnitMemberAssignmentTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))

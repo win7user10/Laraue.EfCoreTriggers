@@ -8,6 +8,7 @@ using Xunit.Categories;
 namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 {
     [IntegrationTest]
+    [Collection("IntegrationTests")]
     public abstract class NativeMemberAssignmentFunctionsTests : BaseMemberAssignmentTests
     {
         protected IContextOptionsFactory<DynamicDbContext> ContextOptionsFactory { get; }

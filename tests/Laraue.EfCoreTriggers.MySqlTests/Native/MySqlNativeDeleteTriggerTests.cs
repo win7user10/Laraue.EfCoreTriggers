@@ -6,8 +6,8 @@ using Xunit;
 namespace Laraue.EfCoreTriggers.MySqlTests.Native
 {
     [Collection(CollectionNames.MySql)]
-    public class MySqlNativeInsertTriggerTests : InsertTests
+    public class MySqlNativeDeleteTriggerTests : DeleteTests
     {
-        public MySqlNativeInsertTriggerTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
+        public MySqlNativeDeleteTriggerTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
     }
 }

@@ -322,7 +322,7 @@ namespace Laraue.EfCoreTriggers.SqlServer
                     .Append(" WHERE ")
                     .AppendJoin(" AND ", matchExpressionParts
                         .Select(memberPair => $"{GetColumnSql(memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
-                    .Append($" IF @@ROWCOUNT = 0 ");
+                    .Append($" IF @@ROWCOUNT = 0");
             }
             else
             {
@@ -333,7 +333,7 @@ namespace Laraue.EfCoreTriggers.SqlServer
             }
 
             sqlBuilder
-                .Append($"BEGIN INSERT INTO {GetTableName(typeof(TUpsertEntity))} ")
+                .Append($" BEGIN INSERT INTO {GetTableName(typeof(TUpsertEntity))} ")
                 .Append(insertStatementSql.StringBuilder)
                 .Append("; END COMMIT TRANSACTION;");
 

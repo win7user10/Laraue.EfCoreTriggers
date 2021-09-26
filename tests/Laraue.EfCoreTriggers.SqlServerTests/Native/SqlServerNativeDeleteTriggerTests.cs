@@ -6,8 +6,8 @@ using Xunit;
 namespace Laraue.EfCoreTriggers.SqlServerTests.Native
 {
     [Collection(CollectionNames.SqlServer)]
-    public class SqlServerNativeInsertTriggerTests : InsertTests
+    public class SqlServerNativeDeleteTriggerTests : DeleteTests
     {
-        public SqlServerNativeInsertTriggerTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
+        public SqlServerNativeDeleteTriggerTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
     }
 }
