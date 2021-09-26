@@ -201,9 +201,10 @@ namespace Laraue.EfCoreTriggers.SqlServer
             return $"SELECT {columns} FROM {TemporaryTableName(argumentType)}";
         }
 
-        private string DeclareVariablesSql(ArgumentType argumentType, IEnumerable<MemberInfo> members)
+        private string[] DeclareVariablesSql(ArgumentType argumentType, IEnumerable<MemberInfo> members)
         {
-            return $"DECLARE {string.Join(", ", members.Select(member => DeclareVariableNameSql(argumentType, member)))}";
+            return members.Select(member => DeclareVariableNameSql(argumentType, member))
+                .ToArray();
         }
         
         private string DeclareVariablesSql<TTriggerEntity>(Dictionary<ArgumentType, HashSet<MemberInfo>> members)
@@ -213,10 +214,15 @@ namespace Laraue.EfCoreTriggers.SqlServer
             var variablesSql = members
                 .ToDictionary(x => x.Key, x => x.Value.WhereDeclaringType<TTriggerEntity>())
                 .Where(x => x.Value.Any())
-                .Select(x => DeclareVariablesSql(x.Key, x.Value))
+                .SelectMany(x => DeclareVariablesSql(x.Key, x.Value))
                 .ToArray();
 
-            sqlBuilder.AppendJoin(", ", variablesSql);
+            if (variablesSql.Any())
+            {
+                sqlBuilder.Append("DECLARE ")
+                    .AppendJoin(", ", variablesSql);
+            }
+            
             return sqlBuilder;
         }
 
@@ -320,8 +326,7 @@ namespace Laraue.EfCoreTriggers.SqlServer
             }
             else
             {
-                sqlBuilder.Append($"IF NOT EXISTS(SELECT 1 FROM {GetTableName(typeof(TUpsertEntity))} WITH (UPDLOCK, SERIALIZABLE) ")
-                    .Append(" WHERE ")
+                sqlBuilder.Append($"IF NOT EXISTS(SELECT 1 FROM {GetTableName(typeof(TUpsertEntity))} WITH (UPDLOCK, SERIALIZABLE) WHERE ")
                     .AppendJoin(" AND ", matchExpressionParts
                         .Select(memberPair => $"{GetColumnSql(memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
                     .Append(")");
