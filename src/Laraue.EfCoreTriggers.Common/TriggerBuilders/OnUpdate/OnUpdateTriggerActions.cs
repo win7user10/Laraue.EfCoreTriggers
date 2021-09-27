@@ -23,7 +23,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
         }
 
         public OnUpdateTriggerActions<TTriggerEntity> Upsert<TUpsertEntity>(
-            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TUpsertEntity, TUpsertEntity>> matchExpression,
             Expression<Func<TTriggerEntity, TTriggerEntity, TUpsertEntity>> insertExpression,
             Expression<Func<TTriggerEntity, TTriggerEntity, TUpsertEntity, TUpsertEntity>> onMatchExpression)
             where TUpsertEntity : class
@@ -33,7 +33,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
         }
 
         public OnUpdateTriggerActions<TTriggerEntity> InsertIfNotExists<TUpsertEntity>(
-            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TUpsertEntity, TUpsertEntity>> matchExpression,
             Expression<Func<TTriggerEntity, TTriggerEntity, TUpsertEntity>> insertExpression)
             where TUpsertEntity : class
         {

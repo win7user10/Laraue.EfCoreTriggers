@@ -23,7 +23,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
         }
 
         public OnDeleteTriggerActions<TTriggerEntity> Upsert<TUpsertEntity>(
-            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TUpsertEntity>> matchExpression,
             Expression<Func<TTriggerEntity, TUpsertEntity>> insertExpression,
             Expression<Func<TTriggerEntity, TUpsertEntity, TUpsertEntity>> onMatchExpression)
             where TUpsertEntity : class
@@ -33,7 +33,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
         }
 
         public OnDeleteTriggerActions<TTriggerEntity> InsertIfNotExists<TUpsertEntity>(
-            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TUpsertEntity>> matchExpression,
             Expression<Func<TTriggerEntity, TUpsertEntity>> insertExpression)
             where TUpsertEntity : class
         {

@@ -2,6 +2,9 @@
 {
     public class StringContainsViaStrposFuncConverter : BaseStringContainsConverter
     {
-        public override string SqlFunctionName => "STRPOS";
+        protected override string CombineSql(string expressionToSearchSql, string expressionToFindSql)
+        {
+            return $"STRPOS({expressionToSearchSql}, {expressionToFindSql}) > 0";
+        }
     }
 }

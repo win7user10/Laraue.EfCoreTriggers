@@ -5,7 +5,7 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.AtanTwo;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan2;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Cos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp;
@@ -38,7 +38,7 @@ namespace Laraue.EfCoreTriggers.PostgreSql
             AddConverter(new MathAcosConverter());
             AddConverter(new MathAsinConverter());
             AddConverter(new MathAtanConverter());
-            AddConverter(new MathAtanTwoConverter());
+            AddConverter(new MathAtan2Converter());
             AddConverter(new MathCeilingConverter());
             AddConverter(new MathCosConverter());
             AddConverter(new MathExpConverter());
@@ -78,14 +78,20 @@ namespace Laraue.EfCoreTriggers.PostgreSql
 
             if (triggerActions.ActionConditions.Count > 0)
             {
-                var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
+                var conditionsSql = triggerActions
+                    .ActionConditions
+                    .Select(actionCondition => actionCondition.BuildSql(this))
+                    .ToArray();
+                
                 sqlResult.MergeColumnsInfo(conditionsSql);
                 sqlResult.Append($"IF ")
                     .AppendJoin(" AND ", conditionsSql.Select(x => x.StringBuilder))
                     .Append($" THEN ");
             }
 
-            var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this));
+            var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this))
+                .ToArray();
+            
             sqlResult.MergeColumnsInfo(actionsSql)
                 .AppendJoin(", ", actionsSql.Select(x => x.StringBuilder));
 
@@ -100,7 +106,9 @@ namespace Laraue.EfCoreTriggers.PostgreSql
 
         public override SqlBuilder GetTriggerSql<TTriggerEntity>(Trigger<TTriggerEntity> trigger)
         {
-            var actionsSql = trigger.Actions.Select(action => action.BuildSql(this));
+            var actionsSql = trigger.Actions.Select(action => action.BuildSql(this))
+                .ToArray();
+            
             return new SqlBuilder(actionsSql)
                 .Append($"CREATE FUNCTION {trigger.Name}() RETURNS trigger as ${trigger.Name}$ ")
                 .Append("BEGIN ")

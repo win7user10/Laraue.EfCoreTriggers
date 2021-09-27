@@ -1,23 +1,34 @@
 ﻿using Laraue.EfCoreTriggers.PostgreSql.Extensions;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests
 {
-    public class ContextFactory : BaseContextFactory<NativeDbContext>
+    public class ContextFactory : BaseContextFactory<FinalContext>
     {
-        public override FinalContext CreateDbContext() => new();
+        public override FinalContext CreateDbContext() => new(new ContextOptionsFactory<DynamicDbContext>().CreateDbContextOptions());
     }
 
-    public class FinalContext : NativeDbContext
+    public class ContextOptionsFactory<TContext> : IContextOptionsFactory<TContext> where TContext : DbContext
     {
-        public FinalContext() 
-            : base(new DbContextOptionsBuilder<NativeDbContext>()
+        public DbContextOptions<TContext> CreateDbContextOptions()
+        {
+            return new DbContextOptionsBuilder<TContext>()
                 .UseNpgsql("User ID=postgres;Password=postgres;Host=localhost;Port=5432;Database=efcoretriggers;",
-                    x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
+                    x => x.MigrationsAssembly(typeof(TContext).Assembly.FullName))
                 .UseSnakeCaseNamingConvention()
                 .UsePostgreSqlTriggers()
-                .Options)
+                .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
+                .Options;
+        }
+    }
+
+    public class FinalContext : DynamicDbContext
+    {
+        public FinalContext(DbContextOptions<DynamicDbContext> options) 
+            : base(options)
         {
         }
 

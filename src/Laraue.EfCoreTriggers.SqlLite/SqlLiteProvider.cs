@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.AtanTwo;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan2;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Cos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp;
@@ -18,6 +19,7 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -38,8 +40,8 @@ namespace Laraue.EfCoreTriggers.SqlLite
             AddConverter(new MathAcosConverter());
             AddConverter(new MathAsinConverter());
             AddConverter(new MathAtanConverter());
-            AddConverter(new MathAtanTwoConverter());
-            AddConverter(new MathCeilingConverter());
+            AddConverter(new MathAtan2Converter());
+            AddConverter(new MathCeilConverter());
             AddConverter(new MathCosConverter());
             AddConverter(new MathExpConverter());
             AddConverter(new MathFloorConverter());
@@ -79,13 +81,21 @@ namespace Laraue.EfCoreTriggers.SqlLite
 
             if (triggerActions.ActionConditions.Count > 0)
             {
-                var conditionsSql = triggerActions.ActionConditions.Select(actionCondition => actionCondition.BuildSql(this));
+                var conditionsSql = triggerActions
+                    .ActionConditions
+                    .Select(actionCondition => actionCondition.BuildSql(this))
+                    .ToArray();
+                
                 sqlResult.MergeColumnsInfo(conditionsSql);
                 sqlResult.Append("WHEN ")
                     .AppendJoin(" AND ", conditionsSql.Select(x => x.StringBuilder));
             }
 
-            var actionsSql = triggerActions.ActionExpressions.Select(action => action.BuildSql(this));
+            var actionsSql = triggerActions
+                .ActionExpressions
+                .Select(action => action.BuildSql(this))
+                .ToArray();
+            
             sqlResult.MergeColumnsInfo(actionsSql)
                 .Append(" BEGIN ")
                 .AppendJoin(", ", actionsSql.Select(x => x.StringBuilder))
@@ -102,14 +112,29 @@ namespace Laraue.EfCoreTriggers.SqlLite
             var generatedSql = new SqlBuilder(actionsSql);
 
             var actionsCount = actionsSql.Length;
-            for (var i = 0; i < actionsCount; i++)
+            
+            // Reverse trigger actions to fire it in the order set while trigger configuring
+            for (var i = actionsCount; i > 0; i--)
             {
-                var postfix = actionsCount > 1 ? $"_{i + 1}" : string.Empty;
+                var postfix = actionsCount > 1 ? $"_{actionsCount - i}" : string.Empty;
                 generatedSql.Append($"CREATE TRIGGER {trigger.Name}{postfix} {triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ")
                    .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW ")
-                   .Append(actionsSql[i].StringBuilder);
+                   .Append(actionsSql[i - 1].StringBuilder);
             }
             return generatedSql;
+        }
+
+        protected override SqlBuilder GetEmptyInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentType> argumentTypes)
+        {
+            var primaryKeyProperties = GetPrimaryKeyMembers(insertExpression.Body.Type);
+            var sqlBuilder = new SqlBuilder();
+            sqlBuilder.Append("(")
+                .AppendJoin(", ", primaryKeyProperties.Select(GetColumnName))
+                .Append(") VALUES (")
+                .AppendJoin(", ", primaryKeyProperties.Select(_ => "NULL"))
+                .Append(")");
+
+            return sqlBuilder;
         }
 
         protected override string GetNewGuidExpressionSql() =>

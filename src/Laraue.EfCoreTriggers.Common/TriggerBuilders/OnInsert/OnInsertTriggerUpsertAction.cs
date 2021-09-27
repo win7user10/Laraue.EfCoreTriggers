@@ -10,7 +10,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
         where TUpsertEntity : class
     {
         public OnInsertTriggerUpsertAction(
-            Expression<Func<TUpsertEntity, object>> matchExpression,
+            Expression<Func<TTriggerEntity, TUpsertEntity>> matchExpression,
             Expression<Func<TTriggerEntity, TUpsertEntity>> insertExpression,
             Expression<Func<TTriggerEntity, TUpsertEntity, TUpsertEntity>> onMatchExpression)
                 : base(matchExpression, insertExpression, onMatchExpression)

@@ -2,6 +2,9 @@
 {
     public class StringContainsViaInstrFuncConverter : BaseStringContainsConverter
     {
-        public override string SqlFunctionName => "INSTR";
+        protected override string CombineSql(string expressionToSearchSql, string expressionToFindSql)
+        {
+            return $"INSTR({expressionToSearchSql}, {expressionToFindSql}) > 0";
+        }
     }
 }

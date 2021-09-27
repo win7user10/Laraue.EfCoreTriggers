@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -20,9 +21,26 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         public readonly Dictionary<ArgumentType, HashSet<MemberInfo>> AffectedColumns
             = new()
             {
-                [ArgumentType.New] = new HashSet<MemberInfo>(),
-                [ArgumentType.Old] = new HashSet<MemberInfo>(),
+                [ArgumentType.New] = new HashSet<MemberInfo>(new MemberInfoComparer()),
+                [ArgumentType.Old] = new HashSet<MemberInfo>(new MemberInfoComparer()),
             };
+
+        private class MemberInfoComparer : IEqualityComparer<MemberInfo>
+        {
+            public bool Equals(MemberInfo x, MemberInfo y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(x, null)) return false;
+                if (ReferenceEquals(y, null)) return false;
+                if (x.GetType() != y.GetType()) return false;
+                return Equals(x.DeclaringType, y.DeclaringType) && x.Name == y.Name;
+            }
+
+            public int GetHashCode(MemberInfo obj)
+            {
+                return HashCode.Combine(obj.DeclaringType, obj.Name);
+            }
+        }
 
         /// <summary>
         /// Create instance of <see cref="SqlBuilder"/>, merging AffectedColumns from passed builders.
@@ -106,6 +124,12 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         public SqlBuilder Append(string value)
         {
             StringBuilder.Append(value);
+            return this;
+        }
+        
+        public SqlBuilder Prepend(string value)
+        {
+            StringBuilder.Insert(0, value);
             return this;
         }
 

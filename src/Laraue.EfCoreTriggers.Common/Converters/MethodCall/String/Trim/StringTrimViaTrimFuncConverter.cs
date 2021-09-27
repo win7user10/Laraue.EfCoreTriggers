@@ -2,6 +2,6 @@
 {
     public class StringTrimViaTrimFuncConverter : BaseStringTrimConverter
     {
-        public override string TrimsTypeName => "TRIM";
+        protected override string[] SqlTrimFunctionsNamesToApply { get; } = { "TRIM" };
     }
 }
