@@ -26,9 +26,9 @@ After update Transaction entity, update records in the table with UserBalance en
 modelBuilder.Entity<Transaction>()
     .AfterUpdate(trigger => trigger
         .Action(action => action
-            .Condition((oldTransaction, newTransaction) => oldTransaction.IsVeryfied && newTransaction.IsVeryfied) // Executes only if condition met 
+            .Condition((transactionBeforeUpdate, transactionAfterUpdate) => transactionBeforeUpdate.IsVeryfied && transactionAfterUpdate.IsVeryfied) // Executes only if condition met 
             .Update<UserBalance>(
-                (oldTransaction, updatedTransaction, userBalances) => userBalances.UserId == oldTransaction.UserId, // Will be updated entities with matched condition
+                (transactionBeforeUpdate, transactionAfterUpdate, userBalances) => userBalances.UserId == oldTransaction.UserId, // Will be updated entities with matched condition
                 (oldTransaction, updatedTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance + updatedTransaction.Value - oldTransaction.Value }))); // New values for matched entities.
 ```
 
@@ -40,9 +40,9 @@ modelBuilder.Entity<Transaction>()
         .Action(action => action
             .Condition(deletedTransaction => deletedTransaction.IsVeryfied)
             .Upsert(
-                balance => new { balance.UserId }, // If this field is matched, will be executed update operation else insert
-                insertedTransaction => new UserBalance { UserId = insertedTransaction.UserId, Balance = insertedTransaction.Value }, // Insert, if value didn't exist
-                (insertedTransaction, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance + insertedTransaction.Value }))); // Update if value existed
+                deletedTransaction => new UserBalance { UserId = deletedTransaction.UserId }, // If this field will match more than 0 rows, will be executed update operation for these rows else insert
+                deletedTransaction => new UserBalance { UserId = deletedTransaction.UserId, Balance = deletedTransaction.Value }, // Insert, if value didn't exist
+                (deletedTransaction, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance + deletedTransaction.Value }))); // Update all matched values
 ```
 
 More examples of using are available in Tests/NativeDbContext.cs.
