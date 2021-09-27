@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -35,7 +36,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// Initializes new instance of <see cref="BaseExpressionProvider"/>.
         /// </summary>
         /// <param name="model"></param>
-        public EfCoreMetadataRetriever(IModel model)
+        protected EfCoreMetadataRetriever(IModel model)
         {
             Model = model ?? throw new ArgumentNullException(nameof(model));
         }
@@ -49,11 +50,11 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         {
             if (!_columnNamesCache.ContainsKey(memberInfo))
             {
-                var entityType = Model.FindEntityType(memberInfo.DeclaringType);
+                var declaringType = memberInfo.DeclaringType;
+                var entityType = Model.FindEntityType(declaringType);
                 if (entityType == null)
                 {
-                    var missingType = memberInfo.DeclaringType.GetType();
-                    throw new InvalidOperationException($"To use entity of type {missingType}, DbSet<{missingType}> should be added to the DbContext");
+                    throw new InvalidOperationException($"DbSet<{declaringType.Name}> should be added to the DbContext");
                 }
                 var property = entityType.FindProperty(memberInfo.Name);
                 var identifier = (StoreObjectIdentifier)StoreObjectIdentifier.Create(entityType, StoreObjectType.Table);
@@ -75,6 +76,14 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <returns></returns>
         protected virtual string GetTableName(MemberInfo memberInfo) => GetTableName(memberInfo.DeclaringType);
 
+        protected virtual PropertyInfo[] GetPrimaryKeyMembers(Type type)
+        {
+            var entityType = Model.FindEntityType(type);
+            return entityType.FindPrimaryKey()
+                .Properties
+                .Select(x => x.PropertyInfo)
+                .ToArray();
+        }
 
         /// <summary>
         /// Get table name for passed <see cref="Type">ClrType</see>.

@@ -302,10 +302,11 @@ namespace Laraue.EfCoreTriggers.SqlServer
             return sqlBuilder;
         }
 
-        protected override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(
-            TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction,
-            IDictionary<MemberInfo, SqlBuilder> matchExpressionParts)
+        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpsertEntity>(
+            TriggerUpsertAction<TTriggerEntity, TUpsertEntity> triggerUpsertAction)
         {
+            var matchExpressionParts = GetLambdaNewExpressionParts(triggerUpsertAction.MatchExpression, triggerUpsertAction.MatchExpressionPrefixes);
+
             var sqlBuilder = new SqlBuilder(matchExpressionParts.Select(x => x.Value));
             var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
 

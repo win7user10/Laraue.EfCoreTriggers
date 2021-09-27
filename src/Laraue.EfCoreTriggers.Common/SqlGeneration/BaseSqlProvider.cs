@@ -84,10 +84,10 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
         public virtual SqlBuilder GetUpdateStatementBodySql(LambdaExpression updateExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
-            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)updateExpression.Body, argumentTypes);
+            var assignmentParts = GetLambdaNewExpressionParts(updateExpression, argumentTypes);
             var sqlResult = new SqlBuilder(assignmentParts.Values);
             var assignmentPartsSql = assignmentParts
-                .Select(expressionPart => $"{GetColumnName(expressionPart.Key.Member)} = {expressionPart.Value}")
+                .Select(expressionPart => $"{GetColumnName(expressionPart.Key)} = {expressionPart.Value}")
                 .ToArray();
             sqlResult.AppendJoin(", ", assignmentPartsSql);
             return sqlResult;
@@ -95,45 +95,39 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
         public virtual SqlBuilder GetInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentType> argumentTypes)
         {
-            var assignmentParts = GetMemberInitExpressionAssignmentParts((MemberInitExpression)insertExpression.Body, argumentTypes);
+            var assignmentParts = GetLambdaNewExpressionParts(insertExpression, argumentTypes);
             var sqlResult = new SqlBuilder(assignmentParts.Values);
-            
-            // TODO - insert via table/column name
-            
-            sqlResult.Append("(")
-                .AppendJoin(", ", assignmentParts.Select(x => GetColumnName(x.Key.Member)))
-                .Append(") VALUES (")
-                .AppendJoin(", ", assignmentParts.Select(x => x.Value.ToString()))
-                .Append(")");
+
+            if (assignmentParts.Any())
+            {
+                sqlResult.Append("(")
+                    .AppendJoin(", ", assignmentParts.Select(x => GetColumnName(x.Key)))
+                    .Append(") VALUES (")
+                    .AppendJoin(", ", assignmentParts.Select(x => x.Value.ToString()))
+                    .Append(")");
+            }
+            else
+            {
+                sqlResult.Append(GetEmptyInsertStatementBodySql(insertExpression, argumentTypes));
+            }
             
             return sqlResult;
+        }
+
+
+        protected virtual SqlBuilder GetEmptyInsertStatementBodySql(LambdaExpression insertExpression,
+            Dictionary<string, ArgumentType> argumentTypes)
+        {
+            var sqlBuilder = new SqlBuilder();
+            sqlBuilder.Append("DEFAULT VALUES");
+            return sqlBuilder;
         }
 
         public virtual SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
             where TTriggerEntity : class
             where TUpdateEntity : class
         {
-            var matchExpressionParts =
-                triggerUpsertAction.MatchExpression.Body switch
-                {
-                    MemberInitExpression memberInitExpression => GetMemberInitExpressionAssignmentParts(
-                            memberInitExpression, triggerUpsertAction.MatchExpressionPrefixes)
-                        .ToDictionary(x => x.Key.Member, x => x.Value),
-                    NewExpression newExpression => GetNewExpressionAssignmentParts(newExpression,
-                            triggerUpsertAction.MatchExpressionPrefixes)
-                        .ToDictionary(x => x.Key.Member, x => x.Value),
-                    _ => throw new NotImplementedException()
-                };
-
-            return GetTriggerUpsertActionSql(triggerUpsertAction, matchExpressionParts);
-        }
-        
-        protected virtual SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(
-            TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction,
-            IDictionary<MemberInfo, SqlBuilder> matchExpressionParts)
-            where TTriggerEntity : class
-            where TUpdateEntity : class
-        {
+            var matchExpressionParts = GetLambdaNewExpressionParts(triggerUpsertAction.MatchExpression, triggerUpsertAction.MatchExpressionPrefixes);
             var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
             
             var sqlBuilder = new SqlBuilder(insertStatementSql.AffectedColumns)
@@ -158,6 +152,18 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             }
 
             return sqlBuilder;
+        }
+        
+        protected Dictionary<MemberInfo, SqlBuilder> GetLambdaNewExpressionParts(LambdaExpression expression, Dictionary<string, ArgumentType> argumentTypes)
+        {
+            return expression.Body switch
+            {
+                MemberInitExpression memberInitExpression => GetMemberInitExpressionAssignmentParts(memberInitExpression, argumentTypes)
+                    .ToDictionary(x => x.Key.Member, x => x.Value),
+                NewExpression newExpression => GetNewExpressionAssignmentParts(newExpression, argumentTypes)
+                    .ToDictionary(x => x.Key.Member, x => x.Value),
+                _ => throw new NotImplementedException()
+            };
         }
 
         public SqlBuilder GetTriggerDeleteActionSql<TTriggerEntity, TUpdateEntity>(TriggerDeleteAction<TTriggerEntity, TUpdateEntity> triggerDeleteAction)

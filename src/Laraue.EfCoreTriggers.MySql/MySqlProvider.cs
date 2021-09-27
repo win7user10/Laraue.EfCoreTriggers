@@ -130,9 +130,10 @@ namespace Laraue.EfCoreTriggers.MySql
             return sql;
         }
 
-        protected override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction,
-            IDictionary<MemberInfo, SqlBuilder> matchExpressionParts)
+        public override SqlBuilder GetTriggerUpsertActionSql<TTriggerEntity, TUpdateEntity>(
+            TriggerUpsertAction<TTriggerEntity, TUpdateEntity> triggerUpsertAction)
         {
+            var matchExpressionParts = GetLambdaNewExpressionParts(triggerUpsertAction.MatchExpression, triggerUpsertAction.MatchExpressionPrefixes);
             var insertStatementSql = GetInsertStatementBodySql(triggerUpsertAction.InsertExpression, triggerUpsertAction.InsertExpressionPrefixes);
 
             var sqlBuilder = new SqlBuilder(insertStatementSql.AffectedColumns)
@@ -166,6 +167,13 @@ namespace Laraue.EfCoreTriggers.MySql
             }
 
             return base.GetConvertExpressionSql(unaryExpression, member);
+        }
+
+        protected override SqlBuilder GetEmptyInsertStatementBodySql(LambdaExpression insertExpression, Dictionary<string, ArgumentType> argumentTypes)
+        {
+            var sqlBuilder = new SqlBuilder();
+            sqlBuilder.Append("() VALUES ()");
+            return sqlBuilder;
         }
 
         protected override string GetNewGuidExpressionSql() => "UUID()";

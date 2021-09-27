@@ -103,5 +103,46 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
             var saved = Assert.Single(dbContext.DestinationEntities);
             Assert.Equal(15, saved.DecimalValue);
         }
+        
+        [Fact]
+        public void InsertTrigger_ShouldExecuteAction_OnlyWhenConditionIsPassed()
+        {
+            Action<EntityTypeBuilder<SourceEntity>> builder = x =>
+                x.AfterInsert(trigger => trigger
+                    .Action(action => action
+                        .Condition(inserted => inserted.IntValue > 10)
+                        .Condition(inserted => inserted.IntValue < 20)
+                        .Insert(inserted => new DestinationEntity())));
+
+            using var dbContext = CreateDbContext(builder);
+            
+            dbContext.Save(new SourceEntity { IntValue = 9 });
+            Assert.Empty(dbContext.DestinationEntities);
+            
+            dbContext.Save(new SourceEntity { IntValue = 21 });
+            Assert.Empty(dbContext.DestinationEntities);
+            
+            dbContext.Save(new SourceEntity { IntValue = 12 });
+            Assert.Single(dbContext.DestinationEntities);
+        }
+        
+        [Fact]
+        public void InsertTrigger_ShouldExecuteActionSequence()
+        {
+            Action<EntityTypeBuilder<SourceEntity>> builder = x =>
+                x.AfterInsert(trigger => trigger
+                    .Action(action => action
+                        .Insert(inserted => new DestinationEntity { StringField = inserted.StringField + "Bob" }))
+                    .Action(action => action
+                        .Insert(inserted => new DestinationEntity { StringField = inserted.StringField + "John" })));
+
+            using var dbContext = CreateDbContext(builder);
+            
+            dbContext.Save(new SourceEntity { StringField = "Hi, " });
+            var result = dbContext.DestinationEntities.OrderBy(x => x.Id).ToArray();
+            Assert.Equal(2, result.Length);
+            Assert.Equal("Hi, Bob", result[0].StringField);
+            Assert.Equal("Hi, John", result[1].StringField);
+        }
     }
 }
