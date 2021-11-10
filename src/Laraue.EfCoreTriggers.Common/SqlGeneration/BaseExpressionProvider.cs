@@ -357,7 +357,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         public AvailableConverters Converters { get; } = new ();
 
         /// <inheritdoc />
-        protected BaseExpressionProvider(IModel model) : base(model)
+        protected BaseExpressionProvider(IReadOnlyModel model) : base(model)
         {
         }
 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Description>Generating native PostgreSql triggers through migrations using EFCore entity builder.</Description>
     <RepositoryUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

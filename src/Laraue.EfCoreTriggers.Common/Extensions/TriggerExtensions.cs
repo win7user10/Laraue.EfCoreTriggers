@@ -20,14 +20,14 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             _setupProviderConverters = setupConverters;
         }
 
-        public static ITriggerProvider GetSqlProvider(IModel model)
+        public static ITriggerProvider GetSqlProvider(IReadOnlyModel model)
         {
             if (_activeProviderType is null)
             {
                 throw new InvalidOperationException("To use triggers, DB provider should be added");
             }
 
-            var providerConstructor = _activeProviderType.GetConstructor(new[] { typeof(IModel) });
+            var providerConstructor = _activeProviderType.GetConstructor(new[] { typeof(IReadOnlyModel) });
 
             if (providerConstructor is null)
             {

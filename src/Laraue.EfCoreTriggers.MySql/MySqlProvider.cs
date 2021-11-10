@@ -28,7 +28,7 @@ namespace Laraue.EfCoreTriggers.MySql
 {
     public class MySqlProvider : BaseSqlProvider
     {
-        public MySqlProvider(IModel model) : base(model)
+        public MySqlProvider(IReadOnlyModel model) : base(model)
         {
             AddConverter(new ConcatStringViaConcatFuncConverter());
             AddConverter(new StringToUpperViaUpperFuncConverter());

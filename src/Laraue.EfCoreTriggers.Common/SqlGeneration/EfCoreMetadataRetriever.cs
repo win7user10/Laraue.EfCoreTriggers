@@ -30,13 +30,13 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <summary>
         /// Model used for generating SQL. From this model takes column names, table names and other meta information.
         /// </summary>
-        protected IModel Model { get; }
+        protected IReadOnlyModel Model { get; }
 
         /// <summary>
         /// Initializes new instance of <see cref="BaseExpressionProvider"/>.
         /// </summary>
         /// <param name="model"></param>
-        protected EfCoreMetadataRetriever(IModel model)
+        protected EfCoreMetadataRetriever(IReadOnlyModel model)
         {
             Model = model ?? throw new ArgumentNullException(nameof(model));
         }

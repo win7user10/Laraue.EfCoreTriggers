@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Description>Common classes EfCoreTriggers packages.</Description>
     <RepositoryUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -15,11 +15,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.11">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 

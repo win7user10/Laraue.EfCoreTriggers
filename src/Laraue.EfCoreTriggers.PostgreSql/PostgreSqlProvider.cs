@@ -25,7 +25,7 @@ namespace Laraue.EfCoreTriggers.PostgreSql
 {
     public class PostgreSqlProvider : BaseSqlProvider
     {
-        public PostgreSqlProvider(IModel model) : base(model)
+        public PostgreSqlProvider(IReadOnlyModel model) : base(model)
         {
             AddConverter(new ConcatStringViaConcatFuncConverter());
             AddConverter(new StringToUpperViaUpperFuncConverter());
