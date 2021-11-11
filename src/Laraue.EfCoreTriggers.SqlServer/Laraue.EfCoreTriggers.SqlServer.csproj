@@ -7,11 +7,10 @@
     <RepositoryType>git</RepositoryType>
     <Authors>Belyanskiy Ilya</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
     <PackageProjectUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</PackageProjectUrl>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;SqlServer</PackageTags>
     <LangVersion>Latest</LangVersion>
-    <PackageVersion>1.1.1</PackageVersion>
+    <PackageVersion>6.0.0</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
