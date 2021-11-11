@@ -128,7 +128,7 @@ var options = new DbContextOptionsBuilder<TestDbContext>()
 var dbContext = new TestDbContext(options);
 ```
 
-### Customization
+## Customization
 
 Using custom provider to extend additional functionality
 
