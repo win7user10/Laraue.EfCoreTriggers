@@ -11,7 +11,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 {
     public abstract class BaseSqlProvider : BaseExpressionProvider, ITriggerProvider
     {
-        protected BaseSqlProvider(IModel model) : base(model)
+        protected BaseSqlProvider(IReadOnlyModel model) : base(model)
         {
         }
 

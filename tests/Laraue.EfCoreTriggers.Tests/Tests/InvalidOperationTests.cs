@@ -19,7 +19,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         public InvalidOperationTests()
         {
             var modelBuilder = new ModelBuilder();
-            IModel model = modelBuilder.Model;
+            IReadOnlyModel model = modelBuilder.Model;
             _provider = new MySqlProvider(model);
         }
         

@@ -27,7 +27,7 @@ namespace Laraue.EfCoreTriggers.SqlLite
 {
     public class SqlLiteProvider : BaseSqlProvider
     {
-        public SqlLiteProvider(IModel model) : base(model)
+        public SqlLiteProvider(IReadOnlyModel model) : base(model)
         {
             AddConverter(new ConcatStringViaDoubleVerticalLineConverter());
             AddConverter(new StringToUpperViaUpperFuncConverter());

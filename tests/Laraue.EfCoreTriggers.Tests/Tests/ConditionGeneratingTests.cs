@@ -14,7 +14,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 	public class ConditionGeneratingTests
     {
         private readonly ITriggerProvider _provider;
-        private readonly IModel _model;
+        private readonly IMutableModel _model;
 
         public ConditionGeneratingTests()
         {

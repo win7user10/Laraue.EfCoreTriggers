@@ -24,7 +24,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             modelBuilder.Entity<Transaction>()
                 .Property<string>("Description");
 
-            IModel model = modelBuilder.Model;
+            IReadOnlyModel model = modelBuilder.Model;
             _provider = new MySqlProvider(model);
         }
 

@@ -28,7 +28,7 @@ namespace Laraue.EfCoreTriggers.SqlServer
 {
     public class SqlServerProvider : BaseSqlProvider
     {
-        public SqlServerProvider(IModel model) : base(model)
+        public SqlServerProvider(IReadOnlyModel model) : base(model)
         {
             AddConverter(new ConcatStringViaPlusConverter());
             AddConverter(new StringToUpperViaUpperFuncConverter());
