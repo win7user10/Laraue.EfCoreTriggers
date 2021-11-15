@@ -93,7 +93,7 @@ namespace Laraue.EfCoreTriggers.PostgreSql
                 .ToArray();
             
             sqlResult.MergeColumnsInfo(actionsSql)
-                .AppendJoin(", ", actionsSql.Select(x => x.StringBuilder));
+                .AppendJoin(" ", actionsSql.Select(x => x.StringBuilder));
 
             if (triggerActions.ActionConditions.Count > 0)
             {
