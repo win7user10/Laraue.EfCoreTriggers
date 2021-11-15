@@ -116,7 +116,7 @@ namespace Laraue.EfCoreTriggers.PostgreSql
                 .Append(" RETURN NEW;END;")
                 .Append($"${trigger.Name}$ LANGUAGE plpgsql;")
                 .Append($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()} ")
-                .Append($"ON {GetTableName(typeof(TTriggerEntity))} FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
+                .Append($"ON \"{GetTableName(typeof(TTriggerEntity))}\" FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
         }
 
         protected override string GetNewGuidExpressionSql() => "uuid_generate_v4()";
