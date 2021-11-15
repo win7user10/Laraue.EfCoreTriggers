@@ -48,6 +48,8 @@ namespace Laraue.EfCoreTriggers.MySql
             AddConverter(new MathFloorConverter());
         }
 
+        protected override char Delimiter => '`';
+
         protected override Dictionary<Type, string> TypeMappings { get; } = new()
         {
             [typeof(bool)] = "BIT(1)",

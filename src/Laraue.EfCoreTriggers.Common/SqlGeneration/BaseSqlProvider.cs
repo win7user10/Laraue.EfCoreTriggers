@@ -101,7 +101,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             if (assignmentParts.Any())
             {
                 sqlResult.Append("(")
-                    .AppendJoin(", ", assignmentParts.Select(x => GetColumnName(x.Key)))
+                    .AppendJoin(", ", assignmentParts.Select(x => $"{Delimiter}{GetColumnName(x.Key)}{Delimiter}"))
                     .Append(") VALUES (")
                     .AppendJoin(", ", assignmentParts.Select(x => x.Value.ToString()))
                     .Append(")");
