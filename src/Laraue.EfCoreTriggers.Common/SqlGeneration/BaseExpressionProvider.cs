@@ -29,6 +29,8 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// </summary>
         protected virtual char Quote => '\'';
 
+        protected virtual char Delimiter => '"';
+
         /// <summary>
         /// Mappings between <see cref="Type">CLR Type</see> and SQL column types.
         /// Do not ask types directly from this property, use <see cref="GetSqlType"/> instead.
