@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
-using LinqToDB;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Xunit;
 using Xunit.Categories;

@@ -2,7 +2,6 @@
 using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
-using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
 {

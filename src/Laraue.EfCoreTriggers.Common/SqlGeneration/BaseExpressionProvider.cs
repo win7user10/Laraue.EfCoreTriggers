@@ -92,10 +92,15 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// </summary>
         /// <param name="unaryExpression"></param>
         /// <returns></returns>
-        protected virtual bool IsNeedConvertion(UnaryExpression unaryExpression)
+        protected virtual bool IsNeedConversion(UnaryExpression unaryExpression)
 		{
             var clrType1 = unaryExpression.Operand.Type;
             var clrType2 = unaryExpression.Type;
+            if (clrType1 == typeof(object) || clrType2 == typeof(object))
+            {
+                return false;
+            }
+            
             var sqlType1 = GetSqlType(clrType1);
             var sqlType2 = GetSqlType(clrType2);
             return sqlType1 != sqlType2;
@@ -223,7 +228,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             
             if (unaryExpression.NodeType == ExpressionType.Convert)
             {
-                if (IsNeedConvertion(unaryExpression))
+                if (IsNeedConversion(unaryExpression))
                 {
                     sqlBuilder.Append(GetConvertExpressionSql(unaryExpression, internalExpressionSql));
                 }

@@ -10,7 +10,8 @@
     <PackageProjectUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</PackageProjectUrl>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;PostgreSql</PackageTags>
     <LangVersion>Latest</LangVersion>
-    <PackageVersion>6.0.2</PackageVersion>
+    <PackageVersion>6.1.0</PackageVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

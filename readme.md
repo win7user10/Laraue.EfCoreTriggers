@@ -32,7 +32,7 @@ modelBuilder.Entity<Transaction>()
                 (oldTransaction, updatedTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance + updatedTransaction.Value - oldTransaction.Value }))); // New values for matched entities.
 ```
 
-After Insert trigger entity, upsert record in the table with UserBalance entities.
+After insert Transaction entity, upsert record in the table with UserBalance entities.
 
 ```cs
 modelBuilder.Entity<Transaction>()
@@ -45,7 +45,14 @@ modelBuilder.Entity<Transaction>()
                 (deletedTransaction, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance + deletedTransaction.Value }))); // Update all matched values
 ```
 
-More examples of using are available in Tests/NativeDbContext.cs.
+After delete Transaction entity, execute raw SQL. Pass deleted entity fields as arguments. 
+
+```cs
+modelBuilder.Entity<Transaction>()
+    .AfterDelete(trigger => trigger
+        .Action(action => action
+            .ExecuteRawSql("PERFORM recalc_balance({0}, {1})"), deletedEntity => deletedEntity.UserId, deletedEntity => deletedEntity.Amount))); // Update all matched values
+```
 
 ### All available triggers
 
@@ -68,6 +75,7 @@ More examples of using are available in Tests/NativeDbContext.cs.
 - Update
 - Upsert
 - Delete
+- ExecuteRawSql
 
 ## Laraue.EfCoreTriggers.PostgreSql
 

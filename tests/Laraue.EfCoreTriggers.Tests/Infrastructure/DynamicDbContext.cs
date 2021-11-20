@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.EfCoreTriggers.Tests.Tests;
 using Microsoft.EntityFrameworkCore;
 
 namespace Laraue.EfCoreTriggers.Tests.Infrastructure
