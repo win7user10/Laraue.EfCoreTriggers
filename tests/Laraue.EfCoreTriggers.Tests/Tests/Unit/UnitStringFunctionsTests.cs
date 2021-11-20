@@ -30,37 +30,37 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
 
         protected override void StringConcatSql()
         {
-            Provider.AssertGeneratedSql(ExceptedConcatSql, ConcatStringExpression);
+            Provider.AssertGeneratedInsertSql(ExceptedConcatSql, ConcatStringExpression);
         }
 
         protected override void StringLowerSql()
         {
-            Provider.AssertGeneratedSql(ExceptedStringLowerSql, StringToLowerExpression);
+            Provider.AssertGeneratedInsertSql(ExceptedStringLowerSql, StringToLowerExpression);
         }
 
         protected override void StringUpperSql()
         {
-            Provider.AssertGeneratedSql(ExceptedStringUpperSql, StringToUpperExpression);
+            Provider.AssertGeneratedInsertSql(ExceptedStringUpperSql, StringToUpperExpression);
         }
 
         protected override void StringTrimSql()
         {
-            Provider.AssertGeneratedSql(ExceptedStringTrimSql, TrimStringValueExpression);
+            Provider.AssertGeneratedInsertSql(ExceptedStringTrimSql, TrimStringValueExpression);
         }
 
         protected override void StringContainsSql()
         {
-            Provider.AssertGeneratedSql(ExceptedContainsSql, ContainsStringValueExpression);
+            Provider.AssertGeneratedInsertSql(ExceptedContainsSql, ContainsStringValueExpression);
         }
         
         protected override void StringEndsWithSql()
         {
-            Provider.AssertGeneratedSql(ExceptedEndsWithSql, EndsWithStringValueExpression);
+            Provider.AssertGeneratedInsertSql(ExceptedEndsWithSql, EndsWithStringValueExpression);
         }
 
         protected override void StringIsNullOrEmptySql()
         {
-            Provider.AssertGeneratedSql(ExceptedIsNullOrEmptySql, IsNullOrEmptyStringValueExpression);
+            Provider.AssertGeneratedInsertSql(ExceptedIsNullOrEmptySql, IsNullOrEmptyStringValueExpression);
         }
     }
 }

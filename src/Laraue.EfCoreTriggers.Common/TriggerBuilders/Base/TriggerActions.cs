@@ -13,7 +13,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
             => visitor.GetTriggerActionsSql(this);
 
-        internal void AddAction(ITriggerAction triggerAction)
+        private void AddAction(ITriggerAction triggerAction)
             => ActionExpressions.Add(triggerAction);
 
         protected void Update<TUpdateEntity>(TriggerUpdateAction<TTriggerEntity, TUpdateEntity> updateAction)
@@ -27,5 +27,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 
         protected void Insert<TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> insertAction)
             where TInsertEntity : class => AddAction(insertAction);
+
+        protected void RawSql<TInsertEntity>(TriggerRawAction<TTriggerEntity> rawSqlAction)
+            where TInsertEntity : class => AddAction(rawSqlAction);
     }
 }

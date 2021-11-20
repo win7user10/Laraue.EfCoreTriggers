@@ -54,5 +54,12 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
             Insert(new OnInsertTriggerInsertAction<TTriggerEntity, TInsertEntity>(setValues));
             return this;
         }
+        
+        public OnInsertTriggerActions<TTriggerEntity> ExecuteRawSql<TInsertEntity>(string sql, params Expression<Func<TTriggerEntity, object>>[] argumentSelectors)
+            where TInsertEntity : class
+        {
+            RawSql<TTriggerEntity>(new OnInsertTriggerRawAction<TTriggerEntity>(sql, argumentSelectors));
+            return this;
+        }
     }
 }

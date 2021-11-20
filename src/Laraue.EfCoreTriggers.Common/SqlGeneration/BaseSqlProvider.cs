@@ -187,5 +187,35 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 .Append(insertStatement.StringBuilder)
                 .Append(";");
         }
+        
+        public SqlBuilder GetTriggerRawActionSql<TTriggerEntity>(TriggerRawAction<TTriggerEntity> triggerRawAction)
+            where TTriggerEntity : class
+        {
+            var sqlBuilder = new SqlBuilder();
+
+            if (triggerRawAction.ArgumentSelectorExpressions.Length > 0)
+            {
+                var sqlArgBuilders = new List<SqlBuilder>();
+                
+                for (var i = 0; i < triggerRawAction.ArgumentSelectorExpressions.Length; i++)
+                {
+                    var expression = triggerRawAction.ArgumentSelectorExpressions[i];
+                    var prefixes = triggerRawAction.ArgumentPrefixes[i];
+
+                    var argSql = GetExpressionSql(expression.Body, prefixes);
+                    
+                    sqlArgBuilders.Add(argSql);
+                    sqlBuilder.MergeColumnsInfo(argSql);
+                }
+
+                sqlBuilder.Append(string.Format(triggerRawAction.Sql, sqlArgBuilders.ToArray()));
+            }
+            else
+            {
+                sqlBuilder.Append(triggerRawAction.Sql);
+            }
+
+            return sqlBuilder;
+        }
     }
 }
