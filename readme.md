@@ -51,7 +51,7 @@ After delete Transaction entity, execute raw SQL. Pass deleted entity fields as 
 modelBuilder.Entity<Transaction>()
     .AfterDelete(trigger => trigger
         .Action(action => action
-            .ExecuteRawSql("PERFORM recalc_balance({0}, {1})"), deletedEntity => deletedEntity.UserId, deletedEntity => deletedEntity.Amount))); // Update all matched values
+            .ExecuteRawSql("PERFORM recalc_balance({0}, {1})"), deletedEntity => deletedEntity.UserId, deletedEntity => deletedEntity.Amount)));
 ```
 
 ### All available triggers
