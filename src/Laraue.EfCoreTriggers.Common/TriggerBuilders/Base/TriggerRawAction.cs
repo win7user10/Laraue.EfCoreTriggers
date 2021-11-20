@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -10,13 +11,13 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
     public abstract class TriggerRawAction<TTriggerEntity> : ITriggerAction
        where TTriggerEntity : class
     {
-        internal LambdaExpression[] ArgumentSelectorExpressions;
+        internal readonly LambdaExpression[] ArgumentSelectorExpressions;
         
-        internal string Sql;
+        internal readonly string Sql;
 
-        protected TriggerRawAction(string sql, params Expression<Func<TTriggerEntity, object>>[] argumentSelectors)
+        protected TriggerRawAction(string sql, IEnumerable<LambdaExpression> argumentSelectors)
         {
-            ArgumentSelectorExpressions = argumentSelectors.Cast<LambdaExpression>().ToArray();
+            ArgumentSelectorExpressions = argumentSelectors.ToArray();
             Sql = sql;
         }
 

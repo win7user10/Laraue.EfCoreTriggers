@@ -12,7 +12,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 
         public readonly List<ISqlConvertible> Actions = new ();
 
-        public Trigger(TriggerEvent triggerEvent, TriggerTime triggerTime)
+        protected Trigger(TriggerEvent triggerEvent, TriggerTime triggerTime)
         {
             TriggerTime = triggerTime;
             TriggerEvent = triggerEvent;

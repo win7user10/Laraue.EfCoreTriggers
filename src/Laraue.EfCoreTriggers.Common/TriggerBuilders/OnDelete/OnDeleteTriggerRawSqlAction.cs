@@ -4,12 +4,12 @@ using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
-namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
+namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
 {
-    public class OnInsertTriggerRawAction<TTriggerEntity> : TriggerRawAction<TTriggerEntity>
+    public class OnDeleteTriggerRawSqlAction<TTriggerEntity> : TriggerRawAction<TTriggerEntity>
         where TTriggerEntity : class
     {
-        public OnInsertTriggerRawAction(string sql, params Expression<Func<TTriggerEntity, object>>[] argumentSelectors)
+        public OnDeleteTriggerRawSqlAction(string sql, params Expression<Func<TTriggerEntity, object>>[] argumentSelectors)
             : base (sql, argumentSelectors)
         {
         }
@@ -18,7 +18,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
         {
             return new Dictionary<string, ArgumentType>
             {
-                [parameters[0].Name] = ArgumentType.New
+                [parameters[0].Name] = ArgumentType.Old
             };
         }
     }

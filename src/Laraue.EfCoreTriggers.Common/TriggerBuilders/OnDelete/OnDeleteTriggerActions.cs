@@ -54,5 +54,11 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
             Insert(new OnDeleteTriggerInsertAction<TTriggerEntity, TInsertEntity>(setValues));
             return this;
         }
+        
+        public OnDeleteTriggerActions<TTriggerEntity> ExecuteRawSql(string sql, params Expression<Func<TTriggerEntity, object>>[] argumentSelectors)
+        {
+            RawSql(new OnDeleteTriggerRawSqlAction<TTriggerEntity>(sql, argumentSelectors));
+            return this;
+        }
     }
 }

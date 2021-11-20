@@ -28,7 +28,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         protected void Insert<TInsertEntity>(TriggerInsertAction<TTriggerEntity, TInsertEntity> insertAction)
             where TInsertEntity : class => AddAction(insertAction);
 
-        protected void RawSql<TInsertEntity>(TriggerRawAction<TTriggerEntity> rawSqlAction)
-            where TInsertEntity : class => AddAction(rawSqlAction);
+        protected void RawSql(TriggerRawAction<TTriggerEntity> rawSqlAction)
+            => AddAction(rawSqlAction);
     }
 }
