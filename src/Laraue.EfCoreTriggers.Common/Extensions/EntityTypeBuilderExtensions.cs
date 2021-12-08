@@ -15,7 +15,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             Trigger<T> configuredTrigger) where T : class
         {
             var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(typeof(T).FullName);
-            entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger.BuildSql(TriggerExtensions.GetSqlProvider(entityTypeBuilder.Metadata.Model)).Sql);
+            entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger);
             return entityTypeBuilder;
         }
 
