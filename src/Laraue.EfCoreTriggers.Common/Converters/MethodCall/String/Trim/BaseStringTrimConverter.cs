@@ -2,6 +2,8 @@
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.v2.Internal;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim
 {
@@ -11,12 +13,16 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim
         protected abstract string[] SqlTrimFunctionsNamesToApply { get; }
         
         /// <inheritdoc />
-        public override string MethodName => nameof(string.Trim);
+        protected override string MethodName => nameof(string.Trim);
 
         /// <inheritdoc />
-        public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression, Dictionary<string, ArgumentType> argumentTypes)
+        public override SqlBuilder BuildSql(
+            IExpressionVisitor visitor,
+            MethodCallExpression expression,
+            ArgumentTypes argumentTypes,
+            VisitedMembers visitedMembers)
         {
-            var expressionSqlBuilder = provider.GetExpressionSql(expression.Object, argumentTypes);
+            var expressionSqlBuilder = visitor.Visit(expression.Object, argumentTypes, visitedMembers);
             
             var sqlBuilder = new SqlBuilder(expressionSqlBuilder.AffectedColumns);
 

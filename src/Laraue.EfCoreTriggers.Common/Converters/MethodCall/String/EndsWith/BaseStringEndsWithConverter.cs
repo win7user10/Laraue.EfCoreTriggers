@@ -3,23 +3,29 @@ using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.v2.Internal;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith
 {
     public abstract class BaseStringEndsWithConverter : BaseStringConverter
     {
         /// <inheritdoc />
-        public override string MethodName => nameof(string.EndsWith);
+        protected override string MethodName => nameof(string.EndsWith);
 
         /// <inheritdoc />
-        public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression, Dictionary<string, ArgumentType> argumentTypes)
+        public override SqlBuilder BuildSql(
+            IExpressionVisitor visitor,
+            MethodCallExpression expression,
+            ArgumentTypes argumentTypes,
+            VisitedMembers visitedMembers)
         {
-            var argumentSql = provider.GetMethodCallArgumentsSql(expression, argumentTypes)[0];
-            var sqlBuilder = provider.GetExpressionSql(expression.Object, argumentTypes);
+            var argumentSql = visitor.VisitArguments(expression, argumentTypes, visitedMembers)[0];
+            var sqlBuilder = visitor.Visit(expression.Object, argumentTypes, visitedMembers);
             return new SqlBuilder(sqlBuilder.AffectedColumns, $"{sqlBuilder} LIKE {BuildEndSql(argumentSql)}")
                 .MergeColumnsInfo(argumentSql);
         }
 
-        public abstract string BuildEndSql(string argumentSql);
+        protected abstract string BuildEndSql(string argumentSql);
     }
 }

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.v2.Internal;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall
 {
@@ -20,10 +20,15 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall
         /// <summary>
         /// Build a SQL for passed <see cref="MethodCallExpression"/>.
         /// </summary>
-        /// <param name="provider">Provider to build parts of SQL.</param>
+        /// <param name="visitor">Provider to build parts of SQL.</param>
         /// <param name="expression">Expression to parse.</param>
         /// <param name="argumentTypes">Argument types of the expression.</param>
+        /// <param name="visitedMembers">Visited members.</param>
         /// <returns></returns>
-        SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression, Dictionary<string, ArgumentType> argumentTypes);
+        SqlBuilder BuildSql(
+            IExpressionVisitor visitor,
+            MethodCallExpression expression,
+            ArgumentTypes argumentTypes,
+            VisitedMembers visitedMembers);
     }
 }

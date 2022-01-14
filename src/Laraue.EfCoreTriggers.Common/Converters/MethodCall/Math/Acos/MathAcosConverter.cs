@@ -2,17 +2,23 @@
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.v2.Internal;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos
 {
     public class MathAcosConverter : BaseMathConverter
     {
-        public override string MethodName => nameof(System.Math.Acos);
+        protected override string MethodName => nameof(System.Math.Acos);
 
-        public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression, Dictionary<string, ArgumentType> argumentTypes)
+        public override SqlBuilder BuildSql(
+            IExpressionVisitor visitor,
+            MethodCallExpression expression,
+            ArgumentTypes argumentTypes,
+            VisitedMembers visitedMembers)
         {
             var argument = expression.Arguments[0];
-            var sqlBuilder = provider.GetExpressionSql(argument, argumentTypes);
+            var sqlBuilder = visitor.Visit(argument, argumentTypes, visitedMembers);
             return new SqlBuilder(sqlBuilder.AffectedColumns, $"ACOS({sqlBuilder})");
         }
     }

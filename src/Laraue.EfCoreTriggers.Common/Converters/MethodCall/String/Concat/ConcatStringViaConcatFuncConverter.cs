@@ -6,7 +6,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat
     public class ConcatStringViaConcatFuncConverter : BaseStringConcatConverter
     {
         /// <inheritdoc />
-        public override SqlBuilder BuildSql(SqlBuilder[] argumentsSql)
+        protected override SqlBuilder BuildSql(SqlBuilder[] argumentsSql)
         {
             return new SqlBuilder(argumentsSql)
                 .Append("CONCAT(")

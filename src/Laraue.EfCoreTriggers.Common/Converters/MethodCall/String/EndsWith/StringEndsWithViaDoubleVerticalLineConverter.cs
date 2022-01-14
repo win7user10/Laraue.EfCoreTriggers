@@ -2,7 +2,7 @@
 {
     public class StringEndsWithViaDoubleVerticalLineConverter : BaseStringEndsWithConverter
     {
-        public override string BuildEndSql(string argumentSql)
+        protected override string BuildEndSql(string argumentSql)
         {
             return $"('%' || {argumentSql})";
         }

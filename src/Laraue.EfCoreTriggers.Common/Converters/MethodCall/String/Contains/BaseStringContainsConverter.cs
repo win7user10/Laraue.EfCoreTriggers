@@ -3,19 +3,25 @@ using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.v2.Internal;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains
 {
     public abstract class BaseStringContainsConverter : BaseStringConverter
     {
         /// <inheritdoc />
-        public override string MethodName => nameof(string.Contains);
+        protected override string MethodName => nameof(string.Contains);
 
         /// <inheritdoc />
-        public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression, Dictionary<string, ArgumentType> argumentTypes)
+        public override SqlBuilder BuildSql(
+            IExpressionVisitor visitor,
+            MethodCallExpression expression,
+            ArgumentTypes argumentTypes,
+            VisitedMembers visitedMembers)
         {
-            var expressionToFindSql = provider.GetMethodCallArgumentsSql(expression, argumentTypes)[0];
-            var expressionToSearchSql = provider.GetExpressionSql(expression.Object, argumentTypes);
+            var expressionToFindSql = visitor.VisitArguments(expression, argumentTypes, visitedMembers)[0];
+            var expressionToSearchSql = visitor.Visit(expression.Object, argumentTypes, visitedMembers);
             
             return new SqlBuilder(expressionToFindSql.AffectedColumns, CombineSql(expressionToSearchSql, expressionToFindSql))
                 .MergeColumnsInfo(expressionToSearchSql);

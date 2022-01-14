@@ -2,18 +2,24 @@
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.v2.Internal;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper
 {
     public class StringToUpperViaUpperFuncConverter : BaseStringConverter
     {
         /// <inheritdoc />
-        public override string MethodName => nameof(string.ToUpper);
+        protected override string MethodName => nameof(string.ToUpper);
 
         /// <inheritdoc />
-        public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression, Dictionary<string, ArgumentType> argumentTypes)
+        public override SqlBuilder BuildSql(
+            IExpressionVisitor visitor,
+            MethodCallExpression expression,
+            ArgumentTypes argumentTypes,
+            VisitedMembers visitedMembers)
         {
-            var sqlBuilder = provider.GetExpressionSql(expression.Object, argumentTypes);
+            var sqlBuilder = visitor.Visit(expression.Object, argumentTypes, visitedMembers);
             return new(sqlBuilder.AffectedColumns, $"UPPER({sqlBuilder})");
         }
     }
