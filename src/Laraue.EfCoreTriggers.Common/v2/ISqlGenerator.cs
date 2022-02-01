@@ -14,4 +14,5 @@ public interface ISqlGenerator
     string GetSql(Enum source);
     string GetSql(bool source);
     string GetNullValueSql();
+    char GetDelimiter();
 }

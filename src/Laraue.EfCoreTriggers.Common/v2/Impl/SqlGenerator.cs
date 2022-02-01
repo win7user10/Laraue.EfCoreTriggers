@@ -27,8 +27,6 @@ public class SqlGenerator : ISqlGenerator
     /// Quote in the database.
     /// </summary>
     protected virtual char Quote => '\'';
-
-    protected virtual char Delimiter => '"';
     
     public SqlGenerator(IEfCoreMetadataRetriever metadataRetriever, SqlTypeMappings sqlTypeMappings)
     {
@@ -105,5 +103,10 @@ public class SqlGenerator : ISqlGenerator
     public string GetNullValueSql()
     {
         return "NULL";
+    }
+
+    public virtual char GetDelimiter()
+    {
+        return '"';
     }
 }

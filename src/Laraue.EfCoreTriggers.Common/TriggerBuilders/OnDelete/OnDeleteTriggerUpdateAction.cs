@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.v2;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
 {
-    public class OnDeleteTriggerUpdateAction<TTriggerEntity, TUpdateEntity> : TriggerUpdateAction<TTriggerEntity, TUpdateEntity>
+    public class OnDeleteTriggerUpdateAction<TTriggerEntity, TUpdateEntity> : TriggerUpdateAction
         where TTriggerEntity : class
         where TUpdateEntity : class
     {
@@ -16,12 +17,12 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
         {
         }
 
-        internal override Dictionary<string, ArgumentType> UpdateFilterPrefixes => new()
+        internal override ArgumentTypes UpdateFilterPrefixes => new()
         {
             [UpdateFilter.Parameters[0].Name] = ArgumentType.Old, 
         };
 
-        internal override Dictionary<string, ArgumentType> UpdateExpressionPrefixes => new()
+        internal override ArgumentTypes UpdateExpressionPrefixes => new()
         {
             [UpdateExpression.Parameters[0].Name] = ArgumentType.Old,
         };

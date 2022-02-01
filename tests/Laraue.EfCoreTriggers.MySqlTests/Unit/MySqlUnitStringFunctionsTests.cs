@@ -1,5 +1,7 @@
-﻿using Laraue.EfCoreTriggers.MySql;
+﻿using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
+using Laraue.EfCoreTriggers.MySql;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
 
@@ -8,7 +10,7 @@ namespace Laraue.EfCoreTriggers.MySqlTests.Unit
     [Collection(CollectionNames.MySql)]
     public class MySqlUnitStringFunctionsTests : UnitStringFunctionsTests
     {
-        public MySqlUnitStringFunctionsTests() : base(new MySqlProvider(new ContextFactory().CreateDbContext().Model))
+        public MySqlUnitStringFunctionsTests() : base(Helper.GetMySqlService<ITriggerActionVisitorFactory>(new ContextFactory().CreateDbContext().Model))
         {
         }
 

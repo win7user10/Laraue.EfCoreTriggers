@@ -7,153 +7,182 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
 namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 {
+    public record Row
+    {
+        public int Ident { get; set; }
+        
+        public StringBuilder StringBuilder { get; set; }
+    };
+    
     public class SqlBuilder
     {
-        public string Sql => StringBuilder.ToString();
+        private const string NewLine = "\r\n";
 
-        public StringBuilder StringBuilder { get; } = new();
+        public const string Ident = "  ";
 
-        public const string NewLine = "\r\n";
+        public int CurrentIdent;
 
-        /// <summary>
-        /// Contains info about all members taking part in generated SQL.
-        /// </summary>
-        public readonly Dictionary<ArgumentType, HashSet<MemberInfo>> AffectedColumns
-            = new()
-            {
-                [ArgumentType.New] = new HashSet<MemberInfo>(new MemberInfoComparer()),
-                [ArgumentType.Old] = new HashSet<MemberInfo>(new MemberInfoComparer()),
-            };
+        public List<Row> Rows { get; } = new ();
+        
+        public Row CurrentRow { get; set; }
 
-        private class MemberInfoComparer : IEqualityComparer<MemberInfo>
+        private SqlBuilder(Row row)
         {
-            public bool Equals(MemberInfo x, MemberInfo y)
-            {
-                if (ReferenceEquals(x, y)) return true;
-                if (ReferenceEquals(x, null)) return false;
-                if (ReferenceEquals(y, null)) return false;
-                if (x.GetType() != y.GetType()) return false;
-                return Equals(x.DeclaringType, y.DeclaringType) && x.Name == y.Name;
-            }
-
-            public int GetHashCode(MemberInfo obj)
-            {
-                return HashCode.Combine(obj.DeclaringType, obj.Name);
-            }
+            CurrentRow = row;
+            Rows.Add(CurrentRow);
         }
-
-        /// <summary>
-        /// Create instance of <see cref="SqlBuilder"/>, merging AffectedColumns from passed builders.
-        /// </summary>
-        /// <param name="generatedSqls"></param>
-        public SqlBuilder(IEnumerable<SqlBuilder> generatedSqls)
-            => MergeColumnsInfo(generatedSqls);
-
-        public SqlBuilder(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns)
-            => MergeColumnsInfo(affectedColumns);
-
-        public SqlBuilder(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns, string sql)
-            : this(affectedColumns) => Append(sql);
-
-        public SqlBuilder(MemberInfo affectedColumn, ArgumentType argumentType)
-            => MergeColumnInfo(affectedColumn, argumentType);
-
-        public SqlBuilder(string sql)
-            => Append(sql);
 
         public SqlBuilder()
         {
+            StartNewRow();
         }
-
-        public SqlBuilder MergeColumnsInfo(IEnumerable<SqlBuilder> generatedSqls)
+        
+        public static SqlBuilder FromString(string sql)
         {
-            foreach (var generatedSql in generatedSqls)
-                MergeColumnsInfo(generatedSql.AffectedColumns);
-            return this;
-        }
-
-        public SqlBuilder MergeColumnsInfo(SqlBuilder generatedSql)
-            => MergeColumnsInfo(new[] { generatedSql });
-
-        public SqlBuilder MergeColumnsInfo(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns)
-        {
-            foreach (var affectedColumn in affectedColumns)
-                AffectedColumns[affectedColumn.Key].AddRange(affectedColumn.Value);
-            return this;
-        }
-
-        public SqlBuilder MergeColumnInfo(MemberInfo affectedColumn, ArgumentType argumentType)
-        {
-            switch (argumentType)
+            var row = new Row
             {
-                case ArgumentType.New:
-                case ArgumentType.Old:
-                    AffectedColumns[argumentType].Add(affectedColumn);
-                    break;
-            }
-            return this;
+                StringBuilder = new StringBuilder(sql)
+            };
+            
+            var sqlBuilder = new SqlBuilder(row);
+            
+            return sqlBuilder;
         }
 
-        public SqlBuilder Append(StringBuilder builder)
+        private SqlBuilder StartNewRow(string value = null)
         {
-            StringBuilder.Append(builder);
+            var row = new Row
+            {
+                Ident = CurrentIdent,
+                StringBuilder = new StringBuilder(value)
+            };
+            
+            Rows.Add(row);
+
+            CurrentRow = row;
+
             return this;
         }
 
-        public SqlBuilder AppendJoin(IEnumerable<StringBuilder> builders)
-            => AppendJoin(string.Empty, builders);
+        public SqlBuilder WithIdent(Action<SqlBuilder> action)
+        {
+            CurrentIdent++;
+            
+            action(this);
+
+            CurrentIdent--;
+
+            return this;
+        }
+
+        private void ExecuteForAllBesidesLast<T>(
+            IEnumerable<T> values, 
+            Action<T> actionForAll,
+            Action<T> actionForFirst)
+        {
+            var valuesArray = values.ToArray();
+            
+            for (var i = 0; i < valuesArray.Length; i++)
+            {
+                actionForAll(valuesArray[i]);
+
+                if (i != valuesArray.Length - 1)
+                {
+                    actionForFirst(valuesArray[i]);
+                }
+            }
+        }
+
+        public SqlBuilder AppendViaNewLine(IEnumerable<SqlBuilder> values)
+        {
+            return AppendJoin(NewLine, values);
+        }
 
         public SqlBuilder AppendJoin(string separator, IEnumerable<string> values)
         {
-            StringBuilder.AppendJoin(separator, values);
+            CurrentRow.StringBuilder.AppendJoin(separator, values);
+            
             return this;
         }
-
-        public SqlBuilder AppendJoin(string separator, IEnumerable<StringBuilder> builders)
+        
+        public SqlBuilder AppendJoin(string separator, IEnumerable<StringBuilder> values)
         {
-            var buildersArray = builders.ToArray();
-            for (int i = 0; i < buildersArray.Length; i++)
+            CurrentRow.StringBuilder.AppendJoin(separator, values);
+            return this;
+        }
+        
+        public SqlBuilder AppendJoin(string separator, IEnumerable<SqlBuilder> values)
+        {
+            ExecuteForAllBesidesLast(values, builder =>
             {
-                StringBuilder.Append(buildersArray[i]);
-                if (i < buildersArray.Length - 1)
-                    StringBuilder.Append(separator);
-            }
+                foreach (var row in builder.Rows)
+                {
+                    Rows.Add(new Row()
+                    {
+                        Ident = row.Ident + CurrentIdent,
+                        StringBuilder = row.StringBuilder
+                    });
+                }
+            }, builder =>
+            {
+                if (separator is not NewLine)
+                {
+                    builder.CurrentRow.StringBuilder.Append(separator);
+                }
+            });
+
             return this;
         }
 
         public SqlBuilder Append(string value)
         {
-            StringBuilder.Append(value);
+            CurrentRow.StringBuilder.Append(value);
+            return this;
+        }
+        
+        public SqlBuilder Append(SqlBuilder sqlBuilder)
+        {
+            CurrentRow.StringBuilder.Append(sqlBuilder);
             return this;
         }
         
         public SqlBuilder Prepend(string value)
         {
-            StringBuilder.Insert(0, value);
+            CurrentRow.StringBuilder.Insert(0, value);
             return this;
         }
 
         public SqlBuilder AppendNewLine(string value)
-            => Append($"{NewLine}{value}");
+        {
+            return StartNewRow(value);
+        }
+
+        private string GetIdent(int ident)
+        {
+            return string.Concat(Enumerable.Range(0, ident).Select(_ => Ident));
+        }
 
         public SqlBuilder Append(char value)
         {
-            StringBuilder.Append(value);
+            CurrentRow.StringBuilder.Append(value);
             return this;
         }
 
-        public static implicit operator string(SqlBuilder @this) => @this.Sql;
+        public static implicit operator string(SqlBuilder @this) => @this.ToString();
 
-        public override string ToString() => Sql;
-    }
-
-    internal static class HashSetExtensions
-    {
-        public static HashSet<T> AddRange<T>(this HashSet<T> hashSet, IEnumerable<T> values)
+        public override string ToString()
         {
-            foreach (var value in values)
-                hashSet.Add(value);
-            return hashSet;
+            var fullSql = new StringBuilder();
+
+            ExecuteForAllBesidesLast(Rows, row =>
+            {
+                var ident = GetIdent(row.Ident);
+                
+                fullSql.Append(ident)
+                    .Append(row.StringBuilder);
+            }, _ => fullSql.Append(NewLine));
+
+            return fullSql.ToString();
         }
     }
 }

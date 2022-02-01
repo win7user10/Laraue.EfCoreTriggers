@@ -1,20 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.v2;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public abstract class TriggerCondition<TTriggerEntity> : ISqlConvertible
-        where TTriggerEntity : class
+    public class TriggerCondition : ITriggerAction
     {
-        internal LambdaExpression Condition { get; }
+        /// <summary>
+        /// Expression to delete, e.g. Users.Where(x => x.Id == 2)
+        /// </summary>
+        internal LambdaExpression Condition;
+        
+        protected TriggerCondition(LambdaExpression condition)
+        {
+            Condition = condition;
+        }
+        
+        internal TriggerCondition(LambdaExpression condition, ArgumentTypes conditionPrefixes)
+            : this(condition)
+        {
+            ConditionPrefixes = conditionPrefixes;
+        }
 
-        public TriggerCondition(LambdaExpression triggerCondition)
-            => Condition = triggerCondition;
-
-        public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
-            => visitor.GetTriggerConditionSql(this);
-
-        internal abstract Dictionary<string, ArgumentType> ConditionPrefixes { get; }
+        internal virtual ArgumentTypes ConditionPrefixes { get; }
+        
+        public Type GetEntityType()
+        {
+            return Condition.Parameters[0].GetType();
+        }
     }
 }

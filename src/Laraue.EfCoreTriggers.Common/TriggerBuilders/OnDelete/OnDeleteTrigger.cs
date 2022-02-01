@@ -14,7 +14,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
         {
             var actionTrigger = new OnDeleteTriggerActions<TTriggerEntity>();
             actionSetup.Invoke(actionTrigger);
-            Actions.Add(actionTrigger);
+            Actions.AddRange(actionTrigger.ActionExpressions);
+            Conditions.AddRange(actionTrigger.ActionConditions);
             return this;
         }
     }

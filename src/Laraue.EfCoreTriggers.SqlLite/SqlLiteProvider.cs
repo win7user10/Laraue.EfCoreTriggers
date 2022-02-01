@@ -29,22 +29,22 @@ namespace Laraue.EfCoreTriggers.SqlLite
     {
         public SqlLiteProvider(IReadOnlyModel model) : base(model)
         {
-            AddConverter(new ConcatStringViaDoubleVerticalLineConverter());
-            AddConverter(new StringToUpperViaUpperFuncConverter());
-            AddConverter(new StringToLowerViaLowerFuncConverter());
-            AddConverter(new StringTrimViaTrimFuncConverter());
-            AddConverter(new StringContainsViaInstrFuncConverter());
-            AddConverter(new StringEndsWithViaDoubleVerticalLineConverter());
-            AddConverter(new StringIsNullOrEmptyConverter());
-            AddConverter(new MathAbsConverter());
-            AddConverter(new MathAcosConverter());
-            AddConverter(new MathAsinConverter());
-            AddConverter(new MathAtanConverter());
-            AddConverter(new MathAtan2Converter());
-            AddConverter(new MathCeilConverter());
-            AddConverter(new MathCosConverter());
-            AddConverter(new MathExpConverter());
-            AddConverter(new MathFloorConverter());
+            AddConverter(new ConcatStringViaDoubleVerticalLineVisitor());
+            AddConverter(new StringToUpperViaUpperFuncVisitor());
+            AddConverter(new StringToLowerViaLowerFuncVisitor());
+            AddConverter(new StringTrimViaTrimFuncVisitor());
+            AddConverter(new StringContainsViaInstrFuncVisitor());
+            AddConverter(new StringEndsWithViaDoubleVerticalLineVisitor());
+            AddConverter(new StringIsNullOrEmptyVisitor());
+            AddConverter(new MathAbsVisitor());
+            AddConverter(new MathAcosVisitor());
+            AddConverter(new MathAsinVisitor());
+            AddConverter(new MathAtanVisitor());
+            AddConverter(new MathAtan2Visitor());
+            AddConverter(new MathCeilVisitor());
+            AddConverter(new MathCosVisitor());
+            AddConverter(new MathExpVisitor());
+            AddConverter(new MathFloorVisitor());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new ()

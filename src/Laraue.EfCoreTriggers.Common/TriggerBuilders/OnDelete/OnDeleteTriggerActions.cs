@@ -4,7 +4,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
 {
-    public class OnDeleteTriggerActions<TTriggerEntity> : TriggerActions<TTriggerEntity>
+    public class OnDeleteTriggerActions<TTriggerEntity> : TriggerActions
         where TTriggerEntity : class
     {
         /// <summary>

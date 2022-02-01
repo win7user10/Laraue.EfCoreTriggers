@@ -4,7 +4,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
 {
-    public class OnUpdateTriggerActions<TTriggerEntity> : TriggerActions<TTriggerEntity>
+    public class OnUpdateTriggerActions<TTriggerEntity> : TriggerActions
         where TTriggerEntity : class
     {
         /// <summary>

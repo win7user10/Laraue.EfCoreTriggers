@@ -30,22 +30,22 @@ namespace Laraue.EfCoreTriggers.SqlServer
     {
         public SqlServerProvider(IReadOnlyModel model) : base(model)
         {
-            AddConverter(new ConcatStringViaPlusConverter());
-            AddConverter(new StringToUpperViaUpperFuncConverter());
-            AddConverter(new StringToLowerViaLowerFuncConverter());
-            AddConverter(new StringTrimViaLtrimRtrimFuncConverter());
-            AddConverter(new StringContainsViaCharindexFuncConverter());
-            AddConverter(new StringEndsWithViaPlusConverter());
-            AddConverter(new StringIsNullOrEmptyConverter());
-            AddConverter(new MathAbsConverter());
-            AddConverter(new MathAcosConverter());
-            AddConverter(new MathAsinConverter());
-            AddConverter(new MathAtanConverter());
-            AddConverter(new MathAtn2Converter());
-            AddConverter(new MathCeilingConverter());
-            AddConverter(new MathCosConverter());
-            AddConverter(new MathExpConverter());
-            AddConverter(new MathFloorConverter());
+            AddConverter(new ConcatStringViaPlusVisitor());
+            AddConverter(new StringToUpperViaUpperFuncVisitor());
+            AddConverter(new StringToLowerViaLowerFuncVisitor());
+            AddConverter(new StringTrimViaLtrimRtrimFuncVisitor());
+            AddConverter(new StringContainsViaCharindexFuncVisitor());
+            AddConverter(new StringEndsWithViaPlusVisitor());
+            AddConverter(new StringIsNullOrEmptyVisitor());
+            AddConverter(new MathAbsVisitor());
+            AddConverter(new MathAcosVisitor());
+            AddConverter(new MathAsinVisitor());
+            AddConverter(new MathAtanVisitor());
+            AddConverter(new MathAtn2Visitor());
+            AddConverter(new MathCeilingVisitor());
+            AddConverter(new MathCosVisitor());
+            AddConverter(new MathExpVisitor());
+            AddConverter(new MathFloorVisitor());
         }
 
         protected override Dictionary<Type, string> TypeMappings { get; } = new()

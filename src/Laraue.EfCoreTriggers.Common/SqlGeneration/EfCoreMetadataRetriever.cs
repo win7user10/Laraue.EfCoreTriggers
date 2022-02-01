@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 {

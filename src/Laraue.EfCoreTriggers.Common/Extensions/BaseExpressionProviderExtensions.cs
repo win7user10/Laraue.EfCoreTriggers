@@ -2,14 +2,14 @@
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Internal;
+using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Extensions
 {
     public static class BaseExpressionProviderExtensions
     {
         public static SqlBuilder[] VisitArguments(
-            this IExpressionVisitor visitor,
+            this IExpressionVisitorFactory visitor,
             MethodCallExpression expression,
             ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers)

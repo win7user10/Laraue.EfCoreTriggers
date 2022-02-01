@@ -1,6 +1,24 @@
-﻿namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
+﻿using System;
+using System.Collections.Generic;
+
+namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public interface ITriggerAction : ISqlConvertible
+    public interface ITriggerAction
     {
+        public Type GetEntityType();
+    }
+    
+    public interface ITrigger
+    {
+        List<ITriggerAction> Actions { get; }
+        List<ITriggerAction> Conditions { get; }
+        
+        TriggerEvent TriggerEvent { get; }
+
+        TriggerTime TriggerTime { get; }
+
+        Type TriggerEntityType { get; }
+
+        string Name { get; }
     }
 }

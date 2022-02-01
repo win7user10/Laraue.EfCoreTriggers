@@ -1,6 +1,8 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
+using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using Xunit;
@@ -9,18 +11,18 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
 {
     public abstract class BaseGeneratingExpressionsTests
     {
-        protected readonly ITriggerProvider Visitor;
+        protected readonly ITriggerActionVisitorFactory Factory;
 
-        public BaseGeneratingExpressionsTests(ITriggerProvider visitor)
+        protected BaseGeneratingExpressionsTests(ITriggerActionVisitorFactory factory)
         {
-            Visitor = visitor;
+            Factory = factory;
         }
 
-        public abstract string ExceptedConcatSql { get; }
+        protected abstract string ExceptedConcatSql { get; }
 
-        public abstract string ExceptedStringLowerSql { get; }
+        protected abstract string ExceptedStringLowerSql { get; }
 
-        public abstract string ExceptedStringUpperSql { get; }
+        protected abstract string ExceptedStringUpperSql { get; }
 
         public abstract string ExceptedEnumValueSql { get; }
 
@@ -63,208 +65,295 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         public virtual void StringConcatSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
-            {
-                Description = transaction.Description + "abc",
-            }).BuildSql(Visitor);
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction =>
+                new TransactionMirror
+                {
+                    Description = transaction.Description + "abc",
+                });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedConcatSql, sql);
         }
 
         [Fact]
         public virtual void StringLowerSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 Description = transaction.Description.ToLower()
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedStringLowerSql, sql);
         }
 
         [Fact]
         public virtual void StringUpperSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
-            {
-                Description = transaction.Description.ToUpper()
-            }).BuildSql(Visitor);
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(
+                transaction => new TransactionMirror
+                {
+                    Description = transaction.Description.ToUpper()
+                });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedStringUpperSql, sql);
         }
 
         [Fact]
         public virtual void EnumValueSql()
         {
-            var action = new OnInsertTriggerInsertAction<Transaction, User>(transaction => new User { Role = UserRole.Admin });
-            var sql = action.BuildSql(Visitor);
+            var action = new OnInsertTriggerInsertAction<Transaction, User>(
+                transaction => new User
+                {
+                    Role = UserRole.Admin
+                });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedEnumValueSql, sql);
         }
 
         [Fact]
         public virtual void DecimalAddSql()
         {
-            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { DecimalValue = t.DecimalValue + 3 });
-            var sql = action.BuildSql(Visitor);
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(
+                t => new TestEntity
+                {
+                    DecimalValue = t.DecimalValue + 3
+                });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedDecimalAddSql, sql);
         }
 
         [Fact]
         public virtual void DoubleSubSql()
         {
-            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { DoubleValue = t.DoubleValue - 3 });
-            var sql = action.BuildSql(Visitor);
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(
+                t => new TestEntity
+                {
+                    DoubleValue = t.DoubleValue - 3
+                });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedDoubleSubSql, sql);
         }
 
         [Fact]
         public virtual void IntMultiplySql()
         {
-            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { IntValue = t.IntValue * 2 });
-            var sql = action.BuildSql(Visitor);
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(
+                t => new TestEntity
+                {
+                    IntValue = t.IntValue * 2
+                });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedIntMultiplySql, sql);
         }
 
         [Fact]
         public virtual void BooleanValueSql()
         {
-            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { BooleanValue = true });
-            var sql = action.BuildSql(Visitor);
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(
+                t => new TestEntity
+                {
+                    BooleanValue = true
+                });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedBooleanSql, sql);
         }
 
         [Fact]
         public virtual void NewGuid()
         {
-            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(t => new TestEntity { GuidValue = new Guid() });
-            var sql = action.BuildSql(Visitor);
+            var action = new OnInsertTriggerInsertAction<TestEntity, TestEntity>(
+                t => new TestEntity
+                {
+                    GuidValue = new Guid()
+                });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedNewGuidSql, sql);
         }
 
         [Fact]
         public virtual void StringTrimSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
-            {
-                Description = transaction.Description.Trim()
-            }).BuildSql(Visitor);
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(
+                transaction => new TransactionMirror
+                {
+                    Description = transaction.Description.Trim()
+                });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedStringTrimSql, sql);
         }
 
         [Fact]
         public virtual void StringContainsSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 IsVeryfied = transaction.Description.Contains("abc"),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedContainsSql, sql);
         }
 
         [Fact]
         public virtual void StringEndsWithSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 IsVeryfied = transaction.Description.EndsWith("abc"),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedEndsWithSql, sql);
         }
 
         [Fact]
         public virtual void StringIsNullOrEmptySql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 IsVeryfied = string.IsNullOrEmpty(transaction.Description),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedIsNullOrEmptySql, sql);
         }
 
         [Fact]
         public virtual void MathAbsSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 Value = Math.Abs(transaction.Value),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedAbsSql, sql);
         }
 
         [Fact]
         public virtual void MathAcosSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 DoubleValue = Math.Acos(transaction.DoubleValue),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedAcosSql, sql);
         }
 
         [Fact]
         public virtual void MathAsinSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 DoubleValue = Math.Asin(transaction.DoubleValue),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedAsinSql, sql);
         }
 
         [Fact]
         public virtual void MathAtanSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 DoubleValue = Math.Atan(transaction.DoubleValue),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedAtanSql, sql);
         }
 
         [Fact]
         public virtual void MathAtanTwoSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 DoubleValue = Math.Atan2(transaction.DoubleValue, transaction.DoubleValue),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedAtanTwoSql, sql);
         }
 
         [Fact]
         public virtual void MathCeilingTwoSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 DoubleValue = Math.Ceiling(transaction.DoubleValue),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedCeilingSql, sql);
         }
 
         [Fact]
         public virtual void MathCosTwoSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 DoubleValue = Math.Cos(transaction.DoubleValue),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedCosSql, sql);
         }
 
         [Fact]
         public virtual void MathExpTwoSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 DoubleValue = Math.Exp(transaction.DoubleValue),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedExpSql, sql);
         }
 
         [Fact]
         public virtual void MathFloorTwoSql()
         {
-            var sql = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
+            var action = new OnInsertTriggerInsertAction<Transaction, TransactionMirror>(transaction => new TransactionMirror
             {
                 DoubleValue = Math.Floor(transaction.DoubleValue),
-            }).BuildSql(Visitor);
+            });
+            
+            var sql = Factory.Visit(action, new VisitedMembers());
+            
             Assert.Equal(ExceptedFloorSql, sql);
         }
     }

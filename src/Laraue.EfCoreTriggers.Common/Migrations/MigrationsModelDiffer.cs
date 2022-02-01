@@ -133,7 +133,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         {
             list.Add(new SqlOperation
             {
-                Sql = TriggerExtensions.GetSqlProvider(model).GetDropTriggerSql(annotation.Name),
+                //Sql = TriggerExtensions.GetSqlProvider(model).GetDropTriggerSql(annotation.Name),
             });
             return list;
         }

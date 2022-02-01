@@ -1,4 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Xunit.Categories;
 
@@ -7,11 +8,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
     [UnitTest]
     public abstract class BaseMemberAssignmentUnitTests : BaseMemberAssignmentTests
     {
-        protected readonly ITriggerProvider Provider;
+        protected readonly ITriggerActionVisitorFactory Factory;
 
-        protected BaseMemberAssignmentUnitTests(ITriggerProvider provider)
+        protected BaseMemberAssignmentUnitTests(ITriggerActionVisitorFactory factory)
         {
-            Provider = provider;
+            Factory = factory;
         }
 
         public abstract string ExceptedEnumValueSql { get; }
@@ -28,32 +29,32 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
 
         public override void EnumValueSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedEnumValueSql, SetEnumValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedEnumValueSql, SetEnumValueExpression);
         }
 
         public override void DecimalAddSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedDecimalAddSql, AddDecimalValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedDecimalAddSql, AddDecimalValueExpression);
         }
 
         public override void DoubleSubSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedDoubleSubSql, SubDoubleValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedDoubleSubSql, SubDoubleValueExpression);
         }
 
         public override void IntMultiplySql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedIntMultiplySql, MultiplyIntValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedIntMultiplySql, MultiplyIntValueExpression);
         }
 
         public override void BooleanValueSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedBooleanSql, SetBooleanValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedBooleanSql, SetBooleanValueExpression);
         }
 
         public override void NewGuid()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedNewGuidSql, SetNewGuidValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedNewGuidSql, SetNewGuidValueExpression);
         }
     }
 }

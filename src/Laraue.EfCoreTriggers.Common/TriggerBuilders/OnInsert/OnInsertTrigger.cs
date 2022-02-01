@@ -14,7 +14,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
         {
             var actionTrigger = new OnInsertTriggerActions<TTriggerEntity>();
             actionSetup.Invoke(actionTrigger);
-            Actions.Add(actionTrigger);
+            Actions.AddRange(actionTrigger.ActionExpressions);
+            Conditions.AddRange(actionTrigger.ActionConditions);
             return this;
         }
     }

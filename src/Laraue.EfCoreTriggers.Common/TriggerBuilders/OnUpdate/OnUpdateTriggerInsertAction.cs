@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.v2;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
 {
-    public class OnUpdateTriggerInsertAction<TTriggerEntity, TInsertEntity> : TriggerInsertAction<TTriggerEntity, TInsertEntity>
+    public class OnUpdateTriggerInsertAction<TTriggerEntity, TInsertEntity> : TriggerInsertAction
         where TTriggerEntity : class
         where TInsertEntity : class
     {
@@ -14,7 +15,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
         {
         }
 
-        internal override Dictionary<string, ArgumentType> InsertExpressionPrefixes => new()
+        internal override ArgumentTypes InsertExpressionPrefixes => new()
         {
             [InsertExpression.Parameters[0].Name] = ArgumentType.Old,
             [InsertExpression.Parameters[1].Name] = ArgumentType.New,

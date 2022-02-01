@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.v2;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
 {
-    public class OnInsertTriggerRawSqlAction<TTriggerEntity> : TriggerRawAction<TTriggerEntity>
+    public class OnInsertTriggerRawSqlAction<TTriggerEntity> : TriggerRawAction
         where TTriggerEntity : class
     {
         public OnInsertTriggerRawSqlAction(string sql, params Expression<Func<TTriggerEntity, object>>[] argumentSelectors)
@@ -14,9 +15,9 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
         {
         }
 
-        protected override Dictionary<string, ArgumentType> GetArgumentPrefixes(ReadOnlyCollection<ParameterExpression> parameters)
+        protected override ArgumentTypes GetArgumentPrefixes(ReadOnlyCollection<ParameterExpression> parameters)
         {
-            return new Dictionary<string, ArgumentType>
+            return new ArgumentTypes
             {
                 [parameters[0].Name] = ArgumentType.New
             };

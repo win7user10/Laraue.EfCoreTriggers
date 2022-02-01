@@ -14,7 +14,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
         {
             var actionTrigger = new OnUpdateTriggerActions<TTriggerEntity>();
             actionSetup.Invoke(actionTrigger);
-            Actions.Add(actionTrigger);
+            Actions.AddRange(actionTrigger.ActionExpressions);
+            Conditions.AddRange(actionTrigger.ActionConditions);
             return this;
         }
     }

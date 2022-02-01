@@ -1,9 +1,12 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
+using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.MySql;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
@@ -14,20 +17,18 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
     [UnitTest]
     public class InvalidOperationTests
     {
-        private readonly ITriggerProvider _provider;
+        private readonly ITriggerActionVisitorFactory _provider;
 
         public InvalidOperationTests()
         {
-            var modelBuilder = new ModelBuilder();
-            IReadOnlyModel model = modelBuilder.Model;
-            _provider = new MySqlProvider(model);
+            _provider = Helper.GetMySqlService<ITriggerActionVisitorFactory>(new ModelBuilder());
         }
         
         [Fact]
         public virtual void Entity_NotExistsInDbContext_ShouldThrowException()
         {
             var action = new OnInsertTriggerCondition<User>(user => user.Role == UserRole.Admin);
-            var ex = Assert.Throws<InvalidOperationException>(() => action.BuildSql(_provider));
+            var ex = Assert.Throws<InvalidOperationException>(() => _provider.Visit(action, new VisitedMembers()));
             Assert.Equal("DbSet<User> should be added to the DbContext", ex.Message);
         }
     }
