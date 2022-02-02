@@ -142,7 +142,11 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         
         public SqlBuilder Append(SqlBuilder sqlBuilder)
         {
-            CurrentRow.StringBuilder.Append(sqlBuilder);
+            ExecuteForAllBesidesLast(sqlBuilder.Rows, row =>
+            {
+                CurrentRow.StringBuilder.Append(row.StringBuilder);
+            }, _ => StartNewRow());
+            
             return this;
         }
         

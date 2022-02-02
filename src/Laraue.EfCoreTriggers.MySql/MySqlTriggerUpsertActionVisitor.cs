@@ -9,36 +9,31 @@ namespace Laraue.EfCoreTriggers.MySql;
 
 public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAction>
 {
-    private readonly ISetExpressionVisitorFactory _factory;
-    private readonly TriggerInsertActionVisitor _insertActionVisitor;
-    private readonly TriggerUpdateActionVisitor _updateActionVisitor;
+    private readonly ISetExpressionVisitorFactory _setExpressionVisitorFactory;
+    private readonly IInsertExpressionVisitor _insertExpressionVisitor;
+    private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
     private readonly IEfCoreMetadataRetriever _metadataRetriever;
 
     public MySqlTriggerUpsertActionVisitor(
-        ISetExpressionVisitorFactory factory,
-        TriggerInsertActionVisitor insertActionVisitor,
-        TriggerUpdateActionVisitor updateActionVisitor,
+        ISetExpressionVisitorFactory setExpressionVisitorFactory, 
+        IInsertExpressionVisitor insertExpressionVisitor,
+        IUpdateExpressionVisitor updateExpressionVisitor,
         IEfCoreMetadataRetriever metadataRetriever)
     {
-        _factory = factory;
-        _insertActionVisitor = insertActionVisitor;
-        _updateActionVisitor = updateActionVisitor;
+        _setExpressionVisitorFactory = setExpressionVisitorFactory;
+        _insertExpressionVisitor = insertExpressionVisitor;
+        _updateExpressionVisitor = updateExpressionVisitor;
         _metadataRetriever = metadataRetriever;
     }
     
     public SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
     {
-        var matchExpressionParts = _factory.Visit(
-            triggerAction.MatchExpression,
-            triggerAction.MatchExpressionPrefixes,
-            visitedMembers);
-        
-        var insertStatementSql = _insertActionVisitor.GetInsertStatementSql(
+        var updateEntityType = triggerAction.InsertExpression.Body.Type;
+
+        var insertStatementSql = _insertExpressionVisitor.Visit(
             triggerAction.InsertExpression,
             triggerAction.InsertExpressionPrefixes,
             visitedMembers);
-
-        var updateEntityType = triggerAction.InsertExpression.Parameters[0].Type;
 
         var sqlBuilder = new SqlBuilder();
 
@@ -50,14 +45,15 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
         }
         else
         {
-            var updateStatementSql = _updateActionVisitor.GetUpdateStatementBodySql(
+            var updateStatementSql = _updateExpressionVisitor.Visit(
                 triggerAction.OnMatchExpression, 
                 triggerAction.OnMatchExpressionPrefixes,
                 visitedMembers);
             
             sqlBuilder.Append($"INSERT INTO {_metadataRetriever.GetTableName(updateEntityType)} ")
                 .Append(insertStatementSql)
-                .Append(" ON DUPLICATE KEY UPDATE ")
+                .AppendNewLine("ON DUPLICATE KEY")
+                .AppendNewLine("UPDATE ")
                 .Append(updateStatementSql)
                 .Append(";");
         }

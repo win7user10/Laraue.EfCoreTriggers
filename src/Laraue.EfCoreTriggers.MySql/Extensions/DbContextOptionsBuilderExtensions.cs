@@ -53,10 +53,13 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
             
             return services.AddTriggerActionVisitor<TriggerCondition, TriggerConditionVisitor>()
                 .AddTriggerActionVisitor<TriggerDeleteAction, TriggerDeleteActionVisitor>()
-                .AddTriggerActionVisitor<TriggerInsertAction, MySqlTriggerInsertActionVisitor>()
+                .AddTriggerActionVisitor<TriggerInsertAction, TriggerInsertActionVisitor>()
                 .AddTriggerActionVisitor<TriggerRawAction, TriggerRawActionVisitor>()
                 .AddTriggerActionVisitor<TriggerUpdateAction, TriggerUpdateActionVisitor>()
-                .AddTriggerActionVisitor<TriggerUpsertAction, TriggerUpsertActionVisitor>()
+                .AddTriggerActionVisitor<TriggerUpsertAction, MySqlTriggerUpsertActionVisitor>()
+                
+                .AddSingleton<IInsertExpressionVisitor, MySqlInsertExpressionVIsitor>()
+                .AddSingleton<IUpdateExpressionVisitor, UpdateExpressionVisitor>()
                     
                 .AddSingleton<SqlTypeMappings, MySqlTypeMappings>()
                     

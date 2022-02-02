@@ -1,42 +1,43 @@
 ﻿using System.Linq;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.v2.Impl.SetExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 public class TriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAction>
 {
-    private readonly ISetExpressionVisitorFactory _factory;
-    private readonly TriggerInsertActionVisitor _insertActionVisitor;
-    private readonly TriggerUpdateActionVisitor _updateActionVisitor;
+    private readonly ISetExpressionVisitorFactory _setExpressionVisitorFactory;
+    private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
+    private readonly IInsertExpressionVisitor _insertExpressionVisitor;
     private readonly IEfCoreMetadataRetriever _metadataRetriever;
 
     public TriggerUpsertActionVisitor(
-        ISetExpressionVisitorFactory factory,
-        TriggerInsertActionVisitor insertActionVisitor,
-        TriggerUpdateActionVisitor updateActionVisitor,
+        ISetExpressionVisitorFactory setExpressionVisitorFactory,
+        IUpdateExpressionVisitor updateExpressionVisitor,
+        IInsertExpressionVisitor insertExpressionVisitor,
         IEfCoreMetadataRetriever metadataRetriever)
     {
-        _factory = factory;
-        _insertActionVisitor = insertActionVisitor;
-        _updateActionVisitor = updateActionVisitor;
+        _setExpressionVisitorFactory = setExpressionVisitorFactory;
+        _updateExpressionVisitor = updateExpressionVisitor;
+        _insertExpressionVisitor = insertExpressionVisitor;
         _metadataRetriever = metadataRetriever;
     }
 
     public virtual SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
     {
-        var matchExpressionParts = _factory.Visit(
+        var matchExpressionParts = _setExpressionVisitorFactory.Visit(
             triggerAction.MatchExpression,
             triggerAction.MatchExpressionPrefixes,
             visitedMembers);
-        
-        var insertStatementSql = _insertActionVisitor.GetInsertStatementSql(
+
+        var updateEntityType = triggerAction.InsertExpression.Body.Type;
+
+        var insertStatementSql = _insertExpressionVisitor.Visit(
             triggerAction.InsertExpression,
             triggerAction.InsertExpressionPrefixes,
             visitedMembers);
-
-        var updateEntityType = triggerAction.InsertExpression.Parameters[0].Type;
             
         var sqlBuilder = SqlBuilder.FromString($"INSERT INTO {_metadataRetriever.GetTableName(updateEntityType)} ")
             .Append(insertStatementSql)
@@ -52,8 +53,8 @@ public class TriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAct
         }
         else
         {
-            var updateStatementSql = _updateActionVisitor.GetUpdateStatementBodySql(
-                triggerAction.OnMatchExpression, 
+            var updateStatementSql = _updateExpressionVisitor.Visit(
+                triggerAction.OnMatchExpression,
                 triggerAction.OnMatchExpressionPrefixes,
                 visitedMembers);
             

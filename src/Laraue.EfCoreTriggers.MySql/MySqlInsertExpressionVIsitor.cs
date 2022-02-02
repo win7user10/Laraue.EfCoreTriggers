@@ -6,14 +6,14 @@ using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
-public class MySqlTriggerInsertActionVisitor : TriggerInsertActionVisitor
+public class MySqlInsertExpressionVIsitor : InsertExpressionVisitor
 {
-    public MySqlTriggerInsertActionVisitor(ISetExpressionVisitorFactory factory, IEfCoreMetadataRetriever metadataRetriever, ISqlGenerator sqlGenerator) 
+    public MySqlInsertExpressionVIsitor(ISetExpressionVisitorFactory factory, IEfCoreMetadataRetriever metadataRetriever, ISqlGenerator sqlGenerator) 
         : base(factory, metadataRetriever, sqlGenerator)
     {
     }
 
-    public override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression, ArgumentTypes argumentTypes)
+    protected override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression, ArgumentTypes argumentTypes)
     {
         var sqlBuilder = new SqlBuilder();
         sqlBuilder.Append("() VALUES ()");

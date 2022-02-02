@@ -6,12 +6,12 @@ using Laraue.EfCoreTriggers.Common.v2;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public abstract class TriggerUpdateAction : ITriggerAction
+    public class TriggerUpdateAction : ITriggerAction
     {
         internal LambdaExpression UpdateFilter;
         internal LambdaExpression UpdateExpression;
 
-        protected TriggerUpdateAction(
+        internal TriggerUpdateAction(
             LambdaExpression updateFilter,
             LambdaExpression updateExpression)
         {
@@ -19,9 +19,9 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
             UpdateExpression = updateExpression;
         }
 
-        internal abstract ArgumentTypes UpdateFilterPrefixes { get; }
+        internal virtual ArgumentTypes UpdateFilterPrefixes { get; }
 
-        internal abstract ArgumentTypes UpdateExpressionPrefixes { get; }
+        internal virtual ArgumentTypes UpdateExpressionPrefixes { get; }
         
         public Type GetEntityType()
         {

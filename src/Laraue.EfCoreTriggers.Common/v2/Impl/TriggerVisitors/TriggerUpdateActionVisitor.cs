@@ -4,56 +4,49 @@ using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.v2.Impl.SetExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 public class TriggerUpdateActionVisitor : ITriggerActionVisitor<TriggerUpdateAction>
 {
-    private readonly ISetExpressionVisitorFactory _setExpressionVisitorFactory;
     private readonly IEfCoreMetadataRetriever _efCoreMetadataRetriever;
+    private readonly IExpressionVisitorFactory _expressionVisitorFactory;
+    private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
 
     public TriggerUpdateActionVisitor(
         IEfCoreMetadataRetriever efCoreMetadataRetriever,
-        ISetExpressionVisitorFactory setExpressionVisitorFactory)
+        IExpressionVisitorFactory expressionVisitorFactory, 
+        IUpdateExpressionVisitor updateExpressionVisitor)
     {
         _efCoreMetadataRetriever = efCoreMetadataRetriever;
-        _setExpressionVisitorFactory = setExpressionVisitorFactory;
+        _expressionVisitorFactory = expressionVisitorFactory;
+        _updateExpressionVisitor = updateExpressionVisitor;
     }
 
     public SqlBuilder Visit(TriggerUpdateAction triggerAction, VisitedMembers visitedMembers)
     {
-        var assignmentParts = _setExpressionVisitorFactory.Visit(
+        var updateStatement = _updateExpressionVisitor.Visit(
             triggerAction.UpdateExpression,
             triggerAction.UpdateExpressionPrefixes,
             visitedMembers);
         
-        var sqlResult = new SqlBuilder();
-        
-        var assignmentPartsSql = assignmentParts
-            .Select(expressionPart =>
-                $"{_efCoreMetadataRetriever.GetColumnName(expressionPart.Key)} = {expressionPart.Value}")
-            .ToArray();
-        
-        sqlResult.AppendJoin(", ", assignmentPartsSql);
-        return sqlResult;
+        var binaryExpressionSql = _expressionVisitorFactory.Visit(
+            (BinaryExpression)triggerAction.UpdateFilter.Body,
+            triggerAction.UpdateFilterPrefixes,
+            visitedMembers);
+
+        var updateEntity = triggerAction.UpdateExpression.Body.Type;
+
+        return new SqlBuilder()
+            .Append($"UPDATE {_efCoreMetadataRetriever.GetTableName(updateEntity)}")
+            .AppendNewLine("SET ")
+            .Append(updateStatement)
+            .AppendNewLine("WHERE ")
+            .Append(binaryExpressionSql)
+            .Append(";");
     }
     
-    public virtual SqlBuilder GetUpdateStatementBodySql(LambdaExpression updateExpression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
-    {
-        var assignmentParts = _setExpressionVisitorFactory.Visit(
-            updateExpression,
-            argumentTypes,
-            visitedMembers);
-        
-        var sqlResult = new SqlBuilder();
-        
-        var assignmentPartsSql = assignmentParts
-            .Select(expressionPart => 
-                $"{_efCoreMetadataRetriever.GetColumnName(expressionPart.Key)} = {expressionPart.Value}")
-            .ToArray();
-        
-        sqlResult.AppendJoin(", ", assignmentPartsSql);
-        return sqlResult;
-    }
+    
 }
