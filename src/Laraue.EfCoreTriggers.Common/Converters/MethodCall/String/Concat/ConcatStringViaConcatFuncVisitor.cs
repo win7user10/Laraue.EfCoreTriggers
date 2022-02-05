@@ -16,7 +16,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat
         {
             return new SqlBuilder()
                 .Append("CONCAT(")
-                .AppendJoin(", ", argumentsSql)
+                .AppendJoin(", ", argumentsSql.Select(x => x.ToString()))
                 .Append(")");
         }
     }

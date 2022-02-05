@@ -24,18 +24,29 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
         var actionsSql = trigger.Actions
             .Select(action => _factory.Visit(action, new VisitedMembers()))
             .ToArray();
-
-        var triggerEntityType = trigger.Actions
-            .Select(x => x.GetEntityType())
-            .First(x => x is not null);
         
         var sql = SqlBuilder.FromString($"CREATE TRIGGER {trigger.Name}")
             .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {_metadataRetriever.GetTableName(trigger.TriggerEntityType)}")
             .AppendNewLine("FOR EACH ROW")
             .AppendNewLine("BEGIN")
-            .WithIdent(loopSql =>
+            .WithIdent(triggerSql =>
             {
-                loopSql.AppendViaNewLine(actionsSql);
+                if (trigger.Conditions.Count > 0)
+                {
+                    var conditionsSql = trigger.Conditions
+                        .Select(actionCondition => _factory.Visit(actionCondition, new VisitedMembers()));
+            
+                    triggerSql.AppendNewLine($"IF ")
+                        .AppendJoin(" AND ", conditionsSql.Select(x => x.ToString()))
+                        .Append(" THEN ");
+                }
+
+                triggerSql.WithIdent(loopSql => loopSql.AppendViaNewLine(actionsSql));
+        
+                if (trigger.Conditions.Count > 0)
+                {
+                    triggerSql.AppendNewLine($"END IF;");
+                }
             })
             .AppendNewLine("END");
         
@@ -44,6 +55,6 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
 
     public override string GenerateDeleteTriggerSql(string triggerName)
     {
-        return new SqlBuilder().Append($"DROP TRIGGER {triggerName};");
+        return SqlBuilder.FromString($"DROP TRIGGER {triggerName};");
     }
 }

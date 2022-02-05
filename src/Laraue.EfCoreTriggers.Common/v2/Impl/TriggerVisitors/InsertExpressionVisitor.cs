@@ -36,8 +36,7 @@ public class InsertExpressionVisitor : IInsertExpressionVisitor
                 .AppendJoin(", ", assignmentParts
                     .Select(x =>
                         $"{_sqlGenerator.GetDelimiter()}{_metadataRetriever.GetColumnName(x.Key)}{_sqlGenerator.GetDelimiter()}"))
-                .Append(")")
-                .AppendNewLine("VALUES (")
+                .Append(") VALUES (")
                 .AppendJoin(", ", assignmentParts
                     .Select(x => x.Value.ToString()))
                 .Append(")");

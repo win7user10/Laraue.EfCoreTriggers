@@ -51,12 +51,15 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
         private SqlBuilder StartNewRow(string value = null)
         {
-            var row = new Row
+            return StartNewRow(new Row
             {
                 Ident = CurrentIdent,
                 StringBuilder = new StringBuilder(value)
-            };
-            
+            });
+        }
+        
+        private SqlBuilder StartNewRow(Row row)
+        {
             Rows.Add(row);
 
             CurrentRow = row;
@@ -117,7 +120,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             {
                 foreach (var row in builder.Rows)
                 {
-                    Rows.Add(new Row()
+                    StartNewRow(new Row()
                     {
                         Ident = row.Ident + CurrentIdent,
                         StringBuilder = row.StringBuilder
