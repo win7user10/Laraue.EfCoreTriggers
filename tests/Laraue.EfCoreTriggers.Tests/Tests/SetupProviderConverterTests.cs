@@ -32,7 +32,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         [Fact]
         public virtual void Provider_ShouldUseCustomConverter_WhenItProvidedForFunction()
         {
-            var provider = Helper.GetMySqlService<ITriggerActionVisitorFactory>(_modelBuilder, converters =>
+            var provider = Helper.GetTriggerActionFactory(_modelBuilder.Model, converters =>
             {
                 converters.AddMethodCallConverter<CustomStringToUpperVisitor>();
             });

@@ -6,9 +6,9 @@ using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
-public class MySqlInsertExpressionVIsitor : InsertExpressionVisitor
+public class MySqlInsertExpressionVisitor : InsertExpressionVisitor
 {
-    public MySqlInsertExpressionVIsitor(ISetExpressionVisitorFactory factory, IEfCoreMetadataRetriever metadataRetriever, ISqlGenerator sqlGenerator) 
+    public MySqlInsertExpressionVisitor(ISetExpressionVisitorFactory factory, IEfCoreMetadataRetriever metadataRetriever, ISqlGenerator sqlGenerator) 
         : base(factory, metadataRetriever, sqlGenerator)
     {
     }

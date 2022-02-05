@@ -49,39 +49,18 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
 
         public static IServiceCollection AddMySqlServices(this IServiceCollection services)
         {
-            services.AddSingleton<ITriggerActionVisitorFactory, TriggerActionVisitorFactory>();
-            
-            return services.AddTriggerActionVisitor<TriggerCondition, TriggerConditionVisitor>()
-                .AddTriggerActionVisitor<TriggerDeleteAction, TriggerDeleteActionVisitor>()
-                .AddTriggerActionVisitor<TriggerInsertAction, TriggerInsertActionVisitor>()
-                .AddTriggerActionVisitor<TriggerRawAction, TriggerRawActionVisitor>()
-                .AddTriggerActionVisitor<TriggerUpdateAction, TriggerUpdateActionVisitor>()
-                .AddTriggerActionVisitor<TriggerUpsertAction, MySqlTriggerUpsertActionVisitor>()
-                
-                .AddSingleton<IInsertExpressionVisitor, MySqlInsertExpressionVIsitor>()
-                .AddSingleton<IUpdateExpressionVisitor, UpdateExpressionVisitor>()
-                    
+            return services.AddDefaultServices()
                 .AddSingleton<SqlTypeMappings, MySqlTypeMappings>()
-                    
-                .AddSingleton<ISqlGenerator, MySqlSqlGenerator>()
-                
-                .AddSingleton<IExpressionVisitorFactory, ExpressionVisitorFactory>()
-                .AddExpressionVisitor<BinaryExpression, BinaryExpressionVisitor>()
-                .AddExpressionVisitor<UnaryExpression, UnaryExpressionVisitor>()
-                .AddExpressionVisitor<MemberExpression, MemberExpressionVisitor>()
-                .AddExpressionVisitor<ConstantExpression, ConstantExpressionVisitor>()
-                .AddExpressionVisitor<MethodCallExpression, MethodCallExpressionVisitor>()
-                .AddExpressionVisitor<NewExpression, MySqlNewExpressionVisitor>()
-                
-                .AddSingleton<IEfCoreMetadataRetriever, EfCoreMetadataRetriever>()
                 
                 .AddSingleton<ITriggerVisitor, MySqlTriggerVisitor>()
                 
-                .AddSingleton<ISetExpressionVisitorFactory, SetExpressionVisitorFactory>()
+                .AddTriggerActionVisitor<TriggerUpsertAction, MySqlTriggerUpsertActionVisitor>()
                 
-                .AddSingleton<ISetExpressionVisitor<LambdaExpression>, SetLambdaExpressionVisitor>()
-                .AddSingleton<ISetExpressionVisitor<MemberInitExpression>, SetMemberInitExpressionVisitor>()
-                .AddSingleton<ISetExpressionVisitor<NewExpression>, SetNewExpressionVisitor>()
+                .AddSingleton<IInsertExpressionVisitor, MySqlInsertExpressionVisitor>()
+                    
+                .AddSingleton<ISqlGenerator, MySqlSqlGenerator>()
+                
+                .AddExpressionVisitor<NewExpression, MySqlNewExpressionVisitor>()
                     
                 .AddMethodCallConverter<ConcatStringViaConcatFuncVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
@@ -99,7 +78,6 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>();
-            
         }
     }
 }

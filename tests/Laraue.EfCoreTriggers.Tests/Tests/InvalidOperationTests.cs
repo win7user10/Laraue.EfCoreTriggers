@@ -4,6 +4,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
 using Laraue.EfCoreTriggers.Common.v2;
 using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.MySql;
+using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
@@ -21,7 +22,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
         public InvalidOperationTests()
         {
-            _provider = Helper.GetMySqlService<ITriggerActionVisitorFactory>(new ModelBuilder());
+            _provider = Helper.GetService<ITriggerActionVisitorFactory>(new ModelBuilder(), collection => collection.AddMySqlServices());
         }
         
         [Fact]

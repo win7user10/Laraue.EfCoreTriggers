@@ -9,18 +9,15 @@ namespace Laraue.EfCoreTriggers.MySql;
 
 public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAction>
 {
-    private readonly ISetExpressionVisitorFactory _setExpressionVisitorFactory;
     private readonly IInsertExpressionVisitor _insertExpressionVisitor;
     private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
     private readonly IEfCoreMetadataRetriever _metadataRetriever;
 
     public MySqlTriggerUpsertActionVisitor(
-        ISetExpressionVisitorFactory setExpressionVisitorFactory, 
         IInsertExpressionVisitor insertExpressionVisitor,
         IUpdateExpressionVisitor updateExpressionVisitor,
         IEfCoreMetadataRetriever metadataRetriever)
     {
-        _setExpressionVisitorFactory = setExpressionVisitorFactory;
         _insertExpressionVisitor = insertExpressionVisitor;
         _updateExpressionVisitor = updateExpressionVisitor;
         _metadataRetriever = metadataRetriever;
