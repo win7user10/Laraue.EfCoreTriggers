@@ -19,8 +19,6 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
 
     public override string GenerateCreateTriggerSql(ITrigger trigger)
     {
-        var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
-        
         var actionsSql = trigger.Actions
             .Select(action => _factory.Visit(action, new VisitedMembers()))
             .ToArray();

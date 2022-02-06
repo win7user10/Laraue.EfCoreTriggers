@@ -15,7 +15,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat
         protected override SqlBuilder Visit(SqlBuilder[] argumentsSql)
         {
             return new SqlBuilder()
-                .AppendJoin(" || ", argumentsSql);
+                .AppendJoin(" || ", argumentsSql.Select(x => x.ToString()));
         }
     }
 }

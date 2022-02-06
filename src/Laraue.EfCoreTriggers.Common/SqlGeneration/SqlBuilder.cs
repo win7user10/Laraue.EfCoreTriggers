@@ -159,7 +159,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             return this;
         }
 
-        public SqlBuilder AppendNewLine(string value)
+        public SqlBuilder AppendNewLine(string value = null)
         {
             return StartNewRow(value);
         }

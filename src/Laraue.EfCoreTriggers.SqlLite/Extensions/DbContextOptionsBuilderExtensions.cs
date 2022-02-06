@@ -1,21 +1,76 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Converters;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan2;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Cos;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Floor;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.IsNullOrEmpty;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.Extensions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.v2.Impl;
+using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.SqlLite.Extensions
 {
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder<TContext> UseSqlLiteTriggers<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder, Action<AvailableConverters> setupConverters = null)
+        public static DbContextOptionsBuilder<TContext> UseSqlLiteTriggers<TContext>(
+            this DbContextOptionsBuilder<TContext> optionsBuilder)
             where TContext : DbContext
         {
-            return optionsBuilder.UseTriggers<SqlLiteProvider, TContext>(setupConverters);
+            TriggerExtensions.Services.AddSqliteServices();
+            
+            return optionsBuilder.UseTriggers();
         }
 
-        public static DbContextOptionsBuilder UseSqlLiteTriggers(this DbContextOptionsBuilder optionsBuilder, Action<AvailableConverters> setupConverters = null)
+        public static DbContextOptionsBuilder UseSqlLiteTriggers(
+            this DbContextOptionsBuilder optionsBuilder)
         {
-            return optionsBuilder.UseTriggers<SqlLiteProvider>(setupConverters);
+            TriggerExtensions.Services.AddSqliteServices();
+            
+            return optionsBuilder.UseTriggers();
+        }
+
+        public static IServiceCollection AddSqliteServices(this IServiceCollection services)
+        {
+            return services.AddDefaultServices()
+                .AddSingleton<SqlTypeMappings, SqliteTypeMappings>()
+                .AddSingleton<ITriggerVisitor, SqliteTriggerVisitor>()
+                .AddExpressionVisitor<NewExpression, SqliteNewExpressionVisitor>()
+                .AddTriggerActionVisitor<TriggerUpsertAction, TriggerUpsertActionVisitor>()
+                .AddSingleton<IInsertExpressionVisitor, SqliteInsertExpressionVisitor>()
+                .AddSingleton<ISqlGenerator, SqlGenerator>()
+                .AddMethodCallConverter<ConcatStringViaDoubleVerticalLineVisitor>()
+                .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
+                .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()
+                .AddMethodCallConverter<StringTrimViaTrimFuncVisitor>()
+                .AddMethodCallConverter<StringContainsViaInstrFuncVisitor>()
+                .AddMethodCallConverter<StringEndsWithViaDoubleVerticalLineVisitor>()
+                .AddMethodCallConverter<StringIsNullOrEmptyVisitor>()
+                .AddMethodCallConverter<MathAbsVisitor>()
+                .AddMethodCallConverter<MathAcosVisitor>()
+                .AddMethodCallConverter<MathAsinVisitor>()
+                .AddMethodCallConverter<MathAtanVisitor>()
+                .AddMethodCallConverter<MathAtan2Visitor>()
+                .AddMethodCallConverter<MathCeilVisitor>()
+                .AddMethodCallConverter<MathCosVisitor>()
+                .AddMethodCallConverter<MathExpVisitor>()
+                .AddMethodCallConverter<MathFloorVisitor>();
         }
     }
 }

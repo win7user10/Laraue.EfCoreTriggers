@@ -25,6 +25,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat
             VisitedMembers visitedMembers)
         {
             var argumentsSql = VisitorFactory.VisitArguments(expression, argumentTypes, visitedMembers);
+            
             return Visit(argumentsSql);
         }
 

@@ -48,17 +48,11 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
         {
             return services.AddDefaultServices()
                 .AddSingleton<SqlTypeMappings, PostgreSqlTypeMappings>()
-                
                 .AddSingleton<ITriggerVisitor, PostgreSqlTriggerVisitor>()
-                
                 .AddExpressionVisitor<NewExpression, PostreSqlNewExpressionVisitor>()
-                
                 .AddTriggerActionVisitor<TriggerUpsertAction, TriggerUpsertActionVisitor>()
-                
                 .AddSingleton<IInsertExpressionVisitor, InsertExpressionVisitor>()
-                
                 .AddSingleton<ISqlGenerator, SqlGenerator>()
-
                 .AddMethodCallConverter<ConcatStringViaConcatFuncVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()
