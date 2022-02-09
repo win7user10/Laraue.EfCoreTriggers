@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.MySql
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.SqlServer", "src\Laraue.EfCoreTriggers.SqlServer\Laraue.EfCoreTriggers.SqlServer.csproj", "{FBB5388A-4AFD-4891-A90A-51E59E364278}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "tests\TestProject1\TestProject1.csproj", "{ECDB13BA-929A-42CB-9B42-834EA6DED8B2}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,10 +73,6 @@ Global
 		{FBB5388A-4AFD-4891-A90A-51E59E364278}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBB5388A-4AFD-4891-A90A-51E59E364278}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBB5388A-4AFD-4891-A90A-51E59E364278}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ECDB13BA-929A-42CB-9B42-834EA6DED8B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ECDB13BA-929A-42CB-9B42-834EA6DED8B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ECDB13BA-929A-42CB-9B42-834EA6DED8B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ECDB13BA-929A-42CB-9B42-834EA6DED8B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,7 +88,6 @@ Global
 		{EAF57617-5657-47D1-A719-424E1D6A63E8} = {9CDC27E2-01F4-4AA6-972C-D140415AA103}
 		{7B377F09-D92F-4844-AFC7-6642AC6174D1} = {9CDC27E2-01F4-4AA6-972C-D140415AA103}
 		{FBB5388A-4AFD-4891-A90A-51E59E364278} = {9CDC27E2-01F4-4AA6-972C-D140415AA103}
-		{ECDB13BA-929A-42CB-9B42-834EA6DED8B2} = {7EE4BD3E-BA14-4823-A5E7-1464B3591407}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3167DB00-67A4-49E7-A52F-CE3B5DBE02A6}

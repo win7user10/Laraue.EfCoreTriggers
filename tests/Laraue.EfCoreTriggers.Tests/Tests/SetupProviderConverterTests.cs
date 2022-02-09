@@ -9,6 +9,7 @@ using Laraue.EfCoreTriggers.Common.v2;
 using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.MySql;
+using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -32,9 +33,10 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         [Fact]
         public virtual void Provider_ShouldUseCustomConverter_WhenItProvidedForFunction()
         {
-            var provider = Helper.GetTriggerActionFactory(_modelBuilder.Model, converters =>
+            var provider = Helper.GetTriggerActionFactory(_modelBuilder.Model, services =>
             {
-                converters.AddMethodCallConverter<CustomStringToUpperVisitor>();
+                services.AddMySqlServices()
+                    .AddMethodCallConverter<CustomStringToUpperVisitor>();
             });
 
             var action = new OnInsertTriggerCondition<Transaction>(t => t.Description.ToUpper() == "ABC");

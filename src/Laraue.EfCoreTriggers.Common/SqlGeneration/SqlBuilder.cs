@@ -23,13 +23,12 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         public int CurrentIdent;
 
         public List<Row> Rows { get; } = new ();
-        
-        public Row CurrentRow { get; set; }
+
+        public Row CurrentRow => Rows.Last();
 
         private SqlBuilder(Row row)
         {
-            CurrentRow = row;
-            Rows.Add(CurrentRow);
+            Rows.Add(row);
         }
 
         public SqlBuilder()
@@ -62,14 +61,14 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         {
             Rows.Add(row);
 
-            CurrentRow = row;
-
             return this;
         }
 
         public SqlBuilder WithIdent(Action<SqlBuilder> action)
         {
             CurrentIdent++;
+
+            StartNewRow();
             
             action(this);
 
@@ -80,18 +79,18 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
         private void ExecuteForAllBesidesLast<T>(
             IEnumerable<T> values, 
-            Action<T> actionForAll,
-            Action<T> actionForFirst)
+            Action<T, int> actionForAll,
+            Action<T, int> actionForFirst)
         {
             var valuesArray = values.ToArray();
             
             for (var i = 0; i < valuesArray.Length; i++)
             {
-                actionForAll(valuesArray[i]);
+                actionForAll(valuesArray[i], i);
 
                 if (i != valuesArray.Length - 1)
                 {
-                    actionForFirst(valuesArray[i]);
+                    actionForFirst(valuesArray[i], i);
                 }
             }
         }
@@ -116,21 +115,14 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         
         public SqlBuilder AppendJoin(string separator, IEnumerable<SqlBuilder> values)
         {
-            ExecuteForAllBesidesLast(values, builder =>
+            ExecuteForAllBesidesLast(values, (builder, _) =>
             {
-                foreach (var row in builder.Rows)
-                {
-                    StartNewRow(new Row()
-                    {
-                        Ident = row.Ident + CurrentIdent,
-                        StringBuilder = row.StringBuilder
-                    });
-                }
-            }, builder =>
+                Append(builder);
+            }, (_, _) =>
             {
                 if (separator is not NewLine)
                 {
-                    builder.CurrentRow.StringBuilder.Append(separator);
+                    CurrentRow.StringBuilder.Append(separator);
                 }
             });
 
@@ -145,10 +137,23 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         
         public SqlBuilder Append(SqlBuilder sqlBuilder)
         {
-            ExecuteForAllBesidesLast(sqlBuilder.Rows, row =>
+            ExecuteForAllBesidesLast(sqlBuilder.Rows, (row, index) =>
             {
+                if (index != 0)
+                {
+                    CurrentRow.Ident = CurrentIdent + row.Ident;
+                }
+                    
                 CurrentRow.StringBuilder.Append(row.StringBuilder);
-            }, _ => StartNewRow());
+
+            }, (row, _) =>
+            {
+                StartNewRow(new Row()
+                {
+                    Ident = CurrentIdent,
+                    StringBuilder = new StringBuilder()
+                });
+            });
             
             return this;
         }
@@ -162,6 +167,13 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         public SqlBuilder AppendNewLine(string value = null)
         {
             return StartNewRow(value);
+        }
+        
+        public SqlBuilder AppendNewLine(SqlBuilder sqlBuilder)
+        {
+            StartNewRow();
+            
+            return Append(sqlBuilder);
         }
 
         private string GetIdent(int ident)
@@ -181,13 +193,13 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         {
             var fullSql = new StringBuilder();
 
-            ExecuteForAllBesidesLast(Rows, row =>
+            ExecuteForAllBesidesLast(Rows, (row, _) =>
             {
                 var ident = GetIdent(row.Ident);
                 
                 fullSql.Append(ident)
                     .Append(row.StringBuilder);
-            }, _ => fullSql.Append(NewLine));
+            }, (_, _) => fullSql.Append(NewLine));
 
             return fullSql.ToString();
         }

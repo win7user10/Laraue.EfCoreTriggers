@@ -1,5 +1,7 @@
 ﻿using Laraue.EfCoreTriggers.SqlServer;
+using Laraue.EfCoreTriggers.SqlServer.Extensions;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
 
@@ -8,9 +10,13 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Unit
     [Collection(CollectionNames.SqlServer)]
     public class SqlServerUnitStringFunctionsTests : UnitStringFunctionsTests
     {
-        public SqlServerUnitStringFunctionsTests() : base(new SqlServerProvider(new ContextFactory().CreateDbContext().Model))
+        public SqlServerUnitStringFunctionsTests() : base(
+            Helper.GetTriggerActionFactory(
+                new ContextFactory().CreateDbContext().Model, 
+                collection => collection.AddSqlServerServices()))
         {
         }
+        
         public override string ExceptedConcatSql => "INSERT INTO destination_entities (\"string_field\") VALUES (@NewStringField + 'abc');";
 
         public override string ExceptedStringLowerSql => "INSERT INTO destination_entities (\"string_field\") VALUES (LOWER(@NewStringField));";

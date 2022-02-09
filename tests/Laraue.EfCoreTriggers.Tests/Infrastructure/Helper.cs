@@ -17,7 +17,7 @@ public static class Helper
     public static T GetService<T>(IReadOnlyModel model, Action<IServiceCollection> modifyServices = null)
     {
         var services = new ServiceCollection();
-            
+        
         services.AddSingleton(model);
         
         modifyServices?.Invoke(services);

@@ -11,17 +11,9 @@ public class SqlGenerator : ISqlGenerator
     private readonly IEfCoreMetadataRetriever _metadataRetriever;
     private readonly SqlTypeMappings _sqlTypeMappings;
 
-    /// <summary>
-    /// Prefix for inserted or updated (new value) entity in triggers. E.g to get balance from inserted entity, 
-    /// in postgres should be used syntax NEW.balance.
-    /// </summary>
-    protected virtual string NewEntityPrefix => "NEW";
+    public virtual string NewEntityPrefix => "NEW";
 
-    /// <summary>
-    /// Prefix for deleted or updated (old value) entity in triggers. E.g to get balance from deleted entity, 
-    /// in postgres should be used syntax OLD.balance.
-    /// </summary>
-    protected virtual string OldEntityPrefix => "OLD";
+    public virtual string OldEntityPrefix => "OLD";
 
     /// <summary>
     /// Quote in the database.
@@ -34,7 +26,7 @@ public class SqlGenerator : ISqlGenerator
         _sqlTypeMappings = sqlTypeMappings;
     }
     
-    public string GetOperand(Expression expression)
+    public virtual string GetOperand(Expression expression)
     {
         return expression.NodeType switch
         {
@@ -79,9 +71,10 @@ public class SqlGenerator : ISqlGenerator
         return sqlType;
     }
     
-    private Type GetNotNullableType(Type type)
+    public Type GetNotNullableType(Type type)
     {
         var nullableUnderlyingType = Nullable.GetUnderlyingType(type);
+        
         return nullableUnderlyingType ?? type;
     }
 
@@ -95,7 +88,7 @@ public class SqlGenerator : ISqlGenerator
         return source.ToString("D");
     }
 
-    public string GetSql(bool source)
+    public virtual string GetSql(bool source)
     {
         return $"{source.ToString().ToLower()}";
     }
