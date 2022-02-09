@@ -33,14 +33,14 @@ namespace Laraue.EfCoreTriggers.SqlServer.Extensions
         {
             TriggerExtensions.Services.AddSqlServerServices();
             
-            return optionsBuilder.UseTriggers();
+            return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
         public static DbContextOptionsBuilder UseSqlServerTriggers(this DbContextOptionsBuilder optionsBuilder)
         {
             TriggerExtensions.Services.AddSqlServerServices();
             
-            return optionsBuilder.UseTriggers();
+            return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
         
         public static IServiceCollection AddSqlServerServices(this IServiceCollection services)

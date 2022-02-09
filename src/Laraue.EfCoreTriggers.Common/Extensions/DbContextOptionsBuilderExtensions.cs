@@ -5,15 +5,32 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Laraue.EfCoreTriggers.Common.Extensions
 {
+    /// <summary>
+    /// Extensions to configure EF Core <see cref="IServiceProvider"/>
+    /// for using EF Core Triggers.
+    /// </summary>
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder UseTriggers(
+        /// <summary>
+        /// Add implementation of <see cref="IMigrationsModelDiffer"/> 
+        /// which allow to use triggers.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <returns></returns>
+        public static DbContextOptionsBuilder ReplaceMigrationsModelDiffer(
             this DbContextOptionsBuilder optionsBuilder)
         {
             return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
         }
         
-        public static DbContextOptionsBuilder<TContext> UseTriggers<TContext>(
+        /// <summary>
+        /// Add implementation of <see cref="IMigrationsModelDiffer"/> 
+        /// which allow to use triggers.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <typeparam name="TContext"></typeparam>
+        /// <returns></returns>
+        public static DbContextOptionsBuilder<TContext> ReplaceMigrationsModelDiffer<TContext>(
             this DbContextOptionsBuilder<TContext> optionsBuilder)
             where TContext : DbContext
         {

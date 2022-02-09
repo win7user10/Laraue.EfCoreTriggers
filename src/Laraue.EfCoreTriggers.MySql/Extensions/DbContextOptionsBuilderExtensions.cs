@@ -36,7 +36,7 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
         {
             TriggerExtensions.Services.AddMySqlServices();
             
-            return optionsBuilder.UseTriggers();
+            return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
         
         public static DbContextOptionsBuilder<TContext> UseMySqlTriggers<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder)
@@ -44,7 +44,7 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
         {
             TriggerExtensions.Services.AddMySqlServices();
             
-            return optionsBuilder.UseTriggers();
+            return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
         public static IServiceCollection AddMySqlServices(this IServiceCollection services)

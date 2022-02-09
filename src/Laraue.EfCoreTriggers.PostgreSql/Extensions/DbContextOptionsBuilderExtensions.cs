@@ -34,14 +34,14 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
         {
             TriggerExtensions.Services.AddPostgreSqlServices();
             
-            return optionsBuilder.UseTriggers();
+            return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
         public static DbContextOptionsBuilder UsePostgreSqlTriggers(this DbContextOptionsBuilder optionsBuilder)
         {
             TriggerExtensions.Services.AddPostgreSqlServices();
             
-            return optionsBuilder.UseTriggers();
+            return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
         public static IServiceCollection AddPostgreSqlServices(this IServiceCollection services)

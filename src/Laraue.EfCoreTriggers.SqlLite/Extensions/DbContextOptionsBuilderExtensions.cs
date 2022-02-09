@@ -35,7 +35,7 @@ namespace Laraue.EfCoreTriggers.SqlLite.Extensions
         {
             TriggerExtensions.Services.AddSqliteServices();
             
-            return optionsBuilder.UseTriggers();
+            return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
         public static DbContextOptionsBuilder UseSqlLiteTriggers(
@@ -43,7 +43,7 @@ namespace Laraue.EfCoreTriggers.SqlLite.Extensions
         {
             TriggerExtensions.Services.AddSqliteServices();
             
-            return optionsBuilder.UseTriggers();
+            return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
         public static IServiceCollection AddSqliteServices(this IServiceCollection services)
