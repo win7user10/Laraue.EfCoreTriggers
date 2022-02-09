@@ -8,6 +8,15 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
 {
     public static class BaseExpressionProviderExtensions
     {
+        /// <summary>
+        /// Visit each argument of <see cref="MethodCallExpression"/> and
+        /// generates a SQL for each of them.
+        /// </summary>
+        /// <param name="visitor"></param>
+        /// <param name="expression"></param>
+        /// <param name="argumentTypes"></param>
+        /// <param name="visitedMembers"></param>
+        /// <returns></returns>
         public static SqlBuilder[] VisitArguments(
             this IExpressionVisitorFactory visitor,
             MethodCallExpression expression,
