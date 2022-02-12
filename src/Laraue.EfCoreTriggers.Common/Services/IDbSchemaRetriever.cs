@@ -21,4 +21,11 @@ public interface IDbSchemaRetriever
     /// <param name="entity"></param>
     /// <returns></returns>
     string GetTableName(Type entity);
+
+    /// <summary>
+    /// Get all members which are used in primary key.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    PropertyInfo[] GetPrimaryKeyMembers(Type type);
 }

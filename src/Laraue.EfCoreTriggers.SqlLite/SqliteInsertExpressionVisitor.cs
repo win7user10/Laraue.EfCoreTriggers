@@ -15,39 +15,26 @@ namespace Laraue.EfCoreTriggers.SqlLite;
 public class SqliteInsertExpressionVisitor : InsertExpressionVisitor
 {
     private readonly IDbSchemaRetriever _adapter;
-    private readonly IReadOnlyModel _model;
     
     public SqliteInsertExpressionVisitor(
         IMemberInfoVisitorFactory factory,
         IDbSchemaRetriever adapter,
-        ISqlGenerator sqlGenerator,
-        IReadOnlyModel model) 
+        ISqlGenerator sqlGenerator) 
         : base(factory, adapter, sqlGenerator)
     {
         _adapter = adapter;
-        _model = model;
     }
 
     protected override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression, ArgumentTypes argumentTypes)
     {
-        var primaryKeyProperties = GetPrimaryKeyMembers(insertExpression.Body.Type);
-        var sqlBuilder = new SqlBuilder();
-        sqlBuilder.Append("(")
+        var primaryKeyProperties = _adapter.GetPrimaryKeyMembers(insertExpression.Body.Type);
+        
+        var sqlBuilder = SqlBuilder.FromString("(")
             .AppendJoin(", ", primaryKeyProperties.Select(_adapter.GetColumnName))
             .Append(") VALUES (")
             .AppendJoin(", ", primaryKeyProperties.Select(_ => "NULL"))
             .Append(")");
 
         return sqlBuilder;
-    }
-    
-    private PropertyInfo[] GetPrimaryKeyMembers(Type type)
-    {
-        var entityType = _model.FindEntityType(type);
-        
-        return entityType.FindPrimaryKey()
-            .Properties
-            .Select(x => x.PropertyInfo)
-            .ToArray();
     }
 }

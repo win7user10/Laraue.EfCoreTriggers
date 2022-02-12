@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -103,5 +104,16 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
         }
 
         return schemaName;
+    }
+    
+    public PropertyInfo[] GetPrimaryKeyMembers(Type type)
+    {
+        var entityType = Model.FindEntityType(type);
+        
+        return entityType
+            ?.FindPrimaryKey()
+            ?.Properties
+            .Select(x => x.PropertyInfo)
+            .ToArray();
     }
 }
