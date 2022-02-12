@@ -5,6 +5,7 @@ using Laraue.EfCoreTriggers.Common.Services.Impl;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.Services.Impl.SetExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors.Statements;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.Extensions.DependencyInjection;
 
