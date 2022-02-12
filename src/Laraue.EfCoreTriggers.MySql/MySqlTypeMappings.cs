@@ -1,5 +1,5 @@
 ﻿using System;
-using Laraue.EfCoreTriggers.Common.v2;
+using Laraue.EfCoreTriggers.Common.Services;
 
 namespace Laraue.EfCoreTriggers.MySql;
 

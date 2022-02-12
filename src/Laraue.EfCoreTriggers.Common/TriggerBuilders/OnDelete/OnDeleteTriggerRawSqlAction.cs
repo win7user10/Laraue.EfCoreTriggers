@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
-using Laraue.EfCoreTriggers.Common.v2;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
 {

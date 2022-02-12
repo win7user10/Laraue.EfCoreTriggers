@@ -1,20 +1,20 @@
 ﻿using System.Linq;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
-using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
 public class MySqlTriggerVisitor : BaseTriggerVisitor
 {
     private readonly ITriggerActionVisitorFactory _factory;
-    private readonly IEfCoreMetadataRetriever _metadataRetriever;
+    private readonly IDbSchemaRetriever _adapter;
 
-    public MySqlTriggerVisitor(ITriggerActionVisitorFactory factory, IEfCoreMetadataRetriever metadataRetriever)
+    public MySqlTriggerVisitor(ITriggerActionVisitorFactory factory, IDbSchemaRetriever adapter)
     {
         _factory = factory;
-        _metadataRetriever = metadataRetriever;
+        _adapter = adapter;
     }
 
     public override string GenerateCreateTriggerSql(ITrigger trigger)
@@ -26,7 +26,7 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
             .ToArray();
         
         var sql = SqlBuilder.FromString($"CREATE TRIGGER {trigger.Name}")
-            .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {_metadataRetriever.GetTableName(trigger.TriggerEntityType)}")
+            .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {_adapter.GetTableName(trigger.TriggerEntityType)}")
             .AppendNewLine("FOR EACH ROW")
             .AppendNewLine("BEGIN")
             .WithIdent(triggerSql =>

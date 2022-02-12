@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
@@ -44,7 +46,7 @@ public class SqlServerUnaryExpressionVisitor : UnaryExpressionVisitor
         }
 
         return expression.NodeType is ExpressionType.Convert && 
-            _sqlGenerator.GetNotNullableType(expression.Operand.Type) == typeof(bool);
+            EfCoreTriggersHelper.GetNotNullableType(expression.Operand.Type) == typeof(bool);
     }
     
     private static readonly HashSet<ExpressionType> BooleanExpressionTypes = new ()

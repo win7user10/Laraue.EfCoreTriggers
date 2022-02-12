@@ -1,10 +1,10 @@
 ﻿using System.Linq;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl.SetExpressionVisitors;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
-using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Impl.SetExpressionVisitors;
-using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
@@ -12,25 +12,25 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
 {
     private readonly IInsertExpressionVisitor _insertExpressionVisitor;
     private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
-    private readonly IEfCoreMetadataRetriever _metadataRetriever;
-    private readonly ISetExpressionVisitorFactory _setExpressionVisitorFactory;
+    private readonly IDbSchemaRetriever _adapter;
+    private readonly IMemberInfoVisitorFactory _memberInfoVisitorFactory;
     private readonly ISqlGenerator _sqlGenerator;
 
-    public SqlServerTriggerUpsertActionVisitor(IInsertExpressionVisitor insertExpressionVisitor, IUpdateExpressionVisitor updateExpressionVisitor, IEfCoreMetadataRetriever metadataRetriever, ISetExpressionVisitorFactory setExpressionVisitorFactory, ISqlGenerator sqlGenerator)
+    public SqlServerTriggerUpsertActionVisitor(IInsertExpressionVisitor insertExpressionVisitor, IUpdateExpressionVisitor updateExpressionVisitor, IDbSchemaRetriever adapter, IMemberInfoVisitorFactory memberInfoVisitorFactory, ISqlGenerator sqlGenerator)
     {
         _insertExpressionVisitor = insertExpressionVisitor;
         _updateExpressionVisitor = updateExpressionVisitor;
-        _metadataRetriever = metadataRetriever;
-        _setExpressionVisitorFactory = setExpressionVisitorFactory;
+        _adapter = adapter;
+        _memberInfoVisitorFactory = memberInfoVisitorFactory;
         _sqlGenerator = sqlGenerator;
     }
 
     public SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
     {
         var updateEntityType = triggerAction.InsertExpression.Body.Type;
-        var updateEntityTable = _metadataRetriever.GetTableName(updateEntityType);
+        var updateEntityTable = _adapter.GetTableName(updateEntityType);
         
-        var matchExpressionParts = _setExpressionVisitorFactory.Visit(
+        var matchExpressionParts = _memberInfoVisitorFactory.Visit(
             triggerAction.MatchExpression, triggerAction.MatchExpressionPrefixes, visitedMembers);
 
         var insertStatementSql = _insertExpressionVisitor.Visit(

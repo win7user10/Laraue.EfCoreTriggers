@@ -1,5 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
-using Laraue.EfCoreTriggers.MySql;
+﻿using Laraue.EfCoreTriggers.MySql;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;

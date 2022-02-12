@@ -2,27 +2,28 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl.SetExpressionVisitors;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Impl.SetExpressionVisitors;
-using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.SqlLite;
 
 public class SqliteInsertExpressionVisitor : InsertExpressionVisitor
 {
-    private readonly IEfCoreMetadataRetriever _metadataRetriever;
+    private readonly IDbSchemaRetriever _adapter;
     private readonly IReadOnlyModel _model;
     
     public SqliteInsertExpressionVisitor(
-        ISetExpressionVisitorFactory factory,
-        IEfCoreMetadataRetriever metadataRetriever,
+        IMemberInfoVisitorFactory factory,
+        IDbSchemaRetriever adapter,
         ISqlGenerator sqlGenerator,
         IReadOnlyModel model) 
-        : base(factory, metadataRetriever, sqlGenerator)
+        : base(factory, adapter, sqlGenerator)
     {
-        _metadataRetriever = metadataRetriever;
+        _adapter = adapter;
         _model = model;
     }
 
@@ -31,7 +32,7 @@ public class SqliteInsertExpressionVisitor : InsertExpressionVisitor
         var primaryKeyProperties = GetPrimaryKeyMembers(insertExpression.Body.Type);
         var sqlBuilder = new SqlBuilder();
         sqlBuilder.Append("(")
-            .AppendJoin(", ", primaryKeyProperties.Select(_metadataRetriever.GetColumnName))
+            .AppendJoin(", ", primaryKeyProperties.Select(_adapter.GetColumnName))
             .Append(") VALUES (")
             .AppendJoin(", ", primaryKeyProperties.Select(_ => "NULL"))
             .Append(")");

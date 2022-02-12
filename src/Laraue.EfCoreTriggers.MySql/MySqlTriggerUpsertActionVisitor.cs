@@ -1,9 +1,8 @@
 ﻿using System.Linq;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
-using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Impl.SetExpressionVisitors;
-using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
@@ -11,16 +10,16 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
 {
     private readonly IInsertExpressionVisitor _insertExpressionVisitor;
     private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
-    private readonly IEfCoreMetadataRetriever _metadataRetriever;
+    private readonly IDbSchemaRetriever _adapter;
 
     public MySqlTriggerUpsertActionVisitor(
         IInsertExpressionVisitor insertExpressionVisitor,
         IUpdateExpressionVisitor updateExpressionVisitor,
-        IEfCoreMetadataRetriever metadataRetriever)
+        IDbSchemaRetriever adapter)
     {
         _insertExpressionVisitor = insertExpressionVisitor;
         _updateExpressionVisitor = updateExpressionVisitor;
-        _metadataRetriever = metadataRetriever;
+        _adapter = adapter;
     }
     
     public SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
@@ -36,7 +35,7 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
 
         if (triggerAction.OnMatchExpression is null)
         {
-            sqlBuilder.Append($"INSERT IGNORE {_metadataRetriever.GetTableName(updateEntityType)} ")
+            sqlBuilder.Append($"INSERT IGNORE {_adapter.GetTableName(updateEntityType)} ")
                 .Append(insertStatementSql)
                 .Append(";");
         }
@@ -47,7 +46,7 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
                 triggerAction.OnMatchExpressionPrefixes,
                 visitedMembers);
             
-            sqlBuilder.Append($"INSERT INTO {_metadataRetriever.GetTableName(updateEntityType)} ")
+            sqlBuilder.Append($"INSERT INTO {_adapter.GetTableName(updateEntityType)} ")
                 .Append(insertStatementSql)
                 .AppendNewLine("ON DUPLICATE KEY")
                 .AppendNewLine("UPDATE ")

@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
-using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
 public class SqlServerTriggerVisitor : BaseTriggerVisitor
 {
     private readonly ITriggerActionVisitorFactory _factory;
-    private readonly IEfCoreMetadataRetriever _efCoreMetadataRetriever;
+    private readonly IDbSchemaRetriever _dbSchemaRetriever;
     private readonly ISqlGenerator _sqlGenerator;
 
-    public SqlServerTriggerVisitor(ITriggerActionVisitorFactory factory, IEfCoreMetadataRetriever efCoreMetadataRetriever, ISqlGenerator sqlGenerator)
+    public SqlServerTriggerVisitor(ITriggerActionVisitorFactory factory, IDbSchemaRetriever dbSchemaRetriever, ISqlGenerator sqlGenerator)
     {
         _factory = factory;
-        _efCoreMetadataRetriever = efCoreMetadataRetriever;
+        _dbSchemaRetriever = dbSchemaRetriever;
         _sqlGenerator = sqlGenerator;
     }
 
@@ -34,7 +34,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
     public override string GenerateCreateTriggerSql(ITrigger trigger)
     {
         var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
-        var tableName = _efCoreMetadataRetriever.GetTableName(trigger.TriggerEntityType);
+        var tableName = _dbSchemaRetriever.GetTableName(trigger.TriggerEntityType);
 
         var visitedMembers = new VisitedMembers();
 
@@ -220,7 +220,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         members = members.WhereDeclaringType(triggerEntityType).ToArray();
         
         var columns = members.Any()
-            ? string.Join(", ", members.Select(member => _efCoreMetadataRetriever.GetColumnName(member)))
+            ? string.Join(", ", members.Select(member => _dbSchemaRetriever.GetColumnName(member)))
             : "*";
         
         return $"SELECT {columns} FROM {GetTemporaryTableName(argumentType)}";

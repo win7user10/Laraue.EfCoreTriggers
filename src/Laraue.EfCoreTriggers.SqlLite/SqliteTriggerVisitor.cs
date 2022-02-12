@@ -1,20 +1,20 @@
 ﻿using System.Linq;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
-using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.SqlLite;
 
 public class SqliteTriggerVisitor : BaseTriggerVisitor
 {
     private readonly ITriggerActionVisitorFactory _factory;
-    private readonly IEfCoreMetadataRetriever _efCoreMetadataRetriever;
+    private readonly IDbSchemaRetriever _dbSchemaRetriever;
 
-    public SqliteTriggerVisitor(ITriggerActionVisitorFactory factory, IEfCoreMetadataRetriever efCoreMetadataRetriever)
+    public SqliteTriggerVisitor(ITriggerActionVisitorFactory factory, IDbSchemaRetriever dbSchemaRetriever)
     {
         _factory = factory;
-        _efCoreMetadataRetriever = efCoreMetadataRetriever;
+        _dbSchemaRetriever = dbSchemaRetriever;
     }
 
     public override string GenerateCreateTriggerSql(ITrigger trigger)
@@ -47,7 +47,7 @@ public class SqliteTriggerVisitor : BaseTriggerVisitor
             var postfix = actionsCount > 1 ? $"_{actionsCount - i}" : string.Empty;
             var action = actionsSql[i - 1];
 
-            var tableName = _efCoreMetadataRetriever.GetTableName(trigger.TriggerEntityType);
+            var tableName = _dbSchemaRetriever.GetTableName(trigger.TriggerEntityType);
             
             sql.Append($"CREATE TRIGGER {trigger.Name}{postfix}")
                 .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {tableName}")

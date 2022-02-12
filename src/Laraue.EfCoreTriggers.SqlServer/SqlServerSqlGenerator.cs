@@ -1,13 +1,13 @@
 ﻿using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Impl;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
 public class SqlServerSqlGenerator : SqlGenerator
 {
-    public SqlServerSqlGenerator(IEfCoreMetadataRetriever metadataRetriever, SqlTypeMappings sqlTypeMappings) 
-        : base(metadataRetriever, sqlTypeMappings)
+    public SqlServerSqlGenerator(IDbSchemaRetriever adapter, SqlTypeMappings sqlTypeMappings) 
+        : base(adapter, sqlTypeMappings)
     {
         
     }

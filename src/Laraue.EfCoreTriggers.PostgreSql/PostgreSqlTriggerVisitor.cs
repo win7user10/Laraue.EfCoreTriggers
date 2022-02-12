@@ -1,20 +1,20 @@
 ﻿using System.Linq;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
-using Laraue.EfCoreTriggers.Common.v2;
-using Laraue.EfCoreTriggers.Common.v2.Impl.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.PostgreSql;
 
 public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
 {
     private readonly ITriggerActionVisitorFactory _factory;
-    private readonly IEfCoreMetadataRetriever _metadataRetriever;
+    private readonly IDbSchemaRetriever _adapter;
 
-    public PostgreSqlTriggerVisitor(ITriggerActionVisitorFactory factory, IEfCoreMetadataRetriever metadataRetriever)
+    public PostgreSqlTriggerVisitor(ITriggerActionVisitorFactory factory, IDbSchemaRetriever adapter)
     {
         _factory = factory;
-        _metadataRetriever = metadataRetriever;
+        _adapter = adapter;
     }
 
     public override string GenerateCreateTriggerSql(ITrigger trigger)
@@ -48,7 +48,7 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine("END;")
             .AppendNewLine($"${trigger.Name}$ LANGUAGE plpgsql;")
             .AppendNewLine($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()}")
-            .AppendNewLine($"ON \"{_metadataRetriever.GetTableName(trigger.TriggerEntityType)}\"")
+            .AppendNewLine($"ON \"{_adapter.GetTableName(trigger.TriggerEntityType)}\"")
             .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
         
         return sql;

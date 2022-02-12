@@ -1,5 +1,5 @@
-﻿using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
+﻿using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 

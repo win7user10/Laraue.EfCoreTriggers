@@ -1,4 +1,4 @@
-﻿using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
+﻿using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith
 {
