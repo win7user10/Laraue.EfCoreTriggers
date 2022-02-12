@@ -99,6 +99,24 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             return this;
         }
 
+        /// <summary>
+        /// Add ident if predicate is passed and executes action on the <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public SqlBuilder WithIdentWhen(bool predicate, Action<SqlBuilder> action)
+        {
+            if (predicate)
+            {
+                return WithIdent(action);
+            }
+            
+            action(this);
+            return this;
+
+        }
+
         private void ExecuteForAllBesidesLast<T>(
             IEnumerable<T> values, 
             Action<T, int> actionForAll,

@@ -32,12 +32,12 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
                     var conditionsSql = trigger.Conditions
                         .Select(actionCondition => _factory.Visit(actionCondition, new VisitedMembers()));
             
-                    triggerSql.AppendNewLine($"IF ")
+                    triggerSql.Append("IF ")
                         .AppendJoin(" AND ", conditionsSql.Select(x => x.ToString()))
                         .Append(" THEN ");
                 }
 
-                triggerSql.WithIdent(loopSql => loopSql.AppendViaNewLine(actionsSql));
+                triggerSql.WithIdentWhen(trigger.Conditions.Count > 0, loopSql => loopSql.AppendViaNewLine(actionsSql));
         
                 if (trigger.Conditions.Count > 0)
                 {
