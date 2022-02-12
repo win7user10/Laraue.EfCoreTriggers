@@ -7,15 +7,21 @@ using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan
 {
+    /// <summary>
+    /// Visitor for <see cref="System.Math.Atan"/> method.
+    /// </summary>
     public class MathAtanVisitor : BaseMathVisitor
     {
+        /// <inheritdoc />
         protected override string MethodName => nameof(System.Math.Atan);
         
+        /// <inheritdoc />
         public MathAtanVisitor(IExpressionVisitorFactory visitorFactory)
             : base(visitorFactory)
         {
         }
 
+        /// <inheritdoc />
         public override SqlBuilder Visit(
             MethodCallExpression expression,
             ArgumentTypes argumentTypes,

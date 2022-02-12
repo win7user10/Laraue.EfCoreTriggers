@@ -7,15 +7,21 @@ using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp
 {
+    /// <summary>
+    /// Visitor for <see cref="System.Math.Exp"/> method.
+    /// </summary>
     public class MathExpVisitor : BaseMathVisitor
     {
+        /// <inheritdoc />
         protected override string MethodName => nameof(System.Math.Exp);
 
+        /// <inheritdoc />
         public MathExpVisitor(IExpressionVisitorFactory visitorFactory) 
             : base(visitorFactory)
         {
         }
 
+        /// <inheritdoc />
         public override SqlBuilder Visit(
             MethodCallExpression expression,
             ArgumentTypes argumentTypes,

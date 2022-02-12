@@ -5,21 +5,26 @@ using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.v2;
 using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
-namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Floor
+namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling
 {
     /// <summary>
-    /// Visitor for <see cref="System.Math.Floor(double)"/> method.
+    /// Visitor for <see cref="System.Math.Ceiling(decimal)"/> method.
     /// </summary>
-    public class MathFloorVisitor : BaseMathVisitor
+    public abstract class BaseMathCeilingVisitor : BaseMathVisitor
     {
         /// <inheritdoc />
-        protected override string MethodName => nameof(System.Math.Floor);
+        protected override string MethodName => nameof(System.Math.Ceiling);
 
         /// <inheritdoc />
-        public MathFloorVisitor(IExpressionVisitorFactory visitorFactory) 
+        protected BaseMathCeilingVisitor(IExpressionVisitorFactory visitorFactory) 
             : base(visitorFactory)
         {
         }
+
+        /// <summary>
+        /// Ceil function name in SQL.
+        /// </summary>
+        protected abstract string SqlFunctionName { get; }
 
         /// <inheritdoc />
         public override SqlBuilder Visit(
@@ -28,8 +33,10 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Floor
             VisitedMembers visitedMembers)
         {
             var argument = expression.Arguments[0];
+            
             var sqlBuilder = VisitorFactory.Visit(argument, argumentTypes, visitedMembers);
-            return SqlBuilder.FromString($"FLOOR({sqlBuilder})");
+            
+            return SqlBuilder.FromString($"{SqlFunctionName}({sqlBuilder})");
         }
     }
 }

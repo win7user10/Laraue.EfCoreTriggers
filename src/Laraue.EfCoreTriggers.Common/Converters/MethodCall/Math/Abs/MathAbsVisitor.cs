@@ -7,15 +7,22 @@ using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs
 {
+    /// <summary>
+    /// Visitor for all Abs methods, such as <see cref="System.Math.Abs(decimal)"/>,
+    /// <see cref="System.Math.Abs(sbyte)"/> etc.
+    /// </summary>
     public class MathAbsVisitor : BaseMathVisitor
     {
+        /// <inheritdoc />
         protected override string MethodName => nameof(System.Math.Abs);
 
+        /// <inheritdoc />
         public MathAbsVisitor(IExpressionVisitorFactory visitorFactory) 
             : base(visitorFactory)
         {
         }
 
+        /// <inheritdoc />
         public override SqlBuilder Visit(MethodCallExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
         {
             var argument = expression.Arguments[0];
