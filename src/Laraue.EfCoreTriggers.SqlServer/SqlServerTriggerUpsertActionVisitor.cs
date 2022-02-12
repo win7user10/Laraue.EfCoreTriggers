@@ -17,7 +17,12 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
     private readonly IMemberInfoVisitorFactory _memberInfoVisitorFactory;
     private readonly ISqlGenerator _sqlGenerator;
 
-    public SqlServerTriggerUpsertActionVisitor(IInsertExpressionVisitor insertExpressionVisitor, IUpdateExpressionVisitor updateExpressionVisitor, IDbSchemaRetriever adapter, IMemberInfoVisitorFactory memberInfoVisitorFactory, ISqlGenerator sqlGenerator)
+    public SqlServerTriggerUpsertActionVisitor(
+        IInsertExpressionVisitor insertExpressionVisitor,
+        IUpdateExpressionVisitor updateExpressionVisitor,
+        IDbSchemaRetriever adapter,
+        IMemberInfoVisitorFactory memberInfoVisitorFactory,
+        ISqlGenerator sqlGenerator)
     {
         _insertExpressionVisitor = insertExpressionVisitor;
         _updateExpressionVisitor = updateExpressionVisitor;
@@ -51,7 +56,7 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
                         .AppendNewLine($"FROM {updateEntityTable} WITH (UPDLOCK, SERIALIZABLE)")
                         .AppendNewLine("WHERE ")
                         .AppendJoin(" AND ", matchExpressionParts
-                            .Select(memberPair => $"{_sqlGenerator.GetColumnSql(memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
+                            .Select(memberPair => $"{_sqlGenerator.GetColumnSql(updateEntityType, memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
                         .Append(")");
                 });
         }
@@ -67,7 +72,7 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
                 .Append(updateStatementSql)
                 .AppendNewLine("WHERE ")
                 .AppendJoin(" AND ", matchExpressionParts
-                    .Select(memberPair => $"{_sqlGenerator.GetColumnSql(memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
+                    .Select(memberPair => $"{_sqlGenerator.GetColumnSql(updateEntityType, memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
                 .AppendNewLine("IF @@ROWCOUNT = 0");
         }
         

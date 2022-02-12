@@ -32,6 +32,8 @@ public class InsertExpressionVisitor : IInsertExpressionVisitor
     /// <inheritdoc />
     public SqlBuilder Visit(LambdaExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
     {
+        var insertType = expression.Body.Type;
+        
         var assignmentParts = _factory.Visit(
             expression,
             argumentTypes,
@@ -44,7 +46,7 @@ public class InsertExpressionVisitor : IInsertExpressionVisitor
             sqlResult.Append("(")
                 .AppendJoin(", ", assignmentParts
                     .Select(x =>
-                        $"{_sqlGenerator.GetDelimiter()}{_adapter.GetColumnName(x.Key)}{_sqlGenerator.GetDelimiter()}"))
+                        $"{_sqlGenerator.GetDelimiter()}{_adapter.GetColumnName(insertType, x.Key)}{_sqlGenerator.GetDelimiter()}"))
                 .Append(") VALUES (")
                 .AppendJoin(", ", assignmentParts
                     .Select(x => x.Value.ToString()))

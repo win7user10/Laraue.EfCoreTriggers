@@ -1,6 +1,5 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
-using Laraue.EfCoreTriggers.MySql.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;

@@ -40,15 +40,15 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     }
     
     /// <inheritdoc />
-    public string GetColumnName(MemberInfo memberInfo)
+    public string GetColumnName(Type type, MemberInfo memberInfo)
     {
         if (!_columnNamesCache.ContainsKey(memberInfo))
         {
-            var declaringType = memberInfo.DeclaringType;
-            var entityType = Model.FindEntityType(declaringType);
+            var entityType = Model.FindEntityType(type);
+            
             if (entityType == null)
             {
-                throw new InvalidOperationException($"DbSet<{declaringType.Name}> should be added to the DbContext");
+                throw new InvalidOperationException($"DbSet<{type}> should be added to the DbContext");
             }
             
             var property = entityType.FindProperty(memberInfo.Name);

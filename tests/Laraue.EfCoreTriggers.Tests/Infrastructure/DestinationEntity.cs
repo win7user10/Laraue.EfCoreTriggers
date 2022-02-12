@@ -2,10 +2,8 @@
 
 namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 {
-    public class DestinationEntity
+    public class DestinationEntity : BaseEntity
     {
-        public int Id { get; set; }
-        public string StringField { get; set; }
         public EnumValue? EnumValue { get; set; }
         public decimal? DecimalValue { get; set; }
         public double? DoubleValue { get; set; }

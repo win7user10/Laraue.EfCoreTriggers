@@ -39,6 +39,6 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
     /// <returns></returns>
     protected virtual string Visit(MemberExpression memberExpression, ArgumentType argumentType)
     {
-        return _generator.GetColumnSql(memberExpression.Member, argumentType);
+        return _generator.GetColumnSql(memberExpression.Expression.Type, memberExpression.Member, argumentType);
     }
 }

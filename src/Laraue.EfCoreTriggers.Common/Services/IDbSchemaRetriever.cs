@@ -11,9 +11,10 @@ public interface IDbSchemaRetriever
     /// <summary>
     /// Get the column name of the passed member.
     /// </summary>
-    /// <param name="memberInfo"></param>
+    /// <param name="type">Entity type.</param>
+    /// <param name="memberInfo">Member to get.</param>
     /// <returns></returns>
-    string GetColumnName(MemberInfo memberInfo);
+    string GetColumnName(Type type, MemberInfo memberInfo);
     
     /// <summary>
     /// Get the table name of passed entity.

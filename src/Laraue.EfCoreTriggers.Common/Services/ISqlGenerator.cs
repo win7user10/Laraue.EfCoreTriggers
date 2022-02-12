@@ -33,10 +33,11 @@ public interface ISqlGenerator
     /// Get column SQL. E.g. NEW.column_name, OLD.column_name depending on argument
     /// and its type. 
     /// </summary>
+    /// <param name="type"></param>
     /// <param name="memberInfo"></param>
     /// <param name="argumentType"></param>
     /// <returns></returns>
-    string GetColumnSql(MemberInfo memberInfo, ArgumentType argumentType);
+    string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType);
     
     /// <summary>
     /// Get name of CLR <see cref="Type"/> in the current SQL provider.

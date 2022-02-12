@@ -49,16 +49,16 @@ public class SqlGenerator : ISqlGenerator
         };
     }
 
-    public string GetColumnSql(MemberInfo memberInfo, ArgumentType argumentType)
+    public string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType)
     {
-        var columnName = _adapter.GetColumnName(memberInfo);
+        var columnName = _adapter.GetColumnName(type, memberInfo);
         
         return argumentType switch
         {
             ArgumentType.New => $"{NewEntityPrefix}.{columnName}", 
             ArgumentType.Old => $"{OldEntityPrefix}.{columnName}", 
             ArgumentType.None => columnName,
-            _ => $"{_adapter.GetTableName(memberInfo.DeclaringType)}.{columnName}",
+            _ => $"{_adapter.GetTableName(type)}.{columnName}",
         };
     }
 
