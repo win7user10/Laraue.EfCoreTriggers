@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.Services;
+﻿using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
