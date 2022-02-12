@@ -7,38 +7,54 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
 namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 {
-    public record Row
-    {
-        public int Ident { get; set; }
-        
-        public StringBuilder StringBuilder { get; set; }
-    };
-    
+    /// <summary>
+    /// Class for SQL code generating.
+    /// </summary>
     public class SqlBuilder
     {
         private const string NewLine = "\r\n";
 
-        public const string Ident = "  ";
+        /// <summary>
+        /// String used for ident in the builder.
+        /// </summary>
+        private const string Ident = "  ";
 
-        public int CurrentIdent;
+        /// <summary>
+        /// Current ident of SQL builder. All new rows will inherit this ident.
+        /// </summary>
+        private int CurrentIdent { get; set; }
 
-        public List<Row> Rows { get; } = new ();
+        /// <summary>
+        /// All rows in <see cref="SqlBuilder"/>.
+        /// </summary>
+        private List<SqlBuilderRow> Rows { get; } = new ();
 
-        public Row CurrentRow => Rows.Last();
+        /// <summary>
+        /// Latest row of <see cref="SqlBuilder"/>.
+        /// </summary>
+        private SqlBuilderRow CurrentSqlBuilderRow => Rows.Last();
 
-        private SqlBuilder(Row row)
+        private SqlBuilder(SqlBuilderRow sqlBuilderRow)
         {
-            Rows.Add(row);
+            Rows.Add(sqlBuilderRow);
         }
 
+        /// <summary>
+        /// Initialize new <see cref="SqlBuilder"/> with empty content.
+        /// </summary>
         public SqlBuilder()
         {
             StartNewRow();
         }
         
+        /// <summary>
+        /// Initialize new <see cref="SqlBuilder"/> with passed content.
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
         public static SqlBuilder FromString(string sql)
         {
-            var row = new Row
+            var row = new SqlBuilderRow
             {
                 StringBuilder = new StringBuilder(sql)
             };
@@ -50,20 +66,26 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
         private SqlBuilder StartNewRow(string value = null)
         {
-            return StartNewRow(new Row
+            return StartNewRow(new SqlBuilderRow
             {
                 Ident = CurrentIdent,
                 StringBuilder = new StringBuilder(value)
             });
         }
         
-        private SqlBuilder StartNewRow(Row row)
+        private SqlBuilder StartNewRow(SqlBuilderRow sqlBuilderRow)
         {
-            Rows.Add(row);
+            Rows.Add(sqlBuilderRow);
 
             return this;
         }
 
+        /// <summary>
+        /// Returns to the delegate instance of
+        /// <see cref="SqlBuilder"/> with increased ident.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public SqlBuilder WithIdent(Action<SqlBuilder> action)
         {
             CurrentIdent++;
@@ -95,24 +117,38 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             }
         }
 
+        /// <summary>
+        /// Append passed sequence of <see cref="SqlBuilder"/> with rule:
+        /// The first line of first builder appends to latest row.
+        /// Other lines appends as new rows with
+        /// <see cref="SqlBuilderRow.Ident"/> = <see cref="SqlBuilderRow.Ident"/> + <see cref="CurrentIdent"/>.
+        /// </summary>
+        /// <param name="values">Sql builders to append</param>
+        /// <returns></returns>
         public SqlBuilder AppendViaNewLine(IEnumerable<SqlBuilder> values)
         {
             return AppendJoin(NewLine, values);
         }
 
+        /// <summary>
+        /// Append sequence of strings to row of current SQL builder.
+        /// </summary>
+        /// <param name="separator"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
         public SqlBuilder AppendJoin(string separator, IEnumerable<string> values)
         {
-            CurrentRow.StringBuilder.AppendJoin(separator, values);
+            CurrentSqlBuilderRow.StringBuilder.AppendJoin(separator, values);
             
             return this;
         }
         
-        public SqlBuilder AppendJoin(string separator, IEnumerable<StringBuilder> values)
-        {
-            CurrentRow.StringBuilder.AppendJoin(separator, values);
-            return this;
-        }
-        
+        /// <summary>
+        /// Append sequence of <see cref="SqlBuilder"/> via passed separator.
+        /// </summary>
+        /// <param name="separator"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
         public SqlBuilder AppendJoin(string separator, IEnumerable<SqlBuilder> values)
         {
             ExecuteForAllBesidesLast(values, (builder, _) =>
@@ -122,33 +158,43 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             {
                 if (separator is not NewLine)
                 {
-                    CurrentRow.StringBuilder.Append(separator);
+                    CurrentSqlBuilderRow.StringBuilder.Append(separator);
                 }
             });
 
             return this;
         }
 
+        /// <summary>
+        /// Append string value to current <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public SqlBuilder Append(string value)
         {
-            CurrentRow.StringBuilder.Append(value);
+            CurrentSqlBuilderRow.StringBuilder.Append(value);
             return this;
         }
         
+        /// <summary>
+        /// Append rows of passed <see cref="SqlBuilder"/> to rows of current <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="sqlBuilder"></param>
+        /// <returns></returns>
         public SqlBuilder Append(SqlBuilder sqlBuilder)
         {
             ExecuteForAllBesidesLast(sqlBuilder.Rows, (row, index) =>
             {
                 if (index != 0)
                 {
-                    CurrentRow.Ident = CurrentIdent + row.Ident;
+                    CurrentSqlBuilderRow.Ident = CurrentIdent + row.Ident;
                 }
                     
-                CurrentRow.StringBuilder.Append(row.StringBuilder);
+                CurrentSqlBuilderRow.StringBuilder.Append(row.StringBuilder);
 
             }, (row, _) =>
             {
-                StartNewRow(new Row()
+                StartNewRow(new SqlBuilderRow()
                 {
                     Ident = CurrentIdent,
                     StringBuilder = new StringBuilder()
@@ -158,17 +204,32 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             return this;
         }
         
+        /// <summary>
+        /// Append string to the start of row of the current <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public SqlBuilder Prepend(string value)
         {
-            CurrentRow.StringBuilder.Insert(0, value);
+            CurrentSqlBuilderRow.StringBuilder.Insert(0, value);
             return this;
         }
 
+        /// <summary>
+        /// Starts new row in <see cref="SqlBuilder"/> with passed string value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public SqlBuilder AppendNewLine(string value = null)
         {
             return StartNewRow(value);
         }
         
+        /// <summary>
+        /// Starts new row and append passed <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="sqlBuilder"></param>
+        /// <returns></returns>
         public SqlBuilder AppendNewLine(SqlBuilder sqlBuilder)
         {
             StartNewRow();
@@ -181,14 +242,28 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             return string.Concat(Enumerable.Range(0, ident).Select(_ => Ident));
         }
 
+        /// <summary>
+        /// Append char to the current row of <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public SqlBuilder Append(char value)
         {
-            CurrentRow.StringBuilder.Append(value);
+            CurrentSqlBuilderRow.StringBuilder.Append(value);
             return this;
         }
 
+        /// <summary>
+        /// Get SQL code from current builder.
+        /// </summary>
+        /// <param name="this"></param>
+        /// <returns></returns>
         public static implicit operator string(SqlBuilder @this) => @this.ToString();
 
+        /// <summary>
+        /// Get the final SQL code.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             var fullSql = new StringBuilder();
