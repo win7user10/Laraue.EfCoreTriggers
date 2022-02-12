@@ -1,21 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.Services;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public abstract class TriggerDeleteAction<TTriggerEntity, TDeleteEntity> : ITriggerAction
-       where TTriggerEntity : class
-       where TDeleteEntity : class
+    public abstract class TriggerDeleteAction : ITriggerAction
     {
-        internal LambdaExpression DeleteFilter;
+        /// <summary>
+        /// Expression to delete, e.g. Users.Where(x => x.Id == 2)
+        /// </summary>
+        internal LambdaExpression DeletePredicate;
 
-        public TriggerDeleteAction(LambdaExpression deleteFilter)
-            => DeleteFilter = deleteFilter;
+        protected TriggerDeleteAction(LambdaExpression deletePredicate)
+        {
+            DeletePredicate = deletePredicate;
+        }
 
-        public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
-            => visitor.GetTriggerDeleteActionSql(this);
-
-        internal abstract Dictionary<string, ArgumentType> DeleteFilterPrefixes { get; }
+        internal abstract ArgumentTypes DeleteFilterPrefixes { get; }
     }
 }

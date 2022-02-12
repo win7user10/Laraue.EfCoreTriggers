@@ -1,23 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.Services;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public abstract class TriggerInsertAction<TTriggerEntity, TInsertEntity> : ITriggerAction
-       where TTriggerEntity : class
-       where TInsertEntity : class
+    public abstract class TriggerInsertAction : ITriggerAction
     {
         internal LambdaExpression InsertExpression;
 
-        public TriggerInsertAction(LambdaExpression insertExpression)
+        protected TriggerInsertAction(LambdaExpression insertExpression)
         {
             InsertExpression = insertExpression;
         }
 
-        public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
-            => visitor.GetTriggerInsertActionSql(this);
-
-        internal abstract Dictionary<string, ArgumentType> InsertExpressionPrefixes { get; }
+        internal abstract ArgumentTypes InsertExpressionPrefixes { get; }
     }
 }

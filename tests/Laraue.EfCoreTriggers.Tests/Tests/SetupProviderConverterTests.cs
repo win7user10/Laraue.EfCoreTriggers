@@ -1,11 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String;
+using Laraue.EfCoreTriggers.Common.Extensions;
+using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
 using Laraue.EfCoreTriggers.MySql;
+using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
@@ -16,36 +21,41 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
     [UnitTest]
 	public class SetupProviderConverterTests
     {
-        private readonly ITriggerProvider _provider;
+        private readonly ModelBuilder _modelBuilder = new ();
 
         public SetupProviderConverterTests()
         {
-            var modelBuilder = new ModelBuilder();
-            modelBuilder.Entity<Transaction>()
+            _modelBuilder.Entity<Transaction>()
                 .Property<string>("Description");
-
-            IReadOnlyModel model = modelBuilder.Model;
-            _provider = new MySqlProvider(model);
         }
 
         [Fact]
         public virtual void Provider_ShouldUseCustomConverter_WhenItProvidedForFunction()
         {
-            _provider.Converters.ExpressionCallConverters.Push(new CustomStringToUpperConverter());
+            var provider = Helper.GetTriggerActionFactory(_modelBuilder.Model, services =>
+            {
+                services.AddMySqlServices(x => 
+                    x.AddMethodCallConverter<CustomStringToUpperVisitor>());
+            });
 
             var action = new OnInsertTriggerCondition<Transaction>(t => t.Description.ToUpper() == "ABC");
-            var sql = action.BuildSql(_provider);
+            var sql = provider.Visit(action, new VisitedMembers());
             Assert.Equal("test = 'ABC'", sql);
         }
 
-        private class CustomStringToUpperConverter : BaseStringConverter
+        private class CustomStringToUpperVisitor : BaseStringVisitor
         {
-            public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression, Dictionary<string, ArgumentType> argumentTypes)
+            public CustomStringToUpperVisitor(IExpressionVisitorFactory visitorFactory) 
+                : base(visitorFactory)
             {
-                return new ("test");
             }
 
-            public override string MethodName => nameof(string.ToUpper);
+            protected override string MethodName => nameof(string.ToUpper);
+            
+            public override SqlBuilder Visit(MethodCallExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+            {
+                return SqlBuilder.FromString("test");
+            }
         }
     }
 }

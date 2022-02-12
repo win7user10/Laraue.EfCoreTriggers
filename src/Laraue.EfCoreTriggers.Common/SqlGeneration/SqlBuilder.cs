@@ -7,153 +7,294 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
 namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 {
+    /// <summary>
+    /// Class for SQL code generating.
+    /// </summary>
     public class SqlBuilder
     {
-        public string Sql => StringBuilder.ToString();
-
-        public StringBuilder StringBuilder { get; } = new();
-
-        public const string NewLine = "\r\n";
+        private const string NewLine = "\r\n";
 
         /// <summary>
-        /// Contains info about all members taking part in generated SQL.
+        /// String used for ident in the builder.
         /// </summary>
-        public readonly Dictionary<ArgumentType, HashSet<MemberInfo>> AffectedColumns
-            = new()
-            {
-                [ArgumentType.New] = new HashSet<MemberInfo>(new MemberInfoComparer()),
-                [ArgumentType.Old] = new HashSet<MemberInfo>(new MemberInfoComparer()),
-            };
+        private const string Ident = "  ";
 
-        private class MemberInfoComparer : IEqualityComparer<MemberInfo>
+        /// <summary>
+        /// Current ident of SQL builder. All new rows will inherit this ident.
+        /// </summary>
+        private int CurrentIdent { get; set; }
+
+        /// <summary>
+        /// All rows in <see cref="SqlBuilder"/>.
+        /// </summary>
+        private List<SqlBuilderRow> Rows { get; } = new ();
+
+        /// <summary>
+        /// Latest row of <see cref="SqlBuilder"/>.
+        /// </summary>
+        private SqlBuilderRow CurrentSqlBuilderRow => Rows.Last();
+
+        private SqlBuilder(SqlBuilderRow sqlBuilderRow)
         {
-            public bool Equals(MemberInfo x, MemberInfo y)
-            {
-                if (ReferenceEquals(x, y)) return true;
-                if (ReferenceEquals(x, null)) return false;
-                if (ReferenceEquals(y, null)) return false;
-                if (x.GetType() != y.GetType()) return false;
-                return Equals(x.DeclaringType, y.DeclaringType) && x.Name == y.Name;
-            }
-
-            public int GetHashCode(MemberInfo obj)
-            {
-                return HashCode.Combine(obj.DeclaringType, obj.Name);
-            }
+            Rows.Add(sqlBuilderRow);
         }
 
         /// <summary>
-        /// Create instance of <see cref="SqlBuilder"/>, merging AffectedColumns from passed builders.
+        /// Initialize new <see cref="SqlBuilder"/> with empty content.
         /// </summary>
-        /// <param name="generatedSqls"></param>
-        public SqlBuilder(IEnumerable<SqlBuilder> generatedSqls)
-            => MergeColumnsInfo(generatedSqls);
-
-        public SqlBuilder(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns)
-            => MergeColumnsInfo(affectedColumns);
-
-        public SqlBuilder(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns, string sql)
-            : this(affectedColumns) => Append(sql);
-
-        public SqlBuilder(MemberInfo affectedColumn, ArgumentType argumentType)
-            => MergeColumnInfo(affectedColumn, argumentType);
-
-        public SqlBuilder(string sql)
-            => Append(sql);
-
         public SqlBuilder()
         {
+            StartNewRow();
         }
-
-        public SqlBuilder MergeColumnsInfo(IEnumerable<SqlBuilder> generatedSqls)
+        
+        /// <summary>
+        /// Initialize new <see cref="SqlBuilder"/> with passed content.
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
+        public static SqlBuilder FromString(string sql)
         {
-            foreach (var generatedSql in generatedSqls)
-                MergeColumnsInfo(generatedSql.AffectedColumns);
-            return this;
-        }
-
-        public SqlBuilder MergeColumnsInfo(SqlBuilder generatedSql)
-            => MergeColumnsInfo(new[] { generatedSql });
-
-        public SqlBuilder MergeColumnsInfo(Dictionary<ArgumentType, HashSet<MemberInfo>> affectedColumns)
-        {
-            foreach (var affectedColumn in affectedColumns)
-                AffectedColumns[affectedColumn.Key].AddRange(affectedColumn.Value);
-            return this;
-        }
-
-        public SqlBuilder MergeColumnInfo(MemberInfo affectedColumn, ArgumentType argumentType)
-        {
-            switch (argumentType)
+            var row = new SqlBuilderRow
             {
-                case ArgumentType.New:
-                case ArgumentType.Old:
-                    AffectedColumns[argumentType].Add(affectedColumn);
-                    break;
-            }
-            return this;
+                StringBuilder = new StringBuilder(sql)
+            };
+            
+            var sqlBuilder = new SqlBuilder(row);
+            
+            return sqlBuilder;
         }
 
-        public SqlBuilder Append(StringBuilder builder)
+        private SqlBuilder StartNewRow(string value = null)
         {
-            StringBuilder.Append(builder);
+            return StartNewRow(new SqlBuilderRow
+            {
+                Ident = CurrentIdent,
+                StringBuilder = new StringBuilder(value)
+            });
+        }
+        
+        private SqlBuilder StartNewRow(SqlBuilderRow sqlBuilderRow)
+        {
+            Rows.Add(sqlBuilderRow);
+
             return this;
         }
 
-        public SqlBuilder AppendJoin(IEnumerable<StringBuilder> builders)
-            => AppendJoin(string.Empty, builders);
+        /// <summary>
+        /// Returns to the delegate instance of
+        /// <see cref="SqlBuilder"/> with increased ident.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public SqlBuilder WithIdent(Action<SqlBuilder> action)
+        {
+            CurrentIdent++;
 
+            StartNewRow();
+            
+            action(this);
+
+            CurrentIdent--;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Add ident if predicate is passed and executes action on the <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        public SqlBuilder WithIdentWhen(bool predicate, Action<SqlBuilder> action)
+        {
+            if (predicate)
+            {
+                return WithIdent(action);
+            }
+            
+            action(this);
+            return this;
+
+        }
+
+        private void ExecuteForAllBesidesLast<T>(
+            IEnumerable<T> values, 
+            Action<T, int> actionForAll,
+            Action<T, int> actionForFirst)
+        {
+            var valuesArray = values.ToArray();
+            
+            for (var i = 0; i < valuesArray.Length; i++)
+            {
+                actionForAll(valuesArray[i], i);
+
+                if (i != valuesArray.Length - 1)
+                {
+                    actionForFirst(valuesArray[i], i);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Append passed sequence of <see cref="SqlBuilder"/> with rule:
+        /// The first line of first builder appends to latest row.
+        /// Other lines appends as new rows with
+        /// <see cref="SqlBuilderRow.Ident"/> = <see cref="SqlBuilderRow.Ident"/> + <see cref="CurrentIdent"/>.
+        /// </summary>
+        /// <param name="values">Sql builders to append</param>
+        /// <returns></returns>
+        public SqlBuilder AppendViaNewLine(IEnumerable<SqlBuilder> values)
+        {
+            return AppendJoin(NewLine, values);
+        }
+
+        /// <summary>
+        /// Append sequence of strings to row of current SQL builder.
+        /// </summary>
+        /// <param name="separator"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
         public SqlBuilder AppendJoin(string separator, IEnumerable<string> values)
         {
-            StringBuilder.AppendJoin(separator, values);
-            return this;
-        }
-
-        public SqlBuilder AppendJoin(string separator, IEnumerable<StringBuilder> builders)
-        {
-            var buildersArray = builders.ToArray();
-            for (int i = 0; i < buildersArray.Length; i++)
-            {
-                StringBuilder.Append(buildersArray[i]);
-                if (i < buildersArray.Length - 1)
-                    StringBuilder.Append(separator);
-            }
-            return this;
-        }
-
-        public SqlBuilder Append(string value)
-        {
-            StringBuilder.Append(value);
+            CurrentSqlBuilderRow.StringBuilder.AppendJoin(separator, values);
+            
             return this;
         }
         
+        /// <summary>
+        /// Append sequence of <see cref="SqlBuilder"/> via passed separator.
+        /// </summary>
+        /// <param name="separator"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public SqlBuilder AppendJoin(string separator, IEnumerable<SqlBuilder> values)
+        {
+            ExecuteForAllBesidesLast(values, (builder, _) =>
+            {
+                Append(builder);
+            }, (_, _) =>
+            {
+                if (separator is not NewLine)
+                {
+                    CurrentSqlBuilderRow.StringBuilder.Append(separator);
+                }
+            });
+
+            return this;
+        }
+
+        /// <summary>
+        /// Append string value to current <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public SqlBuilder Append(string value)
+        {
+            CurrentSqlBuilderRow.StringBuilder.Append(value);
+            return this;
+        }
+        
+        /// <summary>
+        /// Append rows of passed <see cref="SqlBuilder"/> to rows of current <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="sqlBuilder"></param>
+        /// <returns></returns>
+        public SqlBuilder Append(SqlBuilder sqlBuilder)
+        {
+            ExecuteForAllBesidesLast(sqlBuilder.Rows, (row, index) =>
+            {
+                if (index != 0)
+                {
+                    CurrentSqlBuilderRow.Ident = CurrentIdent + row.Ident;
+                }
+                    
+                CurrentSqlBuilderRow.StringBuilder.Append(row.StringBuilder);
+
+            }, (row, _) =>
+            {
+                StartNewRow(new SqlBuilderRow()
+                {
+                    Ident = CurrentIdent,
+                    StringBuilder = new StringBuilder()
+                });
+            });
+            
+            return this;
+        }
+        
+        /// <summary>
+        /// Append string to the start of row of the current <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public SqlBuilder Prepend(string value)
         {
-            StringBuilder.Insert(0, value);
+            CurrentSqlBuilderRow.StringBuilder.Insert(0, value);
             return this;
         }
 
-        public SqlBuilder AppendNewLine(string value)
-            => Append($"{NewLine}{value}");
+        /// <summary>
+        /// Starts new row in <see cref="SqlBuilder"/> with passed string value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public SqlBuilder AppendNewLine(string value = null)
+        {
+            return StartNewRow(value);
+        }
+        
+        /// <summary>
+        /// Starts new row and append passed <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="sqlBuilder"></param>
+        /// <returns></returns>
+        public SqlBuilder AppendNewLine(SqlBuilder sqlBuilder)
+        {
+            StartNewRow();
+            
+            return Append(sqlBuilder);
+        }
 
+        private string GetIdent(int ident)
+        {
+            return string.Concat(Enumerable.Range(0, ident).Select(_ => Ident));
+        }
+
+        /// <summary>
+        /// Append char to the current row of <see cref="SqlBuilder"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public SqlBuilder Append(char value)
         {
-            StringBuilder.Append(value);
+            CurrentSqlBuilderRow.StringBuilder.Append(value);
             return this;
         }
 
-        public static implicit operator string(SqlBuilder @this) => @this.Sql;
+        /// <summary>
+        /// Get SQL code from current builder.
+        /// </summary>
+        /// <param name="this"></param>
+        /// <returns></returns>
+        public static implicit operator string(SqlBuilder @this) => @this.ToString();
 
-        public override string ToString() => Sql;
-    }
-
-    internal static class HashSetExtensions
-    {
-        public static HashSet<T> AddRange<T>(this HashSet<T> hashSet, IEnumerable<T> values)
+        /// <summary>
+        /// Get the final SQL code.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
         {
-            foreach (var value in values)
-                hashSet.Add(value);
-            return hashSet;
+            var fullSql = new StringBuilder();
+
+            ExecuteForAllBesidesLast(Rows, (row, _) =>
+            {
+                var ident = GetIdent(row.Ident);
+                
+                fullSql.Append(ident)
+                    .Append(row.StringBuilder);
+            }, (_, _) => fullSql.Append(NewLine));
+
+            return fullSql.ToString();
         }
     }
 }

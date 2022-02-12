@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
 {
-    public class OnInsertTriggerUpsertAction<TTriggerEntity, TUpsertEntity> : TriggerUpsertAction<TTriggerEntity, TUpsertEntity>
+    public class OnInsertTriggerUpsertAction<TTriggerEntity, TUpsertEntity> : TriggerUpsertAction
         where TTriggerEntity : class
         where TUpsertEntity : class
     {
@@ -17,19 +18,19 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
         {
         }
 
-        public override Dictionary<string, ArgumentType> InsertExpressionPrefixes => new()
+        public override ArgumentTypes InsertExpressionPrefixes => new()
         {
             [InsertExpression.Parameters[0].Name] = ArgumentType.New,
         };
 
-        public override Dictionary<string, ArgumentType> OnMatchExpressionPrefixes => OnMatchExpression is null
-            ? new Dictionary<string, ArgumentType>()
-            : new Dictionary<string, ArgumentType>
+        public override ArgumentTypes OnMatchExpressionPrefixes => OnMatchExpression is null
+            ? new ArgumentTypes()
+            : new ArgumentTypes
             {
                 [OnMatchExpression.Parameters[0].Name] = ArgumentType.New,
             };
 
-        public override Dictionary<string, ArgumentType> MatchExpressionPrefixes => new()
+        public override ArgumentTypes MatchExpressionPrefixes => new()
         {
             [MatchExpression.Parameters[0].Name] = ArgumentType.New,
         };

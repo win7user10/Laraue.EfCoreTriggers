@@ -1,5 +1,7 @@
 ﻿using Laraue.EfCoreTriggers.SqlServer;
+using Laraue.EfCoreTriggers.SqlServer.Extensions;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
 
@@ -8,7 +10,10 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Unit
     [Collection(CollectionNames.SqlServer)]
     public class SqlServerUnitMathFunctionsTest : UnitMathFunctionsTests
     {
-        public SqlServerUnitMathFunctionsTest() : base(new SqlServerProvider(new ContextFactory().CreateDbContext().Model))
+        public SqlServerUnitMathFunctionsTest() : base(
+            Helper.GetTriggerActionFactory(
+                new ContextFactory().CreateDbContext().Model, 
+                collection => collection.AddSqlServerServices()))
         {
         }
 

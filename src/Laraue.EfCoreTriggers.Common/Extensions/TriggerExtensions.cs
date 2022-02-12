@@ -1,47 +1,32 @@
-﻿using System;
-using Laraue.EfCoreTriggers.Common.Converters;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
+﻿using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.Common.Extensions
 {
+    /// <summary>
+    /// EFCore triggers extensions for initializing.  
+    /// </summary>
     public static class TriggerExtensions
     {
-        private static Type _activeProviderType;
-        private static Action<AvailableConverters> _setupProviderConverters;
+        /// <summary>
+        /// Services which will be used to create EFCore triggers SQL provider.
+        /// </summary>
+        public static readonly IServiceCollection Services = new ServiceCollection();
 
         /// <summary>
-        /// Bad solution, but have no idea yet, how to register current provider using DbContextOptionsBuilder.
+        /// Build EFCore triggers provider based on configured <see cref="Services"/>
+        /// and passed <see cref="IReadOnlyModel"/>.
         /// </summary>
-        public static void RememberTriggerProvider<TTriggerProvider>(Action<AvailableConverters> setupConverters)
-            where TTriggerProvider : ITriggerProvider
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static ITriggerVisitor GetVisitor(IReadOnlyModel model)
         {
-            _activeProviderType = typeof(TTriggerProvider);
-            _setupProviderConverters = setupConverters;
-        }
+            var services = Services.AddSingleton(model);
 
-        public static ITriggerProvider GetSqlProvider(IReadOnlyModel model)
-        {
-            if (_activeProviderType is null)
-            {
-                throw new InvalidOperationException("To use triggers, DB provider should be added");
-            }
+            var provider = services.BuildServiceProvider();
 
-            var providerConstructor = _activeProviderType.GetConstructor(new[] { typeof(IReadOnlyModel) });
-
-            if (providerConstructor is null)
-            {
-                throw new InvalidOperationException("Provider should contain constructor with one parameter which receive instance of IModel");
-            }
-
-            var provider = (ITriggerProvider)providerConstructor.Invoke(new[]
-            {
-                (object) model
-            });
-
-            _setupProviderConverters?.Invoke(provider.Converters);
-
-            return provider;
+            return provider.GetRequiredService<ITriggerVisitor>();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Laraue.EfCoreTriggers.PostgreSql;
+using Laraue.EfCoreTriggers.PostgreSql.Extensions;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
 
@@ -8,9 +10,13 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
     [Collection(CollectionNames.PostgreSql)]
     public class PostgreUnitMemberAssignmentTests : BaseMemberAssignmentUnitTests
     {
-        public PostgreUnitMemberAssignmentTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
+        public PostgreUnitMemberAssignmentTests() : base(
+            Helper.GetTriggerActionFactory(
+                new ContextFactory().CreateDbContext().Model, 
+                collection => collection.AddPostgreSqlServices()))
         {
         }
+        
         public override string ExceptedEnumValueSql => "INSERT INTO destination_entities (\"enum_value\") VALUES (NEW.enum_value);";
 
         public override string ExceptedDecimalAddSql => "INSERT INTO destination_entities (\"decimal_value\") VALUES (NEW.decimal_value + 3);";

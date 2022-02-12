@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public abstract class TriggerRawAction<TTriggerEntity> : ITriggerAction
-       where TTriggerEntity : class
+    public abstract class TriggerRawAction : ITriggerAction
     {
         internal readonly LambdaExpression[] ArgumentSelectorExpressions;
         
@@ -21,13 +21,10 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
             Sql = sql;
         }
 
-        public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
-            => visitor.GetTriggerRawActionSql(this);
-
-        internal Dictionary<string, ArgumentType>[] ArgumentPrefixes =>
+        internal ArgumentTypes[] ArgumentPrefixes =>
             ArgumentSelectorExpressions.Select((x, i) => GetArgumentPrefixes(ArgumentSelectorExpressions[i].Parameters)).ToArray();
 
-        protected abstract Dictionary<string, ArgumentType> GetArgumentPrefixes(
+        protected abstract ArgumentTypes GetArgumentPrefixes(
             ReadOnlyCollection<ParameterExpression> parameters);
     }
 }

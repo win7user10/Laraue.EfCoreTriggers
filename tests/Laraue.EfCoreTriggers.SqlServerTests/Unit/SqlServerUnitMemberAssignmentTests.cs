@@ -1,5 +1,7 @@
 ﻿using Laraue.EfCoreTriggers.SqlServer;
+using Laraue.EfCoreTriggers.SqlServer.Extensions;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
 
@@ -8,9 +10,13 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Unit
     [Collection(CollectionNames.SqlServer)]
     public class SqlServerUnitMemberAssignmentTests : BaseMemberAssignmentUnitTests
     {
-        public SqlServerUnitMemberAssignmentTests() : base(new SqlServerProvider(new ContextFactory().CreateDbContext().Model))
+        public SqlServerUnitMemberAssignmentTests() : base(
+            Helper.GetTriggerActionFactory(
+                new ContextFactory().CreateDbContext().Model, 
+                collection => collection.AddSqlServerServices()))
         {
         }
+        
         public override string ExceptedEnumValueSql => "INSERT INTO destination_entities (\"enum_value\") VALUES (@NewEnumValue);";
 
         public override string ExceptedDecimalAddSql => "INSERT INTO destination_entities (\"decimal_value\") VALUES (@NewDecimalValue + 3);";

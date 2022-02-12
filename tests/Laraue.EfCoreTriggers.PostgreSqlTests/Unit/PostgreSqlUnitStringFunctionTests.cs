@@ -1,5 +1,7 @@
 ﻿using Laraue.EfCoreTriggers.PostgreSql;
+using Laraue.EfCoreTriggers.PostgreSql.Extensions;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
 
@@ -8,9 +10,13 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
     [Collection(CollectionNames.PostgreSql)]
     public class PostgreSqlUnitStringFunctionTests : UnitStringFunctionsTests
     {
-        public PostgreSqlUnitStringFunctionTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
+        public PostgreSqlUnitStringFunctionTests() : base(
+            Helper.GetTriggerActionFactory(
+                new ContextFactory().CreateDbContext().Model, 
+                collection => collection.AddPostgreSqlServices()))
         {
         }
+        
         public override string ExceptedConcatSql => "INSERT INTO destination_entities (\"string_field\") VALUES (CONCAT(NEW.string_field, 'abc'));";
 
         public override string ExceptedStringLowerSql => "INSERT INTO destination_entities (\"string_field\") VALUES (LOWER(NEW.string_field));";

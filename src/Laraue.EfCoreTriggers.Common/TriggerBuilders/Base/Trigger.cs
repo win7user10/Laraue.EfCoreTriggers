@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public abstract class Trigger<TTriggerEntity> : ISqlConvertible
+    public abstract class Trigger<TTriggerEntity> : ITrigger
         where TTriggerEntity : class
     {
         public TriggerEvent TriggerEvent { get; }
 
         public TriggerTime TriggerTime { get; }
 
-        public readonly List<ISqlConvertible> Actions = new ();
+        public Type TriggerEntityType => typeof(TTriggerEntity);
+
+        public List<ITriggerAction> Actions { get; } = new();
+
+        public List<ITriggerAction> Conditions  { get; } = new();
 
         protected Trigger(TriggerEvent triggerEvent, TriggerTime triggerTime)
         {
@@ -18,8 +22,6 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
             TriggerEvent = triggerEvent;
         }
 
-        public virtual SqlBuilder BuildSql(ITriggerProvider visitor) => visitor.GetTriggerSql(this);
-
-        public string Name => $"{Constants.AnnotationKey}_{TriggerTime}_{TriggerEvent}_{typeof(TTriggerEntity).Name}".ToUpper();
+        public virtual string Name => $"{Constants.AnnotationKey}_{TriggerTime}_{TriggerEvent}_{typeof(TTriggerEntity).Name}".ToUpper();
     }
 }

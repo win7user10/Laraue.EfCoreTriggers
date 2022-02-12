@@ -1,5 +1,7 @@
 ﻿using Laraue.EfCoreTriggers.SqlLite;
+using Laraue.EfCoreTriggers.SqlLite.Extensions;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
 
@@ -8,7 +10,10 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests.Unit
     [Collection(CollectionNames.Sqlite)]
     public class SqlLiteUnitRawSqlTests : UnitRawSqlTests
     {
-        public SqlLiteUnitRawSqlTests() : base(new SqlLiteProvider(new ContextFactory().CreateDbContext().Model))
+        public SqlLiteUnitRawSqlTests() : base(
+            Helper.GetTriggerActionFactory(
+                new ContextFactory().CreateDbContext().Model, 
+                collection => collection.AddSqliteServices()))
         {
         }
 

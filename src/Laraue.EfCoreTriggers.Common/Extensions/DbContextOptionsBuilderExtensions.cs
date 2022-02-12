@@ -1,26 +1,39 @@
 ﻿using System;
-using Laraue.EfCoreTriggers.Common.Converters;
 using Laraue.EfCoreTriggers.Common.Migrations;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Laraue.EfCoreTriggers.Common.Extensions
 {
+    /// <summary>
+    /// Extensions to configure EF Core <see cref="IServiceProvider"/>
+    /// for using EF Core Triggers.
+    /// </summary>
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder<TContext> UseTriggers<TTriggerProvider, TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder, Action<AvailableConverters> setupConverters)
-            where TTriggerProvider : ITriggerProvider
+        /// <summary>
+        /// Add implementation of <see cref="IMigrationsModelDiffer"/> 
+        /// which allow to use triggers.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <returns></returns>
+        public static DbContextOptionsBuilder ReplaceMigrationsModelDiffer(
+            this DbContextOptionsBuilder optionsBuilder)
+        {
+            return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
+        }
+        
+        /// <summary>
+        /// Add implementation of <see cref="IMigrationsModelDiffer"/> 
+        /// which allow to use triggers.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <typeparam name="TContext"></typeparam>
+        /// <returns></returns>
+        public static DbContextOptionsBuilder<TContext> ReplaceMigrationsModelDiffer<TContext>(
+            this DbContextOptionsBuilder<TContext> optionsBuilder)
             where TContext : DbContext
         {
-            UseTriggers<TTriggerProvider>(optionsBuilder, setupConverters);
-            return optionsBuilder;
-        }
-
-        public static DbContextOptionsBuilder UseTriggers<TTriggerProvider>(this DbContextOptionsBuilder optionsBuilder, Action<AvailableConverters> setupConverters)
-            where TTriggerProvider : ITriggerProvider
-        {
-            TriggerExtensions.RememberTriggerProvider<TTriggerProvider>(setupConverters);
             return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
         }
     }

@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public abstract class TriggerUpdateAction<TTriggerEntity, TUpdateEntity> : ITriggerAction
-       where TTriggerEntity : class
-       where TUpdateEntity : class
+    public class TriggerUpdateAction : ITriggerAction
     {
         internal LambdaExpression UpdateFilter;
         internal LambdaExpression UpdateExpression;
 
-        public TriggerUpdateAction(
+        internal TriggerUpdateAction(
             LambdaExpression updateFilter,
             LambdaExpression updateExpression)
         {
@@ -19,11 +19,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
             UpdateExpression = updateExpression;
         }
 
-        public virtual SqlBuilder BuildSql(ITriggerProvider visitor)
-            => visitor.GetTriggerUpdateActionSql(this);
+        internal virtual ArgumentTypes UpdateFilterPrefixes { get; }
 
-        internal abstract Dictionary<string, ArgumentType> UpdateFilterPrefixes { get; }
-
-        internal abstract Dictionary<string, ArgumentType> UpdateExpressionPrefixes { get; }
+        internal virtual ArgumentTypes UpdateExpressionPrefixes { get; }
     }
 }

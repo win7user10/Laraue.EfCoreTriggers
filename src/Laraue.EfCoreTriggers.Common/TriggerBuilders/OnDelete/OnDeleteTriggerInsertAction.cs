@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
 {
-    public class OnDeleteTriggerInsertAction<TTriggerEntity, TInsertEntity> : TriggerInsertAction<TTriggerEntity, TInsertEntity>
+    public class OnDeleteTriggerInsertAction<TTriggerEntity, TInsertEntity> : TriggerInsertAction
         where TTriggerEntity : class
         where TInsertEntity : class
     {
@@ -14,7 +15,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
         {
         }
 
-        internal override Dictionary<string, ArgumentType> InsertExpressionPrefixes => new()
+        internal override ArgumentTypes InsertExpressionPrefixes => new()
         {
             [InsertExpression.Parameters[0].Name] = ArgumentType.Old,
         };

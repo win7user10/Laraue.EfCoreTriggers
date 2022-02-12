@@ -1,4 +1,5 @@
-﻿using Laraue.EfCoreTriggers.Common.SqlGeneration;
+﻿using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Xunit.Categories;
 
@@ -7,11 +8,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
     [UnitTest]
     public abstract class UnitStringFunctionsTests : BaseStringFunctionsTests
     {
-        protected readonly ITriggerProvider Provider;
+        protected readonly ITriggerActionVisitorFactory Factory;
 
-        protected UnitStringFunctionsTests(ITriggerProvider provider)
+        protected UnitStringFunctionsTests(ITriggerActionVisitorFactory factory)
         {
-            Provider = provider;
+            Factory = factory;
         }
 
         public abstract string ExceptedConcatSql { get; }
@@ -30,37 +31,37 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
 
         protected override void StringConcatSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedConcatSql, ConcatStringExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedConcatSql, ConcatStringExpression);
         }
 
         protected override void StringLowerSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedStringLowerSql, StringToLowerExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedStringLowerSql, StringToLowerExpression);
         }
 
         protected override void StringUpperSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedStringUpperSql, StringToUpperExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedStringUpperSql, StringToUpperExpression);
         }
 
         protected override void StringTrimSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedStringTrimSql, TrimStringValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedStringTrimSql, TrimStringValueExpression);
         }
 
         protected override void StringContainsSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedContainsSql, ContainsStringValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedContainsSql, ContainsStringValueExpression);
         }
         
         protected override void StringEndsWithSql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedEndsWithSql, EndsWithStringValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedEndsWithSql, EndsWithStringValueExpression);
         }
 
         protected override void StringIsNullOrEmptySql()
         {
-            Provider.AssertGeneratedInsertSql(ExceptedIsNullOrEmptySql, IsNullOrEmptyStringValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedIsNullOrEmptySql, IsNullOrEmptyStringValueExpression);
         }
     }
 }

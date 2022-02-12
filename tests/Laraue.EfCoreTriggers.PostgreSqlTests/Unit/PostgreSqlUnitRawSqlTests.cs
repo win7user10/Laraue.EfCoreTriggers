@@ -1,5 +1,7 @@
 ﻿using Laraue.EfCoreTriggers.PostgreSql;
+using Laraue.EfCoreTriggers.PostgreSql.Extensions;
 using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
 
@@ -8,7 +10,10 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
     [Collection(CollectionNames.PostgreSql)]
     public class PostgreSqlUnitRawSqlTests : UnitRawSqlTests
     {
-        public PostgreSqlUnitRawSqlTests() : base(new PostgreSqlProvider(new ContextFactory().CreateDbContext().Model))
+        public PostgreSqlUnitRawSqlTests() : base(
+            Helper.GetTriggerActionFactory(
+                new ContextFactory().CreateDbContext().Model, 
+                collection => collection.AddPostgreSqlServices()))
         {
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
@@ -13,11 +14,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
     [UnitTest]
     public abstract class UnitRawSqlTests
     {
-        protected readonly ITriggerProvider Provider;
+        protected readonly ITriggerActionVisitorFactory Factory;
 
-        protected UnitRawSqlTests(ITriggerProvider provider)
+        protected UnitRawSqlTests(ITriggerActionVisitorFactory factory)
         {
-            Provider = provider;
+            Factory = factory;
         }
         
         protected abstract string ExceptedInsertTriggerSqlForMemberArgs { get; }
@@ -30,7 +31,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
             
             var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>("PERFORM func({0}, {1})", arg1Expression, arg2Expression);
 
-            var generatedSql = trigger.BuildSql(Provider);
+            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedInsertTriggerSqlForMemberArgs, generatedSql);
         }
@@ -45,7 +46,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
             
             var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>("PERFORM func({0})", argExpression);
 
-            var generatedSql = trigger.BuildSql(Provider);
+            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedInsertTriggerSqlForComputedArgs, generatedSql);
         }
@@ -57,7 +58,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         {
             var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>("PERFORM func()");
 
-            var generatedSql = trigger.BuildSql(Provider);
+            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedInsertTriggerSqlWhenNoArgs, generatedSql);
         }
@@ -71,7 +72,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
                 (@old, @new) => @old.DecimalValue, 
                 (@old, @new) => @new.DecimalValue);
 
-            var generatedSql = trigger.BuildSql(Provider);
+            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedUpdateTriggerSqlForMemberArgs, generatedSql);
         }
@@ -85,7 +86,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
                 @old => @old.DecimalValue, 
                 @old => @old.DoubleValue);
 
-            var generatedSql = trigger.BuildSql(Provider);
+            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedDeleteTriggerSqlForMemberArgs, generatedSql);
         }
