@@ -29,24 +29,48 @@ namespace Laraue.EfCoreTriggers.SqlServer.Extensions
 {
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder<TContext> UseSqlServerTriggers<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder)
+        /// <summary>
+        /// Add EF Core triggers SQL Server provider.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <param name="modifyServices"></param>
+        /// <typeparam name="TContext"></typeparam>
+        /// <returns></returns>
+        public static DbContextOptionsBuilder<TContext> UseSqlServerTriggers<TContext>(
+            this DbContextOptionsBuilder<TContext> optionsBuilder,
+            Action<IServiceCollection> modifyServices = null)
             where TContext : DbContext
         {
-            TriggerExtensions.Services.AddSqlServerServices();
+            TriggerExtensions.Services.AddSqlServerServices(modifyServices);
             
             return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
-        public static DbContextOptionsBuilder UseSqlServerTriggers(this DbContextOptionsBuilder optionsBuilder)
+        /// <summary>
+        /// Add EF Core triggers SQL Server provider.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <param name="modifyServices"></param>
+        /// <returns></returns>
+        public static DbContextOptionsBuilder UseSqlServerTriggers(
+            this DbContextOptionsBuilder optionsBuilder,
+            Action<IServiceCollection> modifyServices = null)
         {
-            TriggerExtensions.Services.AddSqlServerServices();
+            TriggerExtensions.Services.AddSqlServerServices(modifyServices);
             
             return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
         
-        public static IServiceCollection AddSqlServerServices(this IServiceCollection services)
+        /// <summary>
+        /// Add EF Core triggers SQL Server provider services.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="modifyServices"></param>
+        public static void AddSqlServerServices(
+            this IServiceCollection services,
+            Action<IServiceCollection> modifyServices = null)
         {
-            return services.AddDefaultServices()
+            services.AddDefaultServices()
                 .AddSingleton<SqlTypeMappings, SqlServerTypeMappings>()
                 .AddExpressionVisitor<UnaryExpression, SqlServerUnaryExpressionVisitor>()
                 .AddExpressionVisitor<NewExpression, SqlServerNewExpressionVisitor>()
@@ -71,6 +95,8 @@ namespace Laraue.EfCoreTriggers.SqlServer.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>();
+            
+            modifyServices?.Invoke(services);
         }
     }
 }

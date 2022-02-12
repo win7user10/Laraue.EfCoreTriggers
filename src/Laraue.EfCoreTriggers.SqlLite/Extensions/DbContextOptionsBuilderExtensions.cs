@@ -30,26 +30,49 @@ namespace Laraue.EfCoreTriggers.SqlLite.Extensions
 {
     public static class DbContextOptionsBuilderExtensions
     {
+        /// <summary>
+        /// Add EF Core triggers SQLite provider.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <param name="modifyServices"></param>
+        /// <typeparam name="TContext"></typeparam>
+        /// <returns></returns>
         public static DbContextOptionsBuilder<TContext> UseSqlLiteTriggers<TContext>(
-            this DbContextOptionsBuilder<TContext> optionsBuilder)
+            this DbContextOptionsBuilder<TContext> optionsBuilder,
+            Action<IServiceCollection> modifyServices = null)
             where TContext : DbContext
         {
-            TriggerExtensions.Services.AddSqliteServices();
+            TriggerExtensions.Services.AddSqliteServices(modifyServices);
             
             return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
+        /// <summary>
+        /// Add EF Core triggers SQLite provider.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <param name="modifyServices"></param>
+        /// <returns></returns>
         public static DbContextOptionsBuilder UseSqlLiteTriggers(
-            this DbContextOptionsBuilder optionsBuilder)
+            this DbContextOptionsBuilder optionsBuilder,
+            Action<IServiceCollection> modifyServices = null)
         {
-            TriggerExtensions.Services.AddSqliteServices();
+            TriggerExtensions.Services.AddSqliteServices(modifyServices);
             
             return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
-        public static IServiceCollection AddSqliteServices(this IServiceCollection services)
+        /// <summary>
+        /// Add EF Core triggers SQLite provider services.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="modifyServices"></param>
+        /// <returns></returns>
+        public static void AddSqliteServices(
+            this IServiceCollection services,
+            Action<IServiceCollection> modifyServices = null)
         {
-            return services.AddDefaultServices()
+            services.AddDefaultServices()
                 .AddSingleton<SqlTypeMappings, SqliteTypeMappings>()
                 .AddSingleton<ITriggerVisitor, SqliteTriggerVisitor>()
                 .AddExpressionVisitor<NewExpression, SqliteNewExpressionVisitor>()
@@ -72,6 +95,8 @@ namespace Laraue.EfCoreTriggers.SqlLite.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>();
+            
+            modifyServices?.Invoke(services);
         }
     }
 }

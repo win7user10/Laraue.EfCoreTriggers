@@ -34,8 +34,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         {
             var provider = Helper.GetTriggerActionFactory(_modelBuilder.Model, services =>
             {
-                services.AddMySqlServices()
-                    .AddMethodCallConverter<CustomStringToUpperVisitor>();
+                services.AddMySqlServices(x => 
+                    x.AddMethodCallConverter<CustomStringToUpperVisitor>());
             });
 
             var action = new OnInsertTriggerCondition<Transaction>(t => t.Description.ToUpper() == "ABC");

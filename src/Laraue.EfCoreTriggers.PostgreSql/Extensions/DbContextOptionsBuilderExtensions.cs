@@ -30,24 +30,48 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
 {
     public static class DbContextOptionsBuilderExtensions
     {
-        public static DbContextOptionsBuilder<TContext> UsePostgreSqlTriggers<TContext>(this DbContextOptionsBuilder<TContext> optionsBuilder)
+        /// <summary>
+        /// Add EF Core triggers PostgreSQL provider.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <param name="modifyServices"></param>
+        /// <typeparam name="TContext"></typeparam>
+        /// <returns></returns>
+        public static DbContextOptionsBuilder<TContext> UsePostgreSqlTriggers<TContext>(
+            this DbContextOptionsBuilder<TContext> optionsBuilder,
+            Action<IServiceCollection> modifyServices = null)
             where TContext : DbContext
         {
-            TriggerExtensions.Services.AddPostgreSqlServices();
+            TriggerExtensions.Services.AddPostgreSqlServices(modifyServices);
             
             return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
-        public static DbContextOptionsBuilder UsePostgreSqlTriggers(this DbContextOptionsBuilder optionsBuilder)
+        /// <summary>
+        /// Add EF Core triggers PostgreSQL provider.
+        /// </summary>
+        /// <param name="optionsBuilder"></param>
+        /// <param name="modifyServices"></param>
+        /// <returns></returns>
+        public static DbContextOptionsBuilder UsePostgreSqlTriggers(
+            this DbContextOptionsBuilder optionsBuilder,
+            Action<IServiceCollection> modifyServices = null)
         {
-            TriggerExtensions.Services.AddPostgreSqlServices();
+            TriggerExtensions.Services.AddPostgreSqlServices(modifyServices);
             
             return optionsBuilder.ReplaceMigrationsModelDiffer();
         }
 
-        public static IServiceCollection AddPostgreSqlServices(this IServiceCollection services)
+        /// <summary>
+        /// Add EF Core triggers PostgreSQL provider services.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="modifyServices"></param>
+        public static void AddPostgreSqlServices(
+            this IServiceCollection services,
+            Action<IServiceCollection> modifyServices = null)
         {
-            return services.AddDefaultServices()
+            services.AddDefaultServices()
                 .AddSingleton<SqlTypeMappings, PostgreSqlTypeMappings>()
                 .AddSingleton<ITriggerVisitor, PostgreSqlTriggerVisitor>()
                 .AddExpressionVisitor<NewExpression, PostreSqlNewExpressionVisitor>()
@@ -70,6 +94,8 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>();
+            
+            modifyServices?.Invoke(services);
         }
     }
 }
