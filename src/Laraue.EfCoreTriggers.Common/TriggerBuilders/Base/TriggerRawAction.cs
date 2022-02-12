@@ -26,10 +26,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 
         protected abstract ArgumentTypes GetArgumentPrefixes(
             ReadOnlyCollection<ParameterExpression> parameters);
-        
-        public Type GetEntityType()
-        {
-            return this.GetType();
-        }
     }
 }

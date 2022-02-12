@@ -22,10 +22,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         internal virtual ArgumentTypes UpdateFilterPrefixes { get; }
 
         internal virtual ArgumentTypes UpdateExpressionPrefixes { get; }
-        
-        public Type GetEntityType()
-        {
-            return UpdateExpression.Parameters[0].GetType();
-        }
     }
 }

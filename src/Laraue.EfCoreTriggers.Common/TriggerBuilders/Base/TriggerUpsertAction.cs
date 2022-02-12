@@ -26,10 +26,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         public abstract ArgumentTypes OnMatchExpressionPrefixes { get; }
 
         public abstract ArgumentTypes MatchExpressionPrefixes { get; }
-        
-        public Type GetEntityType()
-        {
-            return InsertExpression.Parameters[0].GetType();
-        }
     }
 }

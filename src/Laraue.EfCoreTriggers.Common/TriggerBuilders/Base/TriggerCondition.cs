@@ -23,10 +23,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         }
 
         internal virtual ArgumentTypes ConditionPrefixes { get; }
-        
-        public Type GetEntityType()
-        {
-            return Condition.Parameters[0].GetType();
-        }
     }
 }

@@ -5,7 +5,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
     public interface ITriggerAction
     {
-        public Type GetEntityType();
+        
     }
     
     public interface ITrigger

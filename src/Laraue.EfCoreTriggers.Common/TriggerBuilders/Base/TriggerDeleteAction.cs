@@ -18,10 +18,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         }
 
         internal abstract ArgumentTypes DeleteFilterPrefixes { get; }
-        
-        public Type GetEntityType()
-        {
-            return DeletePredicate.Parameters[0].GetType();
-        }
     }
 }

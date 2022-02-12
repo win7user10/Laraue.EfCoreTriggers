@@ -6,7 +6,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
     public class OnDeleteTrigger<TTriggerEntity> : Trigger<TTriggerEntity>
         where TTriggerEntity : class
     {
-        public OnDeleteTrigger(TriggerTime triggerType) : base(TriggerEvent.Delete, triggerType)
+        public OnDeleteTrigger(TriggerTime triggerType) 
+            : base(TriggerEvent.Delete, triggerType)
         {
         }
 

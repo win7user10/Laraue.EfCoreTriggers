@@ -15,10 +15,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         }
 
         internal abstract ArgumentTypes InsertExpressionPrefixes { get; }
-        
-        public Type GetEntityType()
-        {
-            return InsertExpression.Parameters[0].GetType();
-        }
     }
 }
