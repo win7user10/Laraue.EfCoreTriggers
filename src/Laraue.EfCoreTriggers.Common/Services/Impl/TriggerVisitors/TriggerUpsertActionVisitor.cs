@@ -44,7 +44,7 @@ public class TriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAct
             .Append(" ON CONFLICT (")
             .AppendJoin(", ", matchExpressionParts
                 .Select(x => 
-                    _adapter.GetColumnName(x.Key)))
+                    _adapter.GetColumnName(updateEntityType, x.Key)))
             .Append(")");
 
         if (triggerAction.OnMatchExpression is null)

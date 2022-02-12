@@ -28,6 +28,8 @@ public class UpdateExpressionVisitor : IUpdateExpressionVisitor
     /// <inheritdoc />
     public SqlBuilder Visit(LambdaExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
     {
+        var updateType = expression.Body.Type;
+        
         var assignmentParts = _memberInfoVisitorFactory.Visit(
             expression,
             argumentTypes,
@@ -37,7 +39,7 @@ public class UpdateExpressionVisitor : IUpdateExpressionVisitor
         
         var assignmentPartsSql = assignmentParts
             .Select(expressionPart => 
-                $"{_dbSchemaRetriever.GetColumnName(expressionPart.Key)} = {expressionPart.Value}")
+                $"{_dbSchemaRetriever.GetColumnName(updateType, expressionPart.Key)} = {expressionPart.Value}")
             .ToArray();
         
         sqlResult.AppendJoin(", ", assignmentPartsSql);

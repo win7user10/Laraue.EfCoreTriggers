@@ -1,5 +1,4 @@
 ﻿using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Xunit.Categories;
 

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl.SetExpressionVisitors;
 

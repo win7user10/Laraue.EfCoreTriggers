@@ -46,6 +46,9 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         var conditionsSql = trigger.Conditions
             .Select(actionCondition => _factory.Visit(actionCondition, visitedMembers))
             .ToArray();
+
+        visitedMembers.Remove(ArgumentType.Default);
+        visitedMembers.Remove(ArgumentType.None);
         
         var sqlBuilder = SqlBuilder.FromString($"CREATE TRIGGER {trigger.Name} ON {tableName} {triggerTimeName} {trigger.TriggerEvent} AS")
             .AppendNewLine("BEGIN");
@@ -121,7 +124,8 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
     
     private IEnumerable<string> DeclareVariablesSql(ArgumentType argumentType, IEnumerable<MemberInfo> visitedMembers)
     {
-        return visitedMembers.Select(member => GetDeclareVariableNameSql(argumentType, member))
+        return visitedMembers
+            .Select(member => GetDeclareVariableNameSql(argumentType, member))
             .ToArray();
     }
 
@@ -220,7 +224,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         members = members.WhereDeclaringType(triggerEntityType).ToArray();
         
         var columns = members.Any()
-            ? string.Join(", ", members.Select(member => _dbSchemaRetriever.GetColumnName(member)))
+            ? string.Join(", ", members.Select(member => _dbSchemaRetriever.GetColumnName(triggerEntityType, member)))
             : "*";
         
         return $"SELECT {columns} FROM {GetTemporaryTableName(argumentType)}";

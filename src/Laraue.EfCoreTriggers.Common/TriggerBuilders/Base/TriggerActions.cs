@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
