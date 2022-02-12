@@ -12,6 +12,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper
         /// <inheritdoc />
         protected override string MethodName => nameof(string.ToUpper);
 
+        /// <inheritdoc />
         public StringToUpperViaUpperFuncVisitor(IExpressionVisitorFactory visitorFactory) 
             : base(visitorFactory)
         {

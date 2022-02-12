@@ -1,11 +1,18 @@
-﻿using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
+﻿using System.Collections.Generic;
+using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim
 {
+    /// <inheritdoc />
     public class StringTrimViaTrimFuncVisitor : BaseStringTrimVisitor
     {
-        protected override string[] SqlTrimFunctionsNamesToApply { get; } = { "TRIM" };
+        /// <inheritdoc />
+        protected override IEnumerable<string> SqlTrimFunctionsNamesToApply { get; } = new[]
+        {
+            "TRIM"
+        };
         
+        /// <inheritdoc />
         public StringTrimViaTrimFuncVisitor(IExpressionVisitorFactory visitorFactory)
             : base(visitorFactory)
         {

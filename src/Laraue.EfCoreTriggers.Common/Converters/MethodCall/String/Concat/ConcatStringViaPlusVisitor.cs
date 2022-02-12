@@ -4,8 +4,10 @@ using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat
 {
+    /// <inheritdoc />
     public class ConcatStringViaPlusVisitor : BaseStringConcatVisitor
     {
+        /// <inheritdoc />
         public ConcatStringViaPlusVisitor(IExpressionVisitorFactory visitorFactory) 
             : base(visitorFactory)
         {

@@ -8,8 +8,12 @@ using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith
 {
+    /// <summary>
+    /// Visitor for <see cref="System.String.EndsWith(string)"/> method.
+    /// </summary>
     public abstract class BaseStringEndsWithVisitor : BaseStringVisitor
     {
+        /// <inheritdoc />
         protected BaseStringEndsWithVisitor(IExpressionVisitorFactory visitorFactory)
             : base(visitorFactory)
         {
@@ -25,10 +29,17 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith
             VisitedMembers visitedMembers)
         {
             var argumentSql = VisitorFactory.VisitArguments(expression, argumentTypes, visitedMembers)[0];
+            
             var sqlBuilder = VisitorFactory.Visit(expression.Object, argumentTypes, visitedMembers);
+            
             return SqlBuilder.FromString($"{sqlBuilder} LIKE {BuildEndSql(argumentSql)}");
         }
 
+        /// <summary>
+        /// Build end SQL expression from argument SQL expression.
+        /// </summary>
+        /// <param name="argumentSql"></param>
+        /// <returns></returns>
         protected abstract string BuildEndSql(string argumentSql);
     }
 }

@@ -12,6 +12,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower
         /// <inheritdoc />
         protected override string MethodName => nameof(string.ToLower);
         
+        /// <inheritdoc />
         public StringToLowerViaLowerFuncVisitor(IExpressionVisitorFactory visitorFactory)
             : base(visitorFactory)
         {

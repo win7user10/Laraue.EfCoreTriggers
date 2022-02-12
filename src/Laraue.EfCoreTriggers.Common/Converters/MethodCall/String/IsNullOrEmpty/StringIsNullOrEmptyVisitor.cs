@@ -9,13 +9,16 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.IsNullOrEmpt
 {
     public class StringIsNullOrEmptyVisitor : BaseStringVisitor
     {
+        /// <inheritdoc />
         protected override string MethodName => nameof(string.IsNullOrEmpty);
 
+        /// <inheritdoc />
         public StringIsNullOrEmptyVisitor(IExpressionVisitorFactory visitorFactory)
             : base(visitorFactory)
         {
         }
 
+        /// <inheritdoc />
         public override SqlBuilder Visit(
             MethodCallExpression expression,
             ArgumentTypes argumentTypes,

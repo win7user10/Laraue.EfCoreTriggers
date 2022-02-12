@@ -7,14 +7,20 @@ using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim
 {
+    /// <summary>
+    /// Visitor for <see cref="System.String.Trim()"/> method.
+    /// </summary>
     public abstract class BaseStringTrimVisitor : BaseStringVisitor
     {
-        /// <summary>Sequence of SQL functions which should be </summary>
-        protected abstract string[] SqlTrimFunctionsNamesToApply { get; }
+        /// <summary>
+        /// Sequence of SQL functions which should be applied to execute string trim.
+        /// </summary>
+        protected abstract IEnumerable<string> SqlTrimFunctionsNamesToApply { get; }
         
         /// <inheritdoc />
         protected override string MethodName => nameof(string.Trim);
 
+        /// <inheritdoc />
         protected BaseStringTrimVisitor(IExpressionVisitorFactory visitorFactory) 
             : base(visitorFactory)
         {

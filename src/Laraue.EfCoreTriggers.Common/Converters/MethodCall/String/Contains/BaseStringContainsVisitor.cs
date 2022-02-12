@@ -8,6 +8,9 @@ using Laraue.EfCoreTriggers.Common.v2.Impl.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains
 {
+    /// <summary>
+    /// Visitor for <see cref="System.String.Contains(string)"/> method.
+    /// </summary>
     public abstract class BaseStringContainsVisitor : BaseStringVisitor
     {
         protected BaseStringContainsVisitor(IExpressionVisitorFactory visitorFactory) 
@@ -30,6 +33,12 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains
             return SqlBuilder.FromString(CombineSql(expressionToSearchSql, expressionToFindSql));
         }
 
+        /// <summary>
+        /// Build contains SQL expression.
+        /// </summary>
+        /// <param name="expressionToSearchSql">The search string SQL.</param>
+        /// <param name="expressionToFindSql">Where to search the string SQL.</param>
+        /// <returns></returns>
         protected abstract string CombineSql(string expressionToSearchSql, string expressionToFindSql);
     }
 }
