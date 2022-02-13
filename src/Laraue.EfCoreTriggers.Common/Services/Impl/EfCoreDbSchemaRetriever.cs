@@ -13,17 +13,17 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     /// <summary>
     /// Cached column names for entity properties.
     /// </summary>
-    private readonly Dictionary<MemberInfo, string> _columnNamesCache = new();
+    private static readonly Dictionary<MemberInfo, string> ColumnNamesCache = new();
 
     /// <summary>
     /// Cached table names for entities.
     /// </summary>
-    private readonly Dictionary<Type, string> _tableNamesCache = new();
+    private static readonly Dictionary<Type, string> TableNamesCache = new();
 
     /// <summary>
     /// Cached database schema names.
     /// </summary>
-    private readonly Dictionary<Type, string> _tableSchemasCache = new();
+    private static readonly Dictionary<Type, string> TableSchemasCache = new();
 
     /// <summary>
     /// Model used for generating SQL. From this model takes column names, table names and other meta information.
@@ -42,7 +42,7 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     /// <inheritdoc />
     public string GetColumnName(Type type, MemberInfo memberInfo)
     {
-        if (!_columnNamesCache.ContainsKey(memberInfo))
+        if (!ColumnNamesCache.ContainsKey(memberInfo))
         {
             var entityType = Model.FindEntityType(type);
             
@@ -53,10 +53,10 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
             
             var property = entityType.FindProperty(memberInfo.Name);
             var identifier = (StoreObjectIdentifier)StoreObjectIdentifier.Create(entityType, StoreObjectType.Table);
-            _columnNamesCache.Add(memberInfo, property.GetColumnName(identifier));
+            ColumnNamesCache.Add(memberInfo, property.GetColumnName(identifier));
         }
 
-        if (!_columnNamesCache.TryGetValue(memberInfo, out var columnName))
+        if (!ColumnNamesCache.TryGetValue(memberInfo, out var columnName))
         {
             throw new InvalidOperationException($"Column name for member {memberInfo.Name} is not defined in model");
         }
@@ -67,13 +67,13 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     /// <inheritdoc />
     public string GetTableName(Type entity)
     {
-        if (!_tableNamesCache.ContainsKey(entity))
+        if (!TableNamesCache.ContainsKey(entity))
         {
             var entityType = Model.FindEntityType(entity);
-            _tableNamesCache.Add(entity, entityType.GetTableName());
+            TableNamesCache.Add(entity, entityType.GetTableName());
         }
 
-        if (!_tableNamesCache.TryGetValue(entity, out var tableName))
+        if (!TableNamesCache.TryGetValue(entity, out var tableName))
         {
             throw new InvalidOperationException($"Table name for entity {entity.FullName} is not defined in model.");
         }
@@ -92,13 +92,13 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     /// <returns></returns>
     protected virtual string GetTableSchemaName(Type entity)
     {
-        if (!_tableSchemasCache.ContainsKey(entity))
+        if (!TableSchemasCache.ContainsKey(entity))
         {
             var entityType = Model.FindEntityType(entity);
-            _tableSchemasCache.Add(entity, entityType.GetSchema());
+            TableSchemasCache.Add(entity, entityType.GetSchema());
         }
 
-        if (!_tableSchemasCache.TryGetValue(entity, out var schemaName))
+        if (!TableSchemasCache.TryGetValue(entity, out var schemaName))
         {
             throw new InvalidOperationException($"Schema for entity {entity.FullName} is not defined in model.");
         }
