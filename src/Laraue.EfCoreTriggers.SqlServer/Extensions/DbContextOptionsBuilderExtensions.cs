@@ -40,9 +40,7 @@ namespace Laraue.EfCoreTriggers.SqlServer.Extensions
             Action<IServiceCollection> modifyServices = null)
             where TContext : DbContext
         {
-            TriggerExtensions.Services.AddSqlServerServices(modifyServices);
-            
-            return optionsBuilder.ReplaceMigrationsModelDiffer();
+            return optionsBuilder.UseEfCoreTriggers(AddSqlServerServices, modifyServices);
         }
 
         /// <summary>
@@ -55,29 +53,24 @@ namespace Laraue.EfCoreTriggers.SqlServer.Extensions
             this DbContextOptionsBuilder optionsBuilder,
             Action<IServiceCollection> modifyServices = null)
         {
-            TriggerExtensions.Services.AddSqlServerServices(modifyServices);
-            
-            return optionsBuilder.ReplaceMigrationsModelDiffer();
+            return optionsBuilder.UseEfCoreTriggers(AddSqlServerServices, modifyServices);
         }
         
         /// <summary>
         /// Add EF Core triggers SQL Server provider services.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="modifyServices"></param>
-        public static void AddSqlServerServices(
-            this IServiceCollection services,
-            Action<IServiceCollection> modifyServices = null)
+        public static void AddSqlServerServices(this IServiceCollection services)
         {
             services.AddDefaultServices()
-                .AddSingleton<SqlTypeMappings, SqlServerTypeMappings>()
+                .AddScoped<SqlTypeMappings, SqlServerTypeMappings>()
                 .AddExpressionVisitor<UnaryExpression, SqlServerUnaryExpressionVisitor>()
                 .AddExpressionVisitor<NewExpression, SqlServerNewExpressionVisitor>()
                 .AddExpressionVisitor<MemberExpression, SqlServerMemberExpressionVisitor>()
-                .AddSingleton<IInsertExpressionVisitor, InsertExpressionVisitor>()
+                .AddScoped<IInsertExpressionVisitor, InsertExpressionVisitor>()
                 .AddTriggerActionVisitor<TriggerUpsertAction, SqlServerTriggerUpsertActionVisitor>()
-                .AddSingleton<ISqlGenerator, SqlServerSqlGenerator>()
-                .AddSingleton<ITriggerVisitor, SqlServerTriggerVisitor>()
+                .AddScoped<ISqlGenerator, SqlServerSqlGenerator>()
+                .AddScoped<ITriggerVisitor, SqlServerTriggerVisitor>()
                 .AddMethodCallConverter<ConcatStringViaPlusVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()
@@ -94,8 +87,6 @@ namespace Laraue.EfCoreTriggers.SqlServer.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>();
-            
-            modifyServices?.Invoke(services);
         }
     }
 }

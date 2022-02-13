@@ -41,9 +41,7 @@ namespace Laraue.EfCoreTriggers.SqlLite.Extensions
             Action<IServiceCollection> modifyServices = null)
             where TContext : DbContext
         {
-            TriggerExtensions.Services.AddSqliteServices(modifyServices);
-            
-            return optionsBuilder.ReplaceMigrationsModelDiffer();
+            return optionsBuilder.UseEfCoreTriggers(AddSqliteServices, modifyServices);
         }
 
         /// <summary>
@@ -56,28 +54,23 @@ namespace Laraue.EfCoreTriggers.SqlLite.Extensions
             this DbContextOptionsBuilder optionsBuilder,
             Action<IServiceCollection> modifyServices = null)
         {
-            TriggerExtensions.Services.AddSqliteServices(modifyServices);
-            
-            return optionsBuilder.ReplaceMigrationsModelDiffer();
+            return optionsBuilder.UseEfCoreTriggers(AddSqliteServices, modifyServices);
         }
 
         /// <summary>
         /// Add EF Core triggers SQLite provider services.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="modifyServices"></param>
         /// <returns></returns>
-        public static void AddSqliteServices(
-            this IServiceCollection services,
-            Action<IServiceCollection> modifyServices = null)
+        public static void AddSqliteServices(this IServiceCollection services)
         {
             services.AddDefaultServices()
-                .AddSingleton<SqlTypeMappings, SqliteTypeMappings>()
-                .AddSingleton<ITriggerVisitor, SqliteTriggerVisitor>()
+                .AddScoped<SqlTypeMappings, SqliteTypeMappings>()
+                .AddScoped<ITriggerVisitor, SqliteTriggerVisitor>()
                 .AddExpressionVisitor<NewExpression, SqliteNewExpressionVisitor>()
                 .AddTriggerActionVisitor<TriggerUpsertAction, TriggerUpsertActionVisitor>()
-                .AddSingleton<IInsertExpressionVisitor, SqliteInsertExpressionVisitor>()
-                .AddSingleton<ISqlGenerator, SqlGenerator>()
+                .AddScoped<IInsertExpressionVisitor, SqliteInsertExpressionVisitor>()
+                .AddScoped<ISqlGenerator, SqlGenerator>()
                 .AddMethodCallConverter<ConcatStringViaDoubleVerticalLineVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()
@@ -94,8 +87,6 @@ namespace Laraue.EfCoreTriggers.SqlLite.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>();
-            
-            modifyServices?.Invoke(services);
         }
     }
 }

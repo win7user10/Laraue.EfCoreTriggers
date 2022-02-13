@@ -28,10 +28,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         [Fact]
         public virtual void Provider_ShouldUseCustomConverter_WhenItProvidedForFunction()
         {
-            var provider = Helper.GetTriggerActionFactory(_modelBuilder.Model, services =>
+            var provider = Helper.GetTriggerActionFactory(_modelBuilder.Model.FinalizeModel(), services =>
             {
-                services.AddMySqlServices(x => 
-                    x.AddMethodCallConverter<CustomStringToUpperVisitor>());
+                services.AddMySqlServices();
+                
+                services.AddMethodCallConverter<CustomStringToUpperVisitor>();
             });
 
             var action = new OnInsertTriggerCondition<Transaction>(t => t.Description.ToUpper() == "ABC");

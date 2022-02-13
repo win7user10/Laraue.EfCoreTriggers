@@ -10,14 +10,14 @@ public static class Helper
 {
     public static T GetService<T>(ModelBuilder modelBuilder, Action<IServiceCollection> modifyServices = null)
     {
-        return GetService<T>(modelBuilder.Model, modifyServices);
+        return GetService<T>(modelBuilder.Model.FinalizeModel(), modifyServices);
     }
     
-    public static T GetService<T>(IReadOnlyModel model, Action<IServiceCollection> modifyServices = null)
+    public static T GetService<T>(IModel model, Action<IServiceCollection> modifyServices = null)
     {
         var services = new ServiceCollection();
         
-        services.AddSingleton(model);
+        services.AddScoped(_ => model);
         
         modifyServices?.Invoke(services);
 
@@ -26,7 +26,7 @@ public static class Helper
         return provider.GetRequiredService<T>();
     }
     
-    public static ITriggerActionVisitorFactory GetTriggerActionFactory(IReadOnlyModel model, Action<IServiceCollection> modifyServices = null)
+    public static ITriggerActionVisitorFactory GetTriggerActionFactory(IModel model, Action<IServiceCollection> modifyServices = null)
     {
         return GetService<ITriggerActionVisitorFactory>(model, modifyServices);
     }
