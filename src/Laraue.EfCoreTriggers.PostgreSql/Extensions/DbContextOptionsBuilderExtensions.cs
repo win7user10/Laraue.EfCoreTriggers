@@ -41,9 +41,7 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
             Action<IServiceCollection> modifyServices = null)
             where TContext : DbContext
         {
-            TriggerExtensions.Services.AddPostgreSqlServices(modifyServices);
-            
-            return optionsBuilder.ReplaceMigrationsModelDiffer();
+            return optionsBuilder.UseEfCoreTriggers(AddPostgreSqlServices, modifyServices);
         }
 
         /// <summary>
@@ -56,27 +54,22 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
             this DbContextOptionsBuilder optionsBuilder,
             Action<IServiceCollection> modifyServices = null)
         {
-            TriggerExtensions.Services.AddPostgreSqlServices(modifyServices);
-            
-            return optionsBuilder.ReplaceMigrationsModelDiffer();
+            return optionsBuilder.UseEfCoreTriggers(AddPostgreSqlServices, modifyServices);
         }
 
         /// <summary>
         /// Add EF Core triggers PostgreSQL provider services.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="modifyServices"></param>
-        public static void AddPostgreSqlServices(
-            this IServiceCollection services,
-            Action<IServiceCollection> modifyServices = null)
+        public static void AddPostgreSqlServices(this IServiceCollection services)
         {
             services.AddDefaultServices()
-                .AddSingleton<SqlTypeMappings, PostgreSqlTypeMappings>()
-                .AddSingleton<ITriggerVisitor, PostgreSqlTriggerVisitor>()
+                .AddScoped<SqlTypeMappings, PostgreSqlTypeMappings>()
+                .AddScoped<ITriggerVisitor, PostgreSqlTriggerVisitor>()
                 .AddExpressionVisitor<NewExpression, PostreSqlNewExpressionVisitor>()
                 .AddTriggerActionVisitor<TriggerUpsertAction, TriggerUpsertActionVisitor>()
-                .AddSingleton<IInsertExpressionVisitor, InsertExpressionVisitor>()
-                .AddSingleton<ISqlGenerator, SqlGenerator>()
+                .AddScoped<IInsertExpressionVisitor, InsertExpressionVisitor>()
+                .AddScoped<ISqlGenerator, SqlGenerator>()
                 .AddMethodCallConverter<ConcatStringViaConcatFuncVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()
@@ -93,8 +86,6 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>();
-            
-            modifyServices?.Invoke(services);
         }
     }
 }

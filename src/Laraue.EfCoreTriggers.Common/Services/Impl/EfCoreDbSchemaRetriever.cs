@@ -28,13 +28,13 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     /// <summary>
     /// Model used for generating SQL. From this model takes column names, table names and other meta information.
     /// </summary>
-    private IReadOnlyModel Model { get; }
+    private IModel Model { get; }
 
     /// <summary>
     /// Initializes a new instance of <see cref="EfCoreDbSchemaRetriever"/>.
     /// </summary>
     /// <param name="model"></param>
-    public EfCoreDbSchemaRetriever(IReadOnlyModel model)
+    public EfCoreDbSchemaRetriever(IModel model)
     {
         Model = model;
     }

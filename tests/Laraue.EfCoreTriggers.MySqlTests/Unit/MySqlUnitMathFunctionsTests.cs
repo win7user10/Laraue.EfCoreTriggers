@@ -11,7 +11,7 @@ namespace Laraue.EfCoreTriggers.MySqlTests.Unit
     {
         public MySqlUnitMathFunctionsTests() : base(
             Helper.GetTriggerActionFactory(
-                new ContextFactory().CreateDbContext().Model, 
+                new ContextFactory().CreateDbContext().Model,
                 collection => collection.AddMySqlServices()))
         {
         }

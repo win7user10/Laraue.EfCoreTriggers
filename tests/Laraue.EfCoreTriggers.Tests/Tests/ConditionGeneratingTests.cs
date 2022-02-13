@@ -22,7 +22,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             modelBuilder.Entity<User>()
                 .Property<UserRole>("Role");
 
-            _provider = Helper.GetTriggerActionFactory(modelBuilder.Model, collection => collection.AddMySqlServices());
+            _provider = Helper.GetTriggerActionFactory(modelBuilder.Model.FinalizeModel(), collection => collection.AddMySqlServices());
         }
 
         [Fact]

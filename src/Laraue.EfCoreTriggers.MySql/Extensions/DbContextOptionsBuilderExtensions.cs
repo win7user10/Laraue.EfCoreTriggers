@@ -37,9 +37,7 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
         public static DbContextOptionsBuilder UseMySqlTriggers(this DbContextOptionsBuilder optionsBuilder,
             Action<IServiceCollection> modifyServices = null)
         {
-            TriggerExtensions.Services.AddMySqlServices(modifyServices);
-            
-            return optionsBuilder.ReplaceMigrationsModelDiffer();
+            return optionsBuilder.UseEfCoreTriggers(AddMySqlServices,  modifyServices);
         }
         
         /// <summary>
@@ -48,32 +46,27 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
         /// <param name="optionsBuilder"></param>
         /// <param name="modifyServices"></param>
         /// <typeparam name="TContext"></typeparam>
-        /// <returns></returns>
+        /// <returns></returns>A
         public static DbContextOptionsBuilder<TContext> UseMySqlTriggers<TContext>(
             this DbContextOptionsBuilder<TContext> optionsBuilder,
             Action<IServiceCollection> modifyServices = null)
             where TContext : DbContext
         {
-            TriggerExtensions.Services.AddMySqlServices(modifyServices);
-            
-            return optionsBuilder.ReplaceMigrationsModelDiffer();
+            return optionsBuilder.UseEfCoreTriggers(AddMySqlServices, modifyServices);
         }
 
         /// <summary>
         /// Add EF Core triggers MySQL provider services.
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="modifyServices"></param>
-        public static void AddMySqlServices(
-            this IServiceCollection services,
-            Action<IServiceCollection> modifyServices = null)
+        public static void AddMySqlServices(this IServiceCollection serviceCollection)
         {
-            services.AddDefaultServices()
-                .AddSingleton<SqlTypeMappings, MySqlTypeMappings>()
-                .AddSingleton<ITriggerVisitor, MySqlTriggerVisitor>()
+            serviceCollection
+                .AddDefaultServices()
+                .AddScoped<SqlTypeMappings, MySqlTypeMappings>()
+                .AddScoped<ITriggerVisitor, MySqlTriggerVisitor>()
                 .AddTriggerActionVisitor<TriggerUpsertAction, MySqlTriggerUpsertActionVisitor>()
-                .AddSingleton<IInsertExpressionVisitor, MySqlInsertExpressionVisitor>()
-                .AddSingleton<ISqlGenerator, MySqlSqlGenerator>()
+                .AddScoped<IInsertExpressionVisitor, MySqlInsertExpressionVisitor>()
+                .AddScoped<ISqlGenerator, MySqlSqlGenerator>()
                 .AddExpressionVisitor<NewExpression, MySqlNewExpressionVisitor>()
                 .AddMethodCallConverter<ConcatStringViaConcatFuncVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
@@ -91,8 +84,6 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>();
-            
-            modifyServices?.Invoke(services);
         }
     }
 }
