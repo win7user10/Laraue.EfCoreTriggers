@@ -207,7 +207,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         /// <param name="annotation"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static IList<SqlOperation> AddDeleteTriggerSqlMigration(this ITriggerVisitor triggerVisitor, IList<SqlOperation> list, IAnnotation annotation, IReadOnlyModel model)
+        public static IList<SqlOperation> AddDeleteTriggerSqlMigration(this ITriggerVisitor triggerVisitor, IList<SqlOperation> list, IAnnotation annotation, IModel model)
         {
             list.Add(new SqlOperation
             {

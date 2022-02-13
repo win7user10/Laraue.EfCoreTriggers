@@ -17,15 +17,9 @@ public class EfCoreTriggersExtensionInfo : DbContextOptionsExtensionInfo
     }
 
     /// <inheritdoc />
-    public override int GetServiceProviderHashCode()
+    public override long GetServiceProviderHashCode()
     {
         return 0;
-    }
-
-    /// <inheritdoc />
-    public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
-    {
-        return string.Equals(LogFragment, other.LogFragment, StringComparison.Ordinal);
     }
 
     /// <inheritdoc />
