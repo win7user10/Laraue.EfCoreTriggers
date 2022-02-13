@@ -15,6 +15,5 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 
             return context;
         }
-
     }
 }

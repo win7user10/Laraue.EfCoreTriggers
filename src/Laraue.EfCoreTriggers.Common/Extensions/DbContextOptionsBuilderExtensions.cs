@@ -1,7 +1,9 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.Migrations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.Common.Extensions
 {
@@ -16,10 +18,17 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// which allow to use triggers.
         /// </summary>
         /// <param name="optionsBuilder"></param>
+        /// <param name="addDefaultServices"></param>
+        /// <param name="modifyServices"></param>
         /// <returns></returns>
-        public static DbContextOptionsBuilder ReplaceMigrationsModelDiffer(
-            this DbContextOptionsBuilder optionsBuilder)
+        public static DbContextOptionsBuilder UseEfCoreTriggers(
+            this DbContextOptionsBuilder optionsBuilder,
+            Action<IServiceCollection> addDefaultServices,
+            Action<IServiceCollection> modifyServices)
         {
+            ((IDbContextOptionsBuilderInfrastructure)optionsBuilder)
+                .AddOrUpdateExtension(new EfCoreTriggersExtension(addDefaultServices, modifyServices));
+            
             return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
         }
         
@@ -28,12 +37,19 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// which allow to use triggers.
         /// </summary>
         /// <param name="optionsBuilder"></param>
+        /// <param name="addDefaultServices"></param>
+        /// <param name="modifyServices"></param>
         /// <typeparam name="TContext"></typeparam>
         /// <returns></returns>
-        public static DbContextOptionsBuilder<TContext> ReplaceMigrationsModelDiffer<TContext>(
-            this DbContextOptionsBuilder<TContext> optionsBuilder)
+        public static DbContextOptionsBuilder<TContext> UseEfCoreTriggers<TContext>(
+            this DbContextOptionsBuilder<TContext> optionsBuilder,
+            Action<IServiceCollection> addDefaultServices,
+            Action<IServiceCollection> modifyServices)
             where TContext : DbContext
         {
+            ((IDbContextOptionsBuilderInfrastructure)optionsBuilder)
+                .AddOrUpdateExtension(new EfCoreTriggersExtension(addDefaultServices, modifyServices));
+            
             return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
         }
     }

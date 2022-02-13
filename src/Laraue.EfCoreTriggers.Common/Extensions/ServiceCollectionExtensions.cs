@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
         where TVisitorType : ITriggerAction
         where TImpl : class, ITriggerActionVisitor<TVisitorType>
     {
-        return services.AddSingleton<ITriggerActionVisitor<TVisitorType>, TImpl>();
+        return services.AddScoped<ITriggerActionVisitor<TVisitorType>, TImpl>();
     }
     
     /// <summary>
@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMethodCallConverter<TImpl>(this IServiceCollection services)
         where TImpl : class, IMethodCallVisitor
     {
-        return services.AddSingleton<IMethodCallVisitor, TImpl>();
+        return services.AddScoped<IMethodCallVisitor, TImpl>();
     }
     
     /// <summary>
@@ -55,7 +55,7 @@ public static class ServiceCollectionExtensions
         where TImpl : class, IExpressionVisitor<TVisitorType>
         where TVisitorType : Expression
     {
-        return services.AddSingleton<IExpressionVisitor<TVisitorType>, TImpl>();
+        return services.AddScoped<IExpressionVisitor<TVisitorType>, TImpl>();
     }
     
     /// <summary>
@@ -65,9 +65,9 @@ public static class ServiceCollectionExtensions
     /// <returns></returns>
     public static IServiceCollection AddDefaultServices(this IServiceCollection services)
     {
-        return services.AddSingleton<ITriggerActionVisitorFactory, TriggerActionVisitorFactory>()
-            .AddSingleton<IExpressionVisitorFactory, ExpressionVisitorFactory>()
-            .AddSingleton<IMemberInfoVisitorFactory, MemberInfoVisitorFactory>()
+        return services.AddScoped<ITriggerActionVisitorFactory, TriggerActionVisitorFactory>()
+            .AddScoped<IExpressionVisitorFactory, ExpressionVisitorFactory>()
+            .AddScoped<IMemberInfoVisitorFactory, MemberInfoVisitorFactory>()
             
             .AddTriggerActionVisitor<TriggerDeleteAction, TriggerDeleteActionVisitor>()
             .AddTriggerActionVisitor<TriggerInsertAction, TriggerInsertActionVisitor>()
@@ -75,11 +75,11 @@ public static class ServiceCollectionExtensions
             .AddTriggerActionVisitor<TriggerUpdateAction, TriggerUpdateActionVisitor>()
             .AddTriggerActionVisitor<TriggerCondition, TriggerConditionVisitor>()
                 
-            .AddSingleton<IMemberInfoVisitor<LambdaExpression>, SetLambdaExpressionVisitor>()
-            .AddSingleton<IMemberInfoVisitor<MemberInitExpression>, SetMemberInitExpressionVisitor>()
-            .AddSingleton<IMemberInfoVisitor<NewExpression>, SetNewExpressionVisitor>()
+            .AddScoped<IMemberInfoVisitor<LambdaExpression>, SetLambdaExpressionVisitor>()
+            .AddScoped<IMemberInfoVisitor<MemberInitExpression>, SetMemberInitExpressionVisitor>()
+            .AddScoped<IMemberInfoVisitor<NewExpression>, SetNewExpressionVisitor>()
             
-            .AddSingleton<IDbSchemaRetriever, EfCoreDbSchemaRetriever>()
+            .AddScoped<IDbSchemaRetriever, EfCoreDbSchemaRetriever>()
             
             .AddExpressionVisitor<BinaryExpression, BinaryExpressionVisitor>()
             .AddExpressionVisitor<UnaryExpression, UnaryExpressionVisitor>()
@@ -87,6 +87,6 @@ public static class ServiceCollectionExtensions
             .AddExpressionVisitor<ConstantExpression, ConstantExpressionVisitor>()
             .AddExpressionVisitor<MethodCallExpression, MethodCallExpressionVisitor>()
             
-            .AddSingleton<IUpdateExpressionVisitor, UpdateExpressionVisitor>();
+            .AddScoped<IUpdateExpressionVisitor, UpdateExpressionVisitor>();
     }
 }

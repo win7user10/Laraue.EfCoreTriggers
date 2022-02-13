@@ -5,7 +5,7 @@ EfCoreTriggers is the library to write native SQL triggers using EFCore model bu
 [![latest version](https://img.shields.io/nuget/v/Laraue.EfCoreTriggers.Common)](https://www.nuget.org/packages/Laraue.EfCoreTriggers.Common)
 
 ### Installation
-EfCoreTriggers common package is available on Nuget. Version 6.x.x is compatible with .NET6, 1.x.x intended for .NET 5 and no more supported. Install the provider package corresponding to your target database. See the list of providers in the docs for additional databases.
+EfCoreTriggers common package is available on Nuget. Version 6.x.x is compatible with .NET6, 5.x.x intended for .NET 5. Install the provider package corresponding to your target database. See the list of providers in the docs for additional databases.
 
 ### Configuring DB to use triggers
 
@@ -138,30 +138,29 @@ var dbContext = new TestDbContext(options);
 
 ## Customization
 
-Using custom provider to extend additional functionality
+Any service using for generation SQL can be replaced.
 
 ```cs
-private class MyCustomSqlProvider : PostgreSqlProvider // Or another used provider
+private class CustomDbSchemaRetriever : EfCoreDbSchemaRetriever
 {
-    /// Provider will be created via reflection, so constructor only with this argument is allowed 
-    public MySqlProvider(IModel model) : base(model)
+    public CustomDbSchemaRetriever(IModel model) : base(model)
     {
     }
 
-    protected override string GetColumnName(MemberInfo memberInfo)
+    protected override string GetColumnName(Type type, MemberInfo memberInfo)
     {
         // Change strategy of naming some column
-        return 'c_' + base.GetColumnName(memberInfo);
+        return 'c_' + base.GetColumnName(type, memberInfo);
     }
 }
 ```
 
-Adding this provider to a container
+Adding this service to the container
 
 ```cs
 var options = new DbContextOptionsBuilder<TestDbContext>()
     .UseNpgsql("User ID=test;Password=test;Host=localhost;Port=5432;Database=test;")
-    .UseTriggers<MyCustomSqlProvider>()
+    .UsePostgreSqlTriggers(services => services.AddSingleton<IDbSchemaRetriever, CustomDbSchemaRetriever>)
     .Options;
 
 var dbContext = new TestDbContext(options);
@@ -213,7 +212,7 @@ All custom converters should be added while setup a database
 ```cs
 var options = new DbContextOptionsBuilder<TestDbContext>()
     .UseSqlite("Filename=D://test.db")
-    .UseSqlLiteTriggers(converters => converters.ExpressionCallConverters.Push(converter))
+    .UseSqlLiteTriggers(services => services.AddMethodCallConverter(converter))
     .Options;
 
 var dbContext = new TestDbContext(options);
