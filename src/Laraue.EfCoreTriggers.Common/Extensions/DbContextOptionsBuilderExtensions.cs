@@ -1,6 +1,7 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.Migrations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,8 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             ((IDbContextOptionsBuilderInfrastructure)optionsBuilder)
                 .AddOrUpdateExtension(new EfCoreTriggersExtension(addDefaultServices, modifyServices));
             
-            return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
+            return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>()
+                .ReplaceService<ICSharpHelper, CSharpHelper>();
         }
         
         /// <summary>
@@ -50,7 +52,8 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             ((IDbContextOptionsBuilderInfrastructure)optionsBuilder)
                 .AddOrUpdateExtension(new EfCoreTriggersExtension(addDefaultServices, modifyServices));
             
-            return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
+            return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>()
+                .ReplaceService<ICSharpHelper, CSharpHelper>();
         }
     }
 }
