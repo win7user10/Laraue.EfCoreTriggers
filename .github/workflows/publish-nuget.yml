@@ -22,12 +22,5 @@ jobs:
         with:
           dotnet-version: '6.0.100'
           
-      - name: Build base image
-        run: |
-          echo $SOURCE_NAME
-          echo $SOURCE_BRANCH
-          echo $SOURCE_TAG
-        env:
-          SOURCE_NAME: ${{ steps.branch_name.outputs.SOURCE_NAME }}
-          SOURCE_BRANCH: ${{ steps.branch_name.outputs.SOURCE_BRANCH }}
-          SOURCE_TAG: ${{ steps.branch_name.outputs.SOURCE_TAG }} 
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV && echo "NET_TARGET=${GITHUB_REF#refs/*/}[0]" >> $GITHUB_ENV
