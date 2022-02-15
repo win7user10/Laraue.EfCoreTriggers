@@ -22,5 +22,8 @@ jobs:
         with:
           dotnet-version: '6.0.100'
           
-      - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV && echo "NET_TARGET=${GITHUB_REF#refs/*/}[0]" >> $GITHUB_ENV
+      - name: Set release env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        
+      - name: Set net env
+        run: echo "NET_TARGET=${GITHUB_REF#refs/*/}[0]" >> $GITHUB_ENV
