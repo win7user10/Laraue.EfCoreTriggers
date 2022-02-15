@@ -23,7 +23,7 @@ jobs:
           dotnet-version: '6.0.100'
           
       - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV && echo "NET_TARGET=${GITHUB_REF#refs/*/:1}" >> $GITHUB_ENV
             
       - name: Build project
         run: dotnet build --configuration Release
