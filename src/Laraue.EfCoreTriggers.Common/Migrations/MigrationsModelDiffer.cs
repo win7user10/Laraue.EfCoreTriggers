@@ -147,8 +147,14 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
     /// </summary>
     public static class MigrationsExtensions
     {
+#if NET6_0_OR_GREATER
+        private static readonly FieldInfo AnnotationsField = typeof(AnnotatableBase)
+            .GetField("_annotations", BindingFlags.Instance | BindingFlags.NonPublic);
+#else
         private static readonly FieldInfo AnnotationsField = typeof(Annotatable)
             .GetField("_annotations", BindingFlags.Instance | BindingFlags.NonPublic);
+#endif
+        
         
         /// <summary>
         /// Convert all not translated annotations of <see cref="ITrigger"/> type to SQL.
