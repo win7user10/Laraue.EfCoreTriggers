@@ -23,16 +23,4 @@ jobs:
           dotnet-version: '6.0.100'
           
       - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV && echo "NET_TARGET=${GITHUB_REF#refs/*/:1}" >> $GITHUB_ENV
-            
-      - name: Build project
-        run: dotnet build --configuration Release
-        
-      - name: Run unit tests
-        run: dotnet test --filter "Category=UnitTest"
-
-      - name: Generate a NuGet package
-        run: dotnet pack -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o .
-
-      - name: Push to GitHub package registry
-        run: dotnet nuget push "*.nupkg" -k ${{secrets.NUGETORGTOKEN}} -s https://api.nuget.org/v3/index.json --skip-duplicate 
+        run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF#refs/*/}) ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF#refs/*/:1})
