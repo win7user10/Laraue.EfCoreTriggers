@@ -30,8 +30,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             ((IDbContextOptionsBuilderInfrastructure)optionsBuilder)
                 .AddOrUpdateExtension(new EfCoreTriggersExtension(addDefaultServices, modifyServices));
             
-            return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>()
-                .ReplaceService<ICSharpHelper, CSharpHelper>();
+            return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
         }
         
         /// <summary>
@@ -52,8 +51,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             ((IDbContextOptionsBuilderInfrastructure)optionsBuilder)
                 .AddOrUpdateExtension(new EfCoreTriggersExtension(addDefaultServices, modifyServices));
             
-            return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>()
-                .ReplaceService<ICSharpHelper, CSharpHelper>();
+            return optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDiffer>();
         }
     }
 }
