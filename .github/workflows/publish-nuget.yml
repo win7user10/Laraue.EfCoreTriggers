@@ -17,12 +17,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@master
 
-      - name: Setup .NET environment
+      - name: Setup .NET5 environment
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: | 
-      6.0.x
-      5.0.x
+          dotnet-version: '5.0.x'
+          
+      - name: Setup .NET6 environment
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
           
       - name: Set release env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV && echo "NET_TARGET=net${GITHUB_REF:10:1}.0" >> $GITHUB_ENV
