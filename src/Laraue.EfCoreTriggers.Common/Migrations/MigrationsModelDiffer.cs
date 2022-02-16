@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -31,15 +33,6 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         {
             _triggerVisitor = triggerVisitor;
         }
-
-        private static string[] GetEntityTypeNames(IModel model)
-        {
-            return model?
-                .GetEntityTypes()
-                .Select(x => x.Name)
-                .ToArray()
-                   ?? Array.Empty<string>();
-        }
         
         /// <inheritdoc />
         public override IReadOnlyList<MigrationOperation> GetDifferences(IRelationalModel source, IRelationalModel target)
@@ -49,9 +42,12 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
 
             var sourceModel = source?.Model;
             var targetModel = target?.Model;
+            
+            _triggerVisitor.ConvertTriggerAnnotationsToSql(sourceModel);
+            _triggerVisitor.ConvertTriggerAnnotationsToSql(targetModel);
 
-            var oldEntityTypeNames = GetEntityTypeNames(sourceModel);
-            var newEntityTypeNames = GetEntityTypeNames(targetModel);
+            var oldEntityTypeNames = sourceModel.GetEntityTypeNames();
+            var newEntityTypeNames = targetModel.GetEntityTypeNames();
 
             var commonEntityTypeNames = oldEntityTypeNames
                 .Intersect(newEntityTypeNames)
@@ -60,7 +56,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
             // Drop all triggers for deleted entities.
             foreach (var deletedTypeName in oldEntityTypeNames.Except(commonEntityTypeNames))
             {
-                var deletedEntityType = source?.Model.FindEntityType(deletedTypeName);
+                var deletedEntityType = sourceModel?.FindEntityType(deletedTypeName);
 
                 foreach (var annotation in deletedEntityType.GetTriggerAnnotations())
                 {
@@ -71,10 +67,9 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
             // Add all triggers to created entities.
             foreach (var newTypeName in newEntityTypeNames.Except(commonEntityTypeNames))
             {
-                var entityType = targetModel.FindEntityType(newTypeName);
                 foreach (var annotation in targetModel?.FindEntityType(newTypeName).GetTriggerAnnotations() ?? Array.Empty<IAnnotation>())
                 {
-                    _triggerVisitor.AddCreateTriggerSqlMigration(createTriggerOperations, annotation, entityType);
+                    createTriggerOperations.AddCreateTriggerSqlMigration(annotation);
                 }
             }
 
@@ -105,16 +100,14 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
                 {
                     var oldValue = sourceModel?.FindEntityType(entityTypeName)?.GetAnnotation(commonAnnotationName);
                     var newValue = targetModel?.FindEntityType(entityTypeName)?.GetAnnotation(commonAnnotationName);
-
-                    var oldTrigger = _triggerVisitor.ConvertTriggerToSql(oldValue, oldEntityType);
-                    var newTrigger = _triggerVisitor.ConvertTriggerToSql(newValue, newEntityType);
-                    if (oldTrigger == newTrigger)
+                    
+                    if (oldValue?.Value.ToString() == newValue?.Value.ToString())
                     {
                         continue;
                     }
                     
                     _triggerVisitor.AddDeleteTriggerSqlMigration(deleteTriggerOperations, oldValue, sourceModel);
-                    _triggerVisitor.AddCreateTriggerSqlMigration(createTriggerOperations, newValue, newEntityType);
+                    createTriggerOperations.AddCreateTriggerSqlMigration(newValue);
                 }
 
                 // If trigger was removed, delete it.
@@ -130,7 +123,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
                 {
                     var newTriggerAnnotation = newEntityType?.GetAnnotation(newTriggerName);
 
-                    _triggerVisitor.AddCreateTriggerSqlMigration(createTriggerOperations, newTriggerAnnotation, newEntityType);
+                    createTriggerOperations.AddCreateTriggerSqlMigration(newTriggerAnnotation);
                 }
             }
 
@@ -154,14 +147,65 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
     /// </summary>
     public static class MigrationsExtensions
     {
-        public static string ConvertTriggerToSql(this ITriggerVisitor visitor, IAnnotation annotation, IEntityType entityType)
+#if NET6_0_OR_GREATER
+        private static readonly FieldInfo AnnotationsField = typeof(AnnotatableBase)
+            .GetField("_annotations", BindingFlags.Instance | BindingFlags.NonPublic);
+#else
+        private static readonly FieldInfo AnnotationsField = typeof(Annotatable)
+            .GetField("_annotations", BindingFlags.Instance | BindingFlags.NonPublic);
+#endif
+        
+        
+        /// <summary>
+        /// Convert all not translated annotations of <see cref="ITrigger"/> type to SQL.
+        /// </summary>
+        /// <param name="triggerVisitor"></param>
+        /// <param name="model"></param>
+        public static void ConvertTriggerAnnotationsToSql(this ITriggerVisitor triggerVisitor, IModel model)
         {
-            if (annotation.Value is ITrigger trigger)
+            foreach (var entityType in model?.GetEntityTypes() ?? Enumerable.Empty<IEntityType>())
             {
-                return visitor.GenerateCreateTriggerSql(trigger);
-            }
+                var annotations = (SortedDictionary<string, Annotation>) AnnotationsField.GetValue(entityType);
 
-            throw new InvalidOperationException("The configured trigger cannot be converted to SQL");
+                if (annotations is null)
+                {
+                    return;
+                }
+
+                foreach (var key in annotations.Keys.ToArray())
+                {
+                    if (!key.StartsWith(Constants.AnnotationKey))
+                    {
+                        continue;
+                    }
+                    
+                    var annotation = annotations[key];
+
+                    var value = annotation.Value;
+
+                    if (value is not ITrigger trigger)
+                    {
+                        continue;
+                    }
+                    
+                    var sql = triggerVisitor.GenerateCreateTriggerSql(trigger);
+                    annotations[key] = new ConventionAnnotation(key, sql, ConfigurationSource.DataAnnotation);
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Get names of entities in <see cref="IModel"/>.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static string[] GetEntityTypeNames(this IModel model)
+        {
+            return model?
+                .GetEntityTypes()
+                .Select(x => x.Name)
+                .ToArray()
+                   ?? Array.Empty<string>();
         }
         
         /// <summary>
@@ -181,20 +225,17 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         /// </summary>
         /// <param name="list"></param>
         /// <param name="annotation"></param>
-        /// <param name="entityType"></param>
         /// <returns></returns>
-        public static IList<SqlOperation> AddCreateTriggerSqlMigration(this ITriggerVisitor triggerVisitor, IList<SqlOperation> list, IAnnotation annotation, IEntityType entityType)
+        public static IList<SqlOperation> AddCreateTriggerSqlMigration(this IList<SqlOperation> list, IAnnotation annotation)
         {
-            var triggerSql = triggerVisitor.ConvertTriggerToSql(annotation, entityType);
-            
-            if (triggerSql is null)
+            if (annotation.Value is not string createSql)
             {
                 return list;
             }
 
-            list.Add(new SqlOperation 
+            list.Add(new SqlOperation
             {
-                Sql = triggerSql,
+                Sql = createSql,
             });
             
             return list;
@@ -203,11 +244,12 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         /// <summary>
         /// Adds sql operations necessary to drop triggers.
         /// </summary>
+        /// <param name="triggerVisitor"></param>
         /// <param name="list"></param>
         /// <param name="annotation"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static IList<SqlOperation> AddDeleteTriggerSqlMigration(this ITriggerVisitor triggerVisitor, IList<SqlOperation> list, IAnnotation annotation, IReadOnlyModel model)
+        public static IList<SqlOperation> AddDeleteTriggerSqlMigration(this ITriggerVisitor triggerVisitor, IList<SqlOperation> list, IAnnotation annotation, IModel model)
         {
             list.Add(new SqlOperation
             {
