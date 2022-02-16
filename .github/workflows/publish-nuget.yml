@@ -37,7 +37,7 @@ jobs:
         run: dotnet test --framework=${{env.NET_TARGET}} --filter "Category=UnitTest"
 
       - name: Generate a NuGet package
-        run: dotnet pack --framework=${{env.NET_TARGET}} -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o .
+        run: dotnet pack -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o .
 
       - name: Push to GitHub package registry
         run: dotnet nuget push "*.nupkg" -k ${{secrets.NUGETORGTOKEN}} -s https://api.nuget.org/v3/index.json --skip-duplicate 
