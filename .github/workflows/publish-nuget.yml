@@ -16,23 +16,23 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@master
+          
+      - name: Set release env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV && echo "NET_TARGET=${GITHUB_REF:10:1}" >> $GITHUB_ENV
 
       - name: Setup .NET environment
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.100'
-          
-      - name: Set release env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV && echo "NET_TARGET=net${GITHUB_REF:10:1}.0" >> $GITHUB_ENV
+          dotnet-version: '6.0.100' && [[ ${{env.NET_TARGET}} = 5]] && '5.0.405'
             
       - name: Build project
-        run: dotnet build --framework=${{env.NET_TARGET}} --configuration Release
+        run: dotnet build --configuration Release
         
       - name: Run unit tests
-        run: dotnet test --framework=${{env.NET_TARGET}} --filter "Category=UnitTest"
+        run: dotnet test --filter "Category=UnitTest"
 
       - name: Generate a NuGet package
-        run: dotnet pack --framework=${{env.NET_TARGET}} -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o .
+        run: dotnet pack -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o .
 
       - name: Push to GitHub package registry
         run: dotnet nuget push "*.nupkg" -k ${{secrets.NUGETORGTOKEN}} -s https://api.nuget.org/v3/index.json --skip-duplicate 
