@@ -19,12 +19,8 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
     public override SqlBuilder Visit(MemberExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
     {
         argumentTypes ??= new ArgumentTypes();
-        var parameterExpression = (ParameterExpression)expression.Expression;
-        var memberName = parameterExpression.Name;
-        if (!argumentTypes.TryGetValue(memberName, out var argumentType))
-        {
-            argumentType = ArgumentType.Default;
-        }
+        
+        var argumentType = argumentTypes.Get((ParameterExpression) expression.Expression);
         
         visitedMembers.AddMember(argumentType, expression.Member);
         

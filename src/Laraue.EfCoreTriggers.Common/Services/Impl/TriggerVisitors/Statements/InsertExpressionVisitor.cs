@@ -47,10 +47,10 @@ public class InsertExpressionVisitor : IInsertExpressionVisitor
                 .AppendJoin(", ", assignmentParts
                     .Select(x =>
                         $"{_sqlGenerator.GetDelimiter()}{_adapter.GetColumnName(insertType, x.Key)}{_sqlGenerator.GetDelimiter()}"))
-                .Append(") VALUES (")
+                .Append(") SELECT ")
                 .AppendJoin(", ", assignmentParts
                     .Select(x => x.Value.ToString()))
-                .Append(")");
+                .Append("");
         }
         else
         {

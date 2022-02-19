@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 {
@@ -10,5 +11,6 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
         public int IntValue { get; set; }
         public bool BooleanValue { get; set; }
         public Guid GuidValue { get; set; }
+        public IList<RelatedEntity> RelatedEntities { get; set; }
     }
 }

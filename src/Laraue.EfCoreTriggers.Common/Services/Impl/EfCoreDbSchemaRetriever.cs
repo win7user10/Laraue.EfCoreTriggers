@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl;
 
@@ -115,5 +116,29 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
             ?.Properties
             .Select(x => x.PropertyInfo)
             .ToArray();
+    }
+
+    public KeyInfo[] GetForeignKeyMembers(Type type, Type type2)
+    {
+        var entityType = Model.FindEntityType(type);
+        
+        var outerForeignKey = entityType.GetForeignKeys()
+            .FirstOrDefault(x => x.PrincipalEntityType.ClrType == type2);
+
+        var outerKey = outerForeignKey
+            .PrincipalKey
+            .Properties;
+
+        var innerKey = outerForeignKey.Properties;
+
+        var keys = outerKey.Zip(innerKey)
+            .Select(x => new KeyInfo
+            {
+                PrincipalKey = x.First.PropertyInfo,
+                ForeignKey = x.Second.PropertyInfo,
+            })
+            .ToArray();
+
+        return keys;
     }
 }

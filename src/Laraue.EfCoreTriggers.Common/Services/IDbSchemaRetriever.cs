@@ -29,4 +29,6 @@ public interface IDbSchemaRetriever
     /// <param name="type"></param>
     /// <returns></returns>
     PropertyInfo[] GetPrimaryKeyMembers(Type type);
+
+    KeyInfo[] GetForeignKeyMembers(Type type, Type type2);
 }
