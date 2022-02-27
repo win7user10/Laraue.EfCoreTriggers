@@ -78,4 +78,10 @@ public interface ISqlGenerator
     /// </summary>
     /// <returns></returns>
     char GetDelimiter();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    string GetVariableSql(Type type, MemberInfo member, ArgumentType argumentType);
 }

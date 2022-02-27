@@ -94,4 +94,9 @@ public class SqlGenerator : ISqlGenerator
     {
         return '"';
     }
+
+    public virtual string GetVariableSql(Type type, MemberInfo member, ArgumentType argumentType)
+    {
+        return GetColumnSql(type, member, argumentType);
+    }
 }

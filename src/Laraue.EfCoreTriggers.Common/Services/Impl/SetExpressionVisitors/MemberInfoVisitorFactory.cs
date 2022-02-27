@@ -30,6 +30,7 @@ public class MemberInfoVisitorFactory : IMemberInfoVisitorFactory
             LambdaExpression lambdaExpression => Visit(lambdaExpression, argumentTypes, visitedMembers),
             MemberInitExpression memberInitExpression => Visit(memberInitExpression, argumentTypes, visitedMembers),
             NewExpression newExpression => Visit(newExpression, argumentTypes, visitedMembers),
+            BinaryExpression binaryExpression => Visit(binaryExpression, argumentTypes, visitedMembers),
             _ => throw new NotSupportedException($"Expression of type {expression.GetType()} is not supported")
         };
     }

@@ -11,25 +11,32 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 /// <inheritdoc />
 public class MethodCallExpressionVisitor : BaseExpressionVisitor<MethodCallExpression>
 {
-    private readonly IMethodCallVisitor[] _converters;
+    private readonly IMethodCallVisitor[] _visitors;
 
     /// <inheritdoc />
     public MethodCallExpressionVisitor(IEnumerable<IMethodCallVisitor> methodCallVisitors)
     {
-        _converters = methodCallVisitors.Reverse().ToArray();
+        _visitors = methodCallVisitors.Reverse().ToArray();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc />s
     public override SqlBuilder Visit(MethodCallExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
     {
-        foreach (var converter in _converters)
+        var visitor = GetVisitor(expression);
+        
+        return visitor.Visit(expression, argumentTypes, visitedMembers);
+    }
+
+    public IMethodCallVisitor GetVisitor(MethodCallExpression expression)
+    {
+        foreach (var converter in _visitors)
         {
             if (converter.IsApplicable(expression))
             {
-                return converter.Visit(expression, argumentTypes, visitedMembers);
+                return converter;
             }
         }
-
+        
         throw new NotSupportedException($"Expression {expression.Method.Name} is not supported");
     }
 }

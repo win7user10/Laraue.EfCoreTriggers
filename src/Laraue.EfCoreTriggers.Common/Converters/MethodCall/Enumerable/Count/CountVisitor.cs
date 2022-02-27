@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
@@ -11,13 +12,20 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable.Count;
 public class CountVisitor : BaseEnumerableVisitor
 {
     protected override string MethodName => nameof(System.Linq.Enumerable.Count);
-    protected override SqlBuilder Visit(IReadOnlyCollection<Expression> arguments, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
-    {
-        return SqlBuilder.FromString("count(*)");
-    }
+    
+    private readonly IExpressionVisitorFactory _expressionVisitorFactory;
 
-    public CountVisitor(IExpressionVisitorFactory visitorFactory, IDbSchemaRetriever schemaRetriever, ISqlGenerator sqlGenerator)
+    public CountVisitor(
+        IExpressionVisitorFactory visitorFactory,
+        IDbSchemaRetriever schemaRetriever,
+        ISqlGenerator sqlGenerator)
         : base(visitorFactory, schemaRetriever, sqlGenerator)
     {
+        _expressionVisitorFactory = visitorFactory;
+    }
+    
+    protected override (SqlBuilder, Expression) Visit(Expression[] arguments, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    {
+        return  (SqlBuilder.FromString("count(*)"), arguments.FirstOrDefault());
     }
 }

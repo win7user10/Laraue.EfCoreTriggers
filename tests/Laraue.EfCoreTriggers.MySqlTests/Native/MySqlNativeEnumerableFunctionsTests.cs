@@ -6,7 +6,7 @@ using Xunit;
 namespace Laraue.EfCoreTriggers.MySqlTests.Native;
 
 [Collection(CollectionNames.MySql)]
-public class MySqlNativeEnumerableFunctionTests : NativeEnumerableFunctionTests
+public class MySqlNativeEnumerableFunctionsTests : NativeEnumerableFunctionsTests
 {
-    public MySqlNativeEnumerableFunctionTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
+    public MySqlNativeEnumerableFunctionsTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
 }

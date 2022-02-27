@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
-
+    <LangVersion>Latest</LangVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -41,7 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Laraue.EfCoreTriggers.PostgreSqlTests\Laraue.EfCoreTriggers.PostgreSqlTests.csproj" />
     <ProjectReference Include="..\Laraue.EfCoreTriggers.Tests\Laraue.EfCoreTriggers.Tests.csproj" />
     <ProjectReference Include="..\..\src\Laraue.EfCoreTriggers.SqlLite\Laraue.EfCoreTriggers.SqlLite.csproj" />
   </ItemGroup>

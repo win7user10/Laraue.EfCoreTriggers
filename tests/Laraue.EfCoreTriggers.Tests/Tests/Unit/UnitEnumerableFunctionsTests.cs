@@ -28,4 +28,9 @@ public abstract class UnitEnumerableFunctionsTests : BaseEnumerableFunctionsTest
     {
         Factory.AssertGeneratedUpdateSql(ExceptedCountRelatedSql, CountRelatedWithPredicateExpression);
     }
+
+    public override void CountRelatedWithWherePredicateSql()
+    {
+        throw new System.NotImplementedException();
+    }
 }

@@ -6,7 +6,7 @@ using Xunit;
 namespace Laraue.EfCoreTriggers.PostgreSqlTests.Native;
 
 [Collection(CollectionNames.PostgreSql)]
-public class PostgreSqlNativeEnumerableFunctionTests : NativeEnumerableFunctionTests
+public class PostgreSqlNativeEnumerableFunctionsTests : NativeEnumerableFunctionsTests
 {
-    public PostgreSqlNativeEnumerableFunctionTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
+    public PostgreSqlNativeEnumerableFunctionsTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
 }
