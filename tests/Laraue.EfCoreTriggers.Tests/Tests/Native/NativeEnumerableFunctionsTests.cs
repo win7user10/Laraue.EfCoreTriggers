@@ -10,7 +10,7 @@ using Xunit.Categories;
 namespace Laraue.EfCoreTriggers.Tests.Tests.Native;
 
 [IntegrationTest]
-public class NativeEnumerableFunctionsTests : BaseEnumerableFunctionsTests
+public abstract class NativeEnumerableFunctionsTests : BaseEnumerableFunctionsTests
 {
     private IContextOptionsFactory<DynamicDbContext> ContextOptionsFactory { get; }
 
