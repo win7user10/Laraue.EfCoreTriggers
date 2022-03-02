@@ -56,18 +56,18 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
                 .Skip(1)
                 .ToArray();
             
-            var sql = Visit(otherArguments, argumentTypes, visitedMembers);
+            var selectSql = Visit(otherArguments, argumentTypes, visitedMembers);
 
-            if (sql.Item2 is not null)
+            if (selectSql.Item2 is not null)
             {
-                whereExpressions.Add(sql.Item2);
+                whereExpressions.Add(selectSql.Item2);
             }
 
             var finalSql = SqlBuilder.FromString("(");
             
             finalSql.WithIdent(x=> x
                 .Append("SELECT ")
-                .Append(sql.Item1)
+                .Append(selectSql.Item1)
                 .AppendNewLine($"FROM {_schemaRetriever.GetTableName(entityType)}")
                 .AppendNewLine($"INNER JOIN {_schemaRetriever.GetTableName(originalSetType)} ON "));
 
@@ -76,17 +76,17 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
             var joinParts = new List<string>();
             foreach (var key in keys)
             {
-                var c1 = _sqlGenerator.GetColumnSql(entityType, key.ForeignKey, ArgumentType.Default);
+                var column1Sql = _sqlGenerator.GetColumnSql(entityType, key.ForeignKey, ArgumentType.Default);
                 
-                var arg2Type = argumentTypes.Get(originalSetMemberExpression);
+                var argument2Type = argumentTypes.Get(originalSetMemberExpression);
                 
-                var c2AsWhere = _sqlGenerator.GetVariableSql(originalSetType, key.PrincipalKey, arg2Type);
-                visitedMembers.AddMember(arg2Type, key.PrincipalKey);
+                var column2WhereSql = _sqlGenerator.GetVariableSql(originalSetType, key.PrincipalKey, argument2Type);
+                visitedMembers.AddMember(argument2Type, key.PrincipalKey);
                 
-                var c2AsJoin = _sqlGenerator.GetColumnSql(originalSetType, key.PrincipalKey, ArgumentType.Default);
+                var column2JoinSql = _sqlGenerator.GetColumnSql(originalSetType, key.PrincipalKey, ArgumentType.Default);
 
-                joinParts.Add($"{c1} = {c2AsJoin}");
-                joinParts.Add($"{c1} = {c2AsWhere}");
+                joinParts.Add($"{column1Sql} = {column2JoinSql}");
+                joinParts.Add($"{column1Sql} = {column2WhereSql}");
             }
 
             foreach (var e in whereExpressions)
