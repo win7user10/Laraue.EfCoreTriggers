@@ -39,6 +39,12 @@ public class SqlServerUnaryExpressionVisitor : UnaryExpressionVisitor
         {
             return false;
         }
+
+        // Member expressions are already casted, stay at as is
+        if (expression.Operand is MemberExpression)
+        {
+            return false;
+        }
             
         if (BooleanExpressionTypes.Contains(expression.NodeType))
         {

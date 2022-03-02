@@ -21,4 +21,12 @@ public interface IExpressionVisitorFactory
         Expression expression,
         ArgumentTypes argumentTypes,
         VisitedMembers visitedMembers);
+
+    /// <summary>
+    /// Get expression visitor for the passed expression type.
+    /// </summary>
+    /// <typeparam name="TExpression"></typeparam>
+    /// <returns></returns>
+    IExpressionVisitor<TExpression> GetExpressionVisitor<TExpression>()
+        where TExpression : Expression;
 }

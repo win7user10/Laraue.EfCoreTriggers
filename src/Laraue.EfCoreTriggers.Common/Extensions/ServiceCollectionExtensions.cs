@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable.Count;
 using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
@@ -78,6 +79,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IMemberInfoVisitor<LambdaExpression>, SetLambdaExpressionVisitor>()
             .AddScoped<IMemberInfoVisitor<MemberInitExpression>, SetMemberInitExpressionVisitor>()
             .AddScoped<IMemberInfoVisitor<NewExpression>, SetNewExpressionVisitor>()
+            .AddScoped<IMemberInfoVisitor<BinaryExpression>, SetBinaryExpressionVisitor>()
             
             .AddScoped<IDbSchemaRetriever, EfCoreDbSchemaRetriever>()
             
@@ -86,6 +88,9 @@ public static class ServiceCollectionExtensions
             .AddExpressionVisitor<MemberExpression, MemberExpressionVisitor>()
             .AddExpressionVisitor<ConstantExpression, ConstantExpressionVisitor>()
             .AddExpressionVisitor<MethodCallExpression, MethodCallExpressionVisitor>()
+            .AddExpressionVisitor<LambdaExpression, LambdaExpressionVisitor>()
+            
+            .AddMethodCallConverter<CountVisitor>()
             
             .AddScoped<IUpdateExpressionVisitor, UpdateExpressionVisitor>();
     }

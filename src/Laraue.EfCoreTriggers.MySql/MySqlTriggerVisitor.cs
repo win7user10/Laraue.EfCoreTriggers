@@ -31,7 +31,9 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine("BEGIN")
             .WithIdent(triggerSql =>
             {
-                if (trigger.Conditions.Count > 0)
+                var isAnyCondition = trigger.Conditions.Count > 0;
+                
+                if (isAnyCondition)
                 {
                     var conditionsSql = trigger.Conditions
                         .Select(actionCondition => _factory.Visit(actionCondition, new VisitedMembers()));
@@ -41,7 +43,7 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
                         .Append(" THEN ");
                 }
 
-                triggerSql.WithIdent(loopSql => loopSql.AppendViaNewLine(actionsSql));
+                triggerSql.WithIdentWhen(isAnyCondition,  loopSql => loopSql.AppendViaNewLine(actionsSql));
         
                 if (trigger.Conditions.Count > 0)
                 {

@@ -26,8 +26,10 @@ public class TriggerInsertActionVisitor : ITriggerActionVisitor<TriggerInsertAct
 
         var insertEntityType = triggerAction.InsertExpression.Body.Type;
         
-        return SqlBuilder.FromString($"INSERT INTO {_adapter.GetTableName(insertEntityType)} ")
+        var sql = SqlBuilder.FromString($"INSERT INTO {_adapter.GetTableName(insertEntityType)} ")
             .Append(insertStatement)
             .Append(";");
+
+        return sql;
     }
 }

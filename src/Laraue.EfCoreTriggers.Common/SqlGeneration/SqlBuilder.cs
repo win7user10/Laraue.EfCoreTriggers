@@ -145,6 +145,21 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         {
             return AppendJoin(NewLine, values);
         }
+        
+        /// <summary>
+        /// Append to each sql builder passed separator and join them via new line.
+        /// </summary>
+        /// <param name="separator"></param>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        public SqlBuilder AppendViaNewLine(string separator, IEnumerable<SqlBuilder> values)
+        {
+            var arrayValues = values.ToArray();
+            
+            ExecuteForAllBesidesLast(arrayValues, (_, _) => { }, (x, _) => x.Append(separator));
+
+            return AppendViaNewLine(arrayValues);
+        }
 
         /// <summary>
         /// Append sequence of strings to row of current SQL builder.
@@ -175,6 +190,14 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 if (separator is not NewLine)
                 {
                     CurrentSqlBuilderRow.StringBuilder.Append(separator);
+                }
+                else
+                {
+                    StartNewRow(new SqlBuilderRow()
+                    {
+                        Ident = CurrentSqlBuilderRow.Ident,
+                        StringBuilder = new StringBuilder()
+                    });
                 }
             });
 

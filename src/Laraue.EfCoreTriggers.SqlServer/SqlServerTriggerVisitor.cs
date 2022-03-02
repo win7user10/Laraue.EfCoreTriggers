@@ -136,15 +136,9 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         return $"{GetVariableNameSql(argumentType, member)} {sqlType}";
     }
 
-    public static string GetVariableNameSql(ArgumentType argumentType, MemberInfo member)
+    public string GetVariableNameSql(ArgumentType argumentType, MemberInfo member)
     {
-        return argumentType switch
-        {
-            ArgumentType.New => $"@New{member.Name}",
-            ArgumentType.Old => $"@Old{member.Name}",
-            _ => throw new InvalidOperationException(
-                $"Invalid attempt to generate declaring variable SQL using argument prefix {argumentType}")
-        };
+        return _sqlGenerator.GetVariableSql(null, member, argumentType);
     }
     
     private SqlBuilder DeclareCursorsSql(Type triggerEntityType, VisitedMembers visitedMembers, TriggerEvent triggerEvent)
@@ -276,5 +270,5 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
 internal static class SqlServerProviderExtensions
 {
     public static IEnumerable<MemberInfo> WhereDeclaringType(this IEnumerable<MemberInfo> values, Type declaringType)
-        => values.Where(x => x.DeclaringType?.IsAssignableFrom(declaringType) ?? false);
+        => values.Where(x => x.ReflectedType?.IsAssignableFrom(declaringType) ?? false);
 }

@@ -31,11 +31,20 @@ public class ExpressionVisitorFactory : IExpressionVisitorFactory
             MethodCallExpression methodCall => Visit(methodCall, argumentTypes, visitedMembers),
             UnaryExpression unary => Visit(unary, argumentTypes, visitedMembers),
             NewExpression @new => Visit(@new, argumentTypes, visitedMembers),
+            LambdaExpression lambda => Visit(lambda, argumentTypes, visitedMembers),
             _ => throw new NotSupportedException($"Expression of type {expression.GetType()} is not supported")
         };
     }
 
     private SqlBuilder Visit<TExpression>(TExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+        where TExpression : Expression
+    {
+        var visitor = GetExpressionVisitor<TExpression>();
+        
+        return visitor.Visit(expression, argumentTypes, visitedMembers);
+    }
+    
+    public IExpressionVisitor<TExpression> GetExpressionVisitor<TExpression>() 
         where TExpression : Expression
     {
         var visitor = _provider.GetService<IExpressionVisitor<TExpression>>();
@@ -44,7 +53,7 @@ public class ExpressionVisitorFactory : IExpressionVisitorFactory
         {
             throw new NotSupportedException("Not supported " + typeof(TExpression));
         }
-        
-        return visitor.Visit(expression, argumentTypes, visitedMembers);
+
+        return visitor;
     }
 }

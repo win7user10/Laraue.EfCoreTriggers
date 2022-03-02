@@ -7,9 +7,12 @@ namespace Laraue.EfCoreTriggers.SqlServer;
 
 public class SqlServerMemberExpressionVisitor : MemberExpressionVisitor
 {
-    public SqlServerMemberExpressionVisitor(ISqlGenerator generator) 
-        : base(generator)
+    private readonly ISqlGenerator _sqlGenerator;
+    
+    public SqlServerMemberExpressionVisitor(ISqlGenerator sqlGenerator) 
+        : base(sqlGenerator)
     {
+        _sqlGenerator = sqlGenerator;
     }
 
     protected override string Visit(MemberExpression memberExpression, ArgumentType argumentType)
@@ -18,8 +21,8 @@ public class SqlServerMemberExpressionVisitor : MemberExpressionVisitor
         
         return argumentType switch
         {
-            ArgumentType.New => SqlServerTriggerVisitor.GetVariableNameSql(argumentType, memberInfo),
-            ArgumentType.Old => SqlServerTriggerVisitor.GetVariableNameSql(argumentType, memberInfo),
+            ArgumentType.New => _sqlGenerator.GetVariableSql(null, memberInfo, argumentType),
+            ArgumentType.Old => _sqlGenerator.GetVariableSql(null, memberInfo, argumentType),
             _ => base.Visit(memberExpression, argumentType)
         };
     }

@@ -10,6 +10,7 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 
         public DbSet<SourceEntity> SourceEntities { get; set; }
         public DbSet<DestinationEntity> DestinationEntities { get; set; }
+        public DbSet<RelatedEntity> RelatedEntities { get; set; }
 
         public DynamicDbContext(DbContextOptions<DynamicDbContext> options, Action<ModelBuilder> setupDbContext = null)
             : base(options)
