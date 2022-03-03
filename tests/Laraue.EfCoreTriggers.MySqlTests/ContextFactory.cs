@@ -7,12 +7,7 @@ using System;
 
 public class ContextFactory : BaseContextFactory<DynamicDbContext>
 {
-#if (NETSTANDARD)
-    public override DynamicDbContext CreateDbContext() => new(new ContextOptionsFactory<DynamicDbContext>().CreateDbContextOptions());
-#else
     public override FinalContext CreateDbContext() => new(new ContextOptionsFactory<DynamicDbContext>().CreateDbContextOptions());
-#endif
-
 }
 
 public class FinalContext : DynamicDbContext

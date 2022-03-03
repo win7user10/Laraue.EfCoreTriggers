@@ -131,7 +131,7 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
 
         var innerKey = outerForeignKey.Properties;
 
-        var keys = outerKey.Zip(innerKey, (first, second)=> new KeyInfo
+        var keys = outerKey.Zip(innerKey, (first, second) => new KeyInfo
         {
             PrincipalKey = first.PropertyInfo,
             ForeignKey = second.PropertyInfo,

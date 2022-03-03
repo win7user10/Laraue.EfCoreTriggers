@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
     <Description>Common classes EfCoreTriggers packages.</Description>
     <RepositoryUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -13,7 +13,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' Or '$(TargetFramework)' == 'netstandard2.1' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.14">
       <PrivateAssets>all</PrivateAssets>

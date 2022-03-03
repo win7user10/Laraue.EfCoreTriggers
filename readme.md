@@ -5,7 +5,7 @@ EfCoreTriggers is the library to write native SQL triggers using EFCore model bu
 [![latest version](https://img.shields.io/nuget/v/Laraue.EfCoreTriggers.Common)](https://www.nuget.org/packages/Laraue.EfCoreTriggers.Common)
 
 ### Installation
-EfCoreTriggers common package is available on Nuget. Version 6.x.x is compatible with .NET6, 5.x.x intended for .NET 5. Install the provider package corresponding to your target database. See the list of providers in the docs for additional databases.
+EfCoreTriggers common package is available on Nuget. Version 6.x.x is compatible with EFCore 6.x.x and targets .NET6, 5.x.x intended for EFCore 5.x.x and targets .NET standard 2.1. Install the provider package corresponding to your target database. See the list of providers in the docs for additional databases.
 
 ### Configuring DB to use triggers
 
