@@ -2,9 +2,9 @@
 
 namespace Laraue.EfCoreTriggers.Common.Services;
 
-public record KeyInfo
+public class KeyInfo
 {
-    public MemberInfo PrincipalKey { get; init; }
+    public MemberInfo PrincipalKey { get; set; }
 
-    public MemberInfo ForeignKey { get; init; }
+    public MemberInfo ForeignKey { get; set; }
 }
