@@ -30,8 +30,8 @@ jobs:
       - name: Set release env
         run: |
           echo "FIRST_CHAR=${GITHUB_REF:10:1}" >> $GITHUB_ENV \
-          && if [ "$first_char" -eq "5" ]; then echo "PACKAGE_TARGET=netstandard2.1"; else echo "PACKAGE_TARGET=net6.0"; fi \
-          && if [ "$first_char" -eq "5" ]; then echo "TEST_TARGET=net5.0"; else echo "TEST_TARGET=net6.0"; fi \
+          && if [ "$first_char" == "5" ]; then echo "PACKAGE_TARGET=netstandard2.1"; else echo "PACKAGE_TARGET=net6.0"; fi \
+          && if [ "$first_char" == "5" ]; then echo "TEST_TARGET=net5.0"; else echo "TEST_TARGET=net6.0"; fi \
           && echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
             
       - name: Build project
