@@ -22,7 +22,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public static double CustomMathRound(double value)
         {
+#if (NETSTANDARD)
+            return StandardMathRound.RoundToNegativeInfinity(value, 4);
+#else
             return Math.Round(value, 4, MidpointRounding.ToNegativeInfinity);
+#endif
         }
 
         public override void MathAbsDecimalSql()

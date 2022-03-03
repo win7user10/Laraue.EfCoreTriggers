@@ -1,13 +1,18 @@
-﻿using Laraue.EfCoreTriggers.Tests;
-using Microsoft.EntityFrameworkCore;
-using System;
-using Laraue.EfCoreTriggers.MySql.Extensions;
+﻿using Laraue.EfCoreTriggers.MySql.Extensions;
+using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using System;
 
 public class ContextFactory : BaseContextFactory<DynamicDbContext>
 {
+#if (NETSTANDARD)
+    public override DynamicDbContext CreateDbContext() => new(new ContextOptionsFactory<DynamicDbContext>().CreateDbContextOptions());
+#else
     public override FinalContext CreateDbContext() => new(new ContextOptionsFactory<DynamicDbContext>().CreateDbContextOptions());
+#endif
+
 }
 
 public class FinalContext : DynamicDbContext
