@@ -26,13 +26,11 @@ jobs:
           && echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Setup .NET5 environment
-        if: env.MAJOR_VERSION == 5
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.x'
           
       - name: Setup .NET6 environment
-        if: env.MAJOR_VERSION == 6
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
