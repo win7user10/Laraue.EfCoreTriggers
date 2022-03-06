@@ -39,11 +39,11 @@ jobs:
           
       - name: Build project
         run: |
-          for p in $(find ./src -name *.csproj); do dotnet build $p --framework=${{env.PROJECT_TARGET}} --configuration Release; done \
-          && for p in $(find ./tests -name *.csproj); do dotnet build $p --framework=${{env.TEST_TARGET}} --configuration Release; done
+          for p in $(find ./src -name *.csproj); do dotnet build $p --framework ${{env.PROJECT_TARGET}} --configuration Release; done \
+          && for p in $(find ./tests -name *.csproj); do dotnet build $p --framework ${{env.TEST_TARGET}} --configuration Release; done
         
       - name: Run unit tests
-        run: dotnet test --framework=${{env.TEST_TARGET}} --filter "Category=UnitTest"
+        run: dotnet test --framework ${{env.TEST_TARGET}} --filter "Category=UnitTest"
 
       - name: Generate a NuGet package
         run: dotnet pack -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o .
