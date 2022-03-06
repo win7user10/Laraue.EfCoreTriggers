@@ -24,13 +24,13 @@ jobs:
 
       - name: Setup .NET5 environment
         uses: actions/setup-dotnet@v1
-        if: ${{env.MAJOR_VERSION}} = 5
+        if: ${{env.MAJOR_VERSION}} == 5
         with:
           dotnet-version: '5.0.x'
           
       - name: Setup .NET6 environment
         uses: actions/setup-dotnet@v1
-        if: ${{env.MAJOR_VERSION}} = 6
+        if: ${{env.MAJOR_VERSION}} == 6
         with:
           dotnet-version: '6.0.x'
             
