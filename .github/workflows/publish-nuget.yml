@@ -21,8 +21,8 @@ jobs:
         run: |
           major_version=${GITHUB_REF:10:1} \
           && echo "MAJOR_VERSION=${major_version}" >> $GITHUB_ENV \
-          && [[ $first_char = 5 ]] && echo "PROJECT_TARGET=netstandard2.1" >> $GITHUB_ENV || echo "PROJECT_TARGET=net6.0" >> $GITHUB_ENV \
-          && [[ $first_char = 5 ]] && echo "TEST_TARGET=net5.0" >> $GITHUB_ENV || echo "TEST_TARGET=net6.0" >> $GITHUB_ENV \
+          && [[ $major_version = 5 ]] && echo "PROJECT_TARGET=netstandard2.1" >> $GITHUB_ENV || echo "PROJECT_TARGET=net6.0" >> $GITHUB_ENV \
+          && [[ $major_version = 5 ]] && echo "TEST_TARGET=net5.0" >> $GITHUB_ENV || echo "TEST_TARGET=net6.0" >> $GITHUB_ENV \
           && echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Setup .NET5 environment
