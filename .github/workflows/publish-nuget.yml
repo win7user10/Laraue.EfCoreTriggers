@@ -37,7 +37,8 @@ jobs:
           dotnet-version: '6.0.x'
           
       - name: Build project
-        run: for p in $(find . -name src/*.csproj); do dotnet build $p --framework=${{env.PROJECT_TARGET}} --configuration Release; done \
+        run: |
+          for p in $(find . -name src/*.csproj); do dotnet build $p --framework=${{env.PROJECT_TARGET}} --configuration Release; done \
           && for p in $(find . -name tests/*.csproj); do dotnet build $p --framework=${{env.TEST_TARGET}} --configuration Release; done
         
       - name: Run unit tests
