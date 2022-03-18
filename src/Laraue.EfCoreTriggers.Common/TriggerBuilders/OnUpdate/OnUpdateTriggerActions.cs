@@ -14,7 +14,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
         /// <returns></returns>
         public OnUpdateTriggerActions<TTriggerEntity> Condition(Expression<Func<TTriggerEntity, TTriggerEntity, bool>> condition)
         {
-            ActionConditions.Add(new OnUpdateTriggerCondition<TTriggerEntity>(condition));
+            AddCondition(new OnUpdateTriggerCondition<TTriggerEntity>(condition));
+            
             return this;
         }
 
@@ -31,6 +32,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
             where TUpdateEntity : class
         {
             Update(new OnUpdateTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
+            
             return this;
         }
 
@@ -49,6 +51,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
             where TUpsertEntity : class
         {
             Upsert(new OnUpdateTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
+            
             return this;
         }
 
@@ -65,6 +68,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
             where TUpsertEntity : class
         {
             Upsert(new OnUpdateTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, null));
+            
             return this;
         }
 
@@ -78,6 +82,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
             where TDeleteEntity : class
         {
             Delete(new OnUpdateTriggerDeleteAction<TTriggerEntity, TDeleteEntity>(deleteFilter));
+            
             return this;
         }
 
@@ -91,6 +96,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
             where TInsertEntity : class
         {
             Insert(new OnUpdateTriggerInsertAction<TTriggerEntity, TInsertEntity>(setValues));
+            
             return this;
         }
         
@@ -104,6 +110,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate
             params Expression<Func<TTriggerEntity, TTriggerEntity, object>>[] argumentSelectors)
         {
             RawSql(new OnUpdateTriggerRawSqlAction<TTriggerEntity>(sql, argumentSelectors));
+            
             return this;
         }
     }

@@ -14,7 +14,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
         /// <returns></returns>
         public OnDeleteTriggerActions<TTriggerEntity> Condition(Expression<Func<TTriggerEntity, bool>> condition)
         {
-            ActionConditions.Add(new OnDeleteTriggerCondition<TTriggerEntity>(condition));
+            AddCondition(new OnDeleteTriggerCondition<TTriggerEntity>(condition));
+            
             return this;
         }
 
@@ -26,11 +27,12 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
         /// <typeparam name="TUpdateEntity"></typeparam>
         /// <returns></returns>
         public OnDeleteTriggerActions<TTriggerEntity> Update<TUpdateEntity>(
-                Expression<Func<TTriggerEntity, TUpdateEntity, bool>> entityFilter,
-                Expression<Func<TTriggerEntity, TUpdateEntity, TUpdateEntity>> setValues)
-            where TUpdateEntity : class
+            Expression<Func<TTriggerEntity, TUpdateEntity, bool>> entityFilter,
+            Expression<Func<TTriggerEntity, TUpdateEntity, TUpdateEntity>> setValues)
+                where TUpdateEntity : class
         {
             Update(new OnDeleteTriggerUpdateAction<TTriggerEntity, TUpdateEntity>(entityFilter, setValues));
+            
             return this;
         }
 
@@ -49,6 +51,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
             where TUpsertEntity : class
         {
             Upsert(new OnDeleteTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, onMatchExpression));
+            
             return this;
         }
 
@@ -65,6 +68,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
             where TUpsertEntity : class
         {
             Upsert(new OnDeleteTriggerUpsertAction<TTriggerEntity, TUpsertEntity>(matchExpression, insertExpression, null));
+            
             return this;
         }
 
@@ -78,6 +82,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
             where TDeleteEntity : class
         {
             Delete(new OnDeleteTriggerDeleteAction<TTriggerEntity, TDeleteEntity>(deleteExpression));
+            
             return this;
         }
 
@@ -91,6 +96,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
             where TInsertEntity : class
         {
             Insert(new OnDeleteTriggerInsertAction<TTriggerEntity, TInsertEntity>(setValues));
+            
             return this;
         }
         
@@ -103,6 +109,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete
         public OnDeleteTriggerActions<TTriggerEntity> ExecuteRawSql(string sql, params Expression<Func<TTriggerEntity, object>>[] argumentSelectors)
         {
             RawSql(new OnDeleteTriggerRawSqlAction<TTriggerEntity>(sql, argumentSelectors));
+            
             return this;
         }
     }
