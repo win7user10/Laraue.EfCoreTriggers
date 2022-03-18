@@ -75,6 +75,11 @@ public class SqlGenerator : ISqlGenerator
         return $"{Quote}{source}{Quote}";
     }
 
+    public string GetSql(char source)
+    {
+        return $"{Quote}{source}{Quote}";
+    }
+
     public string GetSql(Enum source)
     {
         return source.ToString("D");

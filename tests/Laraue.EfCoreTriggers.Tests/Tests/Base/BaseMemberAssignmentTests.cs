@@ -75,5 +75,21 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
 
         [Fact]
         public abstract void NewGuid();
+        
+        protected Expression<Func<SourceEntity, DestinationEntity>> SetCharVariableExpression = sourceEntity => new DestinationEntity
+        {
+            CharValue = sourceEntity.CharValue
+        };
+        
+        [Fact]
+        public abstract void CharVariableSql();
+        
+        protected Expression<Func<SourceEntity, DestinationEntity>> SetCharValueExpression = sourceEntity => new DestinationEntity
+        {
+            CharValue = 'a'
+        };
+        
+        [Fact]
+        public abstract void CharValueSql();
     }
 }

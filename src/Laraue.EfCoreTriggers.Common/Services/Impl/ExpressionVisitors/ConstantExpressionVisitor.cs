@@ -23,6 +23,8 @@ public class ConstantExpressionVisitor : BaseExpressionVisitor<ConstantExpressio
         {
             case string strValue:
                 return SqlBuilder.FromString(_generator.GetSql(strValue));
+            case char charValue:
+                return SqlBuilder.FromString(_generator.GetSql(charValue));
             case Enum enumValue:
                 return SqlBuilder.FromString(_generator.GetSql(enumValue));
             case bool boolValue:

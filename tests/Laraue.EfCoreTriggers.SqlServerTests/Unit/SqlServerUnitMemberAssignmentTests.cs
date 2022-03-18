@@ -28,7 +28,8 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Unit
 
         public override string ExceptedNewGuidSql => "INSERT INTO destination_entities (\"guid_value\") SELECT NEWID();";
 
-       
-        
+        public override string ExceptedCharVariableSql => "INSERT INTO destination_entities (\"char_value\") SELECT @NewCharValue;";
+
+        public override string ExceptedCharValueSql => "INSERT INTO destination_entities (\"char_value\") SELECT 'a';";
     }
 }

@@ -15,5 +15,7 @@ namespace Laraue.EfCoreTriggers.Tests.Entities
         public Guid GuidValue { get; set; }
 
         public bool BooleanValue { get; set; }
+
+        public char CharValue { get; set; }
     }
 }
