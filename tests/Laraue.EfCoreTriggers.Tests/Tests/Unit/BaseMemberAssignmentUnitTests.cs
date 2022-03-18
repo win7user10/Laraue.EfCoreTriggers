@@ -25,6 +25,10 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         public abstract string ExceptedBooleanSql { get; }
 
         public abstract string ExceptedNewGuidSql { get; }
+        
+        public abstract string ExceptedCharVariableSql { get; }
+        
+        public abstract string ExceptedCharValueSql { get; }
 
         public override void EnumValueSql()
         {
@@ -54,6 +58,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         public override void NewGuid()
         {
             Factory.AssertGeneratedInsertSql(ExceptedNewGuidSql, SetNewGuidValueExpression);
+        }
+        
+        public override void CharVariableSql()
+        {
+            Factory.AssertGeneratedInsertSql(ExceptedCharVariableSql, SetCharVariableExpression);
+        }
+
+        public override void CharValueSql()
+        {
+            Factory.AssertGeneratedInsertSql(ExceptedCharValueSql, SetCharValueExpression);
         }
     }
 }

@@ -54,6 +54,13 @@ public interface ISqlGenerator
     string GetSql(string source);
     
     /// <summary>
+    /// Get SQL for char, e.g. 'a'.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    string GetSql(char source);
+    
+    /// <summary>
     /// Get SQL for enum, e.g. 5.
     /// </summary>
     /// <param name="source"></param>

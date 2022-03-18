@@ -78,5 +78,22 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
             });
             Assert.NotEqual(default, insertedEntity.GuidValue);
         }
+
+        public override void CharVariableSql()
+        {
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(SetCharVariableExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
+            {
+                CharValue = 'a'
+            });
+            
+            Assert.Equal('a', insertedEntity.CharValue);
+        }
+
+        public override void CharValueSql()
+        {
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(SetCharValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity());
+            
+            Assert.Equal('a', insertedEntity.CharValue);
+        }
     }
 }
