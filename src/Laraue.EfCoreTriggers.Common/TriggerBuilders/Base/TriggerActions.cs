@@ -1,15 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
     public abstract class TriggerActions
     {
-        public readonly List<ITriggerAction> ActionConditions = new ();
+        internal IEnumerable<ITriggerAction> ActionConditions => _actionConditions;
 
-        public readonly List<ITriggerAction> ActionExpressions = new ();
+        internal IEnumerable<ITriggerAction> ActionExpressions => _actionExpressions;
+
+        private readonly List<TriggerCondition> _actionConditions = new();
+        
+        private readonly List<ITriggerAction> _actionExpressions = new();
 
         private void AddAction(ITriggerAction triggerAction)
-            => ActionExpressions.Add(triggerAction);
+            => _actionExpressions.Add(triggerAction);
+
+        internal void AddCondition(TriggerCondition triggerCondition)
+        {
+            // Throw on expressions like "_ => true"
+            if (triggerCondition.Condition.Body is ConstantExpression)
+            {
+                throw new InvalidOperationException("Condition with constant expression makes no sense");
+            }
+            
+            _actionConditions.Add(triggerCondition);
+        }
 
         protected void Update(TriggerUpdateAction updateAction) => AddAction(updateAction);
 

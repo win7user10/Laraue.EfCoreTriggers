@@ -7,7 +7,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         /// <summary>
         /// Expression to delete, e.g. Users.Where(x => x.Id == 2)
         /// </summary>
-        internal LambdaExpression Condition;
+        internal readonly LambdaExpression Condition;
         
         protected TriggerCondition(LambdaExpression condition)
         {

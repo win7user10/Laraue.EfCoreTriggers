@@ -1,6 +1,10 @@
-﻿using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
+﻿using System;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
@@ -39,6 +43,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             var action = new OnInsertTriggerCondition<User>(user => (decimal)user.Role > 50m);
             var sql = _provider.Visit(action, new VisitedMembers());
             Assert.Equal("CAST(NEW.Role AS DECIMAL) > 50", sql);
+        }
+        
+        [Fact]
+        public virtual void OnlyNotConstantConditionsShouldBeAddedToTrigger()
+        {
+            Assert.Throws<InvalidOperationException>(() => 
+                new OnUpdateTrigger<User>(TriggerTime.After)
+                    .Action(actions => actions
+                        .Condition((_, _) => true)
+                        .Insert((_, _) => new User { Role = UserRole.Usual })));
         }
     }
 }

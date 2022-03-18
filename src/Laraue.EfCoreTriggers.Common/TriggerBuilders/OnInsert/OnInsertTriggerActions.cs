@@ -14,7 +14,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert
         /// <returns></returns>
         public OnInsertTriggerActions<TTriggerEntity> Condition(Expression<Func<TTriggerEntity, bool>> condition)
         {
-            ActionConditions.Add(new OnInsertTriggerCondition<TTriggerEntity>(condition));
+            AddCondition(new OnInsertTriggerCondition<TTriggerEntity>(condition));
+            
             return this;
         }
 
