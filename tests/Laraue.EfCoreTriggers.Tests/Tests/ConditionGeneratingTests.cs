@@ -26,6 +26,9 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             modelBuilder.Entity<User>()
                 .Property<UserRole>("Role");
 
+            modelBuilder.Entity<TestEntity>()
+                .Property<char>("CharValue");
+
             _provider = Helper.GetTriggerActionFactory(modelBuilder.Model.FinalizeModel(), collection => collection.AddMySqlServices());
         }
 
@@ -43,6 +46,14 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             var action = new OnInsertTriggerCondition<User>(user => (decimal)user.Role > 50m);
             var sql = _provider.Visit(action, new VisitedMembers());
             Assert.Equal("CAST(NEW.Role AS DECIMAL) > 50", sql);
+        }
+        
+        [Fact]
+        public virtual void ComparisonWithCharTypeShouldProduceCorrectSql()
+        {
+            var action = new OnInsertTriggerCondition<TestEntity>(entity => entity.CharValue == 'D');
+            var sql = _provider.Visit(action, new VisitedMembers());
+            Assert.Equal("NEW.CharValue = 'D'", sql);
         }
         
         [Fact]
