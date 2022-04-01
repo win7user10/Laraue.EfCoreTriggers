@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
@@ -24,6 +25,23 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
         ArgumentTypes argumentTypes,
         VisitedMembers visitedMembers)
     {
+        // Convert(charValue, Int32) == 122 -> charValue == 'z'
+        if (expression.Left is UnaryExpression
+            {
+                NodeType: ExpressionType.Convert, 
+                Operand: MemberExpression memberExpression
+            } 
+            && memberExpression.Type == typeof(char) 
+            && expression.Right is ConstantExpression constantExpression)
+        {
+            var memberSql = _factory.Visit(memberExpression, argumentTypes, visitedMembers);
+            var constantSql = _factory.Visit(Expression.Constant(Convert.ToChar(constantExpression.Value)), argumentTypes, visitedMembers);
+
+            return memberSql
+                .Append(" = ")
+                .Append(constantSql);
+        }
+        
         if (expression.Method?.Name == nameof(string.Concat))
         {
             return _factory.Visit(
