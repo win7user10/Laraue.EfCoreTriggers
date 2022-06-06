@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -45,14 +46,8 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     {
         if (!ColumnNamesCache.ContainsKey(memberInfo))
         {
-            var entityType = Model.FindEntityType(type);
-            
-            if (entityType == null)
-            {
-                throw new InvalidOperationException($"DbSet<{type}> should be added to the DbContext");
-            }
-            
-            var property = entityType.FindProperty(memberInfo.Name);
+            var entityType = GetEntityType(type);
+            var property = GetColumn(type, memberInfo);
             var identifier = (StoreObjectIdentifier)StoreObjectIdentifier.Create(entityType, StoreObjectType.Table);
             ColumnNamesCache.Add(memberInfo, property.GetColumnName(identifier));
         }
@@ -63,6 +58,23 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
         }
 
         return columnName;
+    }
+
+    private IProperty GetColumn(Type type, MemberInfo memberInfo)
+    {
+        return GetEntityType(type).FindProperty(memberInfo.Name);
+    }
+    
+    private IEntityType GetEntityType(Type type)
+    {
+        var entityType = Model.FindEntityType(type);
+            
+        if (entityType == null)
+        {
+            throw new InvalidOperationException($"DbSet<{type}> should be added to the DbContext");
+        }
+
+        return entityType;
     }
 
     /// <inheritdoc />
@@ -138,5 +150,14 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
         }).ToArray();
 
         return keys;
+    }
+
+    public bool TryGetActualClrType(Type type, MemberInfo memberInfo, out Type clrType)
+    {
+        var columnType = GetColumn(type, memberInfo);
+
+        clrType = columnType.FindAnnotation("ProviderClrType")?.Value as Type;
+
+        return clrType is not null;
     }
 }

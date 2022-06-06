@@ -30,5 +30,21 @@ public interface IDbSchemaRetriever
     /// <returns></returns>
     PropertyInfo[] GetPrimaryKeyMembers(Type type);
 
+    /// <summary>
+    /// Get info about cases participating in relations between two types.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="type2"></param>
+    /// <returns></returns>
     KeyInfo[] GetForeignKeyMembers(Type type, Type type2);
+
+    /// <summary>
+    /// Some type can be overriden, for example Enum can be store as string in the DB.
+    /// In these cases clr type will be returned from this function.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="memberInfo"></param>
+    /// <param name="clrType"></param>
+    /// <returns></returns>
+    bool TryGetActualClrType(Type type, MemberInfo memberInfo, out Type clrType);
 }

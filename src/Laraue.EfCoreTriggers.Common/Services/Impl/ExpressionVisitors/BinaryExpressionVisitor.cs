@@ -11,12 +11,14 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
 {
     private readonly IExpressionVisitorFactory _factory;
     private readonly ISqlGenerator _generator;
+    private readonly IDbSchemaRetriever _schemaRetriever;
     
     /// <inheritdoc />
-    public BinaryExpressionVisitor(IExpressionVisitorFactory factory, ISqlGenerator generator)
+    public BinaryExpressionVisitor(IExpressionVisitorFactory factory, ISqlGenerator generator, IDbSchemaRetriever schemaRetriever)
     {
         _factory = factory;
         _generator = generator;
+        _schemaRetriever = schemaRetriever;
     }
 
     /// <inheritdoc />
@@ -25,21 +27,38 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
         ArgumentTypes argumentTypes,
         VisitedMembers visitedMembers)
     {
-        // Convert(charValue, Int32) == 122 -> charValue == 'z'
         if (expression.Left is UnaryExpression
             {
                 NodeType: ExpressionType.Convert, 
                 Operand: MemberExpression memberExpression
-            } 
-            && memberExpression.Type == typeof(char) 
+            }
             && expression.Right is ConstantExpression constantExpression)
         {
-            var memberSql = _factory.Visit(memberExpression, argumentTypes, visitedMembers);
-            var constantSql = _factory.Visit(Expression.Constant(Convert.ToChar(constantExpression.Value)), argumentTypes, visitedMembers);
+            // Convert(enumValue, Int32) == 1 when enum is stores as string -> enumValue == Enum.Value
+            if (memberExpression.Type.IsEnum && _schemaRetriever.TryGetActualClrType(
+                    memberExpression.Member.DeclaringType, memberExpression.Member, out var clrType)
+                    && clrType == typeof(string))
+            {
+                var valueName = Enum.GetValues(memberExpression.Type)
+                    .Cast<object>()
+                    .First(x => (int)x == (int)constantExpression.Value)
+                    .ToString();
+                
+                var sb = _factory.Visit(memberExpression, argumentTypes, visitedMembers);
+                sb.Append($" = {_generator.GetSql(valueName)}");
+                return sb;
+            }
+            
+            // Convert(charValue, Int32) == 122 -> charValue == 'z'
+            if (memberExpression.Type == typeof(char))
+            {
+                var memberSql = _factory.Visit(memberExpression, argumentTypes, visitedMembers);
+                var constantSql = _factory.Visit(Expression.Constant(Convert.ToChar(constantExpression.Value)), argumentTypes, visitedMembers);
 
-            return memberSql
-                .Append(" = ")
-                .Append(constantSql);
+                return memberSql
+                    .Append(" = ")
+                    .Append(constantSql);
+            }
         }
         
         if (expression.Method?.Name == nameof(string.Concat))
