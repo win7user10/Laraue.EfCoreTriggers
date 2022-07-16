@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Microsoft.EntityFrameworkCore;
@@ -87,6 +88,45 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
             });
             
             Assert.Equal('a', insertedEntity.CharValue);
+        }
+        
+        [Fact]
+        public void NumberEnumSql()
+        {
+            Expression<Func<SourceEntity, DestinationEntity>> setEnumVariableExpression = sourceEntity => new DestinationEntity
+            {
+                EnumValue = EnumValue.Value2,
+            };
+
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(setEnumVariableExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
+            {
+                CharValue = 'a'
+            });
+            
+            Assert.Equal(EnumValue.Value2, insertedEntity.EnumValue);
+        }
+        
+        [Fact]
+        public void StringEnumSql()
+        {
+            Expression<Func<SourceEntity, DestinationEntity>> setEnumVariableExpression = sourceEntity => new DestinationEntity
+            {
+                EnumValue = EnumValue.Value2,
+            };
+
+            Action<ModelBuilder> setupModelBuilder = builder => builder.Entity<DestinationEntity>()
+                .Property(x => x.EnumValue)
+                .HasColumnType("varchar(100)")
+                .HasConversion<string>();
+            
+            setupModelBuilder += SetupModelBuilder;
+
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(setEnumVariableExpression, SetupDbContext, setupModelBuilder, new SourceEntity
+            {
+                CharValue = 'a'
+            });
+            
+            Assert.Equal(EnumValue.Value2, insertedEntity.EnumValue);
         }
 
         public override void CharValueSql()

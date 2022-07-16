@@ -27,13 +27,22 @@ public class ExpressionVisitorFactory : IExpressionVisitorFactory
         {
             BinaryExpression binary => Visit(binary, argumentTypes, visitedMembers),
             ConstantExpression constant => Visit(constant, argumentTypes, visitedMembers),
-            MemberExpression member => Visit(member, argumentTypes, visitedMembers),
+            MemberExpression member => VisitAndRememberMember(member, argumentTypes, visitedMembers),
             MethodCallExpression methodCall => Visit(methodCall, argumentTypes, visitedMembers),
             UnaryExpression unary => Visit(unary, argumentTypes, visitedMembers),
             NewExpression @new => Visit(@new, argumentTypes, visitedMembers),
             LambdaExpression lambda => Visit(lambda, argumentTypes, visitedMembers),
             _ => throw new NotSupportedException($"Expression of type {expression.GetType()} is not supported")
         };
+    }
+    
+    private SqlBuilder VisitAndRememberMember(MemberExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    {
+        var info = _provider.GetRequiredService<VisitingInfo>();
+
+        return info.ExecuteWithChangingMember(
+            expression.Member,
+            () => Visit(expression, argumentTypes, visitedMembers));
     }
 
     private SqlBuilder Visit<TExpression>(TExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
