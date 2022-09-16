@@ -48,7 +48,7 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine("END;")
             .AppendNewLine($"${trigger.Name}$ LANGUAGE plpgsql;")
             .AppendNewLine($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()}")
-            .AppendNewLine($"ON \"{_adapter.GetTableName(trigger.TriggerEntityType)}\"")
+            .AppendNewLine($"ON {_adapter.GetTableName(trigger.TriggerEntityType)}")
             .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
         
         return sql;
