@@ -15,6 +15,10 @@ public abstract class NewExpressionVisitor : BaseExpressionVisitor<NewExpression
         {
             return GetNewGuidSql();
         }
+        if (expression.Type == typeof(DateTimeOffset))
+        {
+            return GetNewDateTimeOffsetSql();
+        }
         
         throw new System.NotImplementedException();
     }
@@ -24,4 +28,10 @@ public abstract class NewExpressionVisitor : BaseExpressionVisitor<NewExpression
     /// </summary>
     /// <returns></returns>
     protected abstract SqlBuilder GetNewGuidSql();
+    
+    /// <summary>
+    /// Generate new DateTimeOffset SQL.
+    /// </summary>
+    /// <returns></returns>
+    protected abstract SqlBuilder GetNewDateTimeOffsetSql();
 }

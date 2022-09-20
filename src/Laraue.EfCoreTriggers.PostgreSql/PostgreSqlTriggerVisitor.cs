@@ -23,7 +23,7 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
             .Select(action => _factory.Visit(action, new VisitedMembers()))
             .ToArray();
 
-        var sql = SqlBuilder.FromString($"CREATE FUNCTION {trigger.Name}() RETURNS trigger as ${trigger.Name}$")
+        var sql = SqlBuilder.FromString($"CREATE FUNCTION {_adapter.GetFunctionName(trigger.TriggerEntityType, trigger.Name)}() RETURNS trigger as ${trigger.Name}$")
             .AppendNewLine("BEGIN")
             .WithIdent(triggerSql =>
             {
@@ -49,7 +49,7 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine($"${trigger.Name}$ LANGUAGE plpgsql;")
             .AppendNewLine($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()}")
             .AppendNewLine($"ON {_adapter.GetTableName(trigger.TriggerEntityType)}")
-            .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
+            .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {_adapter.GetFunctionName(trigger.TriggerEntityType, trigger.Name)}();");
         
         return sql;
     }
