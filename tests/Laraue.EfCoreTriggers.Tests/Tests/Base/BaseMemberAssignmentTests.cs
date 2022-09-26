@@ -91,5 +91,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         
         [Fact]
         public abstract void CharValueSql();
+        
+        /// <summary>
+        /// DateTimeOffsetValue = CURRENT_DATE()
+        /// </summary>
+        protected Expression<Func<SourceEntity, DestinationEntity>> SetNewDateOffsetValueExpression = sourceEntity => new DestinationEntity
+        {
+            DateTimeOffsetValue = new DateTimeOffset(),
+        };
+        
+        [Fact]
+        public abstract void DateTimeOffsetValueSql();
     }
 }

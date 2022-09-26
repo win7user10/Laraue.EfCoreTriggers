@@ -26,10 +26,12 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
 
         public override string ExceptedBooleanSql => "INSERT INTO destination_entities (\"boolean_value\") SELECT NEW.boolean_value is false;";
 
-        public override string ExceptedNewGuidSql => "INSERT INTO destination_entities (\"guid_value\") SELECT uuid_generate_v4();";
+        public override string ExceptedNewGuidSql => "INSERT INTO destination_entities (\"guid_value\") SELECT gen_random_uuid();";
         
         public override string ExceptedCharVariableSql => "INSERT INTO destination_entities (\"char_value\") SELECT NEW.char_value;";
         
         public override string ExceptedCharValueSql => "INSERT INTO destination_entities (\"char_value\") SELECT 'a';";
+       
+        public override string ExceptedNewDateTimeOffsetSql => "INSERT INTO destination_entities (\"date_time_offset_value\") SELECT CURRENT_DATE;";
     }
 }

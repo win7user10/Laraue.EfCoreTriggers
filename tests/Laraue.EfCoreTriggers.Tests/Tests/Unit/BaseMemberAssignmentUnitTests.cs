@@ -29,6 +29,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         public abstract string ExceptedCharVariableSql { get; }
         
         public abstract string ExceptedCharValueSql { get; }
+        
+        public abstract string ExceptedNewDateTimeOffsetSql { get; }
 
         public override void EnumValueSql()
         {
@@ -68,6 +70,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         public override void CharValueSql()
         {
             Factory.AssertGeneratedInsertSql(ExceptedCharValueSql, SetCharValueExpression);
+        }
+
+        public override void DateTimeOffsetValueSql()
+        {
+            Factory.AssertGeneratedInsertSql(ExceptedNewDateTimeOffsetSql, SetNewDateOffsetValueExpression);
         }
     }
 }
