@@ -9,4 +9,10 @@ public class MySqlNewExpressionVisitor : NewExpressionVisitor
     {
         return SqlBuilder.FromString("UUID()");
     }
+
+    /// <inheritdoc />
+    protected override SqlBuilder GetNewDateTimeOffsetSql()
+    {
+        return SqlBuilder.FromString("CURRENT_DATE()");
+    }
 }

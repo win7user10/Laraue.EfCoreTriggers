@@ -7,6 +7,12 @@ public class PostreSqlNewExpressionVisitor : NewExpressionVisitor
 {
     protected override SqlBuilder GetNewGuidSql()
     {
-        return SqlBuilder.FromString("uuid_generate_v4()");
+        return SqlBuilder.FromString("gen_random_uuid()");
+    }
+
+    /// <inheritdoc />
+    protected override SqlBuilder GetNewDateTimeOffsetSql()
+    {
+        return SqlBuilder.FromString("CURRENT_DATE");
     }
 }

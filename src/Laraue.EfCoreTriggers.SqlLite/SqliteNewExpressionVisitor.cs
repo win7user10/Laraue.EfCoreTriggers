@@ -12,4 +12,10 @@ public class SqliteNewExpressionVisitor : NewExpressionVisitor
             "substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab', abs(random()) % 4 + 1, 1) || " +
             "substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6)))");
     }
+
+    /// <inheritdoc />
+    protected override SqlBuilder GetNewDateTimeOffsetSql()
+    {
+        return SqlBuilder.FromString("DATE(‘now’)");
+    }
 }

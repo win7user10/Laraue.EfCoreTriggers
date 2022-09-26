@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl;
 
@@ -86,6 +85,22 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
             : $"{schemaName}.{tableName}";
     }
     
+    /// <inheritdoc />
+    public string GetFunctionName(Type entity, string name)
+    {
+        if (!TableNamesCache.ContainsKey(entity))
+        {
+            var entityType = Model.FindEntityType(entity);
+            TableNamesCache.Add(entity, entityType.GetTableName());
+        }
+
+        var schemaName = GetTableSchemaName(entity);
+
+        return string.IsNullOrWhiteSpace(schemaName)
+            ? name
+            : $"{schemaName}.{name}";
+    }
+
     /// <summary>
     /// Get schema name for passed <see cref="Type">ClrType</see>.
     /// </summary>
