@@ -95,5 +95,12 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
             
             Assert.Equal('a', insertedEntity.CharValue);
         }
+
+        public override void DateTimeOffsetValueSql()
+        {
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(SetNewDateOffsetValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity());
+            
+            Assert.Equal(DateTimeOffset.UtcNow.Date, insertedEntity.DateTimeOffsetValue.GetValueOrDefault().Date, TimeSpan.FromDays(1));
+        }
     }
 }

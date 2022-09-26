@@ -1,10 +1,19 @@
-﻿using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
+﻿using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.Services.Impl;
+using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 
 namespace Laraue.EfCoreTriggers.SqlLite;
 
 public class SqliteNewExpressionVisitor : NewExpressionVisitor
 {
+    private readonly ISqlGenerator _sqlGenerator;
+
+    public SqliteNewExpressionVisitor(ISqlGenerator sqlGenerator)
+    {
+        _sqlGenerator = sqlGenerator;
+    }
+    
     protected override SqlBuilder GetNewGuidSql()
     {
         return SqlBuilder.FromString(
@@ -16,6 +25,8 @@ public class SqliteNewExpressionVisitor : NewExpressionVisitor
     /// <inheritdoc />
     protected override SqlBuilder GetNewDateTimeOffsetSql()
     {
-        return SqlBuilder.FromString("DATE(‘now’)");
+        var delimiter = _sqlGenerator.GetDelimiter();
+        
+        return SqlBuilder.FromString($"DATE({delimiter}now{delimiter})");
     }
 }
