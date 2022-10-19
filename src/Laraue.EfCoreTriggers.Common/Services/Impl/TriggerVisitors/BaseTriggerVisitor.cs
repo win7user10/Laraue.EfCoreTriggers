@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 
@@ -50,5 +51,5 @@ public abstract class BaseTriggerVisitor : ITriggerVisitor
     public abstract string GenerateCreateTriggerSql(ITrigger trigger);
 
     /// <inheritdoc />
-    public abstract string GenerateDeleteTriggerSql(string triggerName);
+    public abstract string GenerateDeleteTriggerSql(string triggerName, IEntityType entityType);
 }

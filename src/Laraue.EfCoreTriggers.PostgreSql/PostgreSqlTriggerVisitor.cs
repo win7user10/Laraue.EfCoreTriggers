@@ -3,6 +3,8 @@ using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.PostgreSql;
 
@@ -54,8 +56,12 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
         return sql;
     }
 
-    public override string GenerateDeleteTriggerSql(string triggerName)
+    public override string GenerateDeleteTriggerSql(string triggerName, IEntityType entityType)
     {
-        return SqlBuilder.FromString($"DROP FUNCTION {triggerName}() CASCADE;");
+        var schemaName = entityType.GetSchema();
+        var name = string.IsNullOrWhiteSpace(schemaName)
+            ? triggerName
+            : $"{schemaName}.{triggerName}";
+        return SqlBuilder.FromString($"DROP FUNCTION {name}() CASCADE;");
     }
 }
