@@ -3,6 +3,7 @@ using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
@@ -55,7 +56,7 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
         return sql;
     }
 
-    public override string GenerateDeleteTriggerSql(string triggerName)
+    public override string GenerateDeleteTriggerSql(string triggerName, IEntityType entityType)
     {
         return SqlBuilder.FromString($"DROP TRIGGER {triggerName};");
     }

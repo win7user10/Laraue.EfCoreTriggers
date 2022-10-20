@@ -60,7 +60,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
 
                 foreach (var annotation in deletedEntityType.GetTriggerAnnotations())
                 {
-                    _triggerVisitor.AddDeleteTriggerSqlMigration(deleteTriggerOperations, annotation, sourceModel);
+                    _triggerVisitor.AddDeleteTriggerSqlMigration(deleteTriggerOperations, annotation, deletedEntityType);
                 }
             }
 
@@ -106,7 +106,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
                         continue;
                     }
                     
-                    _triggerVisitor.AddDeleteTriggerSqlMigration(deleteTriggerOperations, oldValue, sourceModel);
+                    _triggerVisitor.AddDeleteTriggerSqlMigration(deleteTriggerOperations, oldValue, sourceModel?.FindEntityType(entityTypeName));
                     createTriggerOperations.AddCreateTriggerSqlMigration(newValue);
                 }
 
@@ -115,7 +115,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
                 {
                     var oldTriggerAnnotation = oldEntityType?.GetAnnotation(oldTriggerName);
 
-                    _triggerVisitor.AddDeleteTriggerSqlMigration(deleteTriggerOperations, oldTriggerAnnotation, sourceModel);
+                    _triggerVisitor.AddDeleteTriggerSqlMigration(deleteTriggerOperations, oldTriggerAnnotation, oldEntityType);
                 }
 
                 // If trigger was added, create it.
@@ -247,13 +247,13 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         /// <param name="triggerVisitor"></param>
         /// <param name="list"></param>
         /// <param name="annotation"></param>
-        /// <param name="model"></param>
+        /// <param name="entityType"></param>
         /// <returns></returns>
-        public static IList<SqlOperation> AddDeleteTriggerSqlMigration(this ITriggerVisitor triggerVisitor, IList<SqlOperation> list, IAnnotation annotation, IModel model)
+        public static IList<SqlOperation> AddDeleteTriggerSqlMigration(this ITriggerVisitor triggerVisitor, IList<SqlOperation> list, IAnnotation annotation, IEntityType entityType)
         {
             list.Add(new SqlOperation
             {
-                Sql = triggerVisitor.GenerateDeleteTriggerSql(annotation.Name),
+                Sql = triggerVisitor.GenerateDeleteTriggerSql(annotation.Name, entityType),
             });
             
             return list;
