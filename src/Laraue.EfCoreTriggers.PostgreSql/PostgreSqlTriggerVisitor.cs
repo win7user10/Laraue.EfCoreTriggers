@@ -3,6 +3,8 @@ using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.PostgreSql;
 
@@ -23,7 +25,7 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
             .Select(action => _factory.Visit(action, new VisitedMembers()))
             .ToArray();
 
-        var sql = SqlBuilder.FromString($"CREATE FUNCTION {trigger.Name}() RETURNS trigger as ${trigger.Name}$")
+        var sql = SqlBuilder.FromString($"CREATE FUNCTION {_adapter.GetFunctionName(trigger.TriggerEntityType, trigger.Name)}() RETURNS trigger as ${trigger.Name}$")
             .AppendNewLine("BEGIN")
             .WithIdent(triggerSql =>
             {
@@ -48,14 +50,18 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine("END;")
             .AppendNewLine($"${trigger.Name}$ LANGUAGE plpgsql;")
             .AppendNewLine($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()}")
-            .AppendNewLine($"ON \"{_adapter.GetTableName(trigger.TriggerEntityType)}\"")
-            .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {trigger.Name}();");
+            .AppendNewLine($"ON {_adapter.GetTableName(trigger.TriggerEntityType)}")
+            .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {_adapter.GetFunctionName(trigger.TriggerEntityType, trigger.Name)}();");
         
         return sql;
     }
 
-    public override string GenerateDeleteTriggerSql(string triggerName)
+    public override string GenerateDeleteTriggerSql(string triggerName, IEntityType entityType)
     {
-        return SqlBuilder.FromString($"DROP FUNCTION {triggerName}() CASCADE;");
+        var schemaName = entityType.GetSchema();
+        var name = string.IsNullOrWhiteSpace(schemaName)
+            ? triggerName
+            : $"{schemaName}.{triggerName}";
+        return SqlBuilder.FromString($"DROP FUNCTION {name}() CASCADE;");
     }
 }

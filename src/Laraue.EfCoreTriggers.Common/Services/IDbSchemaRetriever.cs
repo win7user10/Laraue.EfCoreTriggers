@@ -24,6 +24,14 @@ public interface IDbSchemaRetriever
     string GetTableName(Type entity);
 
     /// <summary>
+    /// Get the function name with the entities schema.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    string GetFunctionName(Type entity, string name);
+
+    /// <summary>
     /// Get all members which are used in primary key.
     /// </summary>
     /// <param name="type"></param>

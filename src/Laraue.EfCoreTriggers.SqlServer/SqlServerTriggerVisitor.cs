@@ -7,6 +7,7 @@ using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
@@ -208,7 +209,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         return $"DECLARE {cursorName} CURSOR FOR";
     }
 
-    public override string GenerateDeleteTriggerSql(string triggerName)
+    public override string GenerateDeleteTriggerSql(string triggerName, IEntityType entityType)
     {
         return $"DROP TRIGGER {triggerName};";
     }

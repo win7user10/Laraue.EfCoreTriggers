@@ -3,6 +3,7 @@ using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.SqlLite;
 
@@ -61,7 +62,7 @@ public class SqliteTriggerVisitor : BaseTriggerVisitor
         return sql;
     }
 
-    public override string GenerateDeleteTriggerSql(string triggerName)
+    public override string GenerateDeleteTriggerSql(string triggerName, IEntityType entityType)
     {
         return SqlBuilder.FromString("PRAGMA writable_schema = 1; ")
             .AppendNewLine($"DELETE FROM sqlite_master WHERE type = 'trigger' AND name like '{triggerName}%';")

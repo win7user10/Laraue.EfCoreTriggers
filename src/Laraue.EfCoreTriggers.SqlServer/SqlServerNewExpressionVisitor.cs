@@ -9,4 +9,10 @@ public class SqlServerNewExpressionVisitor : NewExpressionVisitor
     {
         return SqlBuilder.FromString("NEWID()");
     }
+
+    /// <inheritdoc />
+    protected override SqlBuilder GetNewDateTimeOffsetSql()
+    {
+        return SqlBuilder.FromString("GETDATE()");
+    }
 }
