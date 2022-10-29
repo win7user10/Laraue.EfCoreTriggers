@@ -21,20 +21,20 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.14">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.17">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.14">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.17">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.7">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.7">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.10">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
