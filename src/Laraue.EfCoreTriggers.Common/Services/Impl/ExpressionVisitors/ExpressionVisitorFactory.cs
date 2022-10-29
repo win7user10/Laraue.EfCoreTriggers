@@ -10,14 +10,17 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 public class ExpressionVisitorFactory : IExpressionVisitorFactory
 {
     private readonly IServiceProvider _provider;
+    private readonly VisitingInfo _visitingInfo;
 
     /// <summary>
     /// Initializes a new instance of <see cref="ExpressionVisitorFactory"/>.
     /// </summary>
     /// <param name="provider"></param>
-    public ExpressionVisitorFactory(IServiceProvider provider)
+    /// <param name="visitingInfo"></param>
+    public ExpressionVisitorFactory(IServiceProvider provider, VisitingInfo visitingInfo)
     {
         _provider = provider;
+        _visitingInfo = visitingInfo;
     }
     
     /// <inheritdoc />
@@ -38,9 +41,7 @@ public class ExpressionVisitorFactory : IExpressionVisitorFactory
     
     private SqlBuilder VisitAndRememberMember(MemberExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
     {
-        var info = _provider.GetRequiredService<VisitingInfo>();
-
-        return info.ExecuteWithChangingMember(
+        return _visitingInfo.ExecuteWithChangingMember(
             expression.Member,
             () => Visit(expression, argumentTypes, visitedMembers));
     }
