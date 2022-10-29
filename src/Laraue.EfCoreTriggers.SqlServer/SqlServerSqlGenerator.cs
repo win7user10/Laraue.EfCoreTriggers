@@ -3,16 +3,19 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl;
+using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
 public class SqlServerSqlGenerator : SqlGenerator
 {
-    public SqlServerSqlGenerator(IDbSchemaRetriever adapter, SqlTypeMappings sqlTypeMappings) 
-        : base(adapter, sqlTypeMappings)
+    public SqlServerSqlGenerator(
+        IDbSchemaRetriever adapter,
+        SqlTypeMappings sqlTypeMappings,
+        VisitingInfo visitingInfo) 
+        : base(adapter, sqlTypeMappings, visitingInfo)
     {
-        
     }
 
     public override string NewEntityPrefix => "Inserted";

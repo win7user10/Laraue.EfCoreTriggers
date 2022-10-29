@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl;
@@ -9,6 +10,7 @@ public class SqlGenerator : ISqlGenerator
 {
     private readonly IDbSchemaRetriever _adapter;
     private readonly SqlTypeMappings _sqlTypeMappings;
+    private readonly VisitingInfo _visitingInfo;
 
     public virtual string NewEntityPrefix => "NEW";
 
@@ -19,10 +21,14 @@ public class SqlGenerator : ISqlGenerator
     /// </summary>
     protected virtual char Quote => '\'';
     
-    public SqlGenerator(IDbSchemaRetriever adapter, SqlTypeMappings sqlTypeMappings)
+    public SqlGenerator(
+        IDbSchemaRetriever adapter,
+        SqlTypeMappings sqlTypeMappings,
+        VisitingInfo visitingInfo)
     {
         _adapter = adapter;
         _sqlTypeMappings = sqlTypeMappings;
+        _visitingInfo = visitingInfo;
     }
     
     public virtual string GetOperand(Expression expression)
@@ -82,7 +88,13 @@ public class SqlGenerator : ISqlGenerator
 
     public string GetSql(Enum source)
     {
-        return source.ToString("D");
+        var clrType = _adapter.GetActualClrType(
+            _visitingInfo.CurrentMember.DeclaringType,
+            _visitingInfo.CurrentMember);
+
+        return clrType == typeof(string)
+            ? GetSql(source.ToString())
+            : source.ToString("D");
     }
 
     public virtual string GetSql(bool source)

@@ -10,14 +10,17 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 public class ExpressionVisitorFactory : IExpressionVisitorFactory
 {
     private readonly IServiceProvider _provider;
+    private readonly VisitingInfo _visitingInfo;
 
     /// <summary>
     /// Initializes a new instance of <see cref="ExpressionVisitorFactory"/>.
     /// </summary>
     /// <param name="provider"></param>
-    public ExpressionVisitorFactory(IServiceProvider provider)
+    /// <param name="visitingInfo"></param>
+    public ExpressionVisitorFactory(IServiceProvider provider, VisitingInfo visitingInfo)
     {
         _provider = provider;
+        _visitingInfo = visitingInfo;
     }
     
     /// <inheritdoc />
@@ -27,13 +30,20 @@ public class ExpressionVisitorFactory : IExpressionVisitorFactory
         {
             BinaryExpression binary => Visit(binary, argumentTypes, visitedMembers),
             ConstantExpression constant => Visit(constant, argumentTypes, visitedMembers),
-            MemberExpression member => Visit(member, argumentTypes, visitedMembers),
+            MemberExpression member => VisitAndRememberMember(member, argumentTypes, visitedMembers),
             MethodCallExpression methodCall => Visit(methodCall, argumentTypes, visitedMembers),
             UnaryExpression unary => Visit(unary, argumentTypes, visitedMembers),
             NewExpression @new => Visit(@new, argumentTypes, visitedMembers),
             LambdaExpression lambda => Visit(lambda, argumentTypes, visitedMembers),
             _ => throw new NotSupportedException($"Expression of type {expression.GetType()} is not supported")
         };
+    }
+    
+    private SqlBuilder VisitAndRememberMember(MemberExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    {
+        return _visitingInfo.ExecuteWithChangingMember(
+            expression.Member,
+            () => Visit(expression, argumentTypes, visitedMembers));
     }
 
     private SqlBuilder Visit<TExpression>(TExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)

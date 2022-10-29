@@ -92,6 +92,8 @@ public static class ServiceCollectionExtensions
             
             .AddMethodCallConverter<CountVisitor>()
             
+            .AddScoped<VisitingInfo>()
+            
             .AddScoped<IUpdateExpressionVisitor, UpdateExpressionVisitor>();
     }
 }

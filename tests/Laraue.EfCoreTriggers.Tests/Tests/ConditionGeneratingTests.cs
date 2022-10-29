@@ -2,7 +2,6 @@
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate;
 using Laraue.EfCoreTriggers.MySql.Extensions;
@@ -29,11 +28,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             modelBuilder.Entity<TestEntity>()
                 .Property<char>("CharValue");
 
+            modelBuilder.Entity<TestEntity>()
+                .Property<UserRole>("EnumValue")
+                .HasColumnType("varchar(100)")
+                .HasConversion<string>();
+
             _provider = Helper.GetTriggerActionFactory(modelBuilder.Model.FinalizeModel(), collection => collection.AddMySqlServices());
         }
 
         [Fact]
-        public virtual void CastingToSameTypeShouldBeIgnored()
+        public void CastingToSameTypeShouldBeIgnored()
         {
             var action = new OnInsertTriggerCondition<User>(user => user.Role > UserRole.Admin);
             var sql = _provider.Visit(action, new VisitedMembers());
@@ -41,7 +45,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         }
 
         [Fact]
-        public virtual void CastingToAnotherTypeShouldBeTranslated()
+        public void CastingToAnotherTypeShouldBeTranslated()
         {
             var action = new OnInsertTriggerCondition<User>(user => (decimal)user.Role > 50m);
             var sql = _provider.Visit(action, new VisitedMembers());
@@ -49,7 +53,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         }
         
         [Fact]
-        public virtual void ComparisonWithCharTypeShouldProduceCorrectSql()
+        public void ComparisonWithCharTypeShouldProduceCorrectSql()
         {
             var action = new OnInsertTriggerCondition<TestEntity>(entity => entity.CharValue == 'D');
             var sql = _provider.Visit(action, new VisitedMembers());
@@ -57,7 +61,15 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         }
         
         [Fact]
-        public virtual void OnlyNotConstantConditionsShouldBeAddedToTrigger()
+        public void StringEnumShouldGenerateCorrectSql()
+        {
+            var action = new OnInsertTriggerCondition<TestEntity>(entity => entity.EnumValue == UserRole.Admin);
+            var sql = _provider.Visit(action, new VisitedMembers());
+            Assert.Equal("NEW.EnumValue = 'Admin'", sql);
+        }
+        
+        [Fact]
+        public void OnlyNotConstantConditionsShouldBeAddedToTrigger()
         {
             Assert.Throws<InvalidOperationException>(() => 
                 new OnUpdateTrigger<User>(TriggerTime.After)

@@ -10,12 +10,17 @@ public class UnaryExpressionVisitor : BaseExpressionVisitor<UnaryExpression>
 {
     private readonly IExpressionVisitorFactory _factory;
     private readonly ISqlGenerator _generator;
+    private readonly IDbSchemaRetriever _dbSchemaRetriever;
     
     /// <inheritdoc />
-    public UnaryExpressionVisitor(IExpressionVisitorFactory factory, ISqlGenerator generator)
+    public UnaryExpressionVisitor(
+        IExpressionVisitorFactory factory,
+        ISqlGenerator generator,
+        IDbSchemaRetriever dbSchemaRetriever)
     {
         _factory = factory;
         _generator = generator;
+        _dbSchemaRetriever = dbSchemaRetriever;
     }
 
     /// <inheritdoc />
@@ -58,8 +63,14 @@ public class UnaryExpressionVisitor : BaseExpressionVisitor<UnaryExpression>
     /// <returns></returns>
     protected virtual bool IsNeedConversion(UnaryExpression unaryExpression)
     {
-        var clrType1 = unaryExpression.Operand.Type;
-        var clrType2 = unaryExpression.Type;
+        // Do not execute conversion Type? -> Type, it is actual for CLR only
+        if (Nullable.GetUnderlyingType(unaryExpression.Type) != null)
+        {
+            return false;
+        }
+        
+        var clrType1 = GetActualClrType(unaryExpression.Operand);
+        var clrType2 = GetActualClrType(unaryExpression);
         if (clrType1 == typeof(object) || clrType2 == typeof(object))
         {
             return false;
@@ -83,5 +94,17 @@ public class UnaryExpressionVisitor : BaseExpressionVisitor<UnaryExpression>
         return sqlType is not null
             ? $"CAST({member} AS {sqlType})"
             : throw new NotSupportedException($"Converting of type {unaryExpression.Type} is not supported");
+    }
+
+    private Type GetActualClrType(Expression expression)
+    {
+        if (expression is not MemberExpression {Expression: ParameterExpression parameterExpression} memberExpression)
+        {
+            return EfCoreTriggersHelper.GetNotNullableType(expression.Type);
+        }
+        
+        return _dbSchemaRetriever.GetActualClrType(
+            EfCoreTriggersHelper.GetNotNullableType(parameterExpression.Type),
+            memberExpression.Member);
     }
 }

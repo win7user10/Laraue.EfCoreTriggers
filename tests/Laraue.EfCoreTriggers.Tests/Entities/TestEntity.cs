@@ -1,4 +1,5 @@
 ﻿using System;
+using Laraue.EfCoreTriggers.Tests.Enums;
 
 namespace Laraue.EfCoreTriggers.Tests.Entities
 {
@@ -17,5 +18,7 @@ namespace Laraue.EfCoreTriggers.Tests.Entities
         public bool BooleanValue { get; set; }
 
         public char CharValue { get; set; }
+        
+        public UserRole EnumValue { get; set; }
     }
 }

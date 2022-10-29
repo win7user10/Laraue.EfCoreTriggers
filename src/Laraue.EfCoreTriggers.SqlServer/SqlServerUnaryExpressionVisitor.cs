@@ -11,12 +11,13 @@ namespace Laraue.EfCoreTriggers.SqlServer;
 public class SqlServerUnaryExpressionVisitor : UnaryExpressionVisitor
 {
     public SqlServerUnaryExpressionVisitor(
-        IExpressionVisitorFactory factory, 
-        ISqlGenerator sqlGenerator) 
-        : base(factory, sqlGenerator)
+        IExpressionVisitorFactory factory,
+        ISqlGenerator generator,
+        IDbSchemaRetriever dbSchemaRetriever)
+        : base(factory, generator, dbSchemaRetriever)
     {
     }
-
+    
     public override SqlBuilder Visit(UnaryExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
     {
         var unarySql = base.Visit(expression, argumentTypes, visitedMembers);

@@ -12,14 +12,17 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.SetExpressionVisitors;
 public class SetMemberInitExpressionVisitor : IMemberInfoVisitor<MemberInitExpression>
 {
     private readonly IExpressionVisitorFactory _factory;
+    private readonly VisitingInfo _visitingInfo;
     
     /// <summary>
     /// Initializes a new instance of <see cref="SetMemberInitExpressionVisitor"/>.
     /// </summary>
     /// <param name="factory"></param>
-    public SetMemberInitExpressionVisitor(IExpressionVisitorFactory factory)
+    /// <param name="visitingInfo"></param>
+    public SetMemberInitExpressionVisitor(IExpressionVisitorFactory factory, VisitingInfo visitingInfo)
     {
         _factory = factory;
+        _visitingInfo = visitingInfo;
     }
 
     /// <inheritdoc />
@@ -29,7 +32,9 @@ public class SetMemberInitExpressionVisitor : IMemberInfoVisitor<MemberInitExpre
         {
             var memberAssignmentExpression = (MemberAssignment)memberBinding;
             
-            var sqlExtendedResult = _factory.Visit(memberAssignmentExpression.Expression, argumentTypes, visitedMembers);
+            var sqlExtendedResult = _visitingInfo.ExecuteWithChangingMember(
+                memberAssignmentExpression.Member,
+                () => _factory.Visit(memberAssignmentExpression.Expression, argumentTypes, visitedMembers));
             
             return (memberAssignmentExpression.Member, sqlExtendedResult);
         }).ToDictionary(x => x.Member, x => x.sqlExtendedResult);
