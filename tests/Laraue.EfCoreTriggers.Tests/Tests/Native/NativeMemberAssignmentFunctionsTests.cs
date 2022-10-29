@@ -111,19 +111,27 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
         {
             Expression<Func<SourceEntity, DestinationEntity>> setEnumVariableExpression = sourceEntity => new DestinationEntity
             {
-                EnumValue = EnumValue.Value2,
+                EnumValue = sourceEntity.EnumValue,
             };
 
-            Action<ModelBuilder> setupModelBuilder = builder => builder.Entity<DestinationEntity>()
-                .Property(x => x.EnumValue)
-                .HasColumnType("varchar(100)")
-                .HasConversion<string>();
+            Action<ModelBuilder> setupModelBuilder = builder =>
+            {
+                builder.Entity<SourceEntity>()
+                    .Property(x => x.EnumValue)
+                    .HasColumnType("varchar(100)")
+                    .HasConversion<string>();
+
+                builder.Entity<DestinationEntity>()
+                    .Property(x => x.EnumValue)
+                    .HasColumnType("varchar(100)")
+                    .HasConversion<string>();
+            };
             
             setupModelBuilder += SetupModelBuilder;
 
             var insertedEntity = ContextOptionsFactory.CheckTrigger(setEnumVariableExpression, SetupDbContext, setupModelBuilder, new SourceEntity
             {
-                CharValue = 'a'
+                EnumValue = EnumValue.Value2
             });
             
             Assert.Equal(EnumValue.Value2, insertedEntity.EnumValue);

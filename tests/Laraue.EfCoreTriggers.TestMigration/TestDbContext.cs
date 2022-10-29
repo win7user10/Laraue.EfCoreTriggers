@@ -1,6 +1,5 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.EfCoreTriggers.MySql;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Microsoft.EntityFrameworkCore;
 

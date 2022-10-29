@@ -88,10 +88,9 @@ public class SqlGenerator : ISqlGenerator
 
     public string GetSql(Enum source)
     {
-        _adapter.TryGetActualClrType(
+        var clrType = _adapter.GetActualClrType(
             _visitingInfo.CurrentMember.DeclaringType,
-            _visitingInfo.CurrentMember,
-            out var clrType);
+            _visitingInfo.CurrentMember);
 
         return clrType == typeof(string)
             ? GetSql(source.ToString())

@@ -50,9 +50,9 @@ public interface IDbSchemaRetriever
     /// Some type can be overriden, for example Enum can be store as string in the DB.
     /// In these cases clr type will be returned from this function.
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="memberInfo"></param>
-    /// <param name="clrType"></param>
+    /// <param name="type">Entity type.</param>
+    /// <param name="memberInfo">Entity member.</param>
+    /// <param name="clrType">Actual type if it annotation was found.</param>
     /// <returns></returns>
-    bool TryGetActualClrType(Type type, MemberInfo memberInfo, out Type clrType);
+    Type GetActualClrType(Type type, MemberInfo memberInfo);
 }

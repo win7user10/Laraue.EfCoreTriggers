@@ -111,7 +111,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
                 x => x.Key, 
                 x => x.Value.WhereDeclaringType(triggerEntityType))
             .Where(x => x.Value.Any())
-            .SelectMany(x => DeclareVariablesSql(x.Key, x.Value))
+            .SelectMany(x => DeclareVariablesSql(triggerEntityType, x.Key, x.Value))
             .ToArray();
 
         if (variablesSql.Any())
@@ -123,16 +123,18 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         return sqlBuilder;
     }
     
-    private IEnumerable<string> DeclareVariablesSql(ArgumentType argumentType, IEnumerable<MemberInfo> visitedMembers)
+    private IEnumerable<string> DeclareVariablesSql(Type triggerType, ArgumentType argumentType, IEnumerable<MemberInfo> visitedMembers)
     {
         return visitedMembers
-            .Select(member => GetDeclareVariableNameSql(argumentType, member))
+            .Select(member => GetDeclareVariableNameSql(triggerType, argumentType, member))
             .ToArray();
     }
 
-    private string GetDeclareVariableNameSql(ArgumentType argumentType, MemberInfo member)
+    private string GetDeclareVariableNameSql(Type triggerType, ArgumentType argumentType, MemberInfo member)
     {
-        var sqlType = _sqlGenerator.GetSqlType(((PropertyInfo) member).PropertyType);
+        var clrType = _dbSchemaRetriever.GetActualClrType(triggerType, member);
+        
+        var sqlType = _sqlGenerator.GetSqlType(clrType);
         
         return $"{GetVariableNameSql(argumentType, member)} {sqlType}";
     }

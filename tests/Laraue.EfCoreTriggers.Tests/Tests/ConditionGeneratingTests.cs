@@ -2,7 +2,6 @@
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate;
 using Laraue.EfCoreTriggers.MySql.Extensions;

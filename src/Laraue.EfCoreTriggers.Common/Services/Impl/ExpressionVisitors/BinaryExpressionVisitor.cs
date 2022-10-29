@@ -35,9 +35,11 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
             && expression.Right is ConstantExpression constantExpression)
         {
             // Convert(enumValue, Int32) == 1 when enum is stores as string -> enumValue == Enum.Value
-            if (memberExpression.Type.IsEnum && _schemaRetriever.TryGetActualClrType(
-                    memberExpression.Member.DeclaringType, memberExpression.Member, out var clrType)
-                    && clrType == typeof(string))
+            var clrType = _schemaRetriever.GetActualClrType(
+                memberExpression.Member.DeclaringType,
+                memberExpression.Member);
+            
+            if (memberExpression.Type.IsEnum && clrType == typeof(string))
             {
                 var valueName = Enum.GetValues(memberExpression.Type)
                     .Cast<object>()
