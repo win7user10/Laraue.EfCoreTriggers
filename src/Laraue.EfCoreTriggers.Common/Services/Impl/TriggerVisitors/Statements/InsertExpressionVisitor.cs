@@ -10,22 +10,18 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors.Statements;
 public class InsertExpressionVisitor : IInsertExpressionVisitor
 {
     private readonly IMemberInfoVisitorFactory _factory;
-    private readonly IDbSchemaRetriever _adapter;
     private readonly ISqlGenerator _sqlGenerator;
 
     /// <summary>
     /// Initializes a new instance of <see cref="InsertExpressionVisitor"/>.
     /// </summary>
     /// <param name="factory"></param>
-    /// <param name="adapter"></param>
     /// <param name="sqlGenerator"></param>
     public InsertExpressionVisitor(
         IMemberInfoVisitorFactory factory,
-        IDbSchemaRetriever adapter,
         ISqlGenerator sqlGenerator)
     {
         _factory = factory;
-        _adapter = adapter;
         _sqlGenerator = sqlGenerator;
     }
 
@@ -46,7 +42,7 @@ public class InsertExpressionVisitor : IInsertExpressionVisitor
             sqlResult.Append("(")
                 .AppendJoin(", ", assignmentParts
                     .Select(x =>
-                        $"{_sqlGenerator.GetDelimiter()}{_adapter.GetColumnName(insertType, x.Key)}{_sqlGenerator.GetDelimiter()}"))
+                        _sqlGenerator.GetColumnSql(insertType, x.Key, ArgumentType.None)))
                 .Append(") SELECT ");
 
             sqlResult.AppendViaNewLine(", ", assignmentParts

@@ -17,7 +17,7 @@ public class SqlGenerator : ISqlGenerator
     public virtual string OldEntityPrefix => "OLD";
 
     /// <summary>
-    /// Quote in the database.
+    /// Quote in the database to define string values.
     /// </summary>
     protected virtual char Quote => '\'';
     
@@ -57,15 +57,35 @@ public class SqlGenerator : ISqlGenerator
 
     public string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType)
     {
-        var columnName = _adapter.GetColumnName(type, memberInfo);
+        var columnSql = WrapWithDelimiters(_adapter.GetColumnName(type, memberInfo));
         
         return argumentType switch
         {
-            ArgumentType.New => $"{NewEntityPrefix}.{columnName}", 
-            ArgumentType.Old => $"{OldEntityPrefix}.{columnName}", 
-            ArgumentType.None => columnName,
-            _ => $"{_adapter.GetTableName(type)}.{columnName}",
+            ArgumentType.New => $"{NewEntityPrefix}.{columnSql}", 
+            ArgumentType.Old => $"{OldEntityPrefix}.{columnSql}", 
+            ArgumentType.None => columnSql,
+            _ => $"{GetTableSql(type)}.{columnSql}",
         };
+    }
+
+    public string GetTableSql(Type entity)
+    {
+        var schemaName = _adapter.GetTableSchemaName(entity);
+        var tableSql = WrapWithDelimiters(_adapter.GetTableName(entity));
+
+        return string.IsNullOrWhiteSpace(schemaName)
+            ? tableSql
+            : $"{WrapWithDelimiters(schemaName)}.{tableSql}";
+    }
+
+    public string GetFunctionNameSql(Type entity, string name)
+    {
+        var functionName = WrapWithDelimiters(name);
+        var schemaName = _adapter.GetTableSchemaName(entity);
+
+        return string.IsNullOrWhiteSpace(schemaName)
+            ? functionName
+            : $"{WrapWithDelimiters(schemaName)}.{functionName}";
     }
 
     public string GetSqlType(Type type)
@@ -115,5 +135,10 @@ public class SqlGenerator : ISqlGenerator
     public virtual string GetVariableSql(Type type, MemberInfo member, ArgumentType argumentType)
     {
         return GetColumnSql(type, member, argumentType);
+    }
+
+    private string WrapWithDelimiters(string value)
+    {
+        return $"{GetDelimiter()}{value}{GetDelimiter()}";
     }
 }

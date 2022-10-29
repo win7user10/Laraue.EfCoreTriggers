@@ -10,12 +10,12 @@ namespace Laraue.EfCoreTriggers.SqlLite;
 public class SqliteTriggerVisitor : BaseTriggerVisitor
 {
     private readonly ITriggerActionVisitorFactory _factory;
-    private readonly IDbSchemaRetriever _dbSchemaRetriever;
+    private readonly ISqlGenerator _sqlGenerator;
 
-    public SqliteTriggerVisitor(ITriggerActionVisitorFactory factory, IDbSchemaRetriever dbSchemaRetriever)
+    public SqliteTriggerVisitor(ITriggerActionVisitorFactory factory, ISqlGenerator sqlGenerator)
     {
         _factory = factory;
-        _dbSchemaRetriever = dbSchemaRetriever;
+        _sqlGenerator = sqlGenerator;
     }
 
     public override string GenerateCreateTriggerSql(ITrigger trigger)
@@ -48,7 +48,7 @@ public class SqliteTriggerVisitor : BaseTriggerVisitor
             var postfix = actionsCount > 1 ? $"_{actionsCount - i}" : string.Empty;
             var action = actionsSql[i - 1];
 
-            var tableName = _dbSchemaRetriever.GetTableName(trigger.TriggerEntityType);
+            var tableName = _sqlGenerator.GetTableSql(trigger.TriggerEntityType);
             
             sql.Append($"CREATE TRIGGER {trigger.Name}{postfix}")
                 .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {tableName}")

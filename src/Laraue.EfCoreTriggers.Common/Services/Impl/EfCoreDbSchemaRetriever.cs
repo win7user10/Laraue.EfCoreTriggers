@@ -89,27 +89,7 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
             throw new InvalidOperationException($"Table name for entity {entity.FullName} is not defined in model.");
         }
 
-        var schemaName = GetTableSchemaName(entity);
-
-        return string.IsNullOrWhiteSpace(schemaName)
-            ? tableName
-            : $"{schemaName}.{tableName}";
-    }
-    
-    /// <inheritdoc />
-    public string GetFunctionName(Type entity, string name)
-    {
-        if (!_tableNamesCache.ContainsKey(entity))
-        {
-            var entityType = Model.FindEntityType(entity);
-            _tableNamesCache.Add(entity, entityType.GetTableName());
-        }
-
-        var schemaName = GetTableSchemaName(entity);
-
-        return string.IsNullOrWhiteSpace(schemaName)
-            ? name
-            : $"{schemaName}.{name}";
+        return tableName;
     }
 
     /// <summary>
@@ -117,7 +97,7 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    protected virtual string GetTableSchemaName(Type entity)
+    public virtual string GetTableSchemaName(Type entity)
     {
         if (!_tableSchemasCache.ContainsKey(entity))
         {

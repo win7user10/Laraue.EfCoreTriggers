@@ -7,14 +7,14 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 public class TriggerInsertActionVisitor : ITriggerActionVisitor<TriggerInsertAction>
 {
     private readonly IInsertExpressionVisitor _visitor;
-    private readonly IDbSchemaRetriever _adapter;
+    private readonly ISqlGenerator _sqlGenerator;
 
     public TriggerInsertActionVisitor(
         IInsertExpressionVisitor visitor,
-        IDbSchemaRetriever adapter)
+        ISqlGenerator sqlGenerator)
     {
         _visitor = visitor;
-        _adapter = adapter;
+        _sqlGenerator = sqlGenerator;
     }
     
     public SqlBuilder Visit(TriggerInsertAction triggerAction, VisitedMembers visitedMembers)
@@ -26,7 +26,7 @@ public class TriggerInsertActionVisitor : ITriggerActionVisitor<TriggerInsertAct
 
         var insertEntityType = triggerAction.InsertExpression.Body.Type;
         
-        var sql = SqlBuilder.FromString($"INSERT INTO {_adapter.GetTableName(insertEntityType)} ")
+        var sql = SqlBuilder.FromString($"INSERT INTO {_sqlGenerator.GetTableSql(insertEntityType)} ")
             .Append(insertStatement)
             .Append(";");
 

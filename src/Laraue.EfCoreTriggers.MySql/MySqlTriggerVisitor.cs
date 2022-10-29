@@ -10,12 +10,12 @@ namespace Laraue.EfCoreTriggers.MySql;
 public class MySqlTriggerVisitor : BaseTriggerVisitor
 {
     private readonly ITriggerActionVisitorFactory _factory;
-    private readonly IDbSchemaRetriever _adapter;
+    private readonly ISqlGenerator _sqlGenerator;
 
-    public MySqlTriggerVisitor(ITriggerActionVisitorFactory factory, IDbSchemaRetriever adapter)
+    public MySqlTriggerVisitor(ITriggerActionVisitorFactory factory, ISqlGenerator sqlGenerator)
     {
         _factory = factory;
-        _adapter = adapter;
+        _sqlGenerator = sqlGenerator;
     }
 
     public override string GenerateCreateTriggerSql(ITrigger trigger)
@@ -27,7 +27,7 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
             .ToArray();
         
         var sql = SqlBuilder.FromString($"CREATE TRIGGER {trigger.Name}")
-            .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {_adapter.GetTableName(trigger.TriggerEntityType)}")
+            .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {_sqlGenerator.GetTableSql(trigger.TriggerEntityType)}")
             .AppendNewLine("FOR EACH ROW")
             .AppendNewLine("BEGIN")
             .WithIdent(triggerSql =>

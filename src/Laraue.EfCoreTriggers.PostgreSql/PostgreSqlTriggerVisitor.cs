@@ -11,12 +11,12 @@ namespace Laraue.EfCoreTriggers.PostgreSql;
 public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
 {
     private readonly ITriggerActionVisitorFactory _factory;
-    private readonly IDbSchemaRetriever _adapter;
+    private readonly ISqlGenerator _sqlGenerator;
 
-    public PostgreSqlTriggerVisitor(ITriggerActionVisitorFactory factory, IDbSchemaRetriever adapter)
+    public PostgreSqlTriggerVisitor(ITriggerActionVisitorFactory factory, ISqlGenerator sqlGenerator)
     {
         _factory = factory;
-        _adapter = adapter;
+        _sqlGenerator = sqlGenerator;
     }
 
     public override string GenerateCreateTriggerSql(ITrigger trigger)
@@ -25,7 +25,9 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
             .Select(action => _factory.Visit(action, new VisitedMembers()))
             .ToArray();
 
-        var sql = SqlBuilder.FromString($"CREATE FUNCTION {_adapter.GetFunctionName(trigger.TriggerEntityType, trigger.Name)}() RETURNS trigger as ${trigger.Name}$")
+        var functionName = _sqlGenerator.GetFunctionNameSql(trigger.TriggerEntityType, trigger.Name);
+        
+        var sql = SqlBuilder.FromString($"CREATE FUNCTION {functionName}() RETURNS trigger as ${trigger.Name}$")
             .AppendNewLine("BEGIN")
             .WithIdent(triggerSql =>
             {
@@ -50,8 +52,8 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine("END;")
             .AppendNewLine($"${trigger.Name}$ LANGUAGE plpgsql;")
             .AppendNewLine($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()}")
-            .AppendNewLine($"ON {_adapter.GetTableName(trigger.TriggerEntityType)}")
-            .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {_adapter.GetFunctionName(trigger.TriggerEntityType, trigger.Name)}();");
+            .AppendNewLine($"ON {_sqlGenerator.GetTableSql(trigger.TriggerEntityType)}")
+            .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {functionName}();");
         
         return sql;
     }

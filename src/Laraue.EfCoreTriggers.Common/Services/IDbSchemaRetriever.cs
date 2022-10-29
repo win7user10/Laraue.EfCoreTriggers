@@ -10,6 +10,7 @@ public interface IDbSchemaRetriever
 {
     /// <summary>
     /// Get the column name of the passed member.
+    /// Note: this is just a column name, without table name, quotes and schema.
     /// </summary>
     /// <param name="type">Entity type.</param>
     /// <param name="memberInfo">Member to get.</param>
@@ -18,18 +19,19 @@ public interface IDbSchemaRetriever
     
     /// <summary>
     /// Get the table name of passed entity.
+    /// Note: this is just a table name, without quotes and schema.
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
     string GetTableName(Type entity);
-
+    
     /// <summary>
-    /// Get the function name with the entities schema.
+    /// Return schema name for the passed entity if it is exists.
+    /// Note: this is just a schema name, without quotes.
     /// </summary>
     /// <param name="entity"></param>
-    /// <param name="name"></param>
     /// <returns></returns>
-    string GetFunctionName(Type entity, string name);
+    string GetTableSchemaName(Type entity);
 
     /// <summary>
     /// Get all members which are used in primary key.

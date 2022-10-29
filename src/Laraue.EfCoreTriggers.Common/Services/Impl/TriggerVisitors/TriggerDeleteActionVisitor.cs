@@ -6,12 +6,12 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 
 public class TriggerDeleteActionVisitor : ITriggerActionVisitor<TriggerDeleteAction>
 {
-    private readonly IDbSchemaRetriever _dbSchemaRetriever;
+    private readonly ISqlGenerator _sqlGenerator;
     private readonly ITriggerActionVisitorFactory _factory;
 
-    public TriggerDeleteActionVisitor(IDbSchemaRetriever dbSchemaRetriever, ITriggerActionVisitorFactory factory)
+    public TriggerDeleteActionVisitor(ISqlGenerator sqlGenerator, ITriggerActionVisitorFactory factory)
     {
-        _dbSchemaRetriever = dbSchemaRetriever;
+        _sqlGenerator = sqlGenerator;
         _factory = factory;
     }
 
@@ -23,7 +23,7 @@ public class TriggerDeleteActionVisitor : ITriggerActionVisitor<TriggerDeleteAct
         var conditionStatement = _factory.Visit(triggerCondition, visitedMembers);
         
         return new SqlBuilder()
-            .Append($"DELETE FROM {_dbSchemaRetriever.GetTableName(tableType)}")
+            .Append($"DELETE FROM {_sqlGenerator.GetTableSql(tableType)}")
             .AppendNewLine("WHERE ")
             .Append(conditionStatement)
             .Append(";");
