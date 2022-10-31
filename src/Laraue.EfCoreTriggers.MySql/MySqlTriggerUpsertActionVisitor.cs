@@ -10,16 +10,16 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
 {
     private readonly IInsertExpressionVisitor _insertExpressionVisitor;
     private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
-    private readonly IDbSchemaRetriever _adapter;
+    private readonly ISqlGenerator _sqlGenerator;
 
     public MySqlTriggerUpsertActionVisitor(
         IInsertExpressionVisitor insertExpressionVisitor,
         IUpdateExpressionVisitor updateExpressionVisitor,
-        IDbSchemaRetriever adapter)
+        ISqlGenerator sqlGenerator)
     {
         _insertExpressionVisitor = insertExpressionVisitor;
         _updateExpressionVisitor = updateExpressionVisitor;
-        _adapter = adapter;
+        _sqlGenerator = sqlGenerator;
     }
     
     public SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
@@ -35,7 +35,7 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
 
         if (triggerAction.OnMatchExpression is null)
         {
-            sqlBuilder.Append($"INSERT IGNORE {_adapter.GetTableName(updateEntityType)} ")
+            sqlBuilder.Append($"INSERT IGNORE {_sqlGenerator.GetTableSql(updateEntityType)} ")
                 .Append(insertStatementSql)
                 .Append(";");
         }
@@ -46,7 +46,7 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
                 triggerAction.OnMatchExpressionPrefixes,
                 visitedMembers);
             
-            sqlBuilder.Append($"INSERT INTO {_adapter.GetTableName(updateEntityType)} ")
+            sqlBuilder.Append($"INSERT INTO {_sqlGenerator.GetTableSql(updateEntityType)} ")
                 .Append(insertStatementSql)
                 .AppendNewLine("ON DUPLICATE KEY")
                 .AppendNewLine("UPDATE ")

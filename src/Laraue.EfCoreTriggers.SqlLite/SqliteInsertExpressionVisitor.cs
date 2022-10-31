@@ -11,14 +11,16 @@ namespace Laraue.EfCoreTriggers.SqlLite;
 public class SqliteInsertExpressionVisitor : InsertExpressionVisitor
 {
     private readonly IDbSchemaRetriever _adapter;
-    
+    private readonly ISqlGenerator _sqlGenerator;
+
     public SqliteInsertExpressionVisitor(
         IMemberInfoVisitorFactory factory,
         IDbSchemaRetriever adapter,
         ISqlGenerator sqlGenerator) 
-        : base(factory, adapter, sqlGenerator)
+        : base(factory, sqlGenerator)
     {
         _adapter = adapter;
+        _sqlGenerator = sqlGenerator;
     }
 
     protected override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression, ArgumentTypes argumentTypes)
@@ -28,7 +30,9 @@ public class SqliteInsertExpressionVisitor : InsertExpressionVisitor
         var primaryKeyProperties = _adapter.GetPrimaryKeyMembers(insertType);
         
         var sqlBuilder = SqlBuilder.FromString("(")
-            .AppendJoin(", ", primaryKeyProperties.Select(propertyInfo => _adapter.GetColumnName(insertType, propertyInfo)))
+            .AppendJoin(", ", primaryKeyProperties
+                .Select(propertyInfo => _sqlGenerator
+                    .GetColumnSql(insertType, propertyInfo, ArgumentType.None)))
             .Append(") VALUES (")
             .AppendJoin(", ", primaryKeyProperties.Select(_ => "NULL"))
             .Append(")");

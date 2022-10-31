@@ -8,16 +8,16 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 
 public class TriggerUpdateActionVisitor : ITriggerActionVisitor<TriggerUpdateAction>
 {
-    private readonly IDbSchemaRetriever _dbSchemaRetriever;
+    private readonly ISqlGenerator _sqlGenerator;
     private readonly IExpressionVisitorFactory _expressionVisitorFactory;
     private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
 
     public TriggerUpdateActionVisitor(
-        IDbSchemaRetriever dbSchemaRetriever,
+        ISqlGenerator sqlGenerator,
         IExpressionVisitorFactory expressionVisitorFactory, 
         IUpdateExpressionVisitor updateExpressionVisitor)
     {
-        _dbSchemaRetriever = dbSchemaRetriever;
+        _sqlGenerator = sqlGenerator;
         _expressionVisitorFactory = expressionVisitorFactory;
         _updateExpressionVisitor = updateExpressionVisitor;
     }
@@ -37,7 +37,7 @@ public class TriggerUpdateActionVisitor : ITriggerActionVisitor<TriggerUpdateAct
         var updateEntity = triggerAction.UpdateExpression.Body.Type;
 
         return new SqlBuilder()
-            .Append($"UPDATE {_dbSchemaRetriever.GetTableName(updateEntity)}")
+            .Append($"UPDATE {_sqlGenerator.GetTableSql(updateEntity)}")
             .AppendNewLine("SET ")
             .Append(updateStatement)
             .AppendNewLine("WHERE ")

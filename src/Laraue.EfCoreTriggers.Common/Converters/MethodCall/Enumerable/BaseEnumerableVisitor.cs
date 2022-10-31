@@ -68,8 +68,8 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
             finalSql.WithIdent(x=> x
                 .Append("SELECT ")
                 .Append(selectSql.Item1)
-                .AppendNewLine($"FROM {_schemaRetriever.GetTableName(entityType)}")
-                .AppendNewLine($"INNER JOIN {_schemaRetriever.GetTableName(originalSetType)} ON "));
+                .AppendNewLine($"FROM {_sqlGenerator.GetTableSql(entityType)}")
+                .AppendNewLine($"INNER JOIN {_sqlGenerator.GetTableSql(originalSetType)} ON "));
 
             var keys = _schemaRetriever.GetForeignKeyMembers(entityType, originalSetType);
 

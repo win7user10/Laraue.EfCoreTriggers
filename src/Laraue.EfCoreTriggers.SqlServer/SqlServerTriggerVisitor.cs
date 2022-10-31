@@ -35,7 +35,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
     public override string GenerateCreateTriggerSql(ITrigger trigger)
     {
         var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
-        var tableName = _dbSchemaRetriever.GetTableName(trigger.TriggerEntityType);
+        var tableName = _sqlGenerator.GetTableSql(trigger.TriggerEntityType);
 
         var visitedMembers = new VisitedMembers();
 

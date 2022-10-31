@@ -13,20 +13,17 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
 {
     private readonly IInsertExpressionVisitor _insertExpressionVisitor;
     private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
-    private readonly IDbSchemaRetriever _adapter;
     private readonly IMemberInfoVisitorFactory _memberInfoVisitorFactory;
     private readonly ISqlGenerator _sqlGenerator;
 
     public SqlServerTriggerUpsertActionVisitor(
         IInsertExpressionVisitor insertExpressionVisitor,
         IUpdateExpressionVisitor updateExpressionVisitor,
-        IDbSchemaRetriever adapter,
         IMemberInfoVisitorFactory memberInfoVisitorFactory,
         ISqlGenerator sqlGenerator)
     {
         _insertExpressionVisitor = insertExpressionVisitor;
         _updateExpressionVisitor = updateExpressionVisitor;
-        _adapter = adapter;
         _memberInfoVisitorFactory = memberInfoVisitorFactory;
         _sqlGenerator = sqlGenerator;
     }
@@ -34,7 +31,7 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
     public SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
     {
         var updateEntityType = triggerAction.InsertExpression.Body.Type;
-        var updateEntityTable = _adapter.GetTableName(updateEntityType);
+        var updateEntityTable = _sqlGenerator.GetTableSql(updateEntityType);
         
         var matchExpressionParts = _memberInfoVisitorFactory.Visit(
             triggerAction.MatchExpression, triggerAction.MatchExpressionPrefixes, visitedMembers);

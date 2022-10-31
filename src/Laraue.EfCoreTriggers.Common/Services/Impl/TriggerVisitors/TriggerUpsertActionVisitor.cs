@@ -2,6 +2,7 @@
 using Laraue.EfCoreTriggers.Common.Services.Impl.SetExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors.Statements;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
@@ -11,18 +12,18 @@ public class TriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAct
     private readonly IMemberInfoVisitorFactory _memberInfoVisitorFactory;
     private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
     private readonly IInsertExpressionVisitor _insertExpressionVisitor;
-    private readonly IDbSchemaRetriever _adapter;
+    private readonly ISqlGenerator _sqlGenerator;
 
     public TriggerUpsertActionVisitor(
         IMemberInfoVisitorFactory memberInfoVisitorFactory,
         IUpdateExpressionVisitor updateExpressionVisitor,
         IInsertExpressionVisitor insertExpressionVisitor,
-        IDbSchemaRetriever adapter)
+        ISqlGenerator sqlGenerator)
     {
         _memberInfoVisitorFactory = memberInfoVisitorFactory;
         _updateExpressionVisitor = updateExpressionVisitor;
         _insertExpressionVisitor = insertExpressionVisitor;
-        _adapter = adapter;
+        _sqlGenerator = sqlGenerator;
     }
 
     public virtual SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
@@ -39,12 +40,12 @@ public class TriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAct
             triggerAction.InsertExpressionPrefixes,
             visitedMembers);
             
-        var sqlBuilder = SqlBuilder.FromString($"INSERT INTO {_adapter.GetTableName(updateEntityType)} ")
+        var sqlBuilder = SqlBuilder.FromString($"INSERT INTO {_sqlGenerator.GetTableSql(updateEntityType)} ")
             .Append(insertStatementSql)
             .Append(" ON CONFLICT (")
             .AppendJoin(", ", matchExpressionParts
-                .Select(x => 
-                    _adapter.GetColumnName(updateEntityType, x.Key)))
+                .Select(x =>
+                    _sqlGenerator.GetColumnSql(updateEntityType, x.Key, ArgumentType.None)))
             .Append(")");
 
         if (triggerAction.OnMatchExpression is null)

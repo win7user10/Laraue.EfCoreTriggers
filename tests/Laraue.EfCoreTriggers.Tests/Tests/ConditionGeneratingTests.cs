@@ -41,7 +41,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         {
             var action = new OnInsertTriggerCondition<User>(user => user.Role > UserRole.Admin);
             var sql = _provider.Visit(action, new VisitedMembers());
-            Assert.Equal("NEW.Role > 999", sql);
+            Assert.Equal("NEW.`Role` > 999", sql);
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         {
             var action = new OnInsertTriggerCondition<User>(user => (decimal)user.Role > 50m);
             var sql = _provider.Visit(action, new VisitedMembers());
-            Assert.Equal("CAST(NEW.Role AS DECIMAL) > 50", sql);
+            Assert.Equal("CAST(NEW.`Role` AS DECIMAL) > 50", sql);
         }
         
         [Fact]
@@ -57,7 +57,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         {
             var action = new OnInsertTriggerCondition<TestEntity>(entity => entity.CharValue == 'D');
             var sql = _provider.Visit(action, new VisitedMembers());
-            Assert.Equal("NEW.CharValue = 'D'", sql);
+            Assert.Equal("NEW.`CharValue` = 'D'", sql);
         }
         
         [Fact]
@@ -65,7 +65,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         {
             var action = new OnInsertTriggerCondition<TestEntity>(entity => entity.EnumValue == UserRole.Admin);
             var sql = _provider.Visit(action, new VisitedMembers());
-            Assert.Equal("NEW.EnumValue = 'Admin'", sql);
+            Assert.Equal("NEW.`EnumValue` = 'Admin'", sql);
         }
         
         [Fact]

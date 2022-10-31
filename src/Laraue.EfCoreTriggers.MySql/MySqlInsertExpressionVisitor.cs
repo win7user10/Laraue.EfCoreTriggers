@@ -9,8 +9,8 @@ namespace Laraue.EfCoreTriggers.MySql;
 
 public class MySqlInsertExpressionVisitor : InsertExpressionVisitor
 {
-    public MySqlInsertExpressionVisitor(IMemberInfoVisitorFactory factory, IDbSchemaRetriever adapter, ISqlGenerator sqlGenerator) 
-        : base(factory, adapter, sqlGenerator)
+    public MySqlInsertExpressionVisitor(IMemberInfoVisitorFactory factory, ISqlGenerator sqlGenerator) 
+        : base(factory, sqlGenerator)
     {
     }
 

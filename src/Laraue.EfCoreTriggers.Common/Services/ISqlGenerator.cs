@@ -30,7 +30,7 @@ public interface ISqlGenerator
     string GetOperand(Expression expression);
     
     /// <summary>
-    /// Get column SQL. E.g. NEW.column_name, OLD.column_name depending on argument
+    /// Get column SQL. E.g. NEW."column_name", OLD."column_name" depending on argument
     /// and its type. 
     /// </summary>
     /// <param name="type"></param>
@@ -38,6 +38,22 @@ public interface ISqlGenerator
     /// <param name="argumentType"></param>
     /// <returns></returns>
     string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType);
+
+    /// <summary>
+    /// Get table SQL, e.g. "Users".
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    string GetTableSql(Type entity);
+    
+    /// <summary>
+    /// Get the function name with the entities schema.
+    /// User, "AFTER_DELETE" -> "schema"."AFTER_DELETE_USER"
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    string GetFunctionNameSql(Type entity, string name);
     
     /// <summary>
     /// Get name of CLR <see cref="Type"/> in the current SQL provider.
