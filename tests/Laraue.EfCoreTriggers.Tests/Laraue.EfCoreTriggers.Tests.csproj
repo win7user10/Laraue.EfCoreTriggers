@@ -27,8 +27,8 @@
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="EFCore.NamingConventions" Version="6.0.0" />
-    <PackageReference Include="linq2db.EntityFrameworkCore" Version="6.6.1" />
+    <PackageReference Include="EFCore.NamingConventions" Version="7.0.0" />
+    <PackageReference Include="linq2db.EntityFrameworkCore" Version="6.10.0" />
   </ItemGroup>
 
   <ItemGroup>
