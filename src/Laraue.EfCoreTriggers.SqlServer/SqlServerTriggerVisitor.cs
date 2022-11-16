@@ -208,7 +208,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
 
     private static string GetDeclareCursorSql(string cursorName)
     {
-        return $"DECLARE {cursorName} CURSOR FOR";
+        return $"DECLARE {cursorName} CURSOR LOCAL FOR";
     }
 
     public override string GenerateDeleteTriggerSql(string triggerName, IEntityType entityType)
