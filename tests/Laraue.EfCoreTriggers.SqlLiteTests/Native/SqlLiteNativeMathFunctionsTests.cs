@@ -13,7 +13,7 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests.Native
         public SqlLiteNativeMathFunctionsTests() : base(new ContextOptionsFactory<DynamicDbContext>(), context =>
         {
             var connection = context.Database.GetDbConnection() as SqliteConnection;
-            connection.LoadExtension("Extensions/math.dll");
+            connection!.LoadExtension("Extensions/math.dll");
         }){}
     }
 }
