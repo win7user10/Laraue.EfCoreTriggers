@@ -5,14 +5,15 @@ using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.EntityFrameworkCore.Update.Internal;
+using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
 
 namespace Laraue.EfCoreTriggers.Common.Migrations
 {
@@ -21,7 +22,18 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
     {
         private readonly ITriggerVisitor _triggerVisitor;
 
-        /// <inheritdoc />
+#if NET6_0_OR_GREATER
+        public MigrationsModelDiffer(
+            IRelationalTypeMappingSource typeMappingSource,
+            IMigrationsAnnotationProvider migrationsAnnotationProvider,
+            IRowIdentityMapFactory rowIdentityMapFactory,
+            CommandBatchPreparerDependencies commandBatchPreparerDependencies,
+            ITriggerVisitor triggerVisitor) 
+            : base(typeMappingSource, migrationsAnnotationProvider, rowIdentityMapFactory, commandBatchPreparerDependencies)
+        {
+            _triggerVisitor = triggerVisitor;
+        }
+#else
         public MigrationsModelDiffer(
             IRelationalTypeMappingSource typeMappingSource,
             IMigrationsAnnotationProvider migrationsAnnotations,
@@ -29,10 +41,11 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
             IUpdateAdapterFactory updateAdapterFactory,
             ITriggerVisitor triggerVisitor,
             CommandBatchPreparerDependencies commandBatchPreparerDependencies)
-                : base (typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory, commandBatchPreparerDependencies)
+            : base (typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory, commandBatchPreparerDependencies)
         {
             _triggerVisitor = triggerVisitor;
         }
+#endif
         
         /// <inheritdoc />
         public override IReadOnlyList<MigrationOperation> GetDifferences(IRelationalModel source, IRelationalModel target)

@@ -4,6 +4,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Laraue.EfCoreTriggers.Common.Extensions
@@ -26,7 +27,9 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             ITrigger configuredTrigger) where T : class
         {
             var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(typeof(T).FullName);
-            
+#if NET6_0_OR_GREATER
+            entityTypeBuilder.ToTable(tb => tb.HasTrigger(configuredTrigger.Name));
+#endif
             entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger);
             
             return entityTypeBuilder;
