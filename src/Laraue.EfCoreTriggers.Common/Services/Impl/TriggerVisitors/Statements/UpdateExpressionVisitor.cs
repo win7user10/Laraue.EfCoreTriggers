@@ -10,19 +10,19 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors.Statements;
 public class UpdateExpressionVisitor : IUpdateExpressionVisitor
 {
     private readonly IMemberInfoVisitorFactory _memberInfoVisitorFactory;
-    private readonly IDbSchemaRetriever _dbSchemaRetriever;
+    private readonly ISqlGenerator _sqlGenerator;
 
     /// <summary>
     /// Initializes a new instance of <see cref="UpdateExpressionVisitor"/>.
     /// </summary>
     /// <param name="memberInfoVisitorFactory"></param>
-    /// <param name="dbSchemaRetriever"></param>
+    /// <param name="sqlGenerator"></param>
     public UpdateExpressionVisitor(
         IMemberInfoVisitorFactory memberInfoVisitorFactory,
-        IDbSchemaRetriever dbSchemaRetriever)
+        ISqlGenerator sqlGenerator)
     {
         _memberInfoVisitorFactory = memberInfoVisitorFactory;
-        _dbSchemaRetriever = dbSchemaRetriever;
+        _sqlGenerator = sqlGenerator;
     }
 
     /// <inheritdoc />
@@ -39,7 +39,7 @@ public class UpdateExpressionVisitor : IUpdateExpressionVisitor
         
         var assignmentPartsSql = assignmentParts
             .Select(expressionPart => 
-                $"{_dbSchemaRetriever.GetColumnName(updateType, expressionPart.Key)} = {expressionPart.Value}")
+                $"{_sqlGenerator.GetColumnSql(updateType, expressionPart.Key, ArgumentType.None)} = {expressionPart.Value}")
             .ToArray();
         
         sqlResult.AppendJoin(", ", assignmentPartsSql);
