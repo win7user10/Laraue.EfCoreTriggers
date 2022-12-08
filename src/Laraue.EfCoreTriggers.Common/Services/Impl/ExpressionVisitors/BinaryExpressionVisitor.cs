@@ -78,7 +78,7 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
         var binaryExpressionParts = GetBinaryExpressionParts(expression);
 
         // Check, if one argument is null, should be generated expression "value IS NULL"
-        if (expression.NodeType is ExpressionType.Equal || expression.NodeType is ExpressionType.NotEqual)
+        if (expression.NodeType is ExpressionType.Equal or ExpressionType.NotEqual)
         {
             if (binaryExpressionParts.Any(x => x is ConstantExpression { Value: null }))
             {
@@ -95,9 +95,18 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
                         _factory.Visit(part, argumentTypes, visitedMembers))
                     .ToArray();
                 
-                return new SqlBuilder()
+                var sqlBuilder = new SqlBuilder()
                     .Append(argumentsSql[0])
-                    .Append(" IS NULL");
+                    .Append(" IS ");
+
+                if (expression.NodeType is ExpressionType.NotEqual)
+                {
+                    sqlBuilder.Append("NOT ");
+                }
+
+                sqlBuilder.Append(argumentsSql[1]);
+
+                return sqlBuilder;
             }
         }
 
