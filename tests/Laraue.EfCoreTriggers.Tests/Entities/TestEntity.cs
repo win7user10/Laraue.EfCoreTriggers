@@ -19,6 +19,8 @@ namespace Laraue.EfCoreTriggers.Tests.Entities
 
         public char CharValue { get; set; }
         
+        public string StringValue { get; set; }
+        
         public UserRole EnumValue { get; set; }
     }
 }
