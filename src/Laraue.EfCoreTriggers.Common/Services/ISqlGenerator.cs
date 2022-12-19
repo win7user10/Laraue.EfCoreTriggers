@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
 namespace Laraue.EfCoreTriggers.Common.Services;
@@ -25,9 +26,19 @@ public interface ISqlGenerator
     /// <summary>
     /// Get operand of expression, e.g. "+", "-", "*" etc.
     /// </summary>
-    /// <param name="expression"></param>
+    /// <param name="expressionType">Binary expression.</param>
+    /// <param name="left">Sql of the left side expression.</param>
+    /// <param name="right">Sql of the right side expression.</param>
     /// <returns></returns>
-    string GetOperand(Expression expression);
+    string GetBinarySql(ExpressionType expressionType, SqlBuilder left, SqlBuilder right);
+    
+    /// <summary>
+    /// Get operand of expression, e.g. "+", "-", "*" etc.
+    /// </summary>
+    /// <param name="expressionType">Unary expression.</param>
+    /// <param name="innerExpressionSql">Unary expression sql.</param>
+    /// <returns></returns>
+    string GetUnarySql(ExpressionType expressionType, SqlBuilder innerExpressionSql);
     
     /// <summary>
     /// Get column SQL. E.g. NEW."column_name", OLD."column_name" depending on argument

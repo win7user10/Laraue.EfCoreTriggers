@@ -24,7 +24,7 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests.Unit
 
         public override string ExceptedIntMultiplySql => "INSERT INTO \"destination_entities\" (\"int_value\") SELECT NEW.\"int_value\" * 2;";
 
-        public override string ExceptedBooleanSql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT NEW.\"boolean_value\" is false;";
+        public override string ExceptedBooleanSql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT NEW.\"boolean_value\" IS FALSE;";
 
         public override string ExceptedNewGuidSql => "INSERT INTO \"destination_entities\" (\"guid_value\") SELECT lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))),2) || '-' || substr('89ab', abs(random()) % 4 + 1, 1) || substr(lower(hex(randomblob(2))),2) || '-' || lower(hex(randomblob(6)));";
 

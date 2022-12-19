@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.CSharpMethods;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
@@ -14,7 +15,10 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
     private readonly IDbSchemaRetriever _schemaRetriever;
     
     /// <inheritdoc />
-    public BinaryExpressionVisitor(IExpressionVisitorFactory factory, ISqlGenerator generator, IDbSchemaRetriever schemaRetriever)
+    public BinaryExpressionVisitor(
+        IExpressionVisitorFactory factory,
+        ISqlGenerator generator,
+        IDbSchemaRetriever schemaRetriever)
     {
         _factory = factory;
         _generator = generator;
@@ -76,6 +80,20 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
         }
 
         var binaryExpressionParts = GetBinaryExpressionParts(expression);
+        
+        if (expression.NodeType == ExpressionType.Coalesce)
+        {
+            var methodInfo = typeof(BinaryFunctions).GetMethod(nameof(BinaryFunctions.Coalesce))!
+                .MakeGenericMethod(binaryExpressionParts[0].Type);
+            
+            var methodCall = Expression.Call(
+                null,
+                methodInfo,
+                binaryExpressionParts[0],
+                binaryExpressionParts[1]);
+
+            return _factory.Visit(methodCall, argumentTypes, visitedMembers);
+        }
 
         // Check, if one argument is null, should be generated expression "value IS NULL"
         if (expression.NodeType is ExpressionType.Equal or ExpressionType.NotEqual)
@@ -117,16 +135,15 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
                     argumentTypes,
                     visitedMembers))
             .ToArray();
+        
+        var leftArgument = binaryParts[0];
+        var rightArgument = binaryParts[1];
 
         return new SqlBuilder()
-            .Append(binaryParts[0])
-            .Append(" ")
-            .Append(_generator.GetOperand(expression))
-            .Append(" ")
-            .Append(binaryParts[1]);
+            .Append(_generator.GetBinarySql(expression.NodeType, leftArgument, rightArgument));
     }
-    
-    Expression[] GetBinaryExpressionParts(BinaryExpression expression)
+
+    private static Expression[] GetBinaryExpressionParts(BinaryExpression expression)
     {
         var parts = new[] { expression.Left, expression.Right };
         if (expression.Method is not null) return parts;

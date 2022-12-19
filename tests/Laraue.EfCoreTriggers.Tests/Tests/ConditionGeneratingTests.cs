@@ -96,5 +96,13 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             var sql = _provider.Visit(action, new VisitedMembers());
             Assert.Equal("NEW.`StringValue` IS NULL", sql);
         }
+        
+        [Fact]
+        public void NullСoalesceShouldGenerateCorrectSql()
+        {
+            var action = new OnInsertTriggerCondition<TestEntity>(entity => (entity.StringValue ?? "Undefined") != "John");
+            var sql = _provider.Visit(action, new VisitedMembers());
+            Assert.Equal("COALESCE(NEW.`StringValue`, 'Undefined') <> 'John'", sql);
+        }
     }
 }

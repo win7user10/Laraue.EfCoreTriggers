@@ -22,14 +22,14 @@ public class SqlServerSqlGenerator : SqlGenerator
 
     public override string OldEntityPrefix => "Deleted";
 
-    public override string GetOperand(Expression expression)
+    public override string GetNodeTypeSql(ExpressionType expressionType)
     {
-        return expression.NodeType switch
+        return expressionType switch
         {
             ExpressionType.IsTrue => $"= {GetSql(true)}",
             ExpressionType.IsFalse => $"= {GetSql(false)}",
             ExpressionType.Not => $"= {GetSql(false)}",
-            _ => base.GetOperand(expression)
+            _ => base.GetNodeTypeSql(expressionType)
         };
     }
 

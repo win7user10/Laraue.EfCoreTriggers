@@ -15,19 +15,21 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
                 collection => collection.AddPostgreSqlServices()))
         {
         }
-        
-        public override string ExceptedConcatSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT CONCAT(NEW.\"string_field\", 'abc');";
 
-        public override string ExceptedStringLowerSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT LOWER(NEW.\"string_field\");";
+        protected override string ExceptedConcatSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT CONCAT(NEW.\"string_field\", 'abc');";
 
-        public override string ExceptedStringUpperSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT UPPER(NEW.\"string_field\");";
+        protected override string ExceptedStringLowerSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT LOWER(NEW.\"string_field\");";
 
-        public override string ExceptedStringTrimSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT BTRIM(NEW.\"string_field\");";
+        protected override string ExceptedStringUpperSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT UPPER(NEW.\"string_field\");";
 
-        public override string ExceptedContainsSql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT STRPOS(NEW.\"string_field\", 'abc') > 0;";
+        protected override string ExceptedStringTrimSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT BTRIM(NEW.\"string_field\");";
 
-        public override string ExceptedEndsWithSql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT NEW.\"string_field\" LIKE ('%' || 'abc');";
+        protected override string ExceptedContainsSql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT STRPOS(NEW.\"string_field\", 'abc') > 0;";
 
-        public override string ExceptedIsNullOrEmptySql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT NEW.\"string_field\" IS NULL OR NEW.\"string_field\" = '';";
+        protected override string ExceptedEndsWithSql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT NEW.\"string_field\" LIKE ('%' || 'abc');";
+
+        protected override string ExceptedIsNullOrEmptySql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT NEW.\"string_field\" IS NULL OR NEW.\"string_field\" = '';";
+
+        protected override string ExceptedCoalesceStringSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT COALESCE(NEW.\"string_field\", 'John');";
     }
 }

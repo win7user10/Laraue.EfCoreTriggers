@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl;
@@ -31,9 +32,9 @@ public class SqlGenerator : ISqlGenerator
         _visitingInfo = visitingInfo;
     }
     
-    public virtual string GetOperand(Expression expression)
+    public virtual string GetNodeTypeSql(ExpressionType expressionType)
     {
-        return expression.NodeType switch
+        return expressionType switch
         {
             ExpressionType.Add => "+",
             ExpressionType.Subtract => "-",
@@ -47,12 +48,28 @@ public class SqlGenerator : ISqlGenerator
             ExpressionType.GreaterThanOrEqual => ">=",
             ExpressionType.LessThan => "<",
             ExpressionType.LessThanOrEqual => "<=",
-            ExpressionType.IsTrue => "is true",
-            ExpressionType.IsFalse => "is false",
+            ExpressionType.IsTrue => "IS TRUE",
+            ExpressionType.IsFalse => "IS FALSE",
             ExpressionType.Negate => "-",
-            ExpressionType.Not => "is false",
-            _ => throw new NotSupportedException($"Unknown sign of {expression.NodeType}")
+            ExpressionType.Not => "IS FALSE",
+            _ => throw new NotSupportedException($"Unknown sign of {expressionType}")
         };
+    }
+
+    public virtual string GetBinarySql(ExpressionType expressionType, SqlBuilder left, SqlBuilder right)
+    {
+        var nodeTypeSql = GetNodeTypeSql(expressionType);
+        
+        return $"{left} {nodeTypeSql} {right}";
+    }
+
+    public string GetUnarySql(ExpressionType expressionType, SqlBuilder innerExpressionSql)
+    {
+        var nodeTypeSql = GetNodeTypeSql(expressionType);
+        
+        return expressionType == ExpressionType.Negate 
+            ? $"{nodeTypeSql}{innerExpressionSql}" 
+            : $"{innerExpressionSql} {nodeTypeSql}";
     }
 
     public string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType)

@@ -103,5 +103,18 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
             Assert.True(insertedEntities[1].BooleanValue);
             Assert.True(insertedEntities[2].BooleanValue);
         }
+
+        protected override void CoalesceStringSql()
+        {
+            var sourceEntities = new[]
+            {
+                new SourceEntity { StringField = null },
+            };
+            
+            var insertedEntities = ContextOptionsFactory.CheckTrigger(CoalesceStringExpression, SetupDbContext, SetupModelBuilder, sourceEntities);
+            var insertedEntity = Assert.Single(insertedEntities);
+            
+            Assert.Equal("John", insertedEntity.StringField);
+        }
     }
 }

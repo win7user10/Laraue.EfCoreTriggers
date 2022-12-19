@@ -26,7 +26,10 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             this EntityTypeBuilder<T> entityTypeBuilder,
             ITrigger configuredTrigger) where T : class
         {
-            var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(typeof(T).FullName);
+            var entityTypeName = typeof(T).FullName!;
+            var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(entityTypeName)
+                ?? throw new InvalidOperationException($"Entity {entityTypeName} metadata was not found");
+
 #if NET6_0_OR_GREATER
             entityTypeBuilder.ToTable(tb => tb.HasTrigger(configuredTrigger.Name));
 #endif

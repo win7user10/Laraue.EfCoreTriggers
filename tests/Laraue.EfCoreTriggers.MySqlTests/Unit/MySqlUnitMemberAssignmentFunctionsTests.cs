@@ -24,7 +24,7 @@ namespace Laraue.EfCoreTriggers.MySqlTests.Unit
 
         public override string ExceptedIntMultiplySql => "INSERT INTO `destination_entities` (`int_value`) SELECT NEW.`int_value` * 2;";
 
-        public override string ExceptedBooleanSql => "INSERT INTO `destination_entities` (`boolean_value`) SELECT NEW.`boolean_value` is false;";
+        public override string ExceptedBooleanSql => "INSERT INTO `destination_entities` (`boolean_value`) SELECT NEW.`boolean_value` IS FALSE;";
 
         public override string ExceptedNewGuidSql => "INSERT INTO `destination_entities` (`guid_value`) SELECT UUID();";
         
