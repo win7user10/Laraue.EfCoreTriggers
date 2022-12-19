@@ -98,7 +98,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         }
         
         [Fact]
-        public void NullСoalescingShouldGenerateCorrectSql()
+        public void NullСoalesceShouldGenerateCorrectSql()
         {
             var action = new OnInsertTriggerCondition<TestEntity>(entity => (entity.StringValue ?? "Undefined") != "John");
             var sql = _provider.Visit(action, new VisitedMembers());

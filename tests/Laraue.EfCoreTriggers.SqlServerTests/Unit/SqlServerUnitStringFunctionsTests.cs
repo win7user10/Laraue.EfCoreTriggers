@@ -30,6 +30,6 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Unit
 
         protected override string ExceptedIsNullOrEmptySql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT CASE WHEN @NewStringField IS NULL OR @NewStringField = '' THEN 1 ELSE 0 END;";
 
-        protected override string ExceptedCoalesceStringSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT COALESCE(NEW.\"string_field\", 'John');";
+        protected override string ExceptedCoalesceStringSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT COALESCE(@NewStringField, 'John');";
     }
 }
