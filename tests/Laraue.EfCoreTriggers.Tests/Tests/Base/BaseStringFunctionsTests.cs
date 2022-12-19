@@ -86,5 +86,16 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
 
         [Fact]
         protected abstract void StringIsNullOrEmptySql();
+        
+        /// <summary>
+        /// BooleanValue = string.IsNullOrEmpty(OLD.StringField)
+        /// </summary>
+        protected Expression<Func<SourceEntity, DestinationEntity>> CoalesceStringExpression = sourceEntity => new DestinationEntity
+        {
+            StringField = sourceEntity.StringField ?? "John"
+        };
+
+        [Fact]
+        protected abstract void CoalesceStringSql();
     }
 }

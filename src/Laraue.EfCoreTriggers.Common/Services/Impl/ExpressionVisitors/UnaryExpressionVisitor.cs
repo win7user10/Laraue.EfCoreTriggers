@@ -42,14 +42,8 @@ public class UnaryExpressionVisitor : BaseExpressionVisitor<UnaryExpression>
 
             return sqlBuilder;
         }
-            
-        var operand = _generator.GetOperand(expression);
         
-        var sql = expression.NodeType == ExpressionType.Negate 
-            ? $"{operand}{internalExpressionSql}" 
-            : $"{internalExpressionSql} {operand}";
-
-        sqlBuilder.Append(sql);
+        sqlBuilder.Append(_generator.GetUnarySql(expression.NodeType, internalExpressionSql));
             
         return sqlBuilder;
     }
