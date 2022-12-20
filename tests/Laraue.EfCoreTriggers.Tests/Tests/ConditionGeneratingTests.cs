@@ -35,6 +35,9 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
             modelBuilder.Entity<TestEntity>()
                 .Property<string>("StringValue");
+            
+            modelBuilder.Entity<TestEntity>()
+                .Property<int?>("NullableIntValue");
 
             _provider = Helper.GetTriggerActionFactory(modelBuilder.Model.FinalizeModel(), collection => collection.AddMySqlServices());
         }
@@ -98,11 +101,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         }
         
         [Fact]
-        public void NullСoalesceShouldGenerateCorrectSql()
+        public void СoalesceNullableStructShouldGenerateCorrectSql()
         {
-            var action = new OnInsertTriggerCondition<TestEntity>(entity => (entity.StringValue ?? "Undefined") != "John");
+            var action = new OnInsertTriggerCondition<TestEntity>(entity => (entity.NullableIntValue ?? 0) != 1);
             var sql = _provider.Visit(action, new VisitedMembers());
-            Assert.Equal("COALESCE(NEW.`StringValue`, 'Undefined') <> 'John'", sql);
+            Assert.Equal("COALESCE(NEW.`NullableIntValue`, 0) <> 1", sql);
         }
     }
 }
