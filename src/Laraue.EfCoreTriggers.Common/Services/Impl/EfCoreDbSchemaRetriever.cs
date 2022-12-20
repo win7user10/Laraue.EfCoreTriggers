@@ -45,8 +45,10 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
         if (!_columnNamesCache.ContainsKey(memberInfo))
         {
             var entityType = GetEntityType(type);
-            var property = GetColumn(type, memberInfo);
-            var identifier = (StoreObjectIdentifier)StoreObjectIdentifier.Create(entityType, StoreObjectType.Table);
+            var property = GetColumn(type, memberInfo)
+                ?? throw new InvalidOperationException($"Column for type {type} and member {memberInfo} was not found");
+            
+            var identifier = (StoreObjectIdentifier)StoreObjectIdentifier.Create(entityType, StoreObjectType.Table)!;
             _columnNamesCache.Add(memberInfo, property.GetColumnName(identifier));
         }
 

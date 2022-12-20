@@ -90,7 +90,7 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
                 null,
                 methodInfo,
                 binaryExpressionParts[0],
-                binaryExpressionParts[1]);
+                Expression.Convert(binaryExpressionParts[1], binaryExpressionParts[0].Type));
 
             return _factory.Visit(methodCall, argumentTypes, visitedMembers);
         }
