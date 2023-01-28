@@ -51,7 +51,7 @@ public interface ISqlGenerator
     string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType);
 
     /// <summary>
-    /// Get table SQL, e.g. "Users".
+    /// Get table SQL, e.g. "dbo"."Users".
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>

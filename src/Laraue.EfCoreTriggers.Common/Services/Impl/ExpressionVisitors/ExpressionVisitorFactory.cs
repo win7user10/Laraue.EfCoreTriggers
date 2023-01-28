@@ -35,6 +35,7 @@ public class ExpressionVisitorFactory : IExpressionVisitorFactory
             UnaryExpression unary => Visit(unary, argumentTypes, visitedMembers),
             NewExpression @new => Visit(@new, argumentTypes, visitedMembers),
             LambdaExpression lambda => Visit(lambda, argumentTypes, visitedMembers),
+            ParameterExpression parameterExpression => Visit(parameterExpression, argumentTypes, visitedMembers),
             _ => throw new NotSupportedException($"Expression of type {expression.GetType()} is not supported")
         };
     }

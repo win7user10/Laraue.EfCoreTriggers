@@ -90,6 +90,7 @@ public static class ServiceCollectionExtensions
             .AddExpressionVisitor<ConstantExpression, ConstantExpressionVisitor>()
             .AddExpressionVisitor<MethodCallExpression, MethodCallExpressionVisitor>()
             .AddExpressionVisitor<LambdaExpression, LambdaExpressionVisitor>()
+            .AddExpressionVisitor<ParameterExpression, ParameterExpressionVisitor>()
             
             .AddMethodCallConverter<CountVisitor>()
             .AddMethodCallConverter<CoalesceVisitor>()
