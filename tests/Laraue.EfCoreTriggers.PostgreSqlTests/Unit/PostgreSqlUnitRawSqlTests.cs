@@ -16,7 +16,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
         {
         }
 
-        protected override string ExceptedInsertTriggerSqlForMemberArgs => "PERFORM func(NEW.\"boolean_value\", NEW.\"double_value\")";
+        protected override string ExceptedInsertTriggerSqlForMemberArgs => "PERFORM func(NEW.\"boolean_value\", NEW.\"double_value\", \"source_entities\")";
         protected override string ExceptedInsertTriggerSqlForComputedArgs => "PERFORM func(NEW.\"double_value\" + 10)";
         protected override string ExceptedInsertTriggerSqlWhenNoArgs => "PERFORM func()";
         protected override string ExceptedUpdateTriggerSqlForMemberArgs => "PERFORM func(OLD.\"decimal_value\", NEW.\"decimal_value\")";

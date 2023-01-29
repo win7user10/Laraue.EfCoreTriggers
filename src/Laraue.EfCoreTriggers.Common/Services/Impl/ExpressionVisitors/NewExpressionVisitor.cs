@@ -15,12 +15,13 @@ public abstract class NewExpressionVisitor : BaseExpressionVisitor<NewExpression
         {
             return GetNewGuidSql();
         }
+        
         if (expression.Type == typeof(DateTimeOffset))
         {
             return GetNewDateTimeOffsetSql();
         }
         
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     /// <summary>

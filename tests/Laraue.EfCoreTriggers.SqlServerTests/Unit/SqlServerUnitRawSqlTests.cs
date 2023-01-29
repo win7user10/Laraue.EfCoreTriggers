@@ -16,7 +16,7 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Unit
         {
         }
 
-        protected override string ExceptedInsertTriggerSqlForMemberArgs => "PERFORM func(@NewBooleanValue, @NewDoubleValue)";
+        protected override string ExceptedInsertTriggerSqlForMemberArgs => "PERFORM func(@NewBooleanValue, @NewDoubleValue, \"source_entities\")";
         protected override string ExceptedInsertTriggerSqlForComputedArgs => "PERFORM func(@NewDoubleValue + 10)";
         protected override string ExceptedInsertTriggerSqlWhenNoArgs => "PERFORM func()";
         protected override string ExceptedUpdateTriggerSqlForMemberArgs => "PERFORM func(@OldDecimalValue, @NewDecimalValue)";

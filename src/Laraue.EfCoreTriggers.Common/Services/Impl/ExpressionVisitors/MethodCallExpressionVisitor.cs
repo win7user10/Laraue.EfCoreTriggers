@@ -27,7 +27,7 @@ public class MethodCallExpressionVisitor : BaseExpressionVisitor<MethodCallExpre
         return visitor.Visit(expression, argumentTypes, visitedMembers);
     }
 
-    public IMethodCallVisitor GetVisitor(MethodCallExpression expression)
+    private IMethodCallVisitor GetVisitor(MethodCallExpression expression)
     {
         foreach (var converter in _visitors)
         {
