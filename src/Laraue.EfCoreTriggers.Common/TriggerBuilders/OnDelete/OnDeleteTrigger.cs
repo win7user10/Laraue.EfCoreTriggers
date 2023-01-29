@@ -1,4 +1,5 @@
 ﻿using System;
+using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete

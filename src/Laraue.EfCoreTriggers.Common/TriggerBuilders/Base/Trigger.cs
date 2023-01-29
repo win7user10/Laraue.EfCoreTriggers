@@ -12,9 +12,9 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 
         public Type TriggerEntityType => typeof(TTriggerEntity);
 
-        public List<ITriggerAction> Actions { get; } = new();
+        public IList<ITriggerAction> Actions { get; } = new List<ITriggerAction>();
 
-        public List<ITriggerAction> Conditions  { get; } = new();
+        public IList<ITriggerAction> Conditions  { get; } = new List<ITriggerAction>();
 
         protected Trigger(TriggerEvent triggerEvent, TriggerTime triggerTime)
         {

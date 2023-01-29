@@ -28,8 +28,13 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         {
             Expression<Func<SourceEntity, object>> arg1Expression = sourceEntity => sourceEntity.BooleanValue;
             Expression<Func<SourceEntity, object>> arg2Expression = sourceEntity => sourceEntity.DoubleValue;
+            Expression<Func<SourceEntity, object>> arg3Expression = sourceEntity => sourceEntity;
             
-            var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>("PERFORM func({0}, {1})", arg1Expression, arg2Expression);
+            var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>(
+                "PERFORM func({0}, {1}, {2})",
+                arg1Expression,
+                arg2Expression,
+                arg3Expression);
 
             var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
