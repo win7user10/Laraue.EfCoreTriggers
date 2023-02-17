@@ -2,6 +2,7 @@
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.CSharpMethods;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable.Count;
+using Laraue.EfCoreTriggers.Common.Migrations;
 using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
@@ -96,7 +97,9 @@ public static class ServiceCollectionExtensions
             .AddMethodCallConverter<CoalesceVisitor>()
             
             .AddScoped<VisitingInfo>()
-            
+
+            .AddScoped<TriggerModelDiffer>()
+
             .AddScoped<IUpdateExpressionVisitor, UpdateExpressionVisitor>();
     }
 }
