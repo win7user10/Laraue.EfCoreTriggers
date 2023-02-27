@@ -60,10 +60,8 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
 
     public override string GenerateDeleteTriggerSql(string triggerName, IEntityType entityType)
     {
-        var schemaName = entityType.GetSchema();
-        var name = string.IsNullOrWhiteSpace(schemaName)
-            ? triggerName
-            : $"{schemaName}.{triggerName}";
-        return SqlBuilder.FromString($"DROP FUNCTION {name}() CASCADE;");
+        var functionName = _sqlGenerator.GetFunctionNameSql(entityType.ClrType, triggerName);
+        
+        return SqlBuilder.FromString($"DROP FUNCTION {functionName}() CASCADE;");
     }
 }
