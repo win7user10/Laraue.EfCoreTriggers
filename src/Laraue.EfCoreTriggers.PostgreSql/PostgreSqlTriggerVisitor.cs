@@ -2,7 +2,6 @@
 using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
 
