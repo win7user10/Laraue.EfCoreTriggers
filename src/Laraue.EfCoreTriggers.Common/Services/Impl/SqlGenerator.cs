@@ -4,6 +4,7 @@ using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl;
 
@@ -95,10 +96,19 @@ public class SqlGenerator : ISqlGenerator
             : $"{WrapWithDelimiters(schemaName)}.{tableSql}";
     }
 
+    public string GetFunctionNameSql(IEntityType entityType, string name)
+    {
+        return GetFunctionNameSql(_adapter.GetTableSchemaName(entityType), name);
+    }
+
     public string GetFunctionNameSql(Type entity, string name)
     {
-        var functionName = WrapWithDelimiters(name);
-        var schemaName = _adapter.GetTableSchemaName(entity);
+        return GetFunctionNameSql(_adapter.GetTableSchemaName(entity), name);
+    }
+
+    private string GetFunctionNameSql(string? schemaName, string triggerName)
+    {
+        var functionName = WrapWithDelimiters(triggerName);
 
         return string.IsNullOrWhiteSpace(schemaName)
             ? functionName

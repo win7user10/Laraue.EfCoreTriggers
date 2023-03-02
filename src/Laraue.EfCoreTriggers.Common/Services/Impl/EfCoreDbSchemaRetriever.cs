@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
@@ -10,21 +9,6 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl;
 /// <inheritdoc />
 public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
 {
-    /// <summary>
-    /// Cached column names for entity properties.
-    /// </summary>
-    private readonly Dictionary<MemberInfo, string> _columnNamesCache = new();
-
-    /// <summary>
-    /// Cached table names for entities.
-    /// </summary>
-    private readonly Dictionary<Type, string> _tableNamesCache = new();
-
-    /// <summary>
-    /// Cached database schema names.
-    /// </summary>
-    private readonly Dictionary<Type, string> _tableSchemasCache = new();
-
     /// <summary>
     /// Model used for generating SQL. From this model takes column names, table names and other meta information.
     /// </summary>
@@ -42,27 +26,18 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     /// <inheritdoc />
     public string GetColumnName(Type type, MemberInfo memberInfo)
     {
-        if (!_columnNamesCache.ContainsKey(memberInfo))
-        {
-            var entityType = GetEntityType(type);
-            var property = GetColumn(type, memberInfo)
-                ?? throw new InvalidOperationException($"Column for type {type} and member {memberInfo} was not found");
-            
-            var identifier = (StoreObjectIdentifier)StoreObjectIdentifier.Create(entityType, StoreObjectType.Table)!;
-            _columnNamesCache.Add(memberInfo, property.GetColumnName(identifier));
-        }
-
-        if (!_columnNamesCache.TryGetValue(memberInfo, out var columnName))
-        {
-            throw new InvalidOperationException($"Column name for member {memberInfo.Name} is not defined in model");
-        }
-
-        return columnName;
+        var entityType = GetEntityType(type);
+        var column = GetColumn(type, memberInfo);
+        
+        var identifier = (StoreObjectIdentifier)StoreObjectIdentifier.Create(entityType, StoreObjectType.Table)!;
+        return column.GetColumnName(identifier) 
+               ?? throw new InvalidOperationException($"Column information was not found for {identifier}");
     }
 
     private IProperty GetColumn(Type type, MemberInfo memberInfo)
     {
-        return GetEntityType(type).FindProperty(memberInfo.Name);
+        return GetEntityType(type).FindProperty(memberInfo.Name)
+            ?? throw new InvalidOperationException($"Column {memberInfo.Name} was not found in {type}");
     }
     
     private IEntityType GetEntityType(Type type)
@@ -78,20 +53,10 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     }
 
     /// <inheritdoc />
-    public string GetTableName(Type entity)
+    public string GetTableName(Type type)
     {
-        if (!_tableNamesCache.ContainsKey(entity))
-        {
-            var entityType = Model.FindEntityType(entity);
-            _tableNamesCache.Add(entity, entityType.GetTableName());
-        }
-
-        if (!_tableNamesCache.TryGetValue(entity, out var tableName))
-        {
-            throw new InvalidOperationException($"Table name for entity {entity.FullName} is not defined in model.");
-        }
-
-        return tableName;
+        return GetEntityType(type).GetTableName()
+            ?? throw new InvalidOperationException($"{type} is not mapped to the table");
     }
 
     /// <summary>
@@ -99,22 +64,18 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    public virtual string GetTableSchemaName(Type entity)
+    public virtual string? GetTableSchemaName(Type entity)
     {
-        if (!_tableSchemasCache.ContainsKey(entity))
-        {
-            var entityType = Model.FindEntityType(entity);
-            _tableSchemasCache.Add(entity, entityType.GetSchema());
-        }
-
-        if (!_tableSchemasCache.TryGetValue(entity, out var schemaName))
-        {
-            throw new InvalidOperationException($"Schema for entity {entity.FullName} is not defined in model.");
-        }
-
-        return schemaName;
+        return GetTableSchemaName(GetEntityType(entity));
     }
-    
+
+    /// <inheritdoc />
+    public string? GetTableSchemaName(IEntityType? entityType)
+    {
+        return entityType?.GetSchema();
+    }
+
+    /// <inheritdoc />
     public PropertyInfo[] GetPrimaryKeyMembers(Type type)
     {
         var entityType = Model.FindEntityType(type);
@@ -122,10 +83,12 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
         return entityType
             ?.FindPrimaryKey()
             ?.Properties
-            .Select(x => x.PropertyInfo)
-            .ToArray();
+            .Select(x => x.PropertyInfo!)
+            .ToArray()
+               ?? Array.Empty<PropertyInfo>();
     }
 
+    /// <inheritdoc />
     public KeyInfo[] GetForeignKeyMembers(Type type, Type type2)
     {
         var entityType = Model.FindEntityType(type);
@@ -148,6 +111,7 @@ public class EfCoreDbSchemaRetriever : IDbSchemaRetriever
         return keys;
     }
 
+    /// <inheritdoc />
     public Type GetActualClrType(Type type, MemberInfo memberInfo)
     {
         var columnType = GetColumn(type, memberInfo);

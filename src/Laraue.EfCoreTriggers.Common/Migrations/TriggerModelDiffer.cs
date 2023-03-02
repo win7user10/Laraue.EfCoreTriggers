@@ -34,8 +34,8 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
             _triggerVisitor.ConvertTriggerAnnotationsToSql(sourceModel);
             _triggerVisitor.ConvertTriggerAnnotationsToSql(targetModel);
 
-            var oldEntityTypeNames = sourceModel?.GetEntityTypeNames() ?? Array.Empty<string>();
-            var newEntityTypeNames = targetModel?.GetEntityTypeNames() ?? Array.Empty<string>();
+            var oldEntityTypeNames = sourceModel.GetEntityTypeNames();
+            var newEntityTypeNames = targetModel.GetEntityTypeNames();
 
             var commonEntityTypeNames = oldEntityTypeNames
                 .Intersect(newEntityTypeNames)
@@ -60,24 +60,22 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
                     createTriggerOperations.AddCreateTriggerSqlMigration(annotation);
                 }
             }
-
+            
             // For existing entities.
             foreach (var entityTypeName in commonEntityTypeNames)
             {
-                var oldEntityType = sourceModel?.FindEntityType(entityTypeName);
-                var newEntityType = targetModel?.FindEntityType(entityTypeName);
+                var oldEntityType = sourceModel!.FindEntityType(entityTypeName);
+                var newEntityType = targetModel!.FindEntityType(entityTypeName);
 
-                var oldAnnotationNames = sourceModel?.FindEntityType(entityTypeName)?
+                var oldAnnotationNames = sourceModel.FindEntityType(entityTypeName)
                     .GetTriggerAnnotations()
                     .Select(x => x.Name)
-                    .ToArray()
-                        ?? Array.Empty<string>();
+                    .ToArray();
 
-                var newAnnotationNames = targetModel?.FindEntityType(entityTypeName)?
+                var newAnnotationNames = targetModel.FindEntityType(entityTypeName)
                     .GetTriggerAnnotations()
                     .Select(x => x.Name)
-                    .ToArray()
-                        ?? Array.Empty<string>();
+                    .ToArray();
 
                 var commonAnnotationNames = oldAnnotationNames
                     .Intersect(newAnnotationNames)
@@ -97,7 +95,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
                     _triggerVisitor.AddDeleteTriggerSqlMigration(
                         deleteTriggerOperations,
                         oldValue,
-                        GetEntityTypeWithClrType(oldEntityType, newEntityType));
+                        newEntityType);
                     
                     createTriggerOperations.AddCreateTriggerSqlMigration(newValue);
                 }
@@ -105,28 +103,24 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
                 // If trigger was removed, delete it.
                 foreach (var oldTriggerName in oldAnnotationNames.Except(commonAnnotationNames))
                 {
-                    var oldTriggerAnnotation = oldEntityType?.GetAnnotation(oldTriggerName);
+                    var oldTriggerAnnotation = oldEntityType.GetAnnotation(oldTriggerName);
 
-                    _triggerVisitor.AddDeleteTriggerSqlMigration(deleteTriggerOperations, oldTriggerAnnotation, GetEntityTypeWithClrType(oldEntityType, newEntityType));
+                    _triggerVisitor.AddDeleteTriggerSqlMigration(
+                        deleteTriggerOperations,
+                        oldTriggerAnnotation,
+                        newEntityType);
                 }
 
                 // If trigger was added, create it.
                 foreach (var newTriggerName in newAnnotationNames.Except(commonAnnotationNames))
                 {
-                    var newTriggerAnnotation = newEntityType?.GetAnnotation(newTriggerName);
+                    var newTriggerAnnotation = newEntityType.GetAnnotation(newTriggerName);
 
                     createTriggerOperations.AddCreateTriggerSqlMigration(newTriggerAnnotation);
                 }
             }
 
             return MergeOperations(operations, createTriggerOperations, deleteTriggerOperations);
-        }
-
-        private static IEntityType GetEntityTypeWithClrType(IEntityType? oldEntityType, IEntityType? newEntityType)
-        {
-            var entityType = newEntityType?.ClrType is null ? oldEntityType : newEntityType;
-
-            return entityType ?? throw new InvalidOperationException();
         }
 
         private IReadOnlyList<MigrationOperation> MergeOperations(
@@ -151,7 +145,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
             .GetField("_annotations", BindingFlags.Instance | BindingFlags.NonPublic)!;
 #else
         private static readonly FieldInfo AnnotationsField = typeof(Annotatable)
-            .GetField("_annotations", BindingFlags.Instance | BindingFlags.NonPublic);
+            .GetField("_annotations", BindingFlags.Instance | BindingFlags.NonPublic)!;
 #endif
         
         
@@ -164,7 +158,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         {
             foreach (var entityType in model?.GetEntityTypes() ?? Enumerable.Empty<IEntityType>())
             {
-                var annotations = (SortedDictionary<string, Annotation>) AnnotationsField.GetValue(entityType);
+                var annotations = (SortedDictionary<string, Annotation>?) AnnotationsField.GetValue(entityType);
 
                 if (annotations is null)
                 {
@@ -198,7 +192,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static string[] GetEntityTypeNames(this IModel model)
+        public static string[] GetEntityTypeNames(this IModel? model)
         {
             return model?
                 .GetEntityTypes()
@@ -212,7 +206,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         /// </summary>
         /// <param name="entityType"></param>
         /// <returns></returns>
-        public static IEnumerable<IAnnotation> GetTriggerAnnotations(this IEntityType entityType)
+        public static IEnumerable<IAnnotation> GetTriggerAnnotations(this IEntityType? entityType)
         {
             return entityType?.GetAnnotations()
                 .Where(x => x.Name.StartsWith(Constants.AnnotationKey))

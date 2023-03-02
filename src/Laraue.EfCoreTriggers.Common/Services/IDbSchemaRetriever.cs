@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.Common.Services;
 
@@ -27,11 +28,17 @@ public interface IDbSchemaRetriever
     
     /// <summary>
     /// Return schema name for the passed entity if it is exists.
-    /// Note: this is just a schema name, without quotes.
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    string GetTableSchemaName(Type entity);
+    string? GetTableSchemaName(Type entity);
+    
+    /// <summary>
+    /// Return schema name for the passed entity if it is exists.
+    /// </summary>
+    /// <param name="entityType"></param>
+    /// <returns></returns>
+    string? GetTableSchemaName(IEntityType entityType);
 
     /// <summary>
     /// Get all members which are used in primary key.
@@ -54,7 +61,6 @@ public interface IDbSchemaRetriever
     /// </summary>
     /// <param name="type">Entity type.</param>
     /// <param name="memberInfo">Entity member.</param>
-    /// <param name="clrType">Actual type if it annotation was found.</param>
     /// <returns></returns>
     Type GetActualClrType(Type type, MemberInfo memberInfo);
 }

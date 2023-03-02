@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.Common.Services;
 
@@ -61,10 +62,18 @@ public interface ISqlGenerator
     /// Get the function name with the entities schema.
     /// User, "AFTER_DELETE" -> "schema"."AFTER_DELETE_USER"
     /// </summary>
-    /// <param name="entity"></param>
+    /// <param name="entityType"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    string GetFunctionNameSql(Type entity, string name);
+    string GetFunctionNameSql(IEntityType entityType, string name);
+    
+    /// <summary>
+    /// <see cref="GetFunctionNameSql(Microsoft.EntityFrameworkCore.Metadata.IEntityType,string)"/>
+    /// </summary>
+    /// <param name="entityType"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    string GetFunctionNameSql(Type entityType, string name);
     
     /// <summary>
     /// Get name of CLR <see cref="Type"/> in the current SQL provider.
