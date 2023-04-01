@@ -21,7 +21,7 @@ public class TriggerInsertActionVisitor : ITriggerActionVisitor<TriggerInsertAct
     {
         var insertStatement = _visitor.Visit(
             triggerAction.InsertExpression,
-            triggerAction.InsertExpressionPrefixes,
+            null,
             visitedMembers);
 
         var insertEntityType = triggerAction.InsertExpression.Body.Type;

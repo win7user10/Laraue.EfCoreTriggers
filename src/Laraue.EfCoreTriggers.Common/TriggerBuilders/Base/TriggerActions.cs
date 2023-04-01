@@ -13,7 +13,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         private readonly List<TriggerCondition> _actionConditions = new();
         
         private readonly List<ITriggerAction> _actionExpressions = new();
-
+        
         private void AddAction(ITriggerAction triggerAction)
             => _actionExpressions.Add(triggerAction);
 

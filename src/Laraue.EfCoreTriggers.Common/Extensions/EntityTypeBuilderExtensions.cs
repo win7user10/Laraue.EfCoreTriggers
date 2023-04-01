@@ -1,9 +1,6 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -47,10 +44,13 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> BeforeUpdate<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<OnUpdateTrigger<T>> configuration)
+            Action<NewTrigger<T, OldAndNewRef<T>>> configuration)
             where T : class
         {
-            return entityTypeBuilder.AddOnUpdateTrigger(configuration, TriggerTime.Before);
+            return entityTypeBuilder.AddTrigger(
+                TriggerEvent.Update,
+                TriggerTime.Before,
+                configuration);
         }
 
         /// <summary>
@@ -62,10 +62,13 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> AfterUpdate<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<OnUpdateTrigger<T>> configuration) 
+            Action<NewTrigger<T, OldAndNewRef<T>>> configuration) 
             where T : class
         {
-            return entityTypeBuilder.AddOnUpdateTrigger(configuration, TriggerTime.After);
+            return entityTypeBuilder.AddTrigger(
+                TriggerEvent.Update,
+                TriggerTime.After,
+                configuration);
         }
         
         /// <summary>
@@ -77,10 +80,13 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> InsteadOfUpdate<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<OnUpdateTrigger<T>> configuration) 
+            Action<NewTrigger<T, OldAndNewRef<T>>> configuration) 
             where T : class
         {
-            return entityTypeBuilder.AddOnUpdateTrigger(configuration, TriggerTime.InsteadOf);
+            return entityTypeBuilder.AddTrigger(
+                TriggerEvent.Update,
+                TriggerTime.InsteadOf,
+                configuration);
         }
         
         /// <summary>
@@ -92,10 +98,13 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> BeforeDelete<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<OnDeleteTrigger<T>> configuration) 
+            Action<NewTrigger<T, OldRef<T>>> configuration) 
             where T : class
         {
-            return entityTypeBuilder.AddOnDeleteTrigger(configuration, TriggerTime.Before);
+            return entityTypeBuilder.AddTrigger(
+                TriggerEvent.Delete,
+                TriggerTime.Before,
+                configuration);
         }
         
         /// <summary>
@@ -107,10 +116,13 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> AfterDelete<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<OnDeleteTrigger<T>> configuration) 
+            Action<NewTrigger<T, OldRef<T>>> configuration) 
             where T : class
         {
-            return entityTypeBuilder.AddOnDeleteTrigger(configuration, TriggerTime.After);
+            return entityTypeBuilder.AddTrigger(
+                TriggerEvent.Delete,
+                TriggerTime.After,
+                configuration);
         }
 
         /// <summary>
@@ -122,10 +134,13 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> InsteadOfDelete<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<OnDeleteTrigger<T>> configuration) 
+            Action<NewTrigger<T, OldRef<T>>> configuration) 
             where T : class
         {
-            return entityTypeBuilder.AddOnDeleteTrigger(configuration, TriggerTime.InsteadOf);
+            return entityTypeBuilder.AddTrigger(
+                TriggerEvent.Delete,
+                TriggerTime.InsteadOf,
+                configuration);
         }
 
         /// <summary>
@@ -137,9 +152,13 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> BeforeInsert<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<OnInsertTrigger<T>> configuration) where T : class
+            Action<NewTrigger<T, NewRef<T>>> configuration)
+            where T : class
         {
-            return entityTypeBuilder.AddOnInsertTrigger(configuration, TriggerTime.Before);
+            return entityTypeBuilder.AddTrigger(
+                TriggerEvent.Insert,
+                TriggerTime.Before,
+                configuration);
         }
 
         /// <summary>
@@ -151,10 +170,13 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> AfterInsert<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<OnInsertTrigger<T>> configuration)
+            Action<NewTrigger<T, NewRef<T>>> configuration)
             where T : class
         {
-            return entityTypeBuilder.AddOnInsertTrigger(configuration, TriggerTime.After);
+            return entityTypeBuilder.AddTrigger(
+                TriggerEvent.Insert,
+                TriggerTime.After,
+                configuration);
         }
 
         /// <summary>
@@ -166,38 +188,26 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> InsteadOfInsert<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<OnInsertTrigger<T>> configuration) 
+            Action<NewTrigger<T, NewRef<T>>> configuration) 
             where T : class
         {
-            return entityTypeBuilder.AddOnInsertTrigger(configuration, TriggerTime.InsteadOf);
+            return entityTypeBuilder.AddTrigger(
+                TriggerEvent.Insert,
+                TriggerTime.InsteadOf,
+                configuration);
         }
 
-        private static EntityTypeBuilder<T> AddOnUpdateTrigger<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnUpdateTrigger<T>> configuration,
-            TriggerTime triggerTime) where T : class
+        private static EntityTypeBuilder<T> AddTrigger<T, TRefs>(
+            this EntityTypeBuilder<T> entityTypeBuilder,
+            TriggerEvent triggerEvent,
+            TriggerTime triggerTime,
+            Action<NewTrigger<T, TRefs>> configureTrigger)
+            where T : class
+            where TRefs : Refs<T>
         {
-            var trigger = new OnUpdateTrigger<T>(triggerTime);
+            var trigger = new NewTrigger<T, TRefs>(triggerEvent, triggerTime);
             
-            configuration.Invoke(trigger);
-            
-            return entityTypeBuilder.AddTriggerAnnotation(trigger);
-        }
-
-        private static EntityTypeBuilder<T> AddOnDeleteTrigger<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnDeleteTrigger<T>> configuration,
-            TriggerTime triggerTime) where T : class
-        {
-            var trigger = new OnDeleteTrigger<T>(triggerTime);
-            
-            configuration.Invoke(trigger);
-            
-            return entityTypeBuilder.AddTriggerAnnotation(trigger);
-        }
-
-        private static EntityTypeBuilder<T> AddOnInsertTrigger<T>(this EntityTypeBuilder<T> entityTypeBuilder, Action<OnInsertTrigger<T>> configuration,
-            TriggerTime triggerTime) where T : class
-        {
-            var trigger = new OnInsertTrigger<T>(triggerTime);
-            
-            configuration.Invoke(trigger);
+            configureTrigger.Invoke(trigger);
             
             return entityTypeBuilder.AddTriggerAnnotation(trigger);
         }

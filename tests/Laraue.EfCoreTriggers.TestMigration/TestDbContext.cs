@@ -1,24 +1,20 @@
-﻿using System;
-using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.EfCoreTriggers.MySql.Extensions;
+﻿using Laraue.EfCoreTriggers.Common.Extensions;
+using Laraue.EfCoreTriggers.PostgreSql.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Laraue.EfCoreTriggers.TestMigration;
 
 public class TestDbContext : DbContext
 {
-    public DbSet<Entity1> Entities1 { get; set; }
-    
-    public DbSet<Entity2> Entities2 { get; set; }
+    public DbSet<Entity1> Users { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySql(
-            "server=localhost;user=mysql;password=mysql;database=efcoretriggers;", 
-            new MySqlServerVersion(new Version(8, 0, 22)),
+        optionsBuilder.UseNpgsql(
+            "server=localhost;user=mysql;password=mysql;database=efcoretriggers;",
                 x => x
                     .MigrationsAssembly(typeof(TestDbContext).Assembly.FullName))
-            .UseMySqlTriggers();
+            .UsePostgreSqlTriggers();
         
         base.OnConfiguring(optionsBuilder);
     }
@@ -27,8 +23,13 @@ public class TestDbContext : DbContext
     {
         modelBuilder.Entity<Entity1>()
             .AfterDelete(x => x
+                .Action(y => y
+                    .Insert(inserted => new Entity1 { Id = inserted.Old.Id + 1 })));
+        
+        modelBuilder.Entity<Entity2>()
+            .AfterDelete(x => x
                 .Action(x => x
-                    .Insert(inserted => new Entity1 { Id = inserted.Id })));
+                    .Insert(inserted => new Entity1 { Id = inserted.Old.Id })));
         
         base.OnModelCreating(modelBuilder);
     }

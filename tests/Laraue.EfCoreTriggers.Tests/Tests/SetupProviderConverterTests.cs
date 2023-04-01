@@ -4,7 +4,6 @@ using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;

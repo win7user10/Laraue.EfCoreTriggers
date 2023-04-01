@@ -12,7 +12,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
     [Collection("IntegrationTests")]
     public abstract class DeleteTests : BaseTriggerTests
     {
-        protected DeleteTests(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory) : base(contextOptionsFactory)
+        protected DeleteTests(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory)
+            : base(contextOptionsFactory)
         {
         }
         
@@ -22,7 +23,10 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
             Action<EntityTypeBuilder<SourceEntity>> builder = x =>
                 x.AfterDelete(trigger => trigger
                     .Action(action => action
-                        .Insert(deleted => new DestinationEntity {StringField = deleted.StringField})));
+                        .Insert(deleted => new DestinationEntity
+                        {
+                            StringField = deleted.Old.StringField
+                        })));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new SourceEntity { StringField = "12" });
@@ -38,7 +42,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
             Action<EntityTypeBuilder<SourceEntity>> builder = x =>
                 x.AfterDelete(trigger => trigger
                     .Action(action => action
-                        .Delete<DestinationEntity>((deleted, destinationEntities) => deleted.StringField == destinationEntities.StringField)));
+                        .Delete<DestinationEntity>((tableRefs, destinationEntities)
+                            => tableRefs.Old.StringField == destinationEntities.StringField)));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new DestinationEntity { StringField = "def"});
@@ -57,7 +62,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                 x.AfterDelete(trigger => trigger
                     .Action(action => action
                         .Update<DestinationEntity>(
-                            (deleted, destinationEntities) => deleted.StringField == destinationEntities.StringField,
+                            (tableRefs, destinationEntities)
+                                => tableRefs.Old.StringField == destinationEntities.StringField,
                             (deleted, destinationEntities) 
                                 => new DestinationEntity { IntValue = destinationEntities.IntValue + 10 })));
 
@@ -80,9 +86,19 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                 x.AfterDelete(trigger => trigger
                     .Action(action => action
                         .Upsert(
-                            deleted => new DestinationEntity { UniqueIdentifier = deleted.IntValue },
-                            deleted => new DestinationEntity { DecimalValue = deleted.DecimalValue, UniqueIdentifier = deleted.IntValue },
-                            (deleted, destinationEntities) => new DestinationEntity { DecimalValue = destinationEntities.DecimalValue + deleted.DecimalValue })));
+                            (tableRefs, entities)
+                                => entities.UniqueIdentifier == tableRefs.Old.IntValue,
+                            tableRefs
+                                => new DestinationEntity
+                                {
+                                    DecimalValue = tableRefs.Old.DecimalValue,
+                                    UniqueIdentifier = tableRefs.Old.IntValue
+                                },
+                            (tableRefs, destinationEntities)
+                                => new DestinationEntity
+                                {
+                                    DecimalValue = destinationEntities.DecimalValue + tableRefs.Old.DecimalValue
+                                })));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new SourceEntity { IntValue = 1, DecimalValue = 15 });
@@ -100,8 +116,14 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                 x.AfterDelete(trigger => trigger
                     .Action(action => action
                         .InsertIfNotExists(
-                            destinationEntities => new DestinationEntity { UniqueIdentifier = destinationEntities.IntValue },
-                            deleted => new DestinationEntity { DecimalValue = deleted.DecimalValue, UniqueIdentifier = deleted.IntValue })));
+                            (tableRefs, entities)
+                                => entities.UniqueIdentifier == tableRefs.Old.IntValue,
+                            tableRefs
+                                => new DestinationEntity
+                                {
+                                    DecimalValue = tableRefs.Old.DecimalValue,
+                                    UniqueIdentifier = tableRefs.Old.IntValue
+                                })));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new SourceEntity { IntValue = 1, DecimalValue = 15 });

@@ -2,8 +2,6 @@
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
@@ -45,7 +43,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         [Fact]
         public void CastingToSameTypeShouldBeIgnored()
         {
-            var action = new OnInsertTriggerCondition<User>(user => user.Role > UserRole.Admin);
+            var action = new TriggerCondition<User>(user => user.Role > UserRole.Admin);
             var sql = _provider.Visit(action, new VisitedMembers());
             Assert.Equal("NEW.`Role` > 999", sql);
         }

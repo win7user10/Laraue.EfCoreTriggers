@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Extensions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Xunit;
@@ -19,7 +20,7 @@ public abstract class NativeEnumerableFunctionsTests : BaseEnumerableFunctionsTe
         ContextOptionsFactory = contextOptionsFactory;
     }
 
-    private void Test(Expression<Func<SourceEntity, SourceEntity, DestinationEntity>> expression, Action<DynamicDbContext, SourceEntity> testAction)
+    private void Test(Expression<Func<OldAndNewRef<SourceEntity>, DestinationEntity>> expression, Action<DynamicDbContext, SourceEntity> testAction)
     {
         using var dbContext = DynamicDbContextFactory.GetDbContext(
             ContextOptionsFactory,

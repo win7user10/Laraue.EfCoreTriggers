@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Xunit;
 using Xunit.Categories;
@@ -13,10 +14,10 @@ public abstract class BaseEnumerableFunctionsTests
     /// <summary>
     /// SELECT (SELECT COUNT(*) FROM related_entities WHERE source_entities.id = NEW.SourceEntityId), NEW.boolean_value
     /// </summary>
-    protected Expression<Func<SourceEntity, SourceEntity, DestinationEntity>> CountRelatedExpression = (prev, next) => new DestinationEntity
+    protected Expression<Func<OldAndNewRef<SourceEntity>, DestinationEntity>> CountRelatedExpression = refs => new DestinationEntity
     {
-        IntValue = next.RelatedEntities.Count(),
-        BooleanValue = next.BooleanValue,
+        IntValue = refs.New.RelatedEntities.Count(),
+        BooleanValue = refs.New.BooleanValue,
     };
 
     [Fact]

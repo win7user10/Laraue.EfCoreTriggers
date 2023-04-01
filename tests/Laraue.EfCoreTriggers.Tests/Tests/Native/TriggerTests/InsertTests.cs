@@ -37,7 +37,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
             Action<EntityTypeBuilder<SourceEntity>> builder = x =>
                 x.AfterInsert(trigger => trigger
                     .Action(action => action
-                        .Delete<DestinationEntity>((inserted, destinationEntities) => inserted.StringField == destinationEntities.StringField)));
+                        .Delete<DestinationEntity>((tableRefs, destinationEntities) => tableRefs.New.StringField == destinationEntities.StringField)));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new DestinationEntity { StringField = "abc"}, new DestinationEntity { StringField = "def"});
@@ -54,8 +54,10 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                 x.AfterInsert(trigger => trigger
                     .Action(action => action
                         .Update<DestinationEntity>(
-                            (inserted, destinationEntities) => inserted.StringField == destinationEntities.StringField,
-                            (inserted, oldEntities) => new DestinationEntity { IntValue = oldEntities.IntValue + 10 })));
+                            (tableRefs, destinationEntities)
+                                => tableRefs.New.StringField == destinationEntities.StringField,
+                            (tableRefs, oldEntities) 
+                                => new DestinationEntity { IntValue = oldEntities.IntValue + 10 })));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new DestinationEntity { StringField = "abc", IntValue = 1}, new DestinationEntity { StringField = "def", IntValue = 2});
@@ -74,9 +76,19 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                 x.AfterInsert(trigger => trigger
                     .Action(action => action
                         .Upsert(
-                            inserted => new DestinationEntity { UniqueIdentifier = inserted.IntValue },
-                            inserted => new DestinationEntity { DecimalValue = inserted.DecimalValue, UniqueIdentifier = inserted.IntValue },
-                            (inserted, oldEntity) => new DestinationEntity { DecimalValue = oldEntity.DecimalValue + inserted.DecimalValue })));
+                            (tableRefs, entities)
+                                => entities.UniqueIdentifier == tableRefs.New.IntValue,
+                            tableRefs
+                                => new DestinationEntity
+                                {
+                                    DecimalValue = tableRefs.New.DecimalValue,
+                                    UniqueIdentifier = tableRefs.New.IntValue
+                                },
+                            (tableRefs, oldEntity)
+                                => new DestinationEntity
+                                {
+                                    DecimalValue = oldEntity.DecimalValue + tableRefs.New.DecimalValue
+                                })));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new SourceEntity { IntValue = 1, DecimalValue = 15 });
@@ -93,8 +105,14 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                 x.AfterInsert(trigger => trigger
                     .Action(action => action
                         .InsertIfNotExists(
-                            inserted => new DestinationEntity { UniqueIdentifier = inserted.IntValue },
-                            inserted => new DestinationEntity { DecimalValue = inserted.DecimalValue, UniqueIdentifier = inserted.IntValue })));
+                            (tableRefs, entities) 
+                                => entities.UniqueIdentifier == tableRefs.New.IntValue,
+                            (tableRefs)
+                                => new DestinationEntity
+                                {
+                                    DecimalValue = tableRefs.New.DecimalValue,
+                                    UniqueIdentifier = tableRefs.New.IntValue
+                                })));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new SourceEntity { IntValue = 1, DecimalValue = 15 });
@@ -110,8 +128,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
             Action<EntityTypeBuilder<SourceEntity>> builder = x =>
                 x.AfterInsert(trigger => trigger
                     .Action(action => action
-                        .Condition(inserted => inserted.IntValue > 10)
-                        .Condition(inserted => inserted.IntValue < 20)
+                        .Condition(tableRefs => tableRefs.New.IntValue > 10)
+                        .Condition(tableRefs => tableRefs.New.IntValue < 20)
                         .Insert(inserted => new DestinationEntity())));
 
             using var dbContext = CreateDbContext(builder);
@@ -132,9 +150,15 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
             Action<EntityTypeBuilder<SourceEntity>> builder = x =>
                 x.AfterInsert(trigger => trigger
                     .Action(action => action
-                        .Insert(inserted => new DestinationEntity { StringField = inserted.StringField + "Bob" }))
+                        .Insert(tableRefs => new DestinationEntity
+                        {
+                            StringField = tableRefs.New.StringField + "Bob"
+                        }))
                     .Action(action => action
-                        .Insert(inserted => new DestinationEntity { StringField = inserted.StringField + "John" })));
+                        .Insert(tableRefs => new DestinationEntity
+                        {
+                            StringField = tableRefs.New.StringField + "John"
+                        })));
 
             using var dbContext = CreateDbContext(builder);
             
