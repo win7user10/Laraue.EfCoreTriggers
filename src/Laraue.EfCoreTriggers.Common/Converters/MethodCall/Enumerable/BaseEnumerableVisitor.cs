@@ -42,8 +42,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
             var baseMember = exp as MemberExpression;
             var enumerableMemberType = baseMember.Type;
             
-            var originalSetMemberExpression = (ParameterExpression) baseMember.Expression;
-            var originalSetType = originalSetMemberExpression?.Type;
+            var originalSetType = baseMember.Expression?.Type;
 
             if (!typeof(IEnumerable).IsAssignableFrom(enumerableMemberType) || !enumerableMemberType.IsGenericType)
             {
@@ -78,7 +77,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
             {
                 var column1Sql = _sqlGenerator.GetColumnSql(entityType, key.ForeignKey, ArgumentType.Default);
                 
-                var argument2Type = argumentTypes.Get(originalSetMemberExpression);
+                var argument2Type = argumentTypes.Get(baseMember);
                 
                 var column2WhereSql = _sqlGenerator.GetVariableSql(originalSetType, key.PrincipalKey, argument2Type);
                 visitedMembers.AddMember(argument2Type, key.PrincipalKey);

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
 public sealed class NewTrigger<TTriggerEntity, TTriggerEntityRefs> : ITrigger
     where TTriggerEntity : class
-    where TTriggerEntityRefs : Refs<TTriggerEntity>
+    where TTriggerEntityRefs : ITableRef<TTriggerEntity>
 {
     /// <inheritdoc />
     public TriggerEvent TriggerEvent { get; }
@@ -33,11 +34,13 @@ public sealed class NewTrigger<TTriggerEntity, TTriggerEntityRefs> : ITrigger
         => $"{Constants.AnnotationKey}_{TriggerTime}_{TriggerEvent}_{typeof(TTriggerEntity).Name}".ToUpper();
 
     public NewTrigger<TTriggerEntity, TTriggerEntityRefs> Action(
-        Action<NewTriggerActions<TTriggerEntity, TTriggerEntityRefs>> triggerAction)
+        Action<NewTriggerAction<TTriggerEntity, TTriggerEntityRefs>> triggerAction)
     {
-        var actions = new NewTriggerActions<TTriggerEntity, TTriggerEntityRefs>();
+        var action = new NewTriggerAction<TTriggerEntity, TTriggerEntityRefs>();
 
-        triggerAction(actions);
+        triggerAction(action);
+        
+        Actions.Add(action);
 
         return this;
     }

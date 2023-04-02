@@ -2,6 +2,8 @@
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Xunit;
 using Xunit.Categories;
@@ -23,15 +25,13 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlForMemberArgs()
         {
-            Expression<Func<SourceEntity, object>> arg1Expression = sourceEntity => sourceEntity.BooleanValue;
-            Expression<Func<SourceEntity, object>> arg2Expression = sourceEntity => sourceEntity.DoubleValue;
-            Expression<Func<SourceEntity, object>> arg3Expression = sourceEntity => sourceEntity;
+            Expression<Func<NewTableRef<SourceEntity>, object>> arg1Expression = sourceEntity => sourceEntity.New.BooleanValue;
+            Expression<Func<NewTableRef<SourceEntity>, object>> arg2Expression = sourceEntity => sourceEntity.New.DoubleValue;
+            Expression<Func<NewTableRef<SourceEntity>, object>> arg3Expression = sourceEntity => sourceEntity.New;
             
-            var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>(
+            var trigger = new TriggerRawAction<SourceEntity, NewTableRef<SourceEntity>>(
                 "PERFORM func({0}, {1}, {2})",
-                arg1Expression,
-                arg2Expression,
-                arg3Expression);
+                new [] { arg1Expression, arg2Expression, arg3Expression });
 
             var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
@@ -44,9 +44,12 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlForComputedArgs()
         {
-            Expression<Func<SourceEntity, object>> argExpression = sourceEntity => sourceEntity.DoubleValue + 10;
+            Expression<Func<NewTableRef<SourceEntity>, object>> argExpression = sourceEntity
+                => sourceEntity.New.DoubleValue + 10;
             
-            var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>("PERFORM func({0})", argExpression);
+            var trigger = new TriggerRawAction<SourceEntity, NewTableRef<SourceEntity>>(
+                "PERFORM func({0})", 
+                new []{ argExpression });
 
             var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
@@ -58,7 +61,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlWhenNoArgs()
         {
-            var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>("PERFORM func()");
+            var trigger = new TriggerRawAction<SourceEntity, NewTableRef<SourceEntity>>("PERFORM func()");
 
             var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
@@ -70,9 +73,10 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlForUpdateTrigger()
         {
-            var trigger = new OnUpdateTriggerRawSqlAction<SourceEntity>("PERFORM func({0}, {1})", 
-                (@old, @new) => @old.DecimalValue, 
-                (@old, @new) => @new.DecimalValue);
+            var trigger = new TriggerRawAction<SourceEntity, OldAndNewTableRefs<SourceEntity>>(
+                "PERFORM func({0}, {1})",
+                tableRefs => tableRefs.Old.DecimalValue,
+                tableRefs => tableRefs.New.DecimalValue);
 
             var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 
@@ -84,9 +88,9 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlForDeleteTrigger()
         {
-            var trigger = new OnDeleteTriggerRawSqlAction<SourceEntity>("PERFORM func({0}, {1})", 
-                @old => @old.DecimalValue, 
-                @old => @old.DoubleValue);
+            var trigger = new TriggerRawAction<SourceEntity, OldTableRef<SourceEntity>>("PERFORM func({0}, {1})", 
+                tableRefs => tableRefs.Old.DecimalValue, 
+                tableRefs => tableRefs.Old.DoubleValue);
 
             var generatedSql = Factory.Visit(trigger, new VisitedMembers());
 

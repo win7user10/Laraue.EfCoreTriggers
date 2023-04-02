@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DecimalValue = Math.Abs(NEW.DecimalValue)
         /// </summary>
-        protected readonly Expression<Func<NewRef<SourceEntity>, DestinationEntity>> MathAbsDecimalValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MathAbsDecimalValueExpression =
             tableRefs => new DestinationEntity
             {
                 DecimalValue = Math.Abs(tableRefs.New.DecimalValue)
@@ -26,7 +27,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DoubleValue = Math.Acos(NEW.DoubleValue)
         /// </summary>
-        protected readonly Expression<Func<NewRef<SourceEntity>, DestinationEntity>> MathAcosDoubleValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MathAcosDoubleValueExpression =
             tableRefs => new DestinationEntity
             {
                 DoubleValue = Math.Acos(tableRefs.New.DoubleValue)
@@ -38,7 +39,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DoubleValue = Math.Asin(NEW.DoubleValue)
         /// </summary>
-        protected readonly Expression<Func<NewRef<SourceEntity>, DestinationEntity>> MathAsinDoubleValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MathAsinDoubleValueExpression =
             tableRefs => new DestinationEntity
             {
                 DoubleValue = Math.Asin(tableRefs.New.DoubleValue)
@@ -50,7 +51,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DoubleValue = Math.Atan(NEW.DoubleValue)
         /// </summary>
-        protected readonly Expression<Func<NewRef<SourceEntity>, DestinationEntity>> MathAtanDoubleValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MathAtanDoubleValueExpression =
             tableRefs => new DestinationEntity
             {
                 DoubleValue = Math.Atan(tableRefs.New.DoubleValue)
@@ -62,7 +63,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DoubleValue = Math.Atan2(NEW.DoubleValue, NEW.DoubleValue)
         /// </summary>
-        protected readonly Expression<Func<NewRef<SourceEntity>, DestinationEntity>> MathAtan2DoubleValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MathAtan2DoubleValueExpression =
             tableRefs => new DestinationEntity
             {
                 DoubleValue = Math.Atan2(tableRefs.New.DoubleValue, tableRefs.New.DoubleValue)
@@ -74,7 +75,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DoubleValue = Math.Ceiling(NEW.DoubleValue)
         /// </summary>
-        protected readonly Expression<Func<NewRef<SourceEntity>, DestinationEntity>> MathCeilingDoubleValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MathCeilingDoubleValueExpression =
             tableRefs => new DestinationEntity
             {
                 DoubleValue = Math.Ceiling(tableRefs.New.DoubleValue)
@@ -86,7 +87,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DoubleValue = Math.Cos(NEW.DoubleValue)
         /// </summary>
-        protected readonly Expression<Func<NewRef<SourceEntity>, DestinationEntity>> MathCosDoubleValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MathCosDoubleValueExpression =
             tableRefs => new DestinationEntity
             {
                 DoubleValue = Math.Cos(tableRefs.New.DoubleValue)
@@ -98,7 +99,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DoubleValue = Math.Exp(NEW.DoubleValue)
         /// </summary>
-        protected readonly Expression<Func<NewRef<SourceEntity>, DestinationEntity>> MathExpDoubleValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MathExpDoubleValueExpression =
             tableRefs => new DestinationEntity
             {
                 DoubleValue = Math.Exp(tableRefs.New.DoubleValue)
@@ -110,7 +111,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DoubleValue = Math.Floor(NEW.DoubleValue)
         /// </summary>
-        protected readonly Expression<Func<NewRef<SourceEntity>, DestinationEntity>> MathFloorDoubleValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MathFloorDoubleValueExpression =
             tableRefs => new DestinationEntity
             {
                 DoubleValue = Math.Floor(tableRefs.New.DoubleValue)

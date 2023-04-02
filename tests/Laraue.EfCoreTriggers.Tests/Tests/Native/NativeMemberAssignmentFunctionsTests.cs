@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Microsoft.EntityFrameworkCore;
@@ -93,15 +95,20 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
         [Fact]
         public void NumberEnumSql()
         {
-            Expression<Func<SourceEntity, DestinationEntity>> setEnumVariableExpression = sourceEntity => new DestinationEntity
-            {
-                EnumValue = EnumValue.Value2,
-            };
+            Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> setEnumVariableExpression = tableRefs
+                => new DestinationEntity
+                {
+                    EnumValue = EnumValue.Value2,
+                };
 
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(setEnumVariableExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
-            {
-                CharValue = 'a'
-            });
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(
+                setEnumVariableExpression,
+                SetupDbContext,
+                SetupModelBuilder,
+                new SourceEntity
+                {
+                    CharValue = 'a'
+                });
             
             Assert.Equal(EnumValue.Value2, insertedEntity.EnumValue);
         }
@@ -109,10 +116,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
         [Fact]
         public void StringEnumSql()
         {
-            Expression<Func<SourceEntity, DestinationEntity>> setEnumVariableExpression = sourceEntity => new DestinationEntity
-            {
-                EnumValue = sourceEntity.EnumValue,
-            };
+            Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> setEnumVariableExpression = tableRefs
+                => new DestinationEntity
+                {
+                    EnumValue = tableRefs.New.EnumValue,
+                };
 
             Action<ModelBuilder> setupModelBuilder = builder =>
             {

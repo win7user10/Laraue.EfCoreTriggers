@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Xunit;
 
@@ -11,89 +13,97 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
     public abstract class BaseStringFunctionsTests
     {
         /// <summary>
-        /// StringField = OLD.StringField + "abc"
+        /// StringField = NEW.StringField + "abc"
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> ConcatStringExpression = sourceEntity => new DestinationEntity
-        {
-            StringField = sourceEntity.StringField + "abc"
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> ConcatStringExpression =
+            sourceEntity => new DestinationEntity
+            {
+                StringField = sourceEntity.New.StringField + "abc"
+            };
 
         [Fact]
         protected abstract void StringConcatSql();
 
         /// <summary>
-        /// StringField = OLD.StringField.ToLower()
+        /// StringField = NEW.StringField.ToLower()
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> StringToLowerExpression = sourceEntity => new DestinationEntity
-        {
-            StringField = sourceEntity.StringField.ToLower()
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> StringToLowerExpression =
+            sourceEntity => new DestinationEntity
+            {
+                StringField = sourceEntity.New.StringField.ToLower()
+            };
 
         [Fact]
         protected abstract void StringLowerSql();
 
         /// <summary>
-        /// StringField = OLD.StringField.ToUpper()
+        /// StringField = NEW.StringField.ToUpper()
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> StringToUpperExpression = sourceEntity => new DestinationEntity
-        {
-            StringField = sourceEntity.StringField.ToUpper()
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> StringToUpperExpression =
+            sourceEntity => new DestinationEntity
+            {
+                StringField = sourceEntity.New.StringField.ToUpper()
+            };
 
         [Fact]
         protected abstract void StringUpperSql();
 
         /// <summary>
-        /// StringField = OLD.StringField.Trim()
+        /// StringField = NEW.StringField.Trim()
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> TrimStringValueExpression = sourceEntity => new DestinationEntity
-        {
-            StringField = sourceEntity.StringField.Trim()
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> TrimStringValueExpression =
+            sourceEntity => new DestinationEntity
+            {
+                StringField = sourceEntity.New.StringField.Trim()
+            };
 
         [Fact]
         protected abstract void StringTrimSql();
 
         /// <summary>
-        /// BooleanValue = OLD.StringField.Contains("abc")
+        /// BooleanValue = NEW.StringField.Contains("abc")
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> ContainsStringValueExpression = sourceEntity => new DestinationEntity
-        {
-            BooleanValue = sourceEntity.StringField.Contains("abc")
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> ContainsStringValueExpression =
+            sourceEntity => new DestinationEntity
+            {
+                BooleanValue = sourceEntity.New.StringField.Contains("abc")
+            };
 
         [Fact]
         protected abstract void StringContainsSql();
 
         /// <summary>
-        /// BooleanValue = OLD.StringField.EndsWith("abc")
+        /// BooleanValue = NEW.StringField.EndsWith("abc")
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> EndsWithStringValueExpression = sourceEntity => new DestinationEntity
-        {
-            BooleanValue = sourceEntity.StringField.EndsWith("abc")
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> EndsWithStringValueExpression =
+            sourceEntity => new DestinationEntity
+            {
+                BooleanValue = sourceEntity.New.StringField.EndsWith("abc")
+            };
 
         [Fact]
         protected abstract void StringEndsWithSql();
 
         /// <summary>
-        /// BooleanValue = string.IsNullOrEmpty(OLD.StringField)
+        /// BooleanValue = string.IsNullOrEmpty(NEW.StringField)
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> IsNullOrEmptyStringValueExpression = sourceEntity => new DestinationEntity
-        {
-            BooleanValue = string.IsNullOrEmpty(sourceEntity.StringField)
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> IsNullOrEmptyStringValueExpression =
+            sourceEntity => new DestinationEntity
+            {
+                BooleanValue = string.IsNullOrEmpty(sourceEntity.New.StringField)
+            };
 
         [Fact]
         protected abstract void StringIsNullOrEmptySql();
         
         /// <summary>
-        /// BooleanValue = string.IsNullOrEmpty(OLD.StringField)
+        /// BooleanValue = string.IsNullOrEmpty(NEW.StringField)
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> CoalesceStringExpression = sourceEntity => new DestinationEntity
-        {
-            StringField = sourceEntity.StringField ?? "John"
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> CoalesceStringExpression =
+            sourceEntity => new DestinationEntity
+            {
+                StringField = sourceEntity.New.StringField ?? "John"
+            };
 
         [Fact]
         protected abstract void CoalesceStringSql();

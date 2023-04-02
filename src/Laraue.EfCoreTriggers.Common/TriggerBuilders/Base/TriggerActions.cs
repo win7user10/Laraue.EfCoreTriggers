@@ -27,15 +27,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
             
             _actionConditions.Add(triggerCondition);
         }
-
-        protected void Update(TriggerUpdateAction updateAction) => AddAction(updateAction);
-
-        protected void Upsert(TriggerUpsertAction upsertAction) => AddAction(upsertAction);
-
-        protected void Delete(TriggerDeleteAction deleteAction) => AddAction(deleteAction);
-
-        protected void Insert(TriggerInsertAction insertAction) => AddAction(insertAction);
-
-        protected void RawSql(TriggerRawAction rawSqlAction) => AddAction(rawSqlAction);
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
@@ -9,17 +11,36 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         /// </summary>
         internal readonly LambdaExpression Condition;
         
-        protected TriggerCondition(LambdaExpression condition)
+        internal TriggerCondition(LambdaExpression condition, ArgumentTypes conditionPrefixes)
         {
             Condition = condition;
-        }
-        
-        internal TriggerCondition(LambdaExpression condition, ArgumentTypes conditionPrefixes)
-            : this(condition)
-        {
             ConditionPrefixes = conditionPrefixes;
         }
 
         internal virtual ArgumentTypes ConditionPrefixes { get; }
+    }
+
+    public sealed class TriggerCondition<TEntity, TTableRefs> : TriggerCondition
+        where TEntity : class
+        where TTableRefs : ITableRef<TEntity>
+    {
+        public TriggerCondition(Expression<Func<TTableRefs, bool>> condition)
+            : base(condition, GetArgumentTypes())
+        {
+            var refsType = typeof(TTableRefs);
+            var argumentTypes = new ArgumentTypes();
+            if (typeof(IOldTableRef<TEntity>).IsAssignableFrom(refsType))
+            {
+                
+            }
+            if (typeof(INewTableRef<TEntity>).IsAssignableFrom(refsType))
+            {
+            }
+        }
+    
+        private static ArgumentTypes GetArgumentTypes()
+        {
+            return new ArgumentTypes();
+        }
     }
 }

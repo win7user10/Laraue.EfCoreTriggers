@@ -1,6 +1,7 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -44,7 +45,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> BeforeUpdate<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<NewTrigger<T, OldAndNewRef<T>>> configuration)
+            Action<NewTrigger<T, OldAndNewTableRefs<T>>> configuration)
             where T : class
         {
             return entityTypeBuilder.AddTrigger(
@@ -62,7 +63,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> AfterUpdate<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<NewTrigger<T, OldAndNewRef<T>>> configuration) 
+            Action<NewTrigger<T, OldAndNewTableRefs<T>>> configuration) 
             where T : class
         {
             return entityTypeBuilder.AddTrigger(
@@ -80,7 +81,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> InsteadOfUpdate<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<NewTrigger<T, OldAndNewRef<T>>> configuration) 
+            Action<NewTrigger<T, OldAndNewTableRefs<T>>> configuration) 
             where T : class
         {
             return entityTypeBuilder.AddTrigger(
@@ -98,7 +99,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> BeforeDelete<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<NewTrigger<T, OldRef<T>>> configuration) 
+            Action<NewTrigger<T, OldTableRef<T>>> configuration) 
             where T : class
         {
             return entityTypeBuilder.AddTrigger(
@@ -116,7 +117,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> AfterDelete<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<NewTrigger<T, OldRef<T>>> configuration) 
+            Action<NewTrigger<T, OldTableRef<T>>> configuration) 
             where T : class
         {
             return entityTypeBuilder.AddTrigger(
@@ -134,7 +135,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> InsteadOfDelete<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<NewTrigger<T, OldRef<T>>> configuration) 
+            Action<NewTrigger<T, OldTableRef<T>>> configuration) 
             where T : class
         {
             return entityTypeBuilder.AddTrigger(
@@ -152,7 +153,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> BeforeInsert<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<NewTrigger<T, NewRef<T>>> configuration)
+            Action<NewTrigger<T, NewTableRef<T>>> configuration)
             where T : class
         {
             return entityTypeBuilder.AddTrigger(
@@ -170,7 +171,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> AfterInsert<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<NewTrigger<T, NewRef<T>>> configuration)
+            Action<NewTrigger<T, NewTableRef<T>>> configuration)
             where T : class
         {
             return entityTypeBuilder.AddTrigger(
@@ -188,7 +189,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         public static EntityTypeBuilder<T> InsteadOfInsert<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            Action<NewTrigger<T, NewRef<T>>> configuration) 
+            Action<NewTrigger<T, NewTableRef<T>>> configuration) 
             where T : class
         {
             return entityTypeBuilder.AddTrigger(
@@ -203,7 +204,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             TriggerTime triggerTime,
             Action<NewTrigger<T, TRefs>> configureTrigger)
             where T : class
-            where TRefs : Refs<T>
+            where TRefs : ITableRef<T>
         {
             var trigger = new NewTrigger<T, TRefs>(triggerEvent, triggerTime);
             

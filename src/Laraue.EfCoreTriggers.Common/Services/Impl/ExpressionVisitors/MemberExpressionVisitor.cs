@@ -20,8 +20,9 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
     {
         argumentTypes ??= new ArgumentTypes();
         
-        var argumentType = argumentTypes.Get((ParameterExpression) expression.Expression);
+        var argumentType = argumentTypes.Get(expression);
         
+        // TODO - correct member for tableRefs
         visitedMembers.AddMember(argumentType, expression.Member);
         
         return SqlBuilder.FromString(Visit(expression, argumentType));

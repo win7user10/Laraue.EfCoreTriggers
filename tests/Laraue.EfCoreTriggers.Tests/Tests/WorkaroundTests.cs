@@ -4,6 +4,8 @@ using System.Linq;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -65,8 +67,10 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             
             foreach (var type in types)
             {
-                var triggerType = typeof(OnInsertTrigger<>).MakeGenericType(type.ClrType);
-                var trigger = (ITrigger) Activator.CreateInstance(triggerType, TriggerTime.After)!;
+                var triggerType = typeof(NewTrigger<,>).MakeGenericType(
+                    type.ClrType,
+                    typeof(NewTableRef<>).MakeGenericType(type.ClrType));
+                var trigger = (ITrigger) Activator.CreateInstance(triggerType, TriggerEvent.Delete, TriggerTime.After)!;
                 AddTriggerAction((dynamic) trigger);
 
                 var sql = _provider.Visit(trigger.Actions[0], new VisitedMembers());
@@ -79,7 +83,9 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             Assert.Equal("select 1 from `TelegramNotifications`", sqlQueries[1]);
         }
 
-        private static void AddTriggerAction<T>(OnInsertTrigger<T> trigger) where T : Notification
+        private static void AddTriggerAction<TEntity, TRefs>(NewTrigger<TEntity, TRefs> trigger)
+            where TEntity : Notification
+            where TRefs : ITableRef<TEntity>
         {
             trigger.Action(actions => actions.ExecuteRawSql(
                 "select 1 from {0}",

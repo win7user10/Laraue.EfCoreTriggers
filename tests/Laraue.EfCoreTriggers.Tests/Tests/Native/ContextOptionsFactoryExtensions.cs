@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -24,7 +25,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
         /// <returns>Entity inserted by trigger</returns>
         public static DestinationEntity[] CheckTrigger(
             this IContextOptionsFactory<DynamicDbContext> contextOptionsFactory, 
-            Expression<Func<NewRef<SourceEntity>, DestinationEntity>> triggerExpression,
+            Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> triggerExpression,
             Action<DynamicDbContext> setupDbContext,
             Action<ModelBuilder> setupModelBuilder,
             params SourceEntity[] sourceEntities)
@@ -47,7 +48,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         public static DestinationEntity CheckTrigger(
             this IContextOptionsFactory<DynamicDbContext> contextOptionsFactory,
-            Expression<Func<NewRef<SourceEntity>, DestinationEntity>> triggerExpression,
+            Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> triggerExpression,
             Action<DynamicDbContext> setupDbContext,
             Action<ModelBuilder> setupModelBuilder,
             SourceEntity source)

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Xunit;
 
@@ -13,10 +15,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// EnumValue = Old.EnumValue
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> SetEnumValueExpression = sourceEntity => new DestinationEntity
-        {
-            EnumValue = sourceEntity.EnumValue
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetEnumValueExpression =
+            tableRefs => new DestinationEntity
+            {
+                EnumValue = tableRefs.New.EnumValue
+            };
 
         [Fact]
         public abstract void EnumValueSql();
@@ -24,10 +27,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DecimalValue = Old.DecimalValue + 3
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> AddDecimalValueExpression = sourceEntity => new DestinationEntity
-        {
-            DecimalValue = sourceEntity.DecimalValue + 3
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> AddDecimalValueExpression =
+            tableRefs => new DestinationEntity
+            {
+                DecimalValue = tableRefs.New.DecimalValue + 3
+            };
 
         [Fact]
         public abstract void DecimalAddSql();
@@ -35,10 +39,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DoubleValue = Old.DoubleValue + 3
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> SubDoubleValueExpression = sourceEntity => new DestinationEntity
-        {
-            DoubleValue = sourceEntity.DoubleValue + 3
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SubDoubleValueExpression =
+            tableRefs => new DestinationEntity
+            {
+                DoubleValue = tableRefs.New.DoubleValue + 3
+            };
 
         [Fact]
         public abstract void DoubleSubSql();
@@ -46,10 +51,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// NEW.DoubleValue = Old.DoubleValue + 3
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> MultiplyIntValueExpression = sourceEntity => new DestinationEntity
-        {
-            IntValue = sourceEntity.IntValue * 2
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> MultiplyIntValueExpression =
+            tableRefs => new DestinationEntity
+            {
+                IntValue = tableRefs.New.IntValue * 2
+            };
 
         [Fact]
         public abstract void IntMultiplySql();
@@ -57,10 +63,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// BooleanValue = true
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> SetBooleanValueExpression = sourceEntity => new DestinationEntity
-        {
-            BooleanValue = !sourceEntity.BooleanValue
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetBooleanValueExpression =
+            tableRefs => new DestinationEntity
+            {
+                BooleanValue = !tableRefs.New.BooleanValue
+            };
 
         [Fact]
         public abstract void BooleanValueSql();
@@ -68,26 +75,29 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// GuidValue = xxxxxxxx-xxxxxx-xxxxxx-xxxxxxxx
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> SetNewGuidValueExpression = sourceEntity => new DestinationEntity
-        {
-            GuidValue = new Guid()
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetNewGuidValueExpression =
+            tableRefs => new DestinationEntity
+            {
+                GuidValue = new Guid()
+            };
 
         [Fact]
         public abstract void NewGuid();
         
-        protected Expression<Func<SourceEntity, DestinationEntity>> SetCharVariableExpression = sourceEntity => new DestinationEntity
-        {
-            CharValue = sourceEntity.CharValue
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetCharVariableExpression =
+            tableRefs => new DestinationEntity
+            {
+                CharValue = tableRefs.New.CharValue
+            };
         
         [Fact]
         public abstract void CharVariableSql();
         
-        protected Expression<Func<SourceEntity, DestinationEntity>> SetCharValueExpression = sourceEntity => new DestinationEntity
-        {
-            CharValue = 'a'
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetCharValueExpression =
+            tableRefs => new DestinationEntity
+            {
+                CharValue = 'a'
+            };
         
         [Fact]
         public abstract void CharValueSql();
@@ -95,10 +105,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         /// <summary>
         /// DateTimeOffsetValue = CURRENT_DATE()
         /// </summary>
-        protected Expression<Func<SourceEntity, DestinationEntity>> SetNewDateOffsetValueExpression = sourceEntity => new DestinationEntity
-        {
-            DateTimeOffsetValue = new DateTimeOffset(),
-        };
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetNewDateOffsetValueExpression =
+            tableRefs => new DestinationEntity
+            {
+                DateTimeOffsetValue = new DateTimeOffset(),
+            };
         
         [Fact]
         public abstract void DateTimeOffsetValueSql();

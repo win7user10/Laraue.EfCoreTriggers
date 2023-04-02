@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
-public sealed class NewTriggerActions<TTriggerEntity, TTriggerEntityRefs>
+public sealed class NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> : ITriggerAction
+    where TTriggerEntity : class
+    where TTriggerEntityRefs : ITableRef<TTriggerEntity>
 {
     internal IEnumerable<ITriggerAction> ActionConditions => _actionConditions;
 
@@ -14,14 +17,14 @@ public sealed class NewTriggerActions<TTriggerEntity, TTriggerEntityRefs>
         
     private readonly List<ITriggerAction> _actionExpressions = new();
 
-    protected NewTriggerActions<TTriggerEntity, TTriggerEntityRefs> AddAction(ITriggerAction triggerAction)
+    protected NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> AddAction(ITriggerAction triggerAction)
     {
         _actionExpressions.Add(triggerAction);
 
         return this;
     }
     
-    public NewTriggerActions<TTriggerEntity, TTriggerEntityRefs> Condition(
+    public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Condition(
         Expression<Func<TTriggerEntityRefs, bool>> conditionalExpression)
     {
         // Throw on expressions like "_ => true"
@@ -33,26 +36,26 @@ public sealed class NewTriggerActions<TTriggerEntity, TTriggerEntityRefs>
         throw new NotImplementedException();
     }
 
-    public NewTriggerActions<TTriggerEntity, TTriggerEntityRefs> Insert<TInsertEntity>(
+    public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Insert<TInsertEntity>(
         Expression<Func<TTriggerEntityRefs, TInsertEntity>> insertExpression)
     {
         return AddAction(new TriggerInsertAction(insertExpression));
     }
     
-    public NewTriggerActions<TTriggerEntity, TTriggerEntityRefs> Delete<TDeleteEntity>(
+    public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Delete<TDeleteEntity>(
         Expression<Func<TTriggerEntityRefs, TDeleteEntity, bool>> deletePredicate)
     {
         return AddAction(new TriggerInsertAction(deletePredicate));
     }
     
-    public NewTriggerActions<TTriggerEntity, TTriggerEntityRefs> Update<TUpdateEntity>(
+    public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Update<TUpdateEntity>(
         Expression<Func<TTriggerEntityRefs, TUpdateEntity, bool>> updatePredicate,
         Expression<Func<TTriggerEntityRefs, TUpdateEntity, TUpdateEntity>> updateExpression)
     {
         throw new NotImplementedException();
     }
     
-    public NewTriggerActions<TTriggerEntity, TTriggerEntityRefs> Upsert<TUpsertEntity>(
+    public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Upsert<TUpsertEntity>(
         Expression<Func<TTriggerEntityRefs, TUpsertEntity, bool>> upsertPredicate,
         Expression<Func<TTriggerEntityRefs, TUpsertEntity>> insertExpression,
         Expression<Func<TTriggerEntityRefs, TUpsertEntity, TUpsertEntity>> updateExpression)
@@ -60,10 +63,19 @@ public sealed class NewTriggerActions<TTriggerEntity, TTriggerEntityRefs>
         throw new NotImplementedException();
     }
     
-    public NewTriggerActions<TTriggerEntity, TTriggerEntityRefs> InsertIfNotExists<TInsertEntity>(
+    public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> InsertIfNotExists<TInsertEntity>(
         Expression<Func<TTriggerEntityRefs, TInsertEntity, bool>> insertPredicate,
         Expression<Func<TTriggerEntityRefs, TInsertEntity>> insertExpression)
     {
         throw new NotImplementedException();
+    }
+    
+    public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> ExecuteRawSql(
+        string sql,
+        params Expression<Func<TTriggerEntityRefs, object>>[] getSqlVariable)
+    {
+        _actionExpressions.Add(new TriggerRawAction<TTriggerEntity, TTriggerEntityRefs>(sql, getSqlVariable));
+
+        return this;
     }
 }

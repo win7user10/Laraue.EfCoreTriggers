@@ -1,11 +1,15 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
+using Laraue.EfCoreTriggers.Tests.Enums;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -34,7 +38,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
                 services.AddMethodCallConverter<CustomStringToUpperVisitor>();
             });
 
-            var action = new OnInsertTriggerCondition<Transaction>(t => t.Description.ToUpper() == "ABC");
+            var action = new TriggerCondition<Transaction, NewTableRef<Transaction>>(
+                tableRefs => tableRefs.New.Description.ToUpper() == "ABC");
             var sql = provider.Visit(action, new VisitedMembers());
             Assert.Equal("test = 'ABC'", sql);
         }
