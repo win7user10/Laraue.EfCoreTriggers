@@ -26,9 +26,9 @@ public class TriggerRawActionVisitor : ITriggerActionVisitor<TriggerRawAction>
             for (var i = 0; i < triggerAction.ArgumentSelectorExpressions.Length; i++)
             {
                 var expression = triggerAction.ArgumentSelectorExpressions[i];
-                var prefixes = triggerAction.ArgumentPrefixes[i];
+                // TODO - var prefixes = triggerAction.ArgumentPrefixes[i];
 
-                sqlArgBuilders.Add(_factory.Visit(expression.Body, prefixes, visitedMembers));
+                sqlArgBuilders.Add(_factory.Visit(expression.Body, null, visitedMembers));
             }
 
             sqlBuilder.Append(

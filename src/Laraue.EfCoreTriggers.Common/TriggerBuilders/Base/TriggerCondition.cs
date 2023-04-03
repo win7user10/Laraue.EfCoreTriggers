@@ -11,7 +11,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         /// </summary>
         internal readonly LambdaExpression Condition;
         
-        internal TriggerCondition(LambdaExpression condition, ArgumentTypes conditionPrefixes)
+        public TriggerCondition(LambdaExpression condition, ArgumentTypes conditionPrefixes)
         {
             Condition = condition;
             ConditionPrefixes = conditionPrefixes;

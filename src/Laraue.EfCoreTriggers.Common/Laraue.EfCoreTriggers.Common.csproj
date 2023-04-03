@@ -29,9 +29,5 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Remove="Services\Impl\TriggerVisitors\TriggerRawActionVisitor.cs" />
-  </ItemGroup>
 
 </Project>

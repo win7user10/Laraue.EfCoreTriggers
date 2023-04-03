@@ -1,25 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public sealed class TriggerRawAction<TEntity, TTableRefs> : ITriggerAction
-        where TEntity : class
-        where TTableRefs : ITableRef<TEntity>
+    public abstract class TriggerRawAction : ITriggerAction
     {
         internal readonly LambdaExpression[] ArgumentSelectorExpressions;
         
         internal readonly string Sql;
 
-        public TriggerRawAction(string sql, params Expression<Func<TTableRefs, object>>[]? argumentSelectors)
+        protected TriggerRawAction(string sql, LambdaExpression[]? argumentSelectors)
         {
-            ArgumentSelectorExpressions = argumentSelectors?.Cast<LambdaExpression>().ToArray()
-                ?? Array.Empty<LambdaExpression>();
+            ArgumentSelectorExpressions = argumentSelectors;
             Sql = sql;
+        }
+    }
+    
+    public sealed class TriggerRawAction<TEntity, TTableRefs> : TriggerRawAction
+        where TEntity : class
+        where TTableRefs : ITableRef<TEntity>
+    {
+        public TriggerRawAction(string sql, params Expression<Func<TTableRefs, object>>[] argumentSelectors)
+            :base(sql, argumentSelectors.Cast<LambdaExpression>().ToArray())
+        {
         }
     }
 }
