@@ -2,6 +2,7 @@
 using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Microsoft.EntityFrameworkCore.Metadata;
 using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
 
@@ -46,13 +47,16 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
                 {
                     triggerSql.AppendNewLine($"END IF;");
                 }
-            })
-            .AppendNewLine("RETURN NEW;")
-            .AppendNewLine("END;")
-            .AppendNewLine($"${trigger.Name}$ LANGUAGE plpgsql;")
-            .AppendNewLine($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()}")
-            .AppendNewLine($"ON {_sqlGenerator.GetTableSql(trigger.TriggerEntityType)}")
-            .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {functionName}();");
+            });
+        
+            var tableRef = trigger.TriggerEvent == TriggerEvent.Delete ? "OLD" : "NEW";
+            
+            sql.AppendNewLine($"RETURN {tableRef};")
+                .AppendNewLine("END;")
+                .AppendNewLine($"${trigger.Name}$ LANGUAGE plpgsql;")
+                .AppendNewLine($"CREATE TRIGGER {trigger.Name} {GetTriggerTimeName(trigger.TriggerTime)} {trigger.TriggerEvent.ToString().ToUpper()}")
+                .AppendNewLine($"ON {_sqlGenerator.GetTableSql(trigger.TriggerEntityType)}")
+                .AppendNewLine($"FOR EACH ROW EXECUTE PROCEDURE {functionName}();");
         
         return sql;
     }
