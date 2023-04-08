@@ -19,7 +19,7 @@ public class TriggerDeleteActionVisitor : ITriggerActionVisitor<TriggerDeleteAct
     {
         var tableType = triggerAction.DeletePredicate.Parameters.Last().Type;
 
-        var triggerCondition = new TriggerCondition(triggerAction.DeletePredicate, triggerAction.DeleteFilterPrefixes);
+        var triggerCondition = new TriggerCondition(triggerAction.DeletePredicate);
         var conditionStatement = _factory.Visit(triggerCondition, visitedMembers);
         
         return new SqlBuilder()

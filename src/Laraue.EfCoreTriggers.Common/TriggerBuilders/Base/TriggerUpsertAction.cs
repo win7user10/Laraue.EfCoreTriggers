@@ -2,26 +2,26 @@
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public abstract class TriggerUpsertAction : ITriggerAction
+    public sealed class TriggerUpsertAction : ITriggerAction
     {
         public LambdaExpression MatchExpression;
         public LambdaExpression InsertExpression;
-        public LambdaExpression OnMatchExpression;
+        public LambdaExpression? OnMatchExpression;
 
-        protected TriggerUpsertAction(
+        public TriggerUpsertAction(
             LambdaExpression matchExpression,
             LambdaExpression insertExpression,
-            LambdaExpression onMatchExpression)
+            LambdaExpression? onMatchExpression)
         {
             MatchExpression = matchExpression;
             InsertExpression = insertExpression;
             OnMatchExpression = onMatchExpression;
         }
 
-        public abstract ArgumentTypes InsertExpressionPrefixes { get; }
+        public ArgumentTypes InsertExpressionPrefixes { get; }
 
-        public abstract ArgumentTypes OnMatchExpressionPrefixes { get; }
+        public ArgumentTypes OnMatchExpressionPrefixes { get; }
 
-        public abstract ArgumentTypes MatchExpressionPrefixes { get; }
+        public ArgumentTypes MatchExpressionPrefixes { get; }
     }
 }

@@ -24,6 +24,7 @@ public class TriggerActionVisitorFactory : ITriggerActionVisitorFactory
             TriggerUpsertAction upsertAction => Visit(upsertAction, visitedMembers),
             TriggerDeleteAction deleteAction => Visit(deleteAction, visitedMembers),
             TriggerInsertAction insertAction => Visit(insertAction, visitedMembers),
+            NewTriggerAction newTriggerAction => Visit(newTriggerAction, visitedMembers),
             _ => throw new NotSupportedException($"Trigger action {triggerAction.GetType()} not supported")
         };
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -176,7 +177,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
 
                     var value = annotation.Value;
 
-                    if (value is not ITrigger trigger)
+                    if (value is not INewTrigger trigger)
                     {
                         continue;
                     }

@@ -11,31 +11,24 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders;
 /// </summary>
 public class ArgumentTypes
 {
-    public ArgumentType Get(MemberExpression expression)
-    {
-        return expression.Expression switch
-        {
-            MemberExpression memberExpression => TryGetTableRefParameter(memberExpression),
-            _ => ArgumentType.Default,
-        };
-    }
-    
-    public ArgumentType TryGetTableRefParameter(MemberExpression memberExpression)
+    public ArgumentType Get(MemberExpression memberExpression)
     {
         if (memberExpression.Expression is not ParameterExpression)
         {
             return ArgumentType.Default;
         }
-        
-        var newRefType = typeof(INewTableRef<>).MakeGenericType(memberExpression.Type);
 
-        if (newRefType.IsAssignableFrom(memberExpression.Member.DeclaringType))
+        if (!memberExpression.Type.IsClass)
+        {
+            return ArgumentType.Default;
+        }
+
+        if (memberExpression.Member.DeclaringType.TryGetNewTableRef(out _))
         {
             return ArgumentType.New;
         }
         
-        var oldRef = typeof(IOldTableRef<>).MakeGenericType(memberExpression.Type);
-        return oldRef.IsAssignableFrom(memberExpression.Member.DeclaringType)
+        return memberExpression.Member.DeclaringType.TryGetOldTableRef(out _)
             ? ArgumentType.Old
             : ArgumentType.Default;
     }

@@ -22,7 +22,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// <returns></returns>
         private static EntityTypeBuilder<T> AddTriggerAnnotation<T>(
             this EntityTypeBuilder<T> entityTypeBuilder,
-            ITrigger configuredTrigger) where T : class
+            INewTrigger configuredTrigger) where T : class
         {
             var entityTypeName = typeof(T).FullName!;
             var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(entityTypeName)

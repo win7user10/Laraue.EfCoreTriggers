@@ -37,6 +37,6 @@ public class MethodCallExpressionVisitor : BaseExpressionVisitor<MethodCallExpre
             }
         }
         
-        throw new NotSupportedException($"Expression {expression.Method.Name} is not supported");
+        throw new NotSupportedException($"Method {expression.Method.Name} is not supported");
     }
 }

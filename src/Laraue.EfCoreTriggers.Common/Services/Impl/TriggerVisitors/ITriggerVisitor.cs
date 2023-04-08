@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Microsoft.EntityFrameworkCore.Metadata;
 using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
@@ -13,7 +14,7 @@ public interface ITriggerVisitor
     /// </summary>
     /// <param name="trigger"></param>
     /// <returns></returns>
-    string GenerateCreateTriggerSql(ITrigger trigger);
+    string GenerateCreateTriggerSql(INewTrigger trigger);
 
     /// <summary>
     /// Generates drop trigger SQL.

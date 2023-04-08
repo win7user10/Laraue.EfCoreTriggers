@@ -6,7 +6,7 @@
 public interface IOldTableRef<TEntity> : ITableRef<TEntity>
     where TEntity : class
 {
-    /// <summary>
+    /// <summary>ы
     /// Reference to the old entity in a trigger.
     /// </summary>
     public TEntity Old { get; }

@@ -11,13 +11,12 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         /// </summary>
         internal readonly LambdaExpression Condition;
         
-        public TriggerCondition(LambdaExpression condition, ArgumentTypes conditionPrefixes)
+        public TriggerCondition(LambdaExpression condition)
         {
             Condition = condition;
-            ConditionPrefixes = conditionPrefixes;
         }
 
-        internal virtual ArgumentTypes ConditionPrefixes { get; }
+        internal ArgumentTypes ConditionPrefixes { get; }
     }
 
     public sealed class TriggerCondition<TEntity, TTableRefs> : TriggerCondition
@@ -25,22 +24,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         where TTableRefs : ITableRef<TEntity>
     {
         public TriggerCondition(Expression<Func<TTableRefs, bool>> condition)
-            : base(condition, GetArgumentTypes())
+            : base(condition)
         {
-            var refsType = typeof(TTableRefs);
-            var argumentTypes = new ArgumentTypes();
-            if (typeof(IOldTableRef<TEntity>).IsAssignableFrom(refsType))
-            {
-                
-            }
-            if (typeof(INewTableRef<TEntity>).IsAssignableFrom(refsType))
-            {
-            }
-        }
-    
-        private static ArgumentTypes GetArgumentTypes()
-        {
-            return new ArgumentTypes();
         }
     }
 }

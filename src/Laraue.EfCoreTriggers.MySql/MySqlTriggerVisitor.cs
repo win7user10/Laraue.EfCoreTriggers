@@ -2,6 +2,7 @@
 using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
 
@@ -18,7 +19,7 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
         _sqlGenerator = sqlGenerator;
     }
 
-    public override string GenerateCreateTriggerSql(ITrigger trigger)
+    public override string GenerateCreateTriggerSql(INewTrigger trigger)
     {
         var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
         
@@ -32,7 +33,7 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine("BEGIN")
             .WithIdent(triggerSql =>
             {
-                var isAnyCondition = trigger.Conditions.Count > 0;
+                /**var isAnyCondition = trigger.Conditions.Count > 0;
                 
                 if (isAnyCondition)
                 {
@@ -49,7 +50,7 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
                 if (trigger.Conditions.Count > 0)
                 {
                     triggerSql.AppendNewLine($"END IF;");
-                }
+                }*/
             })
             .AppendNewLine("END");
         

@@ -2,6 +2,7 @@
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.CSharpMethods;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable.Count;
+using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Functions;
 using Laraue.EfCoreTriggers.Common.Migrations;
 using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl;
@@ -95,6 +96,8 @@ public static class ServiceCollectionExtensions
             
             .AddMethodCallConverter<CountVisitor>()
             .AddMethodCallConverter<CoalesceVisitor>()
+            .AddMethodCallConverter<GetTableNameVisitor>()
+            .AddMethodCallConverter<GetColumnNameVisitor>()
             
             .AddScoped<VisitingInfo>()
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Functions;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
@@ -27,7 +28,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         {
             Expression<Func<NewTableRef<SourceEntity>, object>> arg1Expression = sourceEntity => sourceEntity.New.BooleanValue;
             Expression<Func<NewTableRef<SourceEntity>, object>> arg2Expression = sourceEntity => sourceEntity.New.DoubleValue;
-            Expression<Func<NewTableRef<SourceEntity>, object>> arg3Expression = sourceEntity => sourceEntity.New;
+            Expression<Func<NewTableRef<SourceEntity>, object>> arg3Expression = sourceEntity => TriggerFunctions.GetTableName<SourceEntity>();
             
             var trigger = new TriggerRawAction<SourceEntity, NewTableRef<SourceEntity>>(
                 "PERFORM func({0}, {1}, {2})",

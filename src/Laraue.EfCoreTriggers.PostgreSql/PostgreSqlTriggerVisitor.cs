@@ -3,6 +3,7 @@ using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
 
@@ -19,7 +20,7 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
         _sqlGenerator = sqlGenerator;
     }
 
-    public override string GenerateCreateTriggerSql(ITrigger trigger)
+    public override string GenerateCreateTriggerSql(INewTrigger trigger)
     {
         var actionsSql = trigger.Actions
             .Select(action => _factory.Visit(action, new VisitedMembers()))
@@ -29,7 +30,7 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
         
         var sql = SqlBuilder.FromString($"CREATE FUNCTION {functionName}() RETURNS trigger as ${trigger.Name}$")
             .AppendNewLine("BEGIN")
-            .WithIdent(triggerSql =>
+            /**.WithIdent(triggerSql =>
             {
                 if (trigger.Conditions.Count > 0)
                 {
@@ -47,7 +48,7 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
                 {
                     triggerSql.AppendNewLine($"END IF;");
                 }
-            });
+            })*/;
         
             var tableRef = trigger.TriggerEvent == TriggerEvent.Delete ? "OLD" : "NEW";
             

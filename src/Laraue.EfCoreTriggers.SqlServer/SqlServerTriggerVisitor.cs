@@ -6,6 +6,7 @@ using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Microsoft.EntityFrameworkCore.Metadata;
 using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
 
@@ -32,7 +33,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
     };
 
     /// <inheritdoc />
-    public override string GenerateCreateTriggerSql(ITrigger trigger)
+    public override string GenerateCreateTriggerSql(INewTrigger trigger)
     {
         var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
         var tableName = _sqlGenerator.GetTableSql(trigger.TriggerEntityType);
@@ -44,9 +45,9 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
             .Select(action => _factory.Visit(action, visitedMembers))
             .ToArray();
         
-        var conditionsSql = trigger.Conditions
+        /**var conditionsSql = trigger.Conditions
             .Select(actionCondition => _factory.Visit(actionCondition, visitedMembers))
-            .ToArray();
+            .ToArray();*/
 
         visitedMembers.Remove(ArgumentType.Default);
         visitedMembers.Remove(ArgumentType.None);
@@ -81,13 +82,13 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
             sqlBuilder
                 .WithIdent(triggerBodyBuilder =>
                 {
-                    if (conditionsSql.Length > 0)
+                    /**if (conditionsSql.Length > 0)
                     {
                         sqlBuilder.Append($"IF (")
                             .AppendJoin(" AND ", conditionsSql.Select(x => x.ToString()))
                             .Append(")")
                             .AppendNewLine();
-                    }
+                    }*/
                     
                     triggerBodyBuilder
                         .AppendViaNewLine(actionsSql)

@@ -4,6 +4,7 @@ using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl;
@@ -53,6 +54,7 @@ public class SqlGenerator : ISqlGenerator
             ExpressionType.IsFalse => "IS FALSE",
             ExpressionType.Negate => "-",
             ExpressionType.Not => "IS FALSE",
+            ExpressionType.Quote => string.Empty,
             _ => throw new NotSupportedException($"Unknown sign of {expressionType}")
         };
     }
@@ -70,7 +72,9 @@ public class SqlGenerator : ISqlGenerator
         
         return expressionType == ExpressionType.Negate 
             ? $"{nodeTypeSql}{innerExpressionSql}" 
-            : $"{innerExpressionSql} {nodeTypeSql}";
+            : string.IsNullOrEmpty(nodeTypeSql)
+                ? innerExpressionSql
+                : $"{innerExpressionSql} {nodeTypeSql}";
     }
 
     public string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType)
@@ -88,6 +92,7 @@ public class SqlGenerator : ISqlGenerator
 
     public string GetTableSql(Type entity)
     {
+        // TODO - add logic for NEW/OLD generation or real schema table name
         var schemaName = _adapter.GetTableSchemaName(entity);
         var tableSql = WrapWithDelimiters(_adapter.GetTableName(entity));
 

@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
-public sealed class NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> : ITriggerAction
+public abstract class NewTriggerAction : ITriggerAction
+{
+    public IReadOnlyList<ITriggerAction> ActionConditions => _actionConditions;
+    public IReadOnlyList<ITriggerAction> ActionExpressions => _actionExpressions;
+
+    protected readonly List<TriggerCondition> _actionConditions = new();
+        
+    protected readonly List<ITriggerAction> _actionExpressions = new();
+}
+
+public sealed class NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> : NewTriggerAction
     where TTriggerEntity : class
     where TTriggerEntityRefs : ITableRef<TTriggerEntity>
 {
-    internal IEnumerable<ITriggerAction> ActionConditions => _actionConditions;
-
-    internal IEnumerable<ITriggerAction> ActionExpressions => _actionExpressions;
-
-    private readonly List<TriggerCondition> _actionConditions = new();
-        
-    private readonly List<ITriggerAction> _actionExpressions = new();
-
     protected NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> AddAction(ITriggerAction triggerAction)
     {
         _actionExpressions.Add(triggerAction);
@@ -33,7 +36,7 @@ public sealed class NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> : ITrig
             throw new InvalidOperationException("Condition with constant expression makes no sense");
         }
 
-        throw new NotImplementedException();
+        return AddAction(new TriggerCondition(conditionalExpression));
     }
 
     public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Insert<TInsertEntity>(
@@ -45,14 +48,14 @@ public sealed class NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> : ITrig
     public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Delete<TDeleteEntity>(
         Expression<Func<TTriggerEntityRefs, TDeleteEntity, bool>> deletePredicate)
     {
-        return AddAction(new TriggerInsertAction(deletePredicate));
+        return AddAction(new TriggerDeleteAction(deletePredicate));
     }
     
     public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Update<TUpdateEntity>(
         Expression<Func<TTriggerEntityRefs, TUpdateEntity, bool>> updatePredicate,
         Expression<Func<TTriggerEntityRefs, TUpdateEntity, TUpdateEntity>> updateExpression)
     {
-        throw new NotImplementedException();
+        return AddAction(new TriggerUpdateAction(updatePredicate, updateExpression));
     }
     
     public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Upsert<TUpsertEntity>(
@@ -60,22 +63,28 @@ public sealed class NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> : ITrig
         Expression<Func<TTriggerEntityRefs, TUpsertEntity>> insertExpression,
         Expression<Func<TTriggerEntityRefs, TUpsertEntity, TUpsertEntity>> updateExpression)
     {
-        throw new NotImplementedException();
+        return AddAction(
+            new TriggerUpsertAction(
+                upsertPredicate,
+                insertExpression,
+                updateExpression));
     }
     
     public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> InsertIfNotExists<TInsertEntity>(
         Expression<Func<TTriggerEntityRefs, TInsertEntity, bool>> insertPredicate,
         Expression<Func<TTriggerEntityRefs, TInsertEntity>> insertExpression)
     {
-        throw new NotImplementedException();
+        return AddAction(
+            new TriggerUpsertAction(
+                insertPredicate,
+                insertExpression,
+                null));
     }
     
     public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> ExecuteRawSql(
         string sql,
         params Expression<Func<TTriggerEntityRefs, object>>[] getSqlVariable)
     {
-        _actionExpressions.Add(new TriggerRawAction<TTriggerEntity, TTriggerEntityRefs>(sql, getSqlVariable));
-
-        return this;
+        return AddAction(new TriggerRawAction<TTriggerEntity, TTriggerEntityRefs>(sql, getSqlVariable));
     }
 }

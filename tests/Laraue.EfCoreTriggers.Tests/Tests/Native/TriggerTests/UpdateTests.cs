@@ -46,7 +46,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                             => entities.StringField == tableRefs.New.StringField + tableRefs.Old.StringField)));
 
             using var dbContext = CreateDbContext(builder);
-            dbContext.Save(new DestinationEntity() { StringField = "dcab" });
+            dbContext.Save(new DestinationEntity { StringField = "dcab" });
             dbContext.Save(new SourceEntity { StringField = "ab" });
             dbContext.Update(x => x.SourceEntities, x => x.StringField = "dc");
 

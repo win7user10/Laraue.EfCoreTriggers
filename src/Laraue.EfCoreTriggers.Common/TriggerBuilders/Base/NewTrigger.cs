@@ -4,7 +4,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
-public sealed class NewTrigger<TTriggerEntity, TTriggerEntityRefs> : ITrigger
+public sealed class NewTrigger<TTriggerEntity, TTriggerEntityRefs> : INewTrigger
     where TTriggerEntity : class
     where TTriggerEntityRefs : ITableRef<TTriggerEntity>
 {
@@ -18,10 +18,7 @@ public sealed class NewTrigger<TTriggerEntity, TTriggerEntityRefs> : ITrigger
     public Type TriggerEntityType => typeof(TTriggerEntity);
 
     /// <inheritdoc />
-    public IList<ITriggerAction> Actions { get; } = new List<ITriggerAction>();
-
-    /// <inheritdoc />
-    public IList<ITriggerAction> Conditions  { get; } = new List<ITriggerAction>();
+    public IList<NewTriggerAction> Actions { get; } = new List<NewTriggerAction>();
 
     public NewTrigger(TriggerEvent triggerEvent, TriggerTime triggerTime)
     {

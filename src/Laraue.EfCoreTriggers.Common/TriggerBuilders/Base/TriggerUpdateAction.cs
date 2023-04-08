@@ -2,7 +2,7 @@
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
 {
-    public class TriggerUpdateAction : ITriggerAction
+    public sealed class TriggerUpdateAction : ITriggerAction
     {
         internal LambdaExpression UpdateFilter;
         internal LambdaExpression UpdateExpression;
@@ -15,8 +15,8 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
             UpdateExpression = updateExpression;
         }
 
-        internal virtual ArgumentTypes UpdateFilterPrefixes { get; }
+        internal ArgumentTypes UpdateFilterPrefixes { get; }
 
-        internal virtual ArgumentTypes UpdateExpressionPrefixes { get; }
+        internal ArgumentTypes UpdateExpressionPrefixes { get; }
     }
 }

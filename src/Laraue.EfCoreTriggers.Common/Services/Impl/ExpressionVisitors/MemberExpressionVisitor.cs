@@ -1,6 +1,9 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
+using System.Reflection;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 
@@ -18,14 +21,9 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
     /// <inheritdoc />
     public override SqlBuilder Visit(MemberExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
     {
-        argumentTypes ??= new ArgumentTypes();
+        visitedMembers.AddMember(ArgumentType.Default, expression.Member);
         
-        var argumentType = argumentTypes.Get(expression);
-        
-        // TODO - correct member for tableRefs
-        visitedMembers.AddMember(argumentType, expression.Member);
-        
-        return SqlBuilder.FromString(Visit(expression, argumentType));
+        return SqlBuilder.FromString(Visit(expression, ArgumentType.Default));
     }
     
     /// <summary>
@@ -36,6 +34,50 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
     /// <returns></returns>
     protected virtual string Visit(MemberExpression memberExpression, ArgumentType argumentType)
     {
-        return _generator.GetColumnSql(memberExpression.Expression.Type, memberExpression.Member, argumentType);
+        if (memberExpression.Expression is MemberExpression nestedMemberExpression)
+        {
+            return TryGetTableRef(nestedMemberExpression, memberExpression.Member);
+        }
+
+        if (memberExpression.Member.TryGetNewTableRef(out _))
+        {
+            return _generator.NewEntityPrefix;
+        }
+        
+        if (memberExpression.Member.TryGetOldTableRef(out _))
+        {
+            return _generator.OldEntityPrefix;
+        }
+
+        return _generator.GetColumnSql(
+            memberExpression.Expression.Type,
+            memberExpression.Member,
+            argumentType);
+    }
+
+    private string TryGetTableRef(MemberExpression memberExpression, MemberInfo parentMember)
+    {
+        var argumentType = ArgumentType.Default;
+        var memberType = memberExpression.Expression.Type;
+        if (memberExpression.Member.TryGetNewTableRef(out var tableRefType))
+        {
+            memberType = tableRefType;
+            argumentType = ArgumentType.New;
+        }
+        else if (memberExpression.Member.TryGetOldTableRef(out tableRefType))
+        {
+            memberType = tableRefType;
+            argumentType = ArgumentType.Old;
+        }
+        
+        // return bool + arg type
+        
+        
+        // TODO - if memberExp.Exp is member exp,
+        //  it is either json (not supported) or our case when new ref return NEW + get column name from the table ref.
+        return _generator.GetColumnSql(
+            memberType,
+            parentMember,
+            argumentType);
     }
 }
