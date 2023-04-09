@@ -17,7 +17,7 @@ public class ConstantExpressionVisitor : BaseExpressionVisitor<ConstantExpressio
     }
 
     /// <inheritdoc />
-    public override SqlBuilder Visit(ConstantExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public override SqlBuilder Visit(ConstantExpression expression, VisitedMembers visitedMembers)
     {
         switch (expression.Value)
         {

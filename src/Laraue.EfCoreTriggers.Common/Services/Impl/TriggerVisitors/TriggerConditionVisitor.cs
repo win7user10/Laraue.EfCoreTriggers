@@ -19,14 +19,14 @@ public class TriggerConditionVisitor : ITriggerActionVisitor<TriggerCondition>
         var conditionBody = triggerAction.Condition.Body;
         return conditionBody switch
         {
-            MemberExpression memberExpression => _visitorFactory.Visit(Expression.IsTrue(memberExpression), triggerAction.ConditionPrefixes, visitedMembers),
-            _ => _visitorFactory.Visit(conditionBody, triggerAction.ConditionPrefixes, visitedMembers),
+            MemberExpression memberExpression => _visitorFactory.Visit(Expression.IsTrue(memberExpression), visitedMembers),
+            _ => _visitorFactory.Visit(conditionBody, visitedMembers),
         };
     }
     
     public SqlBuilder GetConditionStatementSql(TriggerCondition condition, VisitedMembers visitedMembers)
     {
-        var binaryExpressionSql = _visitorFactory.Visit((BinaryExpression)condition.Condition.Body, condition.ConditionPrefixes, visitedMembers);
+        var binaryExpressionSql = _visitorFactory.Visit((BinaryExpression)condition.Condition.Body, visitedMembers);
         
         return SqlBuilder.FromString("WHERE ")
             .Append(binaryExpressionSql);

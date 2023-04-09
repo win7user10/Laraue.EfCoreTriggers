@@ -35,7 +35,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
             _expressionVisitorFactory = visitorFactory;
         }
         
-        public override SqlBuilder Visit(MethodCallExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+        public override SqlBuilder Visit(MethodCallExpression expression, VisitedMembers visitedMembers)
         {
             var whereExpressions = new HashSet<Expression>();
             var exp = GetFlattenExpressions(expression, whereExpressions);
@@ -56,7 +56,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
                 .Skip(1)
                 .ToArray();
             
-            var selectSql = Visit(otherArguments, argumentTypes, visitedMembers);
+            var selectSql = Visit(otherArguments, visitedMembers);
 
             if (selectSql.Item2 is not null)
             {
@@ -96,7 +96,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
 
             foreach (var e in whereExpressions)
             {
-                joinParts.Add(_expressionVisitorFactory.Visit(e, argumentTypes, visitedMembers));
+                joinParts.Add(_expressionVisitorFactory.Visit(e, visitedMembers));
             }
 
             finalSql.AppendJoin(" AND ", joinParts);
@@ -124,7 +124,6 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
 
         protected abstract (SqlBuilder, Expression) Visit(
             Expression[] arguments,
-            ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers);
     }
 }

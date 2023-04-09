@@ -30,14 +30,12 @@ public class TriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAct
     {
         var matchExpressionParts = _memberInfoVisitorFactory.Visit(
             triggerAction.MatchExpression,
-            triggerAction.MatchExpressionPrefixes,
             visitedMembers);
 
         var updateEntityType = triggerAction.InsertExpression.Body.Type;
 
         var insertStatementSql = _insertExpressionVisitor.Visit(
             triggerAction.InsertExpression,
-            triggerAction.InsertExpressionPrefixes,
             visitedMembers);
             
         var sqlBuilder = SqlBuilder.FromString($"INSERT INTO {_sqlGenerator.GetTableSql(updateEntityType)} ")
@@ -56,7 +54,6 @@ public class TriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAct
         {
             var updateStatementSql = _updateExpressionVisitor.Visit(
                 triggerAction.OnMatchExpression,
-                triggerAction.OnMatchExpressionPrefixes,
                 visitedMembers);
             
             sqlBuilder.Append(" DO UPDATE SET ")

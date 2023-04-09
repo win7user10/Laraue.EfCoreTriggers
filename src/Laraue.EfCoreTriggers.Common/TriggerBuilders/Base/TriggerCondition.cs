@@ -15,8 +15,6 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         {
             Condition = condition;
         }
-
-        internal ArgumentTypes ConditionPrefixes { get; }
     }
 
     public sealed class TriggerCondition<TEntity, TTableRefs> : TriggerCondition

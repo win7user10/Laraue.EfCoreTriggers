@@ -14,8 +14,7 @@ public interface IUpdateExpressionVisitor
     /// e.g. SET column1 = "value1", column2 = "value2"
     /// </summary>
     /// <param name="expression"></param>
-    /// <param name="argumentTypes"></param>
     /// <param name="visitedMembers"></param>
     /// <returns></returns>
-    SqlBuilder Visit(LambdaExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers);
+    SqlBuilder Visit(LambdaExpression expression, VisitedMembers visitedMembers);
 }

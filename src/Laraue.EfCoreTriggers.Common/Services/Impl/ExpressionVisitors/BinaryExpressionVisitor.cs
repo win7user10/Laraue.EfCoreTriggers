@@ -28,7 +28,6 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
     /// <inheritdoc />
     public override SqlBuilder Visit(
         BinaryExpression expression,
-        ArgumentTypes argumentTypes,
         VisitedMembers visitedMembers)
     {
         if (expression.Left is UnaryExpression
@@ -50,7 +49,7 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
                     .First(x => (int)x == (int)constantExpression.Value)
                     .ToString();
                 
-                var sb = _factory.Visit(memberExpression, argumentTypes, visitedMembers);
+                var sb = _factory.Visit(memberExpression, visitedMembers);
                 sb.Append($" = {_generator.GetSql(valueName)}");
                 return sb;
             }
@@ -58,8 +57,8 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
             // Convert(charValue, Int32) == 122 -> charValue == 'z'
             if (memberExpression.Type == typeof(char))
             {
-                var memberSql = _factory.Visit(memberExpression, argumentTypes, visitedMembers);
-                var constantSql = _factory.Visit(Expression.Constant(Convert.ToChar(constantExpression.Value)), argumentTypes, visitedMembers);
+                var memberSql = _factory.Visit(memberExpression, visitedMembers);
+                var constantSql = _factory.Visit(Expression.Constant(Convert.ToChar(constantExpression.Value)), visitedMembers);
 
                 return memberSql
                     .Append(" = ")
@@ -75,7 +74,6 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
                     expression.Method,
                     expression.Left,
                     expression.Right),
-                argumentTypes,
                 visitedMembers);
         }
 
@@ -92,7 +90,7 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
                 binaryExpressionParts[0],
                 Expression.Convert(binaryExpressionParts[1], binaryExpressionParts[0].Type));
 
-            return _factory.Visit(methodCall, argumentTypes, visitedMembers);
+            return _factory.Visit(methodCall, visitedMembers);
         }
 
         // Check, if one argument is null, should be generated expression "value IS NULL"
@@ -110,7 +108,7 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
                 
                 var argumentsSql = new[] { firstArgument, secondArgument }
                     .Select(part => 
-                        _factory.Visit(part, argumentTypes, visitedMembers))
+                        _factory.Visit(part, visitedMembers))
                     .ToArray();
                 
                 var sqlBuilder = new SqlBuilder()
@@ -132,7 +130,6 @@ public class BinaryExpressionVisitor : BaseExpressionVisitor<BinaryExpression>
             .Select(part => 
                 _factory.Visit(
                     part,
-                    argumentTypes,
                     visitedMembers))
             .ToArray();
         

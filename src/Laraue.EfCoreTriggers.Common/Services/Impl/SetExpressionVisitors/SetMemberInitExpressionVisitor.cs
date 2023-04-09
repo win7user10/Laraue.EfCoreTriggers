@@ -26,7 +26,7 @@ public class SetMemberInitExpressionVisitor : IMemberInfoVisitor<MemberInitExpre
     }
 
     /// <inheritdoc />
-    public Dictionary<MemberInfo, SqlBuilder> Visit(MemberInitExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public Dictionary<MemberInfo, SqlBuilder> Visit(MemberInitExpression expression, VisitedMembers visitedMembers)
     {
         return expression.Bindings.Select(memberBinding =>
         {
@@ -34,7 +34,7 @@ public class SetMemberInitExpressionVisitor : IMemberInfoVisitor<MemberInitExpre
             
             var sqlExtendedResult = _visitingInfo.ExecuteWithChangingMember(
                 memberAssignmentExpression.Member,
-                () => _factory.Visit(memberAssignmentExpression.Expression, argumentTypes, visitedMembers));
+                () => _factory.Visit(memberAssignmentExpression.Expression, visitedMembers));
             
             return (memberAssignmentExpression.Member, sqlExtendedResult);
         }).ToDictionary(x => x.Member, x => x.sqlExtendedResult);

@@ -17,11 +17,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
             InsertExpression = insertExpression;
             OnMatchExpression = onMatchExpression;
         }
-
-        public ArgumentTypes InsertExpressionPrefixes { get; }
-
-        public ArgumentTypes OnMatchExpressionPrefixes { get; }
-
-        public ArgumentTypes MatchExpressionPrefixes { get; }
     }
 }

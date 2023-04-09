@@ -13,7 +13,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
         {
             DeletePredicate = deletePredicate;
         }
-
-        internal ArgumentTypes DeleteFilterPrefixes { get; }
     }
 }

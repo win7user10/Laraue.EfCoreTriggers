@@ -14,9 +14,5 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Base
             UpdateFilter = updateFilter;
             UpdateExpression = updateExpression;
         }
-
-        internal ArgumentTypes UpdateFilterPrefixes { get; }
-
-        internal ArgumentTypes UpdateExpressionPrefixes { get; }
     }
 }

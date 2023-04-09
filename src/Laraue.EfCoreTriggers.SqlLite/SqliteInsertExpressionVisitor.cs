@@ -23,7 +23,7 @@ public class SqliteInsertExpressionVisitor : InsertExpressionVisitor
         _sqlGenerator = sqlGenerator;
     }
 
-    protected override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression, ArgumentTypes argumentTypes)
+    protected override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression)
     {
         var insertType = insertExpression.Body.Type;
         

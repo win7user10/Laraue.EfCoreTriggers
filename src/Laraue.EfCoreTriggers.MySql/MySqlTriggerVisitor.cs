@@ -31,27 +31,7 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {_sqlGenerator.GetTableSql(trigger.TriggerEntityType)}")
             .AppendNewLine("FOR EACH ROW")
             .AppendNewLine("BEGIN")
-            .WithIdent(triggerSql =>
-            {
-                /**var isAnyCondition = trigger.Conditions.Count > 0;
-                
-                if (isAnyCondition)
-                {
-                    var conditionsSql = trigger.Conditions
-                        .Select(actionCondition => _factory.Visit(actionCondition, new VisitedMembers()));
-            
-                    triggerSql.AppendNewLine($"IF ")
-                        .AppendJoin(" AND ", conditionsSql.Select(x => x.ToString()))
-                        .Append(" THEN ");
-                }
-
-                triggerSql.WithIdentWhen(isAnyCondition,  loopSql => loopSql.AppendViaNewLine(actionsSql));
-        
-                if (trigger.Conditions.Count > 0)
-                {
-                    triggerSql.AppendNewLine($"END IF;");
-                }*/
-            })
+            .WithIdent(triggerSql => triggerSql.AppendViaNewLine(actionsSql))
             .AppendNewLine("END");
         
         return sql;

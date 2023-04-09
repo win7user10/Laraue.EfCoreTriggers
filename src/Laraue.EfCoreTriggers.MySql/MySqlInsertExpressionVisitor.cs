@@ -14,7 +14,7 @@ public class MySqlInsertExpressionVisitor : InsertExpressionVisitor
     {
     }
 
-    protected override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression, ArgumentTypes argumentTypes)
+    protected override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression)
     {
         var sqlBuilder = new SqlBuilder();
         sqlBuilder.Append("() VALUES ()");

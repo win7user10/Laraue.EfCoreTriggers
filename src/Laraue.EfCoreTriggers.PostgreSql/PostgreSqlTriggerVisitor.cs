@@ -30,25 +30,7 @@ public class PostgreSqlTriggerVisitor : BaseTriggerVisitor
         
         var sql = SqlBuilder.FromString($"CREATE FUNCTION {functionName}() RETURNS trigger as ${trigger.Name}$")
             .AppendNewLine("BEGIN")
-            /**.WithIdent(triggerSql =>
-            {
-                if (trigger.Conditions.Count > 0)
-                {
-                    var conditionsSql = trigger.Conditions
-                        .Select(actionCondition => _factory.Visit(actionCondition, new VisitedMembers()));
-            
-                    triggerSql.Append("IF ")
-                        .AppendJoin(" AND ", conditionsSql.Select(x => x.ToString()))
-                        .Append(" THEN ");
-                }
-
-                triggerSql.WithIdentWhen(trigger.Conditions.Count > 0, loopSql => loopSql.AppendViaNewLine(actionsSql));
-        
-                if (trigger.Conditions.Count > 0)
-                {
-                    triggerSql.AppendNewLine($"END IF;");
-                }
-            })*/;
+            .WithIdent(triggerSql => triggerSql.AppendViaNewLine(actionsSql));
         
             var tableRef = trigger.TriggerEvent == TriggerEvent.Delete ? "OLD" : "NEW";
             

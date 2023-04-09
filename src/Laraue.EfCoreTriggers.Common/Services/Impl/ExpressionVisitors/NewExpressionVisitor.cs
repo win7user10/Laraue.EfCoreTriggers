@@ -9,7 +9,7 @@ namespace Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 public abstract class NewExpressionVisitor : BaseExpressionVisitor<NewExpression>
 {
     /// <inheritdoc />
-    public override SqlBuilder Visit(NewExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public override SqlBuilder Visit(NewExpression expression, VisitedMembers visitedMembers)
     {
         if (expression.Type == typeof(Guid))
         {

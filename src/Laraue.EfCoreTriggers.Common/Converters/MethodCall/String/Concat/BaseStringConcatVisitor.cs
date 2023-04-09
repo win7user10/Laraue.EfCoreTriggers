@@ -23,10 +23,9 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat
         /// <inheritdoc />
         public override SqlBuilder Visit(
             MethodCallExpression expression,
-            ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers)
         {
-            var argumentsSql = VisitorFactory.VisitArguments(expression, argumentTypes, visitedMembers);
+            var argumentsSql = VisitorFactory.VisitArguments(expression, visitedMembers);
             
             return Visit(argumentsSql);
         }

@@ -17,11 +17,9 @@ public interface IMemberInfoVisitorFactory
     /// and calls it <see cref="IMemberInfoVisitor{TExpression}.Visit"/> method.
     /// </summary>
     /// <param name="expression"></param>
-    /// <param name="argumentTypes"></param>
     /// <param name="visitedMembers"></param>
     /// <returns></returns>
     Dictionary<MemberInfo, SqlBuilder> Visit(
-        Expression expression, 
-        ArgumentTypes argumentTypes, 
+        Expression expression,
         VisitedMembers visitedMembers);
 }

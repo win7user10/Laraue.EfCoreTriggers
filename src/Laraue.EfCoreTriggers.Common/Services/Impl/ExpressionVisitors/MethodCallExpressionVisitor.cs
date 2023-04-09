@@ -20,11 +20,11 @@ public class MethodCallExpressionVisitor : BaseExpressionVisitor<MethodCallExpre
     }
 
     /// <inheritdoc />s
-    public override SqlBuilder Visit(MethodCallExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public override SqlBuilder Visit(MethodCallExpression expression, VisitedMembers visitedMembers)
     {
         var visitor = GetVisitor(expression);
         
-        return visitor.Visit(expression, argumentTypes, visitedMembers);
+        return visitor.Visit(expression, visitedMembers);
     }
 
     private IMethodCallVisitor GetVisitor(MethodCallExpression expression)

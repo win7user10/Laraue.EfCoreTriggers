@@ -24,35 +24,35 @@ public class ExpressionVisitorFactory : IExpressionVisitorFactory
     }
     
     /// <inheritdoc />
-    public SqlBuilder Visit(Expression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public SqlBuilder Visit(Expression expression, VisitedMembers visitedMembers)
     {
         return expression switch
         {
-            BinaryExpression binary => Visit(binary, argumentTypes, visitedMembers),
-            ConstantExpression constant => Visit(constant, argumentTypes, visitedMembers),
-            MemberExpression member => VisitAndRememberMember(member, argumentTypes, visitedMembers),
-            MethodCallExpression methodCall => Visit(methodCall, argumentTypes, visitedMembers),
-            UnaryExpression unary => Visit(unary, argumentTypes, visitedMembers),
-            NewExpression @new => Visit(@new, argumentTypes, visitedMembers),
-            LambdaExpression lambda => Visit(lambda, argumentTypes, visitedMembers),
-            ParameterExpression parameterExpression => Visit(parameterExpression, argumentTypes, visitedMembers),
+            BinaryExpression binary => Visit(binary, visitedMembers),
+            ConstantExpression constant => Visit(constant, visitedMembers),
+            MemberExpression member => VisitAndRememberMember(member, visitedMembers),
+            MethodCallExpression methodCall => Visit(methodCall, visitedMembers),
+            UnaryExpression unary => Visit(unary, visitedMembers),
+            NewExpression @new => Visit(@new, visitedMembers),
+            LambdaExpression lambda => Visit(lambda, visitedMembers),
+            ParameterExpression parameterExpression => Visit(parameterExpression, visitedMembers),
             _ => throw new NotSupportedException($"Expression of type {expression.GetType()} is not supported")
         };
     }
     
-    private SqlBuilder VisitAndRememberMember(MemberExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    private SqlBuilder VisitAndRememberMember(MemberExpression expression, VisitedMembers visitedMembers)
     {
         return _visitingInfo.ExecuteWithChangingMember(
             expression.Member,
-            () => Visit(expression, argumentTypes, visitedMembers));
+            () => Visit(expression, visitedMembers));
     }
 
-    private SqlBuilder Visit<TExpression>(TExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    private SqlBuilder Visit<TExpression>(TExpression expression, VisitedMembers visitedMembers)
         where TExpression : Expression
     {
         var visitor = GetExpressionVisitor<TExpression>();
         
-        return visitor.Visit(expression, argumentTypes, visitedMembers);
+        return visitor.Visit(expression, visitedMembers);
     }
     
     public IExpressionVisitor<TExpression> GetExpressionVisitor<TExpression>() 

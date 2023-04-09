@@ -28,7 +28,6 @@ public sealed class GetTableNameVisitor : BaseTriggerFunctionsVisitor
     /// <inheritdoc />
     public override SqlBuilder Visit(
         MethodCallExpression expression,
-        ArgumentTypes argumentTypes,
         VisitedMembers visitedMembers)
     {
         var entityType = expression.Method.GetGenericArguments()[0];

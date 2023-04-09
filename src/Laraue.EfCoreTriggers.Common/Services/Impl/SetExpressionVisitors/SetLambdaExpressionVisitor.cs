@@ -21,8 +21,8 @@ public class SetLambdaExpressionVisitor : IMemberInfoVisitor<LambdaExpression>
     }
 
     /// <inheritdoc />
-    public Dictionary<MemberInfo, SqlBuilder> Visit(LambdaExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public Dictionary<MemberInfo, SqlBuilder> Visit(LambdaExpression expression, VisitedMembers visitedMembers)
     {
-        return _factory.Visit(expression.Body, argumentTypes, visitedMembers);
+        return _factory.Visit(expression.Body, visitedMembers);
     }
 }

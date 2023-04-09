@@ -26,13 +26,12 @@ public class UpdateExpressionVisitor : IUpdateExpressionVisitor
     }
 
     /// <inheritdoc />
-    public SqlBuilder Visit(LambdaExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public SqlBuilder Visit(LambdaExpression expression, VisitedMembers visitedMembers)
     {
         var updateType = expression.Body.Type;
         
         var assignmentParts = _memberInfoVisitorFactory.Visit(
             expression,
-            argumentTypes,
             visitedMembers);
         
         var sqlResult = new SqlBuilder();

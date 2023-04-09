@@ -19,7 +19,7 @@ public sealed class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpres
     }
 
     /// <inheritdoc />
-    public override SqlBuilder Visit(MemberExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public override SqlBuilder Visit(MemberExpression expression, VisitedMembers visitedMembers)
     {
         visitedMembers.AddMember(ArgumentType.Default, expression.Member);
         

@@ -19,11 +19,9 @@ public interface IMemberInfoVisitor<in TExpression>
     /// SQL for each of it members.
     /// </summary>
     /// <param name="expression"></param>
-    /// <param name="argumentTypes"></param>
     /// <param name="visitedMembers"></param>
     /// <returns></returns>
     Dictionary<MemberInfo, SqlBuilder> Visit(
         TExpression expression,
-        ArgumentTypes argumentTypes,
         VisitedMembers visitedMembers);
 }

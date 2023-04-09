@@ -34,11 +34,10 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
         var updateEntityTable = _sqlGenerator.GetTableSql(updateEntityType);
         
         var matchExpressionParts = _memberInfoVisitorFactory.Visit(
-            triggerAction.MatchExpression, triggerAction.MatchExpressionPrefixes, visitedMembers);
+            triggerAction.MatchExpression, visitedMembers);
 
         var insertStatementSql = _insertExpressionVisitor.Visit(
             triggerAction.InsertExpression,
-            triggerAction.InsertExpressionPrefixes,
             visitedMembers);
 
         var sqlBuilder = SqlBuilder.FromString("BEGIN TRANSACTION;");
@@ -60,8 +59,7 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
         else
         {
             var updateStatementSql = _updateExpressionVisitor.Visit(
-                triggerAction.OnMatchExpression, 
-                triggerAction.OnMatchExpressionPrefixes,
+                triggerAction.OnMatchExpression,
                 visitedMembers);
             
             sqlBuilder.AppendNewLine($"UPDATE {updateEntityTable} WITH (UPDLOCK, SERIALIZABLE)")

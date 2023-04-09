@@ -26,7 +26,7 @@ public class SetNewExpressionVisitor : IMemberInfoVisitor<NewExpression>
     }
 
     /// <inheritdoc />
-    public Dictionary<MemberInfo, SqlBuilder> Visit(NewExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public Dictionary<MemberInfo, SqlBuilder> Visit(NewExpression expression, VisitedMembers visitedMembers)
     {
         return expression.Arguments.ToDictionary(
             argument => ((MemberExpression)argument).Member,
@@ -34,7 +34,7 @@ public class SetNewExpressionVisitor : IMemberInfoVisitor<NewExpression>
             {
                 return _visitingInfo.ExecuteWithChangingMember(
                     ((MemberExpression)argument).Member,
-                    () => _factory.Visit(argument, argumentTypes, visitedMembers));
+                    () => _factory.Visit(argument, visitedMembers));
             });
     }
 }

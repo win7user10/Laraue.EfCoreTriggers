@@ -53,7 +53,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
             protected override string MethodName => nameof(string.ToUpper);
             
-            public override SqlBuilder Visit(MethodCallExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+            public override SqlBuilder Visit(MethodCallExpression expression, VisitedMembers visitedMembers)
             {
                 return SqlBuilder.FromString("test");
             }

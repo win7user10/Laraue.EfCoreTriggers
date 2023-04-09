@@ -24,9 +24,9 @@ public class UnaryExpressionVisitor : BaseExpressionVisitor<UnaryExpression>
     }
 
     /// <inheritdoc />
-    public override SqlBuilder Visit(UnaryExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public override SqlBuilder Visit(UnaryExpression expression, VisitedMembers visitedMembers)
     {
-        var internalExpressionSql = _factory.Visit(expression.Operand, argumentTypes, visitedMembers);
+        var internalExpressionSql = _factory.Visit(expression.Operand, visitedMembers);
         var sqlBuilder = new SqlBuilder();
         
         if (expression.NodeType == ExpressionType.Convert)

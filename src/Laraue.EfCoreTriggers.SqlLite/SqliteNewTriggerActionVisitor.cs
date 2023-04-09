@@ -19,7 +19,7 @@ public sealed class SqliteNewTriggerActionVisitor : BaseNewTriggerActionVisitor
         if (conditionsSql.Length > 0)
         {
             sql
-                .Append("WHEN ")
+                .AppendNewLine("WHEN ")
                 .WithIdent(x => x
                     .AppendNewLine()
                     .AppendJoin(" AND ", conditionsSql.Select(y => y.ToString())));

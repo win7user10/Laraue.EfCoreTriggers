@@ -44,7 +44,6 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall
         /// <inheritdoc />
         public abstract SqlBuilder Visit(
             MethodCallExpression expression,
-            ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers);
     }
 }

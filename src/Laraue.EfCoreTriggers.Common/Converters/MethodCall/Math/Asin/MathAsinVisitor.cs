@@ -22,11 +22,10 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin
         /// <inheritdoc />
         public override SqlBuilder Visit(
             MethodCallExpression expression,
-            ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers)
         {
             var argument = expression.Arguments[0];
-            var sqlBuilder = VisitorFactory.Visit(argument, argumentTypes, visitedMembers);
+            var sqlBuilder = VisitorFactory.Visit(argument, visitedMembers);
             return SqlBuilder.FromString($"ASIN({sqlBuilder})");
         }
     }

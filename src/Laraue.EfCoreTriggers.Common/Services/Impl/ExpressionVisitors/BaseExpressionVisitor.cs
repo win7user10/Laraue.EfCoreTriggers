@@ -9,6 +9,5 @@ public abstract class BaseExpressionVisitor<TExpression> : IExpressionVisitor<TE
 {
     public abstract SqlBuilder Visit(
         TExpression expression,
-        ArgumentTypes argumentTypes,
         VisitedMembers visitedMembers);
 }

@@ -17,5 +17,5 @@ public interface IExpressionVisitor<in TExpression> where TExpression : Expressi
     /// <param name="argumentTypes">Argument types to know what prefix should have each os passed arg of expression.</param>
     /// <param name="visitedMembers">Dictionary which collect all visited members.</param>
     /// <returns></returns>
-    SqlBuilder Visit(TExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers);
+    SqlBuilder Visit(TExpression expression, VisitedMembers visitedMembers);
 }

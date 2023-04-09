@@ -17,5 +17,5 @@ public interface IInsertExpressionVisitor
     /// <param name="argumentTypes"></param>
     /// <param name="visitedMembers"></param>
     /// <returns></returns>
-    SqlBuilder Visit(LambdaExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers);
+    SqlBuilder Visit(LambdaExpression expression, VisitedMembers visitedMembers);
 }

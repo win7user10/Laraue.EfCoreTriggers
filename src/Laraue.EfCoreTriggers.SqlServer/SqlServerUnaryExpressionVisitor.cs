@@ -18,9 +18,9 @@ public class SqlServerUnaryExpressionVisitor : UnaryExpressionVisitor
     {
     }
     
-    public override SqlBuilder Visit(UnaryExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public override SqlBuilder Visit(UnaryExpression expression, VisitedMembers visitedMembers)
     {
-        var unarySql = base.Visit(expression, argumentTypes, visitedMembers);
+        var unarySql = base.Visit(expression, visitedMembers);
             
         if (ShouldBeCastedToBoolean(expression))
         {

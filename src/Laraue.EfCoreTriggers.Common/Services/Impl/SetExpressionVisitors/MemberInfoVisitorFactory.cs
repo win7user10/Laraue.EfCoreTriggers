@@ -23,22 +23,22 @@ public class MemberInfoVisitorFactory : IMemberInfoVisitorFactory
     }
 
     /// <inheritdoc />
-    public Dictionary<MemberInfo, SqlBuilder> Visit(Expression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public Dictionary<MemberInfo, SqlBuilder> Visit(Expression expression, VisitedMembers visitedMembers)
     {
         return expression switch
         {
-            LambdaExpression lambdaExpression => Visit(lambdaExpression, argumentTypes, visitedMembers),
-            MemberInitExpression memberInitExpression => Visit(memberInitExpression, argumentTypes, visitedMembers),
-            NewExpression newExpression => Visit(newExpression, argumentTypes, visitedMembers),
-            BinaryExpression binaryExpression => Visit(binaryExpression, argumentTypes, visitedMembers),
+            LambdaExpression lambdaExpression => Visit(lambdaExpression, visitedMembers),
+            MemberInitExpression memberInitExpression => Visit(memberInitExpression, visitedMembers),
+            NewExpression newExpression => Visit(newExpression, visitedMembers),
+            BinaryExpression binaryExpression => Visit(binaryExpression, visitedMembers),
             _ => throw new NotSupportedException($"Expression of type {expression.GetType()} is not supported")
         };
     }
     
-    private Dictionary<MemberInfo, SqlBuilder> Visit<TExpression>(TExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    private Dictionary<MemberInfo, SqlBuilder> Visit<TExpression>(TExpression expression, VisitedMembers visitedMembers)
         where TExpression : Expression
     {
         return _serviceProvider.GetRequiredService<IMemberInfoVisitor<TExpression>>()
-            .Visit(expression, argumentTypes, visitedMembers);
+            .Visit(expression, visitedMembers);
     }
 }

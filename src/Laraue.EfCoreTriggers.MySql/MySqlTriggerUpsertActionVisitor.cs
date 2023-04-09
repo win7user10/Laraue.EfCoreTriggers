@@ -28,7 +28,6 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
 
         var insertStatementSql = _insertExpressionVisitor.Visit(
             triggerAction.InsertExpression,
-            triggerAction.InsertExpressionPrefixes,
             visitedMembers);
 
         var sqlBuilder = new SqlBuilder();
@@ -42,8 +41,7 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
         else
         {
             var updateStatementSql = _updateExpressionVisitor.Visit(
-                triggerAction.OnMatchExpression, 
-                triggerAction.OnMatchExpressionPrefixes,
+                triggerAction.OnMatchExpression,
                 visitedMembers);
             
             sqlBuilder.Append($"INSERT INTO {_sqlGenerator.GetTableSql(updateEntityType)} ")

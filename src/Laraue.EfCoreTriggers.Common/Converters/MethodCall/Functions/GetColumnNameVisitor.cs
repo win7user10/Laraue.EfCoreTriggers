@@ -25,9 +25,8 @@ public sealed class GetColumnNameVisitor : BaseTriggerFunctionsVisitor
     /// <inheritdoc />
     public override SqlBuilder Visit(
         MethodCallExpression expression,
-        ArgumentTypes argumentTypes,
         VisitedMembers visitedMembers)
     {
-        return VisitorFactory.Visit(expression.Arguments[0], argumentTypes, visitedMembers);
+        return VisitorFactory.Visit(expression.Arguments[0], visitedMembers);
     }
 }

@@ -14,12 +14,10 @@ public interface IExpressionVisitorFactory
     /// Visit expression and return <see cref="SqlBuilder"/>.
     /// </summary>
     /// <param name="expression">Expression to visit.</param>
-    /// <param name="argumentTypes">Argument types to know what prefix should have each os passed arg of expression.</param>
     /// <param name="visitedMembers">Dictionary which collect all visited members.</param>
     /// <returns></returns>
     SqlBuilder Visit(
         Expression expression,
-        ArgumentTypes argumentTypes,
         VisitedMembers visitedMembers);
 
     /// <summary>

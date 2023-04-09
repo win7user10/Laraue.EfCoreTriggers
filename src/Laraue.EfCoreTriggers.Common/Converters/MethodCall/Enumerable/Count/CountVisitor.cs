@@ -22,7 +22,7 @@ public class CountVisitor : BaseEnumerableVisitor
         _expressionVisitorFactory = visitorFactory;
     }
     
-    protected override (SqlBuilder, Expression) Visit(Expression[] arguments, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    protected override (SqlBuilder, Expression) Visit(Expression[] arguments, VisitedMembers visitedMembers)
     {
         return  (SqlBuilder.FromString("count(*)"), arguments.FirstOrDefault());
     }

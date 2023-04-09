@@ -20,12 +20,10 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall
         /// Build a SQL for passed <see cref="MethodCallExpression"/>.
         /// </summary>
         /// <param name="expression">Expression to parse.</param>
-        /// <param name="argumentTypes">Argument types of the expression.</param>
         /// <param name="visitedMembers">Visited members.</param>
         /// <returns></returns>
         SqlBuilder Visit(
             MethodCallExpression expression,
-            ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers);
     }
 }

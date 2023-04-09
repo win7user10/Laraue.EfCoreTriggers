@@ -21,10 +21,10 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs
         }
 
         /// <inheritdoc />
-        public override SqlBuilder Visit(MethodCallExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+        public override SqlBuilder Visit(MethodCallExpression expression, VisitedMembers visitedMembers)
         {
             var argument = expression.Arguments[0];
-            var sqlBuilder = VisitorFactory.Visit(argument, argumentTypes, visitedMembers);
+            var sqlBuilder = VisitorFactory.Visit(argument, visitedMembers);
             return SqlBuilder.FromString($"ABS({sqlBuilder})");
         }
     }

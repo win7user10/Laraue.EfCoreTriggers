@@ -20,12 +20,11 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         public static SqlBuilder[] VisitArguments(
             this IExpressionVisitorFactory visitor,
             MethodCallExpression expression,
-            ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers)
         {
             return expression.Arguments
                 .Select(argumentExpression => visitor
-                    .Visit(argumentExpression, argumentTypes, visitedMembers))
+                    .Visit(argumentExpression, visitedMembers))
                 .ToArray();
         }
     }

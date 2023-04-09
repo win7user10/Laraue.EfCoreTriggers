@@ -13,8 +13,8 @@ public class LambdaExpressionVisitor : BaseExpressionVisitor<LambdaExpression>
         _factory = factory;
     }
 
-    public override SqlBuilder Visit(LambdaExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public override SqlBuilder Visit(LambdaExpression expression, VisitedMembers visitedMembers)
     {
-        return _factory.Visit(expression.Body, argumentTypes, visitedMembers);
+        return _factory.Visit(expression.Body, visitedMembers);
     }
 }

@@ -15,7 +15,7 @@ public class ParameterExpressionVisitor : BaseExpressionVisitor<ParameterExpress
     }
 
     /// <inheritdoc />
-    public override SqlBuilder Visit(ParameterExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public override SqlBuilder Visit(ParameterExpression expression, VisitedMembers visitedMembers)
     {
         return new SqlBuilder()
             .Append(_generator.GetTableSql(expression.Type));

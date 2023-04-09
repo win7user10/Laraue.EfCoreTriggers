@@ -26,13 +26,12 @@ public class InsertExpressionVisitor : IInsertExpressionVisitor
     }
 
     /// <inheritdoc />
-    public SqlBuilder Visit(LambdaExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public SqlBuilder Visit(LambdaExpression expression, VisitedMembers visitedMembers)
     {
         var insertType = expression.Body.Type;
         
         var assignmentParts = _factory.Visit(
             expression,
-            argumentTypes,
             visitedMembers);
         
         var sqlResult = new SqlBuilder();
@@ -50,7 +49,7 @@ public class InsertExpressionVisitor : IInsertExpressionVisitor
         }
         else
         {
-            sqlResult.Append(VisitEmptyInsertBody(expression, argumentTypes));
+            sqlResult.Append(VisitEmptyInsertBody(expression));
         }
             
         return sqlResult;
@@ -60,9 +59,8 @@ public class InsertExpressionVisitor : IInsertExpressionVisitor
     /// Get SQL for the empty insert statement.
     /// </summary>
     /// <param name="insertExpression"></param>
-    /// <param name="argumentTypes"></param>
     /// <returns></returns>
-    protected virtual SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression, ArgumentTypes argumentTypes)
+    protected virtual SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression)
     {
         var sqlBuilder = new SqlBuilder();
         sqlBuilder.Append("DEFAULT VALUES");

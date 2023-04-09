@@ -17,9 +17,9 @@ public class SetBinaryExpressionVisitor : IMemberInfoVisitor<BinaryExpression>
         _factory = factory;
     }
     
-    public Dictionary<MemberInfo, SqlBuilder> Visit(BinaryExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public Dictionary<MemberInfo, SqlBuilder> Visit(BinaryExpression expression, VisitedMembers visitedMembers)
     {
-        var sqlBuilder = _factory.Visit(expression, argumentTypes, visitedMembers);
+        var sqlBuilder = _factory.Visit(expression, visitedMembers);
 
         var member = expression.Left as MemberExpression;
         member ??= expression.Right as MemberExpression;

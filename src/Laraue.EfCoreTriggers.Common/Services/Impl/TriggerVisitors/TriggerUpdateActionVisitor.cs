@@ -26,12 +26,10 @@ public class TriggerUpdateActionVisitor : ITriggerActionVisitor<TriggerUpdateAct
     {
         var updateStatement = _updateExpressionVisitor.Visit(
             triggerAction.UpdateExpression,
-            triggerAction.UpdateExpressionPrefixes,
             visitedMembers);
         
         var binaryExpressionSql = _expressionVisitorFactory.Visit(
             (BinaryExpression)triggerAction.UpdateFilter.Body,
-            triggerAction.UpdateFilterPrefixes,
             visitedMembers);
 
         var updateEntity = triggerAction.UpdateExpression.Body.Type;
