@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
@@ -83,7 +82,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         public void OnlyNotConstantConditionsShouldBeAddedToTrigger()
         {
             Assert.Throws<InvalidOperationException>(() => 
-                new NewTrigger<User, OldAndNewTableRefs<User>>(TriggerEvent.Update, TriggerTime.After)
+                new Trigger<User, OldAndNewTableRefs<User>>(TriggerEvent.Update, TriggerTime.After)
                     .Action(actions => actions
                         .Condition(_ => true)
                         .Insert(_ => new User { Role = UserRole.Usual })));

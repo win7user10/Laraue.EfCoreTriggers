@@ -17,10 +17,11 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors.Statements;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -70,7 +71,7 @@ namespace Laraue.EfCoreTriggers.SqlServer.Extensions
                 .AddTriggerActionVisitor<TriggerUpsertAction, SqlServerTriggerUpsertActionVisitor>()
                 .AddScoped<ISqlGenerator, SqlServerSqlGenerator>()
                 .AddScoped<ITriggerVisitor, SqlServerTriggerVisitor>()
-                .AddTriggerActionVisitor<NewTriggerAction, SqlServerNewTriggerActionVisitor>()
+                .AddTriggerActionVisitor<TriggerActionsGroup, SqlServerNewTriggerActionVisitor>()
                 .AddMethodCallConverter<ConcatStringViaPlusVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()

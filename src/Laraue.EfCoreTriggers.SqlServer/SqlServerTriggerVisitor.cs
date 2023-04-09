@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore.Metadata;
-using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
+using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
@@ -33,7 +31,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
     };
 
     /// <inheritdoc />
-    public override string GenerateCreateTriggerSql(INewTrigger trigger)
+    public override string GenerateCreateTriggerSql(ITrigger trigger)
     {
         var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
         var tableName = _sqlGenerator.GetTableSql(trigger.TriggerEntityType);

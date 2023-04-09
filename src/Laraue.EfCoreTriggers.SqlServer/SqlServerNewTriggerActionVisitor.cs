@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 

@@ -1,5 +1,5 @@
 ﻿using System;
-using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
 
 namespace Laraue.EfCoreTriggers.PostgreSql;
 

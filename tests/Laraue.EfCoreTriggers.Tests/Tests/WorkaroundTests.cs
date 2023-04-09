@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.Functions;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
 using Xunit.Categories;
+using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.Tests.Tests
 {
@@ -67,10 +67,10 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             
             foreach (var type in types)
             {
-                var triggerType = typeof(NewTrigger<,>).MakeGenericType(
+                var triggerType = typeof(Trigger<,>).MakeGenericType(
                     type.ClrType,
                     typeof(NewTableRef<>).MakeGenericType(type.ClrType));
-                var trigger = (INewTrigger) Activator.CreateInstance(triggerType, TriggerEvent.Delete, TriggerTime.After)!;
+                var trigger = (ITrigger) Activator.CreateInstance(triggerType, TriggerEvent.Delete, TriggerTime.After)!;
                 AddTriggerAction((dynamic) trigger);
 
                 var sql = _provider.Visit(trigger.Actions[0].ActionExpressions.First(), new VisitedMembers());
@@ -83,7 +83,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             Assert.Equal("select NEW.`Id` from NEW union select `TelegramNotifications`.`Id` from `TelegramNotifications`", sqlQueries[1]);
         }
 
-        private static void AddTriggerAction<TEntity>(NewTrigger<TEntity, NewTableRef<TEntity>> trigger)
+        private static void AddTriggerAction<TEntity>(Trigger<TEntity, NewTableRef<TEntity>> trigger)
             where TEntity : Notification
         {
             trigger.Action(actions => actions.ExecuteRawSql(

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Xunit;

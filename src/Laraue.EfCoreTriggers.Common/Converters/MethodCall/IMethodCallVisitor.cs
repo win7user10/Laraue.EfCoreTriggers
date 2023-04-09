@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall
 {

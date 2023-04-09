@@ -1,9 +1,8 @@
 ﻿using System.Linq;
-using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore.Metadata;
+using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.SqlLite;
 
@@ -18,7 +17,7 @@ public class SqliteTriggerVisitor : BaseTriggerVisitor
         _sqlGenerator = sqlGenerator;
     }
 
-    public override string GenerateCreateTriggerSql(INewTrigger trigger)
+    public override string GenerateCreateTriggerSql(ITrigger trigger)
     {
         var sql = new SqlBuilder();
         

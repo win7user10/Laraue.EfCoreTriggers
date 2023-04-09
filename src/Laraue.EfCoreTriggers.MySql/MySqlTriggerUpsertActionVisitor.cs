@@ -1,8 +1,8 @@
-﻿using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors.Statements;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+﻿using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
 
 namespace Laraue.EfCoreTriggers.MySql;
 

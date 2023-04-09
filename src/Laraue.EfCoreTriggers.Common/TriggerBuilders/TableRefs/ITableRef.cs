@@ -1,14 +1,16 @@
-﻿namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
-
-/// <summary>
-/// Represents the class with references to triggered table rows. 
-/// </summary>
-/// <typeparam name="TEntity"></typeparam>
-public interface ITableRef<TEntity> : ITableRef
-    where TEntity : class
+﻿namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs
 {
-}
+    /// <inheritdoc />
+    /// <typeparam name="TEntity">Type of the table that was triggered.</typeparam>
+    public interface ITableRef<TEntity> : ITableRef
+        where TEntity : class
+    {
+    }
 
-public interface ITableRef
-{
+    /// <summary>
+    /// Contains references to the table row when trigger was fired.
+    /// </summary>
+    public interface ITableRef
+    {
+    }
 }

@@ -1,13 +1,14 @@
-﻿namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
-
-/// <summary>
-/// Contains reference to the old row in a trigger.
-/// </summary>
-public interface IOldTableRef<TEntity> : ITableRef<TEntity>
-    where TEntity : class
+﻿namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs
 {
-    /// <summary>ы
-    /// Reference to the old entity in a trigger.
+    /// <summary>
+    /// Contains references to the table row before it was updated.
     /// </summary>
-    public TEntity Old { get; }
+    public interface IOldTableRef<TEntity> : ITableRef<TEntity>
+        where TEntity : class
+    {
+        /// <summary>
+        /// Reference to the old entity in a trigger.
+        /// </summary>
+        public TEntity Old { get; }
+    }
 }
