@@ -7,6 +7,7 @@ using Laraue.EfCoreTriggers.Common.Services;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
 {
@@ -76,8 +77,13 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
             foreach (var key in keys)
             {
                 var column1Sql = _sqlGenerator.GetColumnSql(entityType, key.ForeignKey, ArgumentType.Default);
+
+                if (baseMember.Expression is not MemberExpression memberExpression)
+                {
+                    throw new InvalidOperationException("Member expression was excepted");
+                }
                 
-                var argument2Type = argumentTypes.Get(baseMember);
+                var argument2Type = memberExpression.Member.GetArgumentType();
                 
                 var column2WhereSql = _sqlGenerator.GetVariableSql(originalSetType, key.PrincipalKey, argument2Type);
                 visitedMembers.AddMember(argument2Type, key.PrincipalKey);

@@ -7,6 +7,18 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 public static class TypeExtensions
 {
+    public static ArgumentType GetArgumentType(this MemberInfo memberInfo)
+    {
+        if (memberInfo.TryGetNewTableRef(out _))
+        {
+            return ArgumentType.New;
+        }
+
+        return memberInfo.TryGetOldTableRef(out _)
+            ? ArgumentType.Old
+            : ArgumentType.Default;
+    }
+    
     public static bool TryGetOldTableRef(this MemberInfo memberInfo, [NotNullWhen(true)] out Type? refType)
     {
         return TryGetTableRef(memberInfo, typeof(IOldTableRef<>), out refType);

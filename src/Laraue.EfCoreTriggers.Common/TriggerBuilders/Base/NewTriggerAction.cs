@@ -36,7 +36,9 @@ public sealed class NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> : NewTr
             throw new InvalidOperationException("Condition with constant expression makes no sense");
         }
 
-        return AddAction(new TriggerCondition(conditionalExpression));
+        _actionConditions.Add(new TriggerCondition(conditionalExpression));
+        
+        return this;
     }
 
     public NewTriggerAction<TTriggerEntity, TTriggerEntityRefs> Insert<TInsertEntity>(

@@ -36,9 +36,14 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
     {
         if (memberExpression.Expression is MemberExpression nestedMemberExpression)
         {
-            return TryGetTableRef(nestedMemberExpression, memberExpression.Member);
+            return GetColumnSql(nestedMemberExpression, memberExpression.Member);
         }
 
+        return GeTableSql(memberExpression, argumentType);
+    }
+
+    private string GeTableSql(MemberExpression memberExpression, ArgumentType argumentType)
+    {
         if (memberExpression.Member.TryGetNewTableRef(out _))
         {
             return _generator.NewEntityPrefix;
@@ -55,10 +60,11 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
             argumentType);
     }
 
-    private string TryGetTableRef(MemberExpression memberExpression, MemberInfo parentMember)
+    private string GetColumnSql(MemberExpression memberExpression, MemberInfo parentMember)
     {
         var argumentType = ArgumentType.Default;
         var memberType = memberExpression.Expression.Type;
+        
         if (memberExpression.Member.TryGetNewTableRef(out var tableRefType))
         {
             memberType = tableRefType;
@@ -70,11 +76,6 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
             argumentType = ArgumentType.Old;
         }
         
-        // return bool + arg type
-        
-        
-        // TODO - if memberExp.Exp is member exp,
-        //  it is either json (not supported) or our case when new ref return NEW + get column name from the table ref.
         return _generator.GetColumnSql(
             memberType,
             parentMember,
