@@ -6,6 +6,9 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public abstract class TriggerRawAction : ITriggerAction
     {
         internal readonly LambdaExpression[] ArgumentSelectorExpressions;

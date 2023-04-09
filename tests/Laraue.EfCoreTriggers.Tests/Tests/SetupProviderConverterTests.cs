@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
@@ -36,9 +37,12 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
                 services.AddMethodCallConverter<CustomStringToUpperVisitor>();
             });
 
-            var action = new TriggerCondition<Transaction, NewTableRef<Transaction>>(
-                tableRefs => tableRefs.New.Description.ToUpper() == "ABC");
+            Expression<Func<NewTableRef<Transaction>, bool>> condition = tableRefs =>
+                tableRefs.New.Description.ToUpper() == "ABC";
+            var action = new TriggerCondition(condition);
+            
             var sql = provider.Visit(action, new VisitedMembers());
+            
             Assert.Equal("test = 'ABC'", sql);
         }
 

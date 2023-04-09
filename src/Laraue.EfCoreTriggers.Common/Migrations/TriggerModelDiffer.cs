@@ -11,15 +11,21 @@ using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrig
 
 namespace Laraue.EfCoreTriggers.Common.Migrations
 {
-    public class TriggerModelDiffer
+    /// <inheritdoc />
+    public class TriggerModelDiffer : ITriggerModelDiffer
     {
         private readonly ITriggerVisitor _triggerVisitor;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="TriggerModelDiffer"/>.
+        /// </summary>
+        /// <param name="triggerVisitor"></param>
         public TriggerModelDiffer(ITriggerVisitor triggerVisitor) 
         {
             _triggerVisitor = triggerVisitor;
         }
         
+        /// <inheritdoc />
         public IReadOnlyList<MigrationOperation> AddTriggerOperations(
             IEnumerable<MigrationOperation> operations,
             IRelationalModel? source,

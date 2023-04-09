@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
@@ -27,9 +28,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         [Fact]
         public void Entity_NotExistsInDbContext_ShouldThrowException()
         {
-            var action = new TriggerCondition<User, NewTableRef<User>>(
-                tableRefs => tableRefs.New.Role == UserRole.Admin);
+            Expression<Func<NewTableRef<User>, bool>> condition = tableRefs => tableRefs.New.Role == UserRole.Admin;
+            var action = new TriggerCondition(condition);
+            
             var ex = Assert.Throws<InvalidOperationException>(() => _provider.Visit(action, new VisitedMembers()));
+            
             Assert.Equal("DbSet<Laraue.EfCoreTriggers.Tests.Entities.User> should be added to the DbContext", ex.Message);
         }
     }

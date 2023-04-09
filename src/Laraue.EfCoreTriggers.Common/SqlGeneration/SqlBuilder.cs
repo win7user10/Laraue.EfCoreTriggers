@@ -52,23 +52,16 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <returns></returns>
         public static SqlBuilder FromString(string sql)
         {
-            var row = new SqlBuilderRow
-            {
-                StringBuilder = new StringBuilder(sql)
-            };
+            var row = new SqlBuilderRow(0, sql);
             
             var sqlBuilder = new SqlBuilder(row);
             
             return sqlBuilder;
         }
 
-        private SqlBuilder StartNewRow(string value = null)
+        private SqlBuilder StartNewRow(string? value = null)
         {
-            return StartNewRow(new SqlBuilderRow
-            {
-                Ident = CurrentIdent,
-                StringBuilder = new StringBuilder(value)
-            });
+            return StartNewRow(new SqlBuilderRow(CurrentIdent, value));
         }
         
         private SqlBuilder StartNewRow(SqlBuilderRow sqlBuilderRow)
@@ -193,11 +186,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 }
                 else
                 {
-                    StartNewRow(new SqlBuilderRow()
-                    {
-                        Ident = CurrentSqlBuilderRow.Ident,
-                        StringBuilder = new StringBuilder()
-                    });
+                    StartNewRow(new SqlBuilderRow(CurrentSqlBuilderRow.Ident));
                 }
             });
 
@@ -231,13 +220,9 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                     
                 CurrentSqlBuilderRow.StringBuilder.Append(row.StringBuilder);
 
-            }, (row, _) =>
+            }, (_, _) =>
             {
-                StartNewRow(new SqlBuilderRow()
-                {
-                    Ident = CurrentIdent,
-                    StringBuilder = new StringBuilder()
-                });
+                StartNewRow(new SqlBuilderRow(CurrentIdent));
             });
             
             return this;
@@ -259,7 +244,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public SqlBuilder AppendNewLine(string value = null)
+        public SqlBuilder AppendNewLine(string? value = null)
         {
             return StartNewRow(value);
         }
@@ -276,7 +261,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             return Append(sqlBuilder);
         }
 
-        private string GetIdent(int ident)
+        private static string GetIdent(int ident)
         {
             return string.Concat(Enumerable.Range(0, ident).Select(_ => Ident));
         }

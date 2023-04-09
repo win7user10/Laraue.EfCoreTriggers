@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
@@ -45,36 +46,44 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         [Fact]
         public void CastingToSameTypeShouldBeIgnored()
         {
-            var action = new TriggerCondition<User, NewTableRef<User>>(
-                tableRefs => tableRefs.New.Role > UserRole.Admin);
+            Expression<Func<NewTableRef<User>, bool>> condition = tableRefs => tableRefs.New.Role > UserRole.Admin;
+            var action = new TriggerCondition(condition);
+            
             var sql = _provider.Visit(action, new VisitedMembers());
+            
             Assert.Equal("NEW.`Role` > 999", sql);
         }
 
         [Fact]
         public void CastingToAnotherTypeShouldBeTranslated()
         {
-            var action = new TriggerCondition<User, NewTableRef<User>>(
-                tableRefs => (decimal)tableRefs.New.Role > 50m);
+            Expression<Func<NewTableRef<User>, bool>> condition = tableRefs => (decimal)tableRefs.New.Role > 50m;
+            var action = new TriggerCondition(condition);
+            
             var sql = _provider.Visit(action, new VisitedMembers());
+            
             Assert.Equal("CAST(NEW.`Role` AS DECIMAL) > 50", sql);
         }
         
         [Fact]
         public void ComparisonWithCharTypeShouldProduceCorrectSql()
         {
-            var action = new TriggerCondition<TestEntity, NewTableRef<TestEntity>>(
-                tableRefs => tableRefs.New.CharValue == 'D');
+            Expression<Func<NewTableRef<TestEntity>, bool>> condition = tableRefs => tableRefs.New.CharValue == 'D';
+            var action = new TriggerCondition(condition);
+            
             var sql = _provider.Visit(action, new VisitedMembers());
+            
             Assert.Equal("NEW.`CharValue` = 'D'", sql);
         }
         
         [Fact]
         public void StringEnumShouldGenerateCorrectSql()
         {
-            var action = new TriggerCondition<TestEntity, NewTableRef<TestEntity>>(
-                tableRefs => tableRefs.New.EnumValue == UserRole.Admin);
+            Expression<Func<NewTableRef<TestEntity>, bool>> condition = tableRefs => tableRefs.New.EnumValue == UserRole.Admin;
+            var action = new TriggerCondition(condition);
+            
             var sql = _provider.Visit(action, new VisitedMembers());
+            
             Assert.Equal("NEW.`EnumValue` = 'Admin'", sql);
         }
         
@@ -91,27 +100,33 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
         [Fact]
         public void NotEqualToNullShouldGenerateCorrectSql()
         {
-            var action = new TriggerCondition<TestEntity, NewTableRef<TestEntity>>(
-                tableRefs => tableRefs.New.StringValue != null);
+            Expression<Func<NewTableRef<TestEntity>, bool>> condition = tableRefs => tableRefs.New.StringValue != null;
+            var action = new TriggerCondition(condition);
+            
             var sql = _provider.Visit(action, new VisitedMembers());
+            
             Assert.Equal("NEW.`StringValue` IS NOT NULL", sql);
         }
         
         [Fact]
         public void EqualToNullShouldGenerateCorrectSql()
         {
-            var action = new TriggerCondition<TestEntity, NewTableRef<TestEntity>>(
-                tableRefs => tableRefs.New.StringValue == null);
+            Expression<Func<NewTableRef<TestEntity>, bool>> condition = tableRefs => tableRefs.New.StringValue == null;
+            var action = new TriggerCondition(condition);
+            
             var sql = _provider.Visit(action, new VisitedMembers());
+            
             Assert.Equal("NEW.`StringValue` IS NULL", sql);
         }
         
         [Fact]
         public void СoalesceNullableStructShouldGenerateCorrectSql()
         {
-            var action = new TriggerCondition<TestEntity, NewTableRef<TestEntity>>(
-                tableRefs => (tableRefs.New.NullableIntValue ?? 0) != 1);
+            Expression<Func<NewTableRef<TestEntity>, bool>> condition = tableRefs => (tableRefs.New.NullableIntValue ?? 0) != 1;
+            var action = new TriggerCondition(condition);
+            
             var sql = _provider.Visit(action, new VisitedMembers());
+            
             Assert.Equal("COALESCE(NEW.`NullableIntValue`, 0) <> 1", sql);
         }
     }

@@ -102,7 +102,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             
                 .AddScoped<VisitingInfo>()
 
-                .AddScoped<TriggerModelDiffer>()
+                .AddScoped<ITriggerModelDiffer, TriggerModelDiffer>()
 
                 .AddScoped<IUpdateExpressionVisitor, UpdateExpressionVisitor>();
         }

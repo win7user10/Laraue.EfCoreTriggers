@@ -34,15 +34,21 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
             _expressionVisitorFactory = visitorFactory;
         }
         
+        /// <inheritdoc />
         public override SqlBuilder Visit(MethodCallExpression expression, VisitedMembers visitedMembers)
         {
             var whereExpressions = new HashSet<Expression>();
             var exp = GetFlattenExpressions(expression, whereExpressions);
+
+            if (exp is not MemberExpression baseMember)
+            {
+                throw new InvalidOperationException("Member expression was excepted");
+            }
             
-            var baseMember = exp as MemberExpression;
             var enumerableMemberType = baseMember.Type;
             
-            var originalSetType = baseMember.Expression?.Type;
+            var originalSetType = baseMember.Expression?.Type
+                ?? throw new InvalidOperationException("Not null expression in the passed member excepted.");
 
             if (!typeof(IEnumerable).IsAssignableFrom(enumerableMemberType) || !enumerableMemberType.IsGenericType)
             {
@@ -121,8 +127,14 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
             }
         }
 
+        /// <summary>
+        /// Generate pairs SqlBuilder -> Expression for all passed expressions
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <param name="visitedMembers"></param>
+        /// <returns></returns>
         protected abstract (SqlBuilder, Expression) Visit(
-            Expression[] arguments,
+            IEnumerable<Expression> arguments,
             VisitedMembers visitedMembers);
     }
 }

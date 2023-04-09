@@ -94,7 +94,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             var entityType = Model.FindEntityType(type);
         
             var outerForeignKey = entityType.GetForeignKeys()
-                .FirstOrDefault(x => x.PrincipalEntityType.ClrType == type2);
+                .First(x => x.PrincipalEntityType.ClrType == type2);
 
             var outerKey = outerForeignKey
                 .PrincipalKey
@@ -102,11 +102,12 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
 
             var innerKey = outerForeignKey.Properties;
 
-            var keys = outerKey.Zip(innerKey, (first, second) => new KeyInfo
-            {
-                PrincipalKey = first.PropertyInfo,
-                ForeignKey = second.PropertyInfo,
-            }).ToArray();
+            var keys = outerKey
+                .Zip(innerKey, (first, second)
+                    => new KeyInfo(
+                        first.PropertyInfo,
+                        second.PropertyInfo))
+                .ToArray();
 
             return keys;
         }
