@@ -44,10 +44,6 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
             .Actions
             .Select(action => _factory.Visit(action, visitedMembers))
             .ToArray();
-        
-        /**var conditionsSql = trigger.Conditions
-            .Select(actionCondition => _factory.Visit(actionCondition, visitedMembers))
-            .ToArray();*/
 
         visitedMembers.Remove(ArgumentType.Default);
         visitedMembers.Remove(ArgumentType.None);
@@ -80,20 +76,8 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
                 .AppendNewLine("BEGIN");
                 
             sqlBuilder
-                .WithIdent(triggerBodyBuilder =>
-                {
-                    /**if (conditionsSql.Length > 0)
-                    {
-                        sqlBuilder.Append($"IF (")
-                            .AppendJoin(" AND ", conditionsSql.Select(x => x.ToString()))
-                            .Append(")")
-                            .AppendNewLine();
-                    }*/
-                    
-                    triggerBodyBuilder
-                        .AppendViaNewLine(actionsSql)
-                        .AppendNewLine(GetFetchCursorsSql(trigger.TriggerEntityType, visitedMembers, trigger.TriggerEvent));
-                })
+                .WithIdent(triggerBodyBuilder => triggerBodyBuilder.AppendViaNewLine(actionsSql))
+                .AppendNewLine(GetFetchCursorsSql(trigger.TriggerEntityType, visitedMembers, trigger.TriggerEvent))
                 .AppendNewLine("END")
                 .AppendNewLine(GetCloseCursorsSql(trigger.TriggerEntityType, visitedMembers, trigger.TriggerEvent));
         });
@@ -142,7 +126,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
 
     public string GetVariableNameSql(ArgumentType argumentType, MemberInfo member)
     {
-        return _sqlGenerator.GetVariableSql(null, member, argumentType);
+        return _sqlGenerator.GetColumnValueReferenceSql(null, member, argumentType);
     }
     
     private SqlBuilder DeclareCursorsSql(Type triggerEntityType, VisitedMembers visitedMembers, TriggerEvent triggerEvent)
@@ -165,7 +149,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         if (cursorBlocksSql.Any())
         {
             var sql = new SqlBuilder()
-                .AppendJoin(" ", cursorBlocksSql);
+                .AppendViaNewLine(cursorBlocksSql);
             
             return sql;
         }

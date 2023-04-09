@@ -123,8 +123,10 @@ public interface ISqlGenerator
     char GetDelimiter();
 
     /// <summary>
-    /// 
+    /// Get SQL to access a column value. In SQL Server that returns a
+    /// reference to the defined variable, e.g. @NewAge, in other dialects - reference to a
+    /// column name, e.g. NEW."Age".
     /// </summary>
     /// <returns></returns>
-    string GetVariableSql(Type type, MemberInfo member, ArgumentType argumentType);
+    string GetColumnValueReferenceSql(Type? type, MemberInfo member, ArgumentType argumentType);
 }

@@ -85,7 +85,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable
                 
                 var argument2Type = memberExpression.Member.GetArgumentType();
                 
-                var column2WhereSql = _sqlGenerator.GetVariableSql(originalSetType, key.PrincipalKey, argument2Type);
+                var column2WhereSql = _sqlGenerator.GetColumnValueReferenceSql(originalSetType, key.PrincipalKey, argument2Type);
                 visitedMembers.AddMember(argument2Type, key.PrincipalKey);
                 
                 var column2JoinSql = _sqlGenerator.GetColumnSql(originalSetType, key.PrincipalKey, ArgumentType.Default);

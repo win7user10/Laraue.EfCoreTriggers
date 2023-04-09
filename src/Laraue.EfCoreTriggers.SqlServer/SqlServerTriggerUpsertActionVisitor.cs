@@ -53,7 +53,7 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
                         .AppendNewLine($"FROM {updateEntityTable} WITH (UPDLOCK, SERIALIZABLE)")
                         .AppendNewLine("WHERE ")
                         .AppendJoin(" AND ", matchExpressionParts
-                            .Select(memberPair => $"{_sqlGenerator.GetColumnSql(updateEntityType, memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
+                            .Select(memberPair => memberPair.Value))
                         .Append(")");
                 });
         }
@@ -68,8 +68,7 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
                 .AppendNewLine("SET ")
                 .Append(updateStatementSql)
                 .AppendNewLine("WHERE ")
-                .AppendJoin(" AND ", matchExpressionParts
-                    .Select(memberPair => $"{_sqlGenerator.GetColumnSql(updateEntityType, memberPair.Key, ArgumentType.Default)} = {memberPair.Value}"))
+                .AppendJoin(" AND ", matchExpressionParts.Select(x => x.Value))
                 .AppendNewLine("IF @@ROWCOUNT = 0");
         }
         

@@ -8,7 +8,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 namespace Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 
 /// <inheritdoc />
-public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
+public sealed class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
 {
     private readonly ISqlGenerator _generator;
     
@@ -23,7 +23,7 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
     {
         visitedMembers.AddMember(ArgumentType.Default, expression.Member);
         
-        return SqlBuilder.FromString(Visit(expression, ArgumentType.Default));
+        return SqlBuilder.FromString(Visit(expression, ArgumentType.Default, visitedMembers));
     }
     
     /// <summary>
@@ -31,36 +31,34 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
     /// </summary>
     /// <param name="memberExpression"></param>
     /// <param name="argumentType"></param>
+    /// <param name="visitedMembers"></param>
     /// <returns></returns>
-    protected virtual string Visit(MemberExpression memberExpression, ArgumentType argumentType)
+    private string Visit(MemberExpression memberExpression, ArgumentType argumentType, VisitedMembers visitedMembers)
     {
         if (memberExpression.Expression is MemberExpression nestedMemberExpression)
         {
-            return GetColumnSql(nestedMemberExpression, memberExpression.Member);
+            return GetColumnSql(nestedMemberExpression, memberExpression.Member, visitedMembers);
         }
 
-        return GeTableSql(memberExpression, argumentType);
+        return GetTableSql(memberExpression, argumentType);
     }
 
-    private string GeTableSql(MemberExpression memberExpression, ArgumentType argumentType)
+    private string GetTableSql(MemberExpression memberExpression, ArgumentType argumentType)
     {
         if (memberExpression.Member.TryGetNewTableRef(out _))
         {
             return _generator.NewEntityPrefix;
         }
         
-        if (memberExpression.Member.TryGetOldTableRef(out _))
-        {
-            return _generator.OldEntityPrefix;
-        }
-
-        return _generator.GetColumnSql(
-            memberExpression.Expression.Type,
-            memberExpression.Member,
-            argumentType);
+        return memberExpression.Member.TryGetOldTableRef(out _)
+            ? _generator.OldEntityPrefix
+            : GetColumnSql(memberExpression.Expression.Type, memberExpression.Member, argumentType);
     }
 
-    private string GetColumnSql(MemberExpression memberExpression, MemberInfo parentMember)
+    private string GetColumnSql(
+        MemberExpression memberExpression,
+        MemberInfo parentMember,
+        VisitedMembers visitedMembers)
     {
         var argumentType = ArgumentType.Default;
         var memberType = memberExpression.Expression.Type;
@@ -76,9 +74,24 @@ public class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
             argumentType = ArgumentType.Old;
         }
         
+        visitedMembers.AddMember(argumentType, parentMember);
+        
+        return GetColumnSql(memberType, parentMember, argumentType);
+    }
+
+    private string GetColumnSql(Type? tableType, MemberInfo columnMember, ArgumentType argumentType)
+    {
+        if (argumentType is ArgumentType.New or ArgumentType.Old)
+        {
+            return _generator.GetColumnValueReferenceSql(
+                tableType,
+                columnMember,
+                argumentType);
+        }
+
         return _generator.GetColumnSql(
-            memberType,
-            parentMember,
+            tableType!,
+            columnMember,
             argumentType);
     }
 }

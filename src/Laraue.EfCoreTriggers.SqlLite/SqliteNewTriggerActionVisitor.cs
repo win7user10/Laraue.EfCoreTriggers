@@ -1,43 +1,31 @@
 ﻿using System.Linq;
 using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
 
 namespace Laraue.EfCoreTriggers.SqlLite;
 
-public sealed class SqliteNewTriggerActionVisitor : ITriggerActionVisitor<NewTriggerAction>
+public sealed class SqliteNewTriggerActionVisitor : BaseNewTriggerActionVisitor
 {
-    private readonly ITriggerActionVisitorFactory _factory;
-
     public SqliteNewTriggerActionVisitor(ITriggerActionVisitorFactory factory)
+        : base(factory)
     {
-        _factory = factory;
     }
-
-    public SqlBuilder Visit(NewTriggerAction triggerAction, VisitedMembers visitedMembers)
+    
+    protected override SqlBuilder GetActionSql(SqlBuilder[] actionsSql, SqlBuilder[] conditionsSql)
     {
-        var conditionSql = new SqlBuilder();
-        var sql = new SqlBuilder();
+        var sql = new SqlBuilder()
+            .AppendNewLine("FOR EACH ROW");
         
-        var actionsSql = triggerAction.ActionExpressions
-            .Select(action => _factory.Visit(action, new VisitedMembers()))
-            .ToArray();
-        
-        if (triggerAction.ActionConditions.Count > 0)
+        if (conditionsSql.Length > 0)
         {
-            var conditionsSql = triggerAction.ActionConditions
-                .Select(actionCondition => _factory.Visit(actionCondition, new VisitedMembers()));
-
-            conditionSql
+            sql
                 .Append("WHEN ")
                 .WithIdent(x => x
                     .AppendNewLine()
-                    .AppendJoin(" AND ", conditionsSql.Select(x => x.ToString())));
+                    .AppendJoin(" AND ", conditionsSql.Select(y => y.ToString())));
         }
 
-        sql.AppendNewLine("FOR EACH ROW")
-            .AppendNewLine(conditionSql)
-            .AppendNewLine("BEGIN")
+        sql.AppendNewLine("BEGIN")
             .WithIdent(x => x.AppendViaNewLine(actionsSql));
 
         return sql;

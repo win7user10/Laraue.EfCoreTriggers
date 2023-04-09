@@ -38,7 +38,7 @@ public class SqlServerSqlGenerator : SqlGenerator
         return source ? "1" : "0";
     }
 
-    public override string GetVariableSql(Type type, MemberInfo member, ArgumentType argumentType)
+    public override string GetColumnValueReferenceSql(Type type, MemberInfo member, ArgumentType argumentType)
     {
         return argumentType switch
         {

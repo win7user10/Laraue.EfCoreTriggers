@@ -4,7 +4,6 @@ using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Laraue.EfCoreTriggers.Common.Services.Impl;
@@ -92,7 +91,6 @@ public class SqlGenerator : ISqlGenerator
 
     public string GetTableSql(Type entity)
     {
-        // TODO - add logic for NEW/OLD generation or real schema table name
         var schemaName = _adapter.GetTableSchemaName(entity);
         var tableSql = WrapWithDelimiters(_adapter.GetTableName(entity));
 
@@ -164,7 +162,7 @@ public class SqlGenerator : ISqlGenerator
         return '"';
     }
 
-    public virtual string GetVariableSql(Type type, MemberInfo member, ArgumentType argumentType)
+    public virtual string GetColumnValueReferenceSql(Type type, MemberInfo member, ArgumentType argumentType)
     {
         return GetColumnSql(type, member, argumentType);
     }
