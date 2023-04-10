@@ -5,7 +5,6 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable.Count;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Functions;
 using Laraue.EfCoreTriggers.Common.Migrations;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 using Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors;

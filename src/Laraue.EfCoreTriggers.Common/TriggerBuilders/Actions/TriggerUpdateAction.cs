@@ -5,10 +5,15 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
 {
     public sealed class TriggerUpdateAction : ITriggerAction
     {
-        internal LambdaExpression UpdateFilter;
-        internal LambdaExpression UpdateExpression;
+        internal readonly LambdaExpression UpdateFilter;
+        internal readonly LambdaExpression UpdateExpression;
 
-        internal TriggerUpdateAction(
+        /// <summary>
+        /// Initializes a new instance of <see cref="TriggerUpdateAction"/>.
+        /// </summary>
+        /// <param name="updateFilter"></param>
+        /// <param name="updateExpression"></param>
+        public TriggerUpdateAction(
             LambdaExpression updateFilter,
             LambdaExpression updateExpression)
         {

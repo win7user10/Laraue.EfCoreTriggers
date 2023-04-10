@@ -1,5 +1,4 @@
 ﻿using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
 
 namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors

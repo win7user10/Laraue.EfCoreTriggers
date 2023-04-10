@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
@@ -141,7 +142,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
             string sql,
             params Expression<Func<TTriggerEntityRefs, object>>[] getSqlVariable)
         {
-            AddAction(new TriggerRawAction<TTriggerEntity, TTriggerEntityRefs>(sql, getSqlVariable));
+            AddAction(new TriggerRawAction(sql, getSqlVariable.Cast<LambdaExpression>().ToArray()));
 
             return this;
         }

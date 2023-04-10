@@ -6,20 +6,20 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
     /// <summary>
     /// Trigger condition.
     /// </summary>
-    public class TriggerCondition : ITriggerAction
+    public sealed class TriggerCondition : ITriggerAction
     {
         /// <summary>
-        /// Expression to delete, e.g. Users.Where(x => x.Id == 2)
+        /// Predicate for an action, e.g. NEW.Age > 21
         /// </summary>
-        internal readonly LambdaExpression Condition;
+        internal readonly LambdaExpression Predicate;
         
         /// <summary>
         /// Initializes a new instance of <see cref="TriggerCondition"/>.
         /// </summary>
-        /// <param name="condition"></param>
-        public TriggerCondition(LambdaExpression condition)
+        /// <param name="predicate"></param>
+        public TriggerCondition(LambdaExpression predicate)
         {
-            Condition = condition;
+            Predicate = predicate;
         }
     }
 }

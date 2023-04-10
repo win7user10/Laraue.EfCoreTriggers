@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 using Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors;
 

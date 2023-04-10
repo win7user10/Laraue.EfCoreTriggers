@@ -5,10 +5,16 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
 {
     public sealed class TriggerUpsertAction : ITriggerAction
     {
-        public LambdaExpression MatchExpression;
-        public LambdaExpression InsertExpression;
-        public LambdaExpression? OnMatchExpression;
+        public readonly LambdaExpression MatchExpression;
+        public readonly LambdaExpression InsertExpression;
+        public readonly LambdaExpression? OnMatchExpression;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="TriggerUpsertAction"/>.
+        /// </summary>
+        /// <param name="matchExpression"></param>
+        /// <param name="insertExpression"></param>
+        /// <param name="onMatchExpression"></param>
         public TriggerUpsertAction(
             LambdaExpression matchExpression,
             LambdaExpression insertExpression,

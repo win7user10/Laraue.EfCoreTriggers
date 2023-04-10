@@ -8,8 +8,12 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
         /// <summary>
         /// Expression to delete, e.g. Users.Where(x => x.Id == 2)
         /// </summary>
-        internal LambdaExpression DeletePredicate;
+        internal readonly LambdaExpression DeletePredicate;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="TriggerDeleteAction"/>.
+        /// </summary>
+        /// <param name="deletePredicate"></param>
         public TriggerDeleteAction(LambdaExpression deletePredicate)
         {
             DeletePredicate = deletePredicate;

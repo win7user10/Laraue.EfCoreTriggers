@@ -1,6 +1,5 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 using Microsoft.Extensions.DependencyInjection;

@@ -18,7 +18,6 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
