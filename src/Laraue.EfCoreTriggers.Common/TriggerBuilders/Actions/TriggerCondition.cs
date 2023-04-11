@@ -11,7 +11,7 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
         /// <summary>
         /// Predicate for an action, e.g. NEW.Age > 21
         /// </summary>
-        internal readonly LambdaExpression Predicate;
+        public readonly LambdaExpression Predicate;
         
         /// <summary>
         /// Initializes a new instance of <see cref="TriggerCondition"/>.

@@ -17,6 +17,7 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
             _sqlGenerator = sqlGenerator;
         }
     
+        /// <inheritdoc />
         public SqlBuilder Visit(TriggerInsertAction triggerAction, VisitedMembers visitedMembers)
         {
             var insertStatement = _visitor.Visit(

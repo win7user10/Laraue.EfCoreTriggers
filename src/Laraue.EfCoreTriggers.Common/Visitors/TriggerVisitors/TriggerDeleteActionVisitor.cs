@@ -4,7 +4,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 
 namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
 {
-    public class TriggerDeleteActionVisitor : ITriggerActionVisitor<TriggerDeleteAction>
+    public sealed class TriggerDeleteActionVisitor : ITriggerActionVisitor<TriggerDeleteAction>
     {
         private readonly ISqlGenerator _sqlGenerator;
         private readonly ITriggerActionVisitorFactory _factory;
@@ -15,11 +15,12 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
             _factory = factory;
         }
 
+        /// <inheritdoc />
         public SqlBuilder Visit(TriggerDeleteAction triggerAction, VisitedMembers visitedMembers)
         {
-            var tableType = triggerAction.DeletePredicate.Parameters.Last().Type;
+            var tableType = triggerAction.Predicate.Parameters.Last().Type;
 
-            var triggerCondition = new TriggerCondition(triggerAction.DeletePredicate);
+            var triggerCondition = new TriggerCondition(triggerAction.Predicate);
             var conditionStatement = _factory.Visit(triggerCondition, visitedMembers);
         
             return new SqlBuilder()

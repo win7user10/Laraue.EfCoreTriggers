@@ -68,7 +68,7 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
                 .AddScoped<IInsertExpressionVisitor, MySqlInsertExpressionVisitor>()
                 .AddScoped<ISqlGenerator, MySqlSqlGenerator>()
                 .AddExpressionVisitor<NewExpression, MySqlNewExpressionVisitor>()
-                .AddTriggerActionVisitor<TriggerActionsGroup, MySqlNewTriggerActionVisitor>()
+                .AddTriggerActionVisitor<TriggerActionsGroup, MySqlTriggerActionsGroupVisitor>()
                 .AddMethodCallConverter<ConcatStringViaConcatFuncVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()

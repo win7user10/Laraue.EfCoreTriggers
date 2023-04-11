@@ -40,7 +40,7 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
 
         var sqlBuilder = SqlBuilder.FromString("BEGIN TRANSACTION;");
 
-        if (triggerAction.OnMatchExpression is null)
+        if (triggerAction.UpdateExpression is null)
         {
             sqlBuilder.AppendNewLine($"IF NOT EXISTS(")
                 .WithIdent(selectBuilder =>
@@ -57,7 +57,7 @@ public class SqlServerTriggerUpsertActionVisitor : ITriggerActionVisitor<Trigger
         else
         {
             var updateStatementSql = _updateExpressionVisitor.Visit(
-                triggerAction.OnMatchExpression,
+                triggerAction.UpdateExpression,
                 visitedMembers);
             
             sqlBuilder.AppendNewLine($"UPDATE {updateEntityTable} WITH (UPDLOCK, SERIALIZABLE)")

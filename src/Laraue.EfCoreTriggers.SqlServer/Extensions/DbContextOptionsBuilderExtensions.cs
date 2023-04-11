@@ -70,7 +70,7 @@ namespace Laraue.EfCoreTriggers.SqlServer.Extensions
                 .AddTriggerActionVisitor<TriggerUpsertAction, SqlServerTriggerUpsertActionVisitor>()
                 .AddScoped<ISqlGenerator, SqlServerSqlGenerator>()
                 .AddScoped<ITriggerVisitor, SqlServerTriggerVisitor>()
-                .AddTriggerActionVisitor<TriggerActionsGroup, SqlServerNewTriggerActionVisitor>()
+                .AddTriggerActionVisitor<TriggerActionsGroup, SqlServerTriggerActionsGroupVisitor>()
                 .AddMethodCallConverter<ConcatStringViaPlusVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()

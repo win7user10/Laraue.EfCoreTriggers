@@ -23,7 +23,7 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
         /// <summary>
         /// How named each of <see cref="TriggerTime"/> in the current SQL provider.
         /// </summary>
-        protected virtual Dictionary<TriggerTime, string> TriggerTimeNames { get; } = new()
+        private Dictionary<TriggerTime, string> TriggerTimeNames { get; } = new()
         {
             [TriggerTime.After] = "AFTER",
             [TriggerTime.Before] = "BEFORE",

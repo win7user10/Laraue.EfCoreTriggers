@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
 {
-    public class TriggerActionVisitorFactory : ITriggerActionVisitorFactory
+    public sealed class TriggerActionVisitorFactory : ITriggerActionVisitorFactory
     {
         private readonly IServiceProvider _provider;
 
@@ -15,6 +15,7 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
             _provider = provider;
         }
 
+        /// <inheritdoc />
         public SqlBuilder Visit(ITriggerAction triggerAction, VisitedMembers visitedMembers)
         {
             return triggerAction switch

@@ -14,6 +14,7 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
             _visitorFactory = visitorFactory;
         }
 
+        /// <inheritdoc />
         public SqlBuilder Visit(TriggerCondition triggerAction, VisitedMembers visitedMembers)
         {
             var conditionBody = triggerAction.Predicate.Body;
@@ -22,14 +23,6 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
                 MemberExpression memberExpression => _visitorFactory.Visit(Expression.IsTrue(memberExpression), visitedMembers),
                 _ => _visitorFactory.Visit(conditionBody, visitedMembers),
             };
-        }
-    
-        public SqlBuilder GetConditionStatementSql(TriggerCondition condition, VisitedMembers visitedMembers)
-        {
-            var binaryExpressionSql = _visitorFactory.Visit((BinaryExpression)condition.Predicate.Body, visitedMembers);
-        
-            return SqlBuilder.FromString("WHERE ")
-                .Append(binaryExpressionSql);
         }
     }
 }

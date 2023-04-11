@@ -4,11 +4,11 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 
 namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
 {
-    public abstract class BaseNewTriggerActionVisitor : ITriggerActionVisitor<TriggerActionsGroup>
+    public abstract class BaseTriggerActionsGroupVisitor : ITriggerActionVisitor<TriggerActionsGroup>
     {
         private readonly ITriggerActionVisitorFactory _factory;
 
-        protected BaseNewTriggerActionVisitor(ITriggerActionVisitorFactory factory)
+        protected BaseTriggerActionsGroupVisitor(ITriggerActionVisitorFactory factory)
         {
             _factory = factory;
         }

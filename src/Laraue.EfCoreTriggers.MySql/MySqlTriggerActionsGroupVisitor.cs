@@ -2,11 +2,11 @@
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 
-namespace Laraue.EfCoreTriggers.PostgreSql;
+namespace Laraue.EfCoreTriggers.MySql;
 
-public sealed class PostgreSqlNewTriggerActionVisitor : BaseNewTriggerActionVisitor
+public sealed class MySqlTriggerActionsGroupVisitor : BaseTriggerActionsGroupVisitor
 {
-    public PostgreSqlNewTriggerActionVisitor(ITriggerActionVisitorFactory factory)
+    public MySqlTriggerActionsGroupVisitor(ITriggerActionVisitorFactory factory)
         : base(factory)
     {
     }

@@ -26,6 +26,7 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
             _sqlGenerator = sqlGenerator;
         }
 
+        /// <inheritdoc />
         public virtual SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
         {
             var matchExpressionParts = _memberInfoVisitorFactory.Visit(
@@ -46,14 +47,14 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
                         _sqlGenerator.GetColumnSql(updateEntityType, x.Key, ArgumentType.None)))
                 .Append(")");
 
-            if (triggerAction.OnMatchExpression is null)
+            if (triggerAction.UpdateExpression is null)
             {
                 sqlBuilder.Append(" DO NOTHING;");
             }
             else
             {
                 var updateStatementSql = _updateExpressionVisitor.Visit(
-                    triggerAction.OnMatchExpression,
+                    triggerAction.UpdateExpression,
                     visitedMembers);
             
                 sqlBuilder.Append(" DO UPDATE SET ")

@@ -4,9 +4,9 @@ using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.SqlLite;
 
-public sealed class SqliteNewTriggerActionVisitor : BaseNewTriggerActionVisitor
+public sealed class SqliteTriggerActionsGroupVisitor : BaseTriggerActionsGroupVisitor
 {
-    public SqliteNewTriggerActionVisitor(ITriggerActionVisitorFactory factory)
+    public SqliteTriggerActionsGroupVisitor(ITriggerActionVisitorFactory factory)
         : base(factory)
     {
     }

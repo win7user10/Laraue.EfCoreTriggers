@@ -70,7 +70,7 @@ namespace Laraue.EfCoreTriggers.SqlLite.Extensions
                 .AddTriggerActionVisitor<TriggerUpsertAction, TriggerUpsertActionVisitor>()
                 .AddScoped<IInsertExpressionVisitor, SqliteInsertExpressionVisitor>()
                 .AddScoped<ISqlGenerator, SqlGenerator>()
-                .AddTriggerActionVisitor<TriggerActionsGroup, SqliteNewTriggerActionVisitor>()
+                .AddTriggerActionVisitor<TriggerActionsGroup, SqliteTriggerActionsGroupVisitor>()
                 .AddMethodCallConverter<ConcatStringViaDoubleVerticalLineVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()

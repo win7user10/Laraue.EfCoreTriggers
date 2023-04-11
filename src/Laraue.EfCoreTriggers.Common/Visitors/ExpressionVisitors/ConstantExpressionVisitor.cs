@@ -31,7 +31,7 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
                 case null:
                     return SqlBuilder.FromString(_generator.GetNullValueSql());
                 default:
-                    return SqlBuilder.FromString(expression.Value.ToString()?.ToLower());
+                    return SqlBuilder.FromString(expression.Value.ToString().ToLower());
             }
         }
     }

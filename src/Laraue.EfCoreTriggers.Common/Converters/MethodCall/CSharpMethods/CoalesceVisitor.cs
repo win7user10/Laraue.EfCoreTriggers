@@ -9,8 +9,9 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.CSharpMethods
     /// <summary>
     /// Base visitor for <see cref="BinaryFunctions"/> methods.
     /// </summary>
-    public class CoalesceVisitor : BaseBinaryFunctionsVisitor
+    public sealed class CoalesceVisitor : BaseBinaryFunctionsVisitor
     {
+        /// <inheritdoc />
         protected override string MethodName => nameof(BinaryFunctions.Coalesce);
 
         /// <inheritdoc />
@@ -19,6 +20,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.CSharpMethods
         {
         }
 
+        /// <inheritdoc />
         public override SqlBuilder Visit(MethodCallExpression expression, VisitedMembers visitedMembers)
         {
             var argumentsSql = expression.Arguments
@@ -28,7 +30,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.CSharpMethods
             return GetSql(argumentsSql[0], argumentsSql[1]);
         }
 
-        protected virtual SqlBuilder GetSql(SqlBuilder isNullExpressionSql, SqlBuilder whenNullExpressionSql)
+        private static SqlBuilder GetSql(SqlBuilder isNullExpressionSql, SqlBuilder whenNullExpressionSql)
         {
             return SqlBuilder.FromString($"COALESCE({isNullExpressionSql}, {whenNullExpressionSql})");
         }

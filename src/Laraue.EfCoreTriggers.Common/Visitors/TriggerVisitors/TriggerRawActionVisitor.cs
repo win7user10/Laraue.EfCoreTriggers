@@ -15,6 +15,7 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors
             _factory = factory;
         }
 
+        /// <inheritdoc />
         public SqlBuilder Visit(TriggerRawAction triggerAction, VisitedMembers visitedMembers)
         {
             var sqlBuilder = new SqlBuilder();

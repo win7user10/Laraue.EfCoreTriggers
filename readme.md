@@ -27,10 +27,10 @@ After update Transaction entity, update records in the table with UserBalance en
 modelBuilder.Entity<Transaction>()
     .AfterUpdate(trigger => trigger
         .Action(action => action
-            .Condition((transactionBeforeUpdate, transactionAfterUpdate) => transactionBeforeUpdate.IsVeryfied && transactionAfterUpdate.IsVeryfied) // Executes only if condition met 
+            .Condition(tableRefs => tableRefs.Old.IsVeryfied && tableRefs.New.IsVeryfied) // Executes only if condition met 
             .Update<UserBalance>(
-                (transactionBeforeUpdate, transactionAfterUpdate, userBalances) => userBalances.UserId == oldTransaction.UserId, // Will be updated entities with matched condition
-                (oldTransaction, updatedTransaction, oldBalance) => new UserBalance { Balance = oldBalance.Balance + updatedTransaction.Value - oldTransaction.Value }))); // New values for matched entities.
+                (tableRefs, userBalances) => userBalances.UserId == tableRefs.Old.UserId, // Will be updated entities with matched condition
+                (tableRefs, oldBalance) => new UserBalance { Balance = oldBalance.Balance + tableRefs.New.Value - tableRefs.Old.Value }))); // New values for matched entities.
 ```
 
 After insert Transaction entity, upsert record in the table with UserBalance entities.
@@ -39,11 +39,11 @@ After insert Transaction entity, upsert record in the table with UserBalance ent
 modelBuilder.Entity<Transaction>()
     .AfterDelete(trigger => trigger
         .Action(action => action
-            .Condition(deletedTransaction => deletedTransaction.IsVeryfied)
+            .Condition(tableRefs => tableRefs.Old.IsVeryfied)
             .Upsert(
-                deletedTransaction => new UserBalance { UserId = deletedTransaction.UserId }, // If this field will match more than 0 rows, will be executed update operation for these rows else insert
-                deletedTransaction => new UserBalance { UserId = deletedTransaction.UserId, Balance = deletedTransaction.Value }, // Insert, if value didn't exist
-                (deletedTransaction, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance + deletedTransaction.Value }))); // Update all matched values
+                (tableRefs, balances) => tableRefs.Old.UserId == balances.UserId, // If this field will match more than 0 rows, will be executed update operation for these rows else insert
+                tableRefs => new UserBalance { UserId = tableRefs.Old.UserId, Balance = tableRefs.Old.Value }, // Insert, if value didn't exist
+                (tableRefs, oldUserBalance) => new UserBalance { Balance = oldUserBalance.Balance + tableRefs.Old.Value }))); // Update all matched values
 ```
 
 After delete Transaction entity, execute raw SQL. Pass deleted entity fields as arguments. 
@@ -52,7 +52,13 @@ After delete Transaction entity, execute raw SQL. Pass deleted entity fields as 
 modelBuilder.Entity<Transaction>()
     .AfterDelete(trigger => trigger
         .Action(action => action
-            .ExecuteRawSql("PERFORM recalc_balance({0}, {1})"), deletedEntity => deletedEntity.UserId, deletedEntity => deletedEntity.Amount)));
+            .ExecuteRawSql("PERFORM recalc_balance({0}, {1})"), tableRefs => tableRefs.Old.UserId, tableRefs => tableRefs.Old.Amount)));
+```
+
+Also, different trigger functions can be used to generate the SQL.  
+```
+TriggerFunctions.GetTableName<Transaction>();
+TriggerFunctions.GetColumnName<Transaction>(transaction => transaction.Value);
 ```
 
 ### All available triggers

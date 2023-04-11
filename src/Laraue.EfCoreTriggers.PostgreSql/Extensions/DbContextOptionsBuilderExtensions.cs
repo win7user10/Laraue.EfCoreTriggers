@@ -69,7 +69,7 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
                 .AddTriggerActionVisitor<TriggerUpsertAction, TriggerUpsertActionVisitor>()
                 .AddScoped<IInsertExpressionVisitor, InsertExpressionVisitor>()
                 .AddScoped<ISqlGenerator, SqlGenerator>()
-                .AddTriggerActionVisitor<TriggerActionsGroup, PostgreSqlNewTriggerActionVisitor>()
+                .AddTriggerActionVisitor<TriggerActionsGroup, PostgreSqlTriggerActionsGroupVisitor>()
                 .AddMethodCallConverter<ConcatStringViaConcatFuncVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()

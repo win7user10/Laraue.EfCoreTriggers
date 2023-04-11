@@ -31,7 +31,7 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
 
         var sqlBuilder = new SqlBuilder();
 
-        if (triggerAction.OnMatchExpression is null)
+        if (triggerAction.UpdateExpression is null)
         {
             sqlBuilder.Append($"INSERT IGNORE {_sqlGenerator.GetTableSql(updateEntityType)} ")
                 .Append(insertStatementSql)
@@ -40,7 +40,7 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
         else
         {
             var updateStatementSql = _updateExpressionVisitor.Visit(
-                triggerAction.OnMatchExpression,
+                triggerAction.UpdateExpression,
                 visitedMembers);
             
             sqlBuilder.Append($"INSERT INTO {_sqlGenerator.GetTableSql(updateEntityType)} ")

@@ -26,6 +26,7 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable.Count
         {
         }
     
+        /// <inheritdoc />
         protected override (SqlBuilder, Expression) Visit(IEnumerable<Expression> arguments, VisitedMembers visitedMembers)
         {
             return  (SqlBuilder.FromString("count(*)"), arguments.FirstOrDefault());

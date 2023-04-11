@@ -4,9 +4,9 @@ using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
-public sealed class SqlServerNewTriggerActionVisitor : BaseNewTriggerActionVisitor
+public sealed class SqlServerTriggerActionsGroupVisitor : BaseTriggerActionsGroupVisitor
 {
-    public SqlServerNewTriggerActionVisitor(ITriggerActionVisitorFactory factory)
+    public SqlServerTriggerActionsGroupVisitor(ITriggerActionVisitorFactory factory)
         : base(factory)
     {
     }

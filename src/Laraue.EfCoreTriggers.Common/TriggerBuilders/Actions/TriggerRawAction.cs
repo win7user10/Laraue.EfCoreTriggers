@@ -4,13 +4,21 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
 {
     /// <summary>
-    /// 
+    /// Trigger raw action.
     /// </summary>
     public sealed class TriggerRawAction : ITriggerAction
     {
-        internal readonly LambdaExpression[] ArgumentSelectorExpressions;
+        /// <summary>
+        /// Member expressions that should be converted to strings
+        /// e.g. tableRefs => tableRefs.Old.Age
+        /// </summary>
+        public readonly LambdaExpression[] ArgumentSelectorExpressions;
         
-        internal readonly string Sql;
+        /// <summary>
+        /// Sql expression. Can take {0}, {1} arguments. These arguments
+        /// will be formatted based on <see cref="ArgumentSelectorExpressions"/>.
+        /// </summary>
+        public readonly string Sql;
 
         /// <summary>
         /// Initializes a new instance of <see cref="TriggerRawAction"/>.

@@ -11,7 +11,7 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
         /// <summary>
         /// Current visiting member.
         /// </summary>
-        public MemberInfo CurrentMember { get; internal set; }
+        public MemberInfo? CurrentMember { get; internal set; }
     }
 
     internal static class VisitingInfoExtensions

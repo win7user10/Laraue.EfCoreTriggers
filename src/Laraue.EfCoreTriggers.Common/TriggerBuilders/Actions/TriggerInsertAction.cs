@@ -3,9 +3,15 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
 {
+    /// <summary>
+    /// Trigger insert action.
+    /// </summary>
     public sealed class TriggerInsertAction : ITriggerAction
     {
-        internal readonly LambdaExpression InsertExpression;
+        /// <summary>
+        /// The entity should be inserted expression, tableRefs => new User { Age = tableRefs.Old.Age }.
+        /// </summary>
+        public readonly LambdaExpression InsertExpression;
 
         /// <summary>
         /// Initializes a new instance of <see cref="TriggerInsertAction"/>.
