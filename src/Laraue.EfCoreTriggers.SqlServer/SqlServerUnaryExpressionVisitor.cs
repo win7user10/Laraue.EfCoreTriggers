@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common;
-using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
@@ -18,9 +16,9 @@ public class SqlServerUnaryExpressionVisitor : UnaryExpressionVisitor
     {
     }
     
-    public override SqlBuilder Visit(UnaryExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+    public override SqlBuilder Visit(UnaryExpression expression, VisitedMembers visitedMembers)
     {
-        var unarySql = base.Visit(expression, argumentTypes, visitedMembers);
+        var unarySql = base.Visit(expression, visitedMembers);
             
         if (ShouldBeCastedToBoolean(expression))
         {

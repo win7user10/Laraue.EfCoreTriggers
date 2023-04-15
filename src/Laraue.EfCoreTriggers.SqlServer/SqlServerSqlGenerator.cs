@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl;
-using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.SqlServer;
 
@@ -22,7 +21,7 @@ public class SqlServerSqlGenerator : SqlGenerator
 
     public override string OldEntityPrefix => "Deleted";
 
-    public override string GetNodeTypeSql(ExpressionType expressionType)
+    protected override string GetNodeTypeSql(ExpressionType expressionType)
     {
         return expressionType switch
         {
@@ -38,7 +37,7 @@ public class SqlServerSqlGenerator : SqlGenerator
         return source ? "1" : "0";
     }
 
-    public override string GetVariableSql(Type type, MemberInfo member, ArgumentType argumentType)
+    public override string GetColumnValueReferenceSql(Type type, MemberInfo member, ArgumentType argumentType)
     {
         return argumentType switch
         {

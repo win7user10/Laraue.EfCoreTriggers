@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.Functions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Xunit;
 using Xunit.Categories;
-using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
+using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.Tests.Tests
 {
@@ -66,25 +67,31 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
             
             foreach (var type in types)
             {
-                var triggerType = typeof(OnInsertTrigger<>).MakeGenericType(type.ClrType);
-                var trigger = (ITrigger) Activator.CreateInstance(triggerType, TriggerTime.After)!;
+                var triggerType = typeof(Trigger<,>).MakeGenericType(
+                    type.ClrType,
+                    typeof(NewTableRef<>).MakeGenericType(type.ClrType));
+                var trigger = (ITrigger) Activator.CreateInstance(triggerType, TriggerEvent.Delete, TriggerTime.After)!;
                 AddTriggerAction((dynamic) trigger);
 
-                var sql = _provider.Visit(trigger.Actions[0], new VisitedMembers());
+                var sql = _provider.Visit(trigger.Actions[0].ActionExpressions.First(), new VisitedMembers());
                 
                 sqlQueries.Add(sql);
             }
             
             Assert.Equal(2, sqlQueries.Count);
-            Assert.Equal("select 1 from `EmailNotifications`", sqlQueries[0]);
-            Assert.Equal("select 1 from `TelegramNotifications`", sqlQueries[1]);
+            Assert.Equal("select NEW.`Id` from NEW union select `EmailNotifications`.`Id` from `EmailNotifications`", sqlQueries[0]);
+            Assert.Equal("select NEW.`Id` from NEW union select `TelegramNotifications`.`Id` from `TelegramNotifications`", sqlQueries[1]);
         }
 
-        private static void AddTriggerAction<T>(OnInsertTrigger<T> trigger) where T : Notification
+        private static void AddTriggerAction<TEntity>(Trigger<TEntity, NewTableRef<TEntity>> trigger)
+            where TEntity : Notification
         {
             trigger.Action(actions => actions.ExecuteRawSql(
-                "select 1 from {0}",
-                notification => notification));
+                "select {0} from {1} union select {2} from {3}",
+                tableRefs => tableRefs.New.Id,
+                tableRefs => tableRefs.New,
+                _ => TriggerFunctions.GetColumnName((TEntity e) => e.Id),
+                _ => TriggerFunctions.GetTableName<TEntity>()));
         }
     }
 }

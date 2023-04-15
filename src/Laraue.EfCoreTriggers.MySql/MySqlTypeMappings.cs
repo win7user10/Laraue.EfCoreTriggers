@@ -1,10 +1,12 @@
 ﻿using System;
-using Laraue.EfCoreTriggers.Common.Services;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
+/// <inheritdoc />
 public class MySqlTypeMappings : SqlTypeMappings
 {
+    /// <inheritdoc />
     public MySqlTypeMappings()
     {
         Add(typeof(bool), "BIT(1)");

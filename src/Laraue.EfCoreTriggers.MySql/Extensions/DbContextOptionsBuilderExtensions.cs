@@ -17,15 +17,18 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors.Statements;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.MySql.Extensions
 {
+    /// <summary>
+    /// Extensions to add MySql Triggers to the container.
+    /// </summary>
     public static class DbContextOptionsBuilderExtensions
     {
         /// <summary>
@@ -34,8 +37,9 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
         /// <param name="optionsBuilder"></param>
         /// <param name="modifyServices"></param>
         /// <returns></returns>
-        public static DbContextOptionsBuilder UseMySqlTriggers(this DbContextOptionsBuilder optionsBuilder,
-            Action<IServiceCollection> modifyServices = null)
+        public static DbContextOptionsBuilder UseMySqlTriggers(
+            this DbContextOptionsBuilder optionsBuilder,
+            Action<IServiceCollection>? modifyServices = null)
         {
             return optionsBuilder.UseEfCoreTriggers(AddMySqlServices,  modifyServices);
         }
@@ -49,7 +53,7 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
         /// <returns></returns>A
         public static DbContextOptionsBuilder<TContext> UseMySqlTriggers<TContext>(
             this DbContextOptionsBuilder<TContext> optionsBuilder,
-            Action<IServiceCollection> modifyServices = null)
+            Action<IServiceCollection>? modifyServices = null)
             where TContext : DbContext
         {
             return optionsBuilder.UseEfCoreTriggers(AddMySqlServices, modifyServices);
@@ -68,6 +72,7 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
                 .AddScoped<IInsertExpressionVisitor, MySqlInsertExpressionVisitor>()
                 .AddScoped<ISqlGenerator, MySqlSqlGenerator>()
                 .AddExpressionVisitor<NewExpression, MySqlNewExpressionVisitor>()
+                .AddTriggerActionVisitor<TriggerActionsGroup, MySqlTriggerActionsGroupVisitor>()
                 .AddMethodCallConverter<ConcatStringViaConcatFuncVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
                 .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()

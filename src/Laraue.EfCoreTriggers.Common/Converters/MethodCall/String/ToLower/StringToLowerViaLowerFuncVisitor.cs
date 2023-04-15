@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower
 {
@@ -19,10 +18,9 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower
         /// <inheritdoc />
         public override SqlBuilder Visit(
             MethodCallExpression expression,
-            ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers)
         {
-            var sqlBuilder = VisitorFactory.Visit(expression.Object, argumentTypes, visitedMembers);
+            var sqlBuilder = VisitorFactory.Visit(expression.Object, visitedMembers);
             
             return SqlBuilder.FromString($"LOWER({sqlBuilder})");
         }

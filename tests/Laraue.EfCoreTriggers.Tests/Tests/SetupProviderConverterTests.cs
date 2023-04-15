@@ -1,10 +1,11 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String;
 using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
+using Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
@@ -35,8 +36,12 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
                 services.AddMethodCallConverter<CustomStringToUpperVisitor>();
             });
 
-            var action = new OnInsertTriggerCondition<Transaction>(t => t.Description.ToUpper() == "ABC");
+            Expression<Func<NewTableRef<Transaction>, bool>> condition = tableRefs =>
+                tableRefs.New.Description.ToUpper() == "ABC";
+            var action = new TriggerCondition(condition);
+            
             var sql = provider.Visit(action, new VisitedMembers());
+            
             Assert.Equal("test = 'ABC'", sql);
         }
 
@@ -49,7 +54,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests
 
             protected override string MethodName => nameof(string.ToUpper);
             
-            public override SqlBuilder Visit(MethodCallExpression expression, ArgumentTypes argumentTypes, VisitedMembers visitedMembers)
+            public override SqlBuilder Visit(MethodCallExpression expression, VisitedMembers visitedMembers)
             {
                 return SqlBuilder.FromString("test");
             }

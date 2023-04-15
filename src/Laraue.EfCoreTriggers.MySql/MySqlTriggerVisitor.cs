@@ -1,23 +1,25 @@
 ﻿using System.Linq;
-using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore.Metadata;
-using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
+using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
+/// <inheritdoc />
 public class MySqlTriggerVisitor : BaseTriggerVisitor
 {
     private readonly ITriggerActionVisitorFactory _factory;
     private readonly ISqlGenerator _sqlGenerator;
 
+    /// <inheritdoc />
     public MySqlTriggerVisitor(ITriggerActionVisitorFactory factory, ISqlGenerator sqlGenerator)
     {
         _factory = factory;
         _sqlGenerator = sqlGenerator;
     }
 
+    /// <inheritdoc />
     public override string GenerateCreateTriggerSql(ITrigger trigger)
     {
         var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);
@@ -30,27 +32,7 @@ public class MySqlTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {_sqlGenerator.GetTableSql(trigger.TriggerEntityType)}")
             .AppendNewLine("FOR EACH ROW")
             .AppendNewLine("BEGIN")
-            .WithIdent(triggerSql =>
-            {
-                var isAnyCondition = trigger.Conditions.Count > 0;
-                
-                if (isAnyCondition)
-                {
-                    var conditionsSql = trigger.Conditions
-                        .Select(actionCondition => _factory.Visit(actionCondition, new VisitedMembers()));
-            
-                    triggerSql.AppendNewLine($"IF ")
-                        .AppendJoin(" AND ", conditionsSql.Select(x => x.ToString()))
-                        .Append(" THEN ");
-                }
-
-                triggerSql.WithIdentWhen(isAnyCondition,  loopSql => loopSql.AppendViaNewLine(actionsSql));
-        
-                if (trigger.Conditions.Count > 0)
-                {
-                    triggerSql.AppendNewLine($"END IF;");
-                }
-            })
+            .WithIdent(triggerSql => triggerSql.AppendViaNewLine(actionsSql))
             .AppendNewLine("END");
         
         return sql;

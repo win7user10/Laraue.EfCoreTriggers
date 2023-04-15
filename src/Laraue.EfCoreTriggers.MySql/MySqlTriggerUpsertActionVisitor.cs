@@ -1,12 +1,12 @@
-﻿using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors.Statements;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Base;
+﻿using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
-public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAction>
+/// <inheritdoc />
+public sealed class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAction>
 {
     private readonly IInsertExpressionVisitor _insertExpressionVisitor;
     private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
@@ -22,18 +22,18 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
         _sqlGenerator = sqlGenerator;
     }
     
+    /// <inheritdoc />
     public SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
     {
         var updateEntityType = triggerAction.InsertExpression.Body.Type;
 
         var insertStatementSql = _insertExpressionVisitor.Visit(
             triggerAction.InsertExpression,
-            triggerAction.InsertExpressionPrefixes,
             visitedMembers);
 
         var sqlBuilder = new SqlBuilder();
 
-        if (triggerAction.OnMatchExpression is null)
+        if (triggerAction.UpdateExpression is null)
         {
             sqlBuilder.Append($"INSERT IGNORE {_sqlGenerator.GetTableSql(updateEntityType)} ")
                 .Append(insertStatementSql)
@@ -42,8 +42,7 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
         else
         {
             var updateStatementSql = _updateExpressionVisitor.Visit(
-                triggerAction.OnMatchExpression, 
-                triggerAction.OnMatchExpressionPrefixes,
+                triggerAction.UpdateExpression,
                 visitedMembers);
             
             sqlBuilder.Append($"INSERT INTO {_sqlGenerator.GetTableSql(updateEntityType)} ")

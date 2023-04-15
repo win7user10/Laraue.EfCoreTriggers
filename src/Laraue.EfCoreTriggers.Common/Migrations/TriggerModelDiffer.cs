@@ -2,24 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
+using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.Common.Migrations
 {
-    public class TriggerModelDiffer
+    /// <inheritdoc />
+    public class TriggerModelDiffer : ITriggerModelDiffer
     {
         private readonly ITriggerVisitor _triggerVisitor;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="TriggerModelDiffer"/>.
+        /// </summary>
+        /// <param name="triggerVisitor"></param>
         public TriggerModelDiffer(ITriggerVisitor triggerVisitor) 
         {
             _triggerVisitor = triggerVisitor;
         }
         
+        /// <inheritdoc />
         public IReadOnlyList<MigrationOperation> AddTriggerOperations(
             IEnumerable<MigrationOperation> operations,
             IRelationalModel? source,
@@ -150,7 +156,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         
         
         /// <summary>
-        /// Convert all not translated annotations of <see cref="ITrigger"/> type to SQL.
+        /// Convert all not translated annotations of <see cref="Microsoft.EntityFrameworkCore.Metadata.ITrigger"/> type to SQL.
         /// </summary>
         /// <param name="triggerVisitor"></param>
         /// <param name="model"></param>

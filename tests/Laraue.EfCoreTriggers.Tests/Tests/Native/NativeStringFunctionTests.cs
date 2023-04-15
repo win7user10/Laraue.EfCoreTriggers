@@ -23,10 +23,14 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
 
         protected override void StringConcatSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(ConcatStringExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
-            {
-                StringField = "daw "
-            });
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(
+                ConcatStringExpression,
+                SetupDbContext,
+                SetupModelBuilder,
+                new SourceEntity
+                {
+                    StringField = "daw "
+                });
             Assert.Equal("daw abc", insertedEntity.StringField);
         }
 

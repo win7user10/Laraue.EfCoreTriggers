@@ -24,7 +24,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         public static DbContextOptionsBuilder UseEfCoreTriggers(
             this DbContextOptionsBuilder optionsBuilder,
             Action<IServiceCollection> addDefaultServices,
-            Action<IServiceCollection> modifyServices)
+            Action<IServiceCollection>? modifyServices)
         {
             ((IDbContextOptionsBuilderInfrastructure)optionsBuilder)
                 .AddOrUpdateExtension(new EfCoreTriggersExtension(addDefaultServices, modifyServices));
@@ -44,7 +44,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         public static DbContextOptionsBuilder<TContext> UseEfCoreTriggers<TContext>(
             this DbContextOptionsBuilder<TContext> optionsBuilder,
             Action<IServiceCollection> addDefaultServices,
-            Action<IServiceCollection> modifyServices)
+            Action<IServiceCollection>? modifyServices)
             where TContext : DbContext
         {
             ((IDbContextOptionsBuilderInfrastructure)optionsBuilder)

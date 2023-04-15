@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Extensions
 {
@@ -14,18 +13,16 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// </summary>
         /// <param name="visitor"></param>
         /// <param name="expression"></param>
-        /// <param name="argumentTypes"></param>
         /// <param name="visitedMembers"></param>
         /// <returns></returns>
         public static SqlBuilder[] VisitArguments(
             this IExpressionVisitorFactory visitor,
             MethodCallExpression expression,
-            ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers)
         {
             return expression.Arguments
                 .Select(argumentExpression => visitor
-                    .Visit(argumentExpression, argumentTypes, visitedMembers))
+                    .Visit(argumentExpression, visitedMembers))
                 .ToArray();
         }
     }

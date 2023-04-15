@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 
-namespace Laraue.EfCoreTriggers.Common.Extensions;
-
-public static class CollectionExtensions
+namespace Laraue.EfCoreTriggers.Common.Extensions
 {
-    public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> elements)
+    public static class CollectionExtensions
     {
-        foreach (var element in elements)
+        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> elements)
         {
-            collection.Add(element);
+            foreach (var element in elements)
+            {
+                collection.Add(element);
+            }
         }
     }
 }

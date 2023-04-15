@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
+using Laraue.EfCoreTriggers.Common.Functions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnDelete;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnInsert;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.OnUpdate;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
+using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Xunit;
 using Xunit.Categories;
@@ -14,11 +14,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
     [UnitTest]
     public abstract class UnitRawSqlTests
     {
-        protected readonly ITriggerActionVisitorFactory Factory;
+        private readonly ITriggerActionVisitorFactory _factory;
 
         protected UnitRawSqlTests(ITriggerActionVisitorFactory factory)
         {
-            Factory = factory;
+            _factory = factory;
         }
         
         protected abstract string ExceptedInsertTriggerSqlForMemberArgs { get; }
@@ -26,17 +26,17 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlForMemberArgs()
         {
-            Expression<Func<SourceEntity, object>> arg1Expression = sourceEntity => sourceEntity.BooleanValue;
-            Expression<Func<SourceEntity, object>> arg2Expression = sourceEntity => sourceEntity.DoubleValue;
-            Expression<Func<SourceEntity, object>> arg3Expression = sourceEntity => sourceEntity;
+            Expression<Func<NewTableRef<SourceEntity>, object>> arg1Expression = sourceEntity => sourceEntity.New.BooleanValue;
+            Expression<Func<NewTableRef<SourceEntity>, object>> arg2Expression = sourceEntity => sourceEntity.New.DoubleValue;
+            Expression<Func<NewTableRef<SourceEntity>, object>> arg3Expression = sourceEntity => TriggerFunctions.GetTableName<SourceEntity>();
             
-            var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>(
+            var trigger = new TriggerRawAction(
                 "PERFORM func({0}, {1}, {2})",
-                arg1Expression,
+                arg1Expression, 
                 arg2Expression,
                 arg3Expression);
 
-            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
+            var generatedSql = _factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedInsertTriggerSqlForMemberArgs, generatedSql);
         }
@@ -47,11 +47,12 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlForComputedArgs()
         {
-            Expression<Func<SourceEntity, object>> argExpression = sourceEntity => sourceEntity.DoubleValue + 10;
+            Expression<Func<NewTableRef<SourceEntity>, object>> argExpression = sourceEntity
+                => sourceEntity.New.DoubleValue + 10;
             
-            var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>("PERFORM func({0})", argExpression);
+            var trigger = new TriggerRawAction("PERFORM func({0})", argExpression);
 
-            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
+            var generatedSql = _factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedInsertTriggerSqlForComputedArgs, generatedSql);
         }
@@ -61,9 +62,9 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlWhenNoArgs()
         {
-            var trigger = new OnInsertTriggerRawSqlAction<SourceEntity>("PERFORM func()");
+            var trigger = new TriggerRawAction("PERFORM func()");
 
-            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
+            var generatedSql = _factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedInsertTriggerSqlWhenNoArgs, generatedSql);
         }
@@ -73,11 +74,18 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlForUpdateTrigger()
         {
-            var trigger = new OnUpdateTriggerRawSqlAction<SourceEntity>("PERFORM func({0}, {1})", 
-                (@old, @new) => @old.DecimalValue, 
-                (@old, @new) => @new.DecimalValue);
+            Expression<Func<OldAndNewTableRefs<SourceEntity>, object>> arg1Expression = tableRefs
+                => tableRefs.Old.DecimalValue;
+            
+            Expression<Func<OldAndNewTableRefs<SourceEntity>, object>> arg2Expression = tableRefs
+                => tableRefs.New.DecimalValue;
+            
+            var trigger = new TriggerRawAction(
+                "PERFORM func({0}, {1})",
+                arg1Expression,
+                arg2Expression);
 
-            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
+            var generatedSql = _factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedUpdateTriggerSqlForMemberArgs, generatedSql);
         }
@@ -87,11 +95,18 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         [Fact]
         protected void GenerateSqlForDeleteTrigger()
         {
-            var trigger = new OnDeleteTriggerRawSqlAction<SourceEntity>("PERFORM func({0}, {1})", 
-                @old => @old.DecimalValue, 
-                @old => @old.DoubleValue);
+            Expression<Func<OldTableRef<SourceEntity>, object>> arg1Expression = tableRefs
+                => tableRefs.Old.DecimalValue;
+            
+            Expression<Func<OldTableRef<SourceEntity>, object>> arg2Expression = tableRefs
+                => tableRefs.Old.DoubleValue;
+            
+            var trigger = new TriggerRawAction(
+                "PERFORM func({0}, {1})",
+                arg1Expression,
+                arg2Expression);
 
-            var generatedSql = Factory.Visit(trigger, new VisitedMembers());
+            var generatedSql = _factory.Visit(trigger, new VisitedMembers());
 
             Assert.Equal(ExceptedDeleteTriggerSqlForMemberArgs, generatedSql);
         }

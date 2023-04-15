@@ -11,7 +11,8 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
     [Collection("IntegrationTests")]
     public abstract class UpdateTests : BaseTriggerTests
     {
-        protected UpdateTests(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory) : base(contextOptionsFactory)
+        protected UpdateTests(IContextOptionsFactory<DynamicDbContext> contextOptionsFactory)
+            : base(contextOptionsFactory)
         {
         }
         
@@ -21,7 +22,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
             Action<EntityTypeBuilder<SourceEntity>> builder = x =>
                 x.AfterUpdate(trigger => trigger
                     .Action(action => action
-                        .Insert((entityBeforeUpdate, updatedEntity) => new DestinationEntity { StringField = updatedEntity.StringField + entityBeforeUpdate.StringField + "x" })));
+                        .Insert(tableRefs
+                            => new DestinationEntity
+                            {
+                                StringField = tableRefs.New.StringField + tableRefs.Old.StringField + "x"
+                            })));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new SourceEntity { StringField = "ab" });
@@ -37,11 +42,11 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
             Action<EntityTypeBuilder<SourceEntity>> builder = x =>
                 x.AfterUpdate(trigger => trigger
                     .Action(action => action
-                        .Delete<DestinationEntity>((entityBeforeUpdate, updatedEntity, destinationEntities)
-                            => destinationEntities.StringField == updatedEntity.StringField + entityBeforeUpdate.StringField)));
+                        .Delete<DestinationEntity>((tableRefs, entities)
+                            => entities.StringField == tableRefs.New.StringField + tableRefs.Old.StringField)));
 
             using var dbContext = CreateDbContext(builder);
-            dbContext.Save(new DestinationEntity() { StringField = "dcab" });
+            dbContext.Save(new DestinationEntity { StringField = "dcab" });
             dbContext.Save(new SourceEntity { StringField = "ab" });
             dbContext.Update(x => x.SourceEntities, x => x.StringField = "dc");
 
@@ -55,10 +60,13 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                 x.AfterUpdate(trigger => trigger
                     .Action(action => action
                         .Update<DestinationEntity>(
-                            (entityBeforeUpdate, updatedEntity, destinationEntities) 
-                                => destinationEntities.StringField == updatedEntity.StringField + entityBeforeUpdate.StringField,
-                            (entityBeforeUpdate, updatedEntity, destinationEntities) 
-                                => new DestinationEntity { IntValue = entityBeforeUpdate.IntValue + updatedEntity.IntValue + 10 })));
+                            (tableRefs, destinationEntities) 
+                                => destinationEntities.StringField == tableRefs.New.StringField + tableRefs.Old.StringField,
+                            (tableRefs, destinationEntities) 
+                                => new DestinationEntity
+                                {
+                                    IntValue = tableRefs.Old.IntValue + tableRefs.New.IntValue + 10
+                                })));
 
             using var dbContext = CreateDbContext(builder);
             dbContext.Save(new DestinationEntity { StringField = "abcdef", IntValue = 1});
@@ -81,18 +89,18 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                 x.AfterUpdate(trigger => trigger
                     .Action(action => action
                         .Upsert(
-                            (entityBeforeUpdate, updatedEntity) 
-                                => new DestinationEntity { UniqueIdentifier = entityBeforeUpdate.IntValue + updatedEntity.IntValue },
-                            (entityBeforeUpdate, updatedEntity) 
+                            (tableRefs, entities)
+                                => entities.UniqueIdentifier == tableRefs.Old.IntValue + tableRefs.New.IntValue,
+                            tableRefs 
                                 => new DestinationEntity
                                 {
-                                    DecimalValue = entityBeforeUpdate.DecimalValue + updatedEntity.DecimalValue,
-                                    UniqueIdentifier = entityBeforeUpdate.IntValue + updatedEntity.IntValue
+                                    DecimalValue = tableRefs.Old.DecimalValue + tableRefs.New.DecimalValue,
+                                    UniqueIdentifier = tableRefs.Old.IntValue + tableRefs.New.IntValue
                                 },
-                            (entityBeforeUpdate, updatedEntity, oldEntity)
+                            (tableRefs, oldEntity)
                                 => new DestinationEntity
                                 {
-                                    DecimalValue = oldEntity.DecimalValue + entityBeforeUpdate.DecimalValue + updatedEntity.DecimalValue
+                                    DecimalValue = oldEntity.DecimalValue + tableRefs.Old.DecimalValue + tableRefs.New.DecimalValue
                                 })));
 
             using var dbContext = CreateDbContext(builder);
@@ -125,13 +133,13 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native.TriggerTests
                 x.AfterUpdate(trigger => trigger
                     .Action(action => action
                         .InsertIfNotExists(
-                            (entityBeforeUpdate, updatedEntity) 
-                                => new DestinationEntity { UniqueIdentifier = entityBeforeUpdate.IntValue + updatedEntity.IntValue },
-                            (entityBeforeUpdate, updatedEntity) 
+                            (tableRefs, entities) 
+                                => entities.UniqueIdentifier == tableRefs.Old.IntValue + tableRefs.New.IntValue,
+                            tableRefs
                                 => new DestinationEntity
                                 {
-                                    DecimalValue = entityBeforeUpdate.DecimalValue + updatedEntity.DecimalValue, 
-                                    UniqueIdentifier = entityBeforeUpdate.IntValue + updatedEntity.IntValue
+                                    DecimalValue = tableRefs.Old.DecimalValue + tableRefs.New.DecimalValue, 
+                                    UniqueIdentifier = tableRefs.Old.IntValue + tableRefs.New.IntValue
                                 })));
 
             using var dbContext = CreateDbContext(builder);

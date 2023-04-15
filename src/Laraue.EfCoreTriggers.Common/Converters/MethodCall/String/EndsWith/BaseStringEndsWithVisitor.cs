@@ -1,8 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.EfCoreTriggers.Common.Services.Impl.ExpressionVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
+using Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith
 {
@@ -23,12 +22,11 @@ namespace Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith
         /// <inheritdoc />
         public override SqlBuilder Visit(
             MethodCallExpression expression,
-            ArgumentTypes argumentTypes,
             VisitedMembers visitedMembers)
         {
-            var argumentSql = VisitorFactory.VisitArguments(expression, argumentTypes, visitedMembers)[0];
+            var argumentSql = VisitorFactory.VisitArguments(expression, visitedMembers)[0];
             
-            var sqlBuilder = VisitorFactory.Visit(expression.Object, argumentTypes, visitedMembers);
+            var sqlBuilder = VisitorFactory.Visit(expression.Object, visitedMembers);
             
             return SqlBuilder.FromString($"{sqlBuilder} LIKE {BuildEndSql(argumentSql)}");
         }

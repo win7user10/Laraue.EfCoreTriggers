@@ -1,9 +1,11 @@
-﻿using Laraue.EfCoreTriggers.MySql.Extensions;
+﻿using System;
+using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using System;
+
+namespace Laraue.EfCoreTriggers.MySqlTests;
 
 public class ContextFactory : BaseContextFactory<DynamicDbContext>
 {

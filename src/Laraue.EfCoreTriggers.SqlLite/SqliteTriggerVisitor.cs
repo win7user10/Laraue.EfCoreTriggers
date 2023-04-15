@@ -1,9 +1,8 @@
 ﻿using System.Linq;
-using Laraue.EfCoreTriggers.Common.Services;
-using Laraue.EfCoreTriggers.Common.Services.Impl.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore.Metadata;
-using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Base.ITrigger;
+using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.SqlLite;
 
@@ -20,20 +19,7 @@ public class SqliteTriggerVisitor : BaseTriggerVisitor
 
     public override string GenerateCreateTriggerSql(ITrigger trigger)
     {
-        var conditionSql = new SqlBuilder();
         var sql = new SqlBuilder();
-        
-        if (trigger.Conditions.Count > 0)
-        {
-            var conditionsSql = trigger.Conditions
-                .Select(actionCondition => _factory.Visit(actionCondition, new VisitedMembers()));
-
-            conditionSql
-                .Append("WHEN ")
-                .WithIdent(x => x
-                    .AppendNewLine()
-                    .AppendJoin(" AND ", conditionsSql.Select(x => x.ToString())));
-        }
         
         var actionsSql = trigger.Actions
             .Select(action => _factory.Visit(action, new VisitedMembers()))
@@ -52,10 +38,7 @@ public class SqliteTriggerVisitor : BaseTriggerVisitor
             
             sql.Append($"CREATE TRIGGER {trigger.Name}{postfix}")
                 .AppendNewLine($"{triggerTimeName} {trigger.TriggerEvent.ToString().ToUpper()} ON {tableName}")
-                .AppendNewLine("FOR EACH ROW")
-                .AppendNewLine(conditionSql)
-                .AppendNewLine("BEGIN")
-                .WithIdent(x => x.AppendNewLine(action))
+                .Append(action)
                 .AppendNewLine("END;");
         }
         
