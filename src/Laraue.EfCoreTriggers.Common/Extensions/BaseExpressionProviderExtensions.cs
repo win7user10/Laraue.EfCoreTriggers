@@ -13,7 +13,6 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// </summary>
         /// <param name="visitor"></param>
         /// <param name="expression"></param>
-        /// <param name="argumentTypes"></param>
         /// <param name="visitedMembers"></param>
         /// <returns></returns>
         public static SqlBuilder[] VisitArguments(

@@ -14,7 +14,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         /// </summary>
         /// <param name="addDefaultServices"></param>
         /// <param name="modifyServices"></param>
-        public EfCoreTriggersExtension(Action<IServiceCollection> addDefaultServices, Action<IServiceCollection> modifyServices)
+        public EfCoreTriggersExtension(Action<IServiceCollection> addDefaultServices, Action<IServiceCollection>? modifyServices)
         {
             _modifyServices = addDefaultServices;
 

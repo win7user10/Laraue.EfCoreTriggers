@@ -3,8 +3,10 @@ using Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
-public class MySqlSqlGenerator : SqlGenerator
+/// <inheritdoc />
+public sealed class MySqlSqlGenerator : SqlGenerator
 {
+    /// <inheritdoc />
     public MySqlSqlGenerator(
         IDbSchemaRetriever adapter,
         SqlTypeMappings sqlTypeMappings,
@@ -13,6 +15,7 @@ public class MySqlSqlGenerator : SqlGenerator
     {
     }
 
+    /// <inheritdoc />
     public override char GetDelimiter()
     {
         return '`';

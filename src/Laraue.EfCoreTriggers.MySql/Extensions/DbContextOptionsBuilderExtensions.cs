@@ -26,6 +26,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.MySql.Extensions
 {
+    /// <summary>
+    /// Extensions to add MySql Triggers to the container.
+    /// </summary>
     public static class DbContextOptionsBuilderExtensions
     {
         /// <summary>
@@ -34,8 +37,9 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
         /// <param name="optionsBuilder"></param>
         /// <param name="modifyServices"></param>
         /// <returns></returns>
-        public static DbContextOptionsBuilder UseMySqlTriggers(this DbContextOptionsBuilder optionsBuilder,
-            Action<IServiceCollection> modifyServices = null)
+        public static DbContextOptionsBuilder UseMySqlTriggers(
+            this DbContextOptionsBuilder optionsBuilder,
+            Action<IServiceCollection>? modifyServices = null)
         {
             return optionsBuilder.UseEfCoreTriggers(AddMySqlServices,  modifyServices);
         }
@@ -49,7 +53,7 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
         /// <returns></returns>A
         public static DbContextOptionsBuilder<TContext> UseMySqlTriggers<TContext>(
             this DbContextOptionsBuilder<TContext> optionsBuilder,
-            Action<IServiceCollection> modifyServices = null)
+            Action<IServiceCollection>? modifyServices = null)
             where TContext : DbContext
         {
             return optionsBuilder.UseEfCoreTriggers(AddMySqlServices, modifyServices);

@@ -5,7 +5,8 @@ using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
-public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAction>
+/// <inheritdoc />
+public sealed class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAction>
 {
     private readonly IInsertExpressionVisitor _insertExpressionVisitor;
     private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
@@ -21,6 +22,7 @@ public class MySqlTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpse
         _sqlGenerator = sqlGenerator;
     }
     
+    /// <inheritdoc />
     public SqlBuilder Visit(TriggerUpsertAction triggerAction, VisitedMembers visitedMembers)
     {
         var updateEntityType = triggerAction.InsertExpression.Body.Type;

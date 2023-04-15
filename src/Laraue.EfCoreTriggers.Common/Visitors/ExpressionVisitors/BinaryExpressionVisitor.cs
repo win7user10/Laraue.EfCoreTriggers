@@ -29,12 +29,15 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
             BinaryExpression expression,
             VisitedMembers visitedMembers)
         {
-            if (expression.Left is UnaryExpression
+            if (expression is 
                 {
-                    NodeType: ExpressionType.Convert, 
-                    Operand: MemberExpression memberExpression
-                }
-                && expression.Right is ConstantExpression constantExpression)
+                    Left: UnaryExpression
+                    {
+                        NodeType: ExpressionType.Convert, 
+                        Operand: MemberExpression memberExpression
+                    },
+                    Right: ConstantExpression constantExpression
+                })
             {
                 // Convert(enumValue, Int32) == 1 when enum is stores as string -> enumValue == Enum.Value
                 var clrType = _schemaRetriever.GetActualClrType(
@@ -45,8 +48,8 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
                 {
                     var valueName = Enum.GetValues(memberExpression.Type)
                         .Cast<object>()
-                        .First(x => (int)x == (int)constantExpression.Value)
-                        .ToString();
+                        .First(x => (int)x == (int)constantExpression.Value!)
+                        .ToString()!;
                 
                     var sb = _factory.Visit(memberExpression, visitedMembers);
                     sb.Append($" = {_generator.GetSql(valueName)}");

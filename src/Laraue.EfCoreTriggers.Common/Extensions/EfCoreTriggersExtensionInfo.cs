@@ -16,6 +16,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         {
         }
     
+        /// <inheritdoc />
 #if NET6_0_OR_GREATER
     public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
     {

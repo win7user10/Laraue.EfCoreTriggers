@@ -4,13 +4,16 @@ using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
+/// <inheritdoc />
 public sealed class MySqlTriggerActionsGroupVisitor : BaseTriggerActionsGroupVisitor
 {
+    /// <inheritdoc />
     public MySqlTriggerActionsGroupVisitor(ITriggerActionVisitorFactory factory)
         : base(factory)
     {
     }
     
+    /// <inheritdoc />
     protected override SqlBuilder GetActionSql(SqlBuilder[] actionsSql, SqlBuilder[] conditionsSql)
     {
         var sql = new SqlBuilder();

@@ -57,9 +57,11 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
         /// Adds the new condition to the action.
         /// The action will be fired only if all conditions passed.
         /// </summary>
-        /// <param name="conditionalExpression"></param>
+        /// <param name="conditionalExpression">
+        /// Predicate, e.g (tableRefs) => tableRefs.Old.Value == 0
+        /// </param>
         /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="InvalidOperationException">Expression is not supported</exception>
         public TriggerActionsGroup<TTriggerEntity, TTriggerEntityRefs> Condition(
             Expression<Func<TTriggerEntityRefs, bool>> conditionalExpression)
         {
@@ -77,7 +79,10 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
         /// <summary>
         /// Performs inserting of the new entity in the target table.
         /// </summary>
-        /// <param name="insertExpression">Describes how to insert a new entity based on the <see cref="ITableRef"/></param>
+        /// <param name="insertExpression">
+        /// Expression to make the insert
+        /// e.g (tableRefs) => new InsertableEntity { Value = tableRefs.Old.Value })
+        /// </param>
         /// <typeparam name="TInsertEntity"></typeparam>
         /// <returns></returns>
         public TriggerActionsGroup<TTriggerEntity, TTriggerEntityRefs> Insert<TInsertEntity>(
@@ -89,9 +94,12 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
         }
     
         /// <summary>
-        /// Performs deleting of the entity from the target table. 
+        /// Performs deleting of the entities from the target table satisfied to the passed predicate. 
         /// </summary>
-        /// <param name="deletePredicate"></param>
+        /// <param name="deletePredicate">
+        /// Predicate to select entities should be deleted,
+        /// e.g (tableRefs, entities) => tableRefs.Old.Value == entities.Value
+        /// </param>
         /// <typeparam name="TDeleteEntity"></typeparam>
         /// <returns></returns>
         public TriggerActionsGroup<TTriggerEntity, TTriggerEntityRefs> Delete<TDeleteEntity>(
@@ -102,6 +110,19 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
             return this;
         }
     
+        /// <summary>
+        /// Performs update of the entities of the target table satisfied to the passed predicate.
+        /// </summary>
+        /// <param name="updatePredicate">
+        /// Predicate to select entities should be updated,
+        /// e.g (tableRefs, entities) => tableRefs.Old.Value == entities.Value
+        /// </param>
+        /// <param name="updateExpression">
+        /// Expression to make the update
+        /// e.g (tableRefs, entities) => new UpdatableEntity { Value = tableRefs.Old.Value + 1 })
+        /// </param>
+        /// <typeparam name="TUpdateEntity"></typeparam>
+        /// <returns></returns>
         public TriggerActionsGroup<TTriggerEntity, TTriggerEntityRefs> Update<TUpdateEntity>(
             Expression<Func<TTriggerEntityRefs, TUpdateEntity, bool>> updatePredicate,
             Expression<Func<TTriggerEntityRefs, TUpdateEntity, TUpdateEntity>> updateExpression)
@@ -111,6 +132,23 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
             return this;
         }
     
+        /// <summary>
+        /// Performs upsert of the entities on the target table.
+        /// </summary>
+        /// <param name="upsertPredicate">
+        /// Predicate to find entities should be updated,
+        /// e.g (tableRefs, entities) => tableRefs.Old.Value == entities.Value
+        /// </param>
+        /// <param name="insertExpression">
+        /// Expression to make the insert when no one entity for update was found
+        /// e.g (tableRefs) => new UpsertableEntity { Value = tableRefs.Old.Value })
+        /// </param>
+        /// <param name="updateExpression">
+        /// Expression to make the update when one or more entity for update was found
+        /// e.g (tableRefs, entities) => new UpsertableEntity { Value = tableRefs.Old.Value + 1 })
+        /// </param>
+        /// <typeparam name="TUpsertEntity"></typeparam>
+        /// <returns></returns>
         public TriggerActionsGroup<TTriggerEntity, TTriggerEntityRefs> Upsert<TUpsertEntity>(
             Expression<Func<TTriggerEntityRefs, TUpsertEntity, bool>> upsertPredicate,
             Expression<Func<TTriggerEntityRefs, TUpsertEntity>> insertExpression,
@@ -125,6 +163,20 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
             return this;
         }
     
+        /// <summary>
+        /// Performs insert of the entity to the target table if no entity exists
+        /// with the passed predicate.
+        /// </summary>
+        /// <param name="insertPredicate">
+        /// Predicate to find does the entity already exists,
+        /// e.g (tableRefs, entities) => tableRefs.Old.Value == entities.Value
+        /// </param>
+        /// <param name="insertExpression">
+        /// Expression to make the insert when an entity is not exists in DB yet.
+        /// e.g (tableRefs) => new InsertableEntity { Value = tableRefs.Old.Value })
+        /// </param>
+        /// <typeparam name="TInsertEntity"></typeparam>
+        /// <returns></returns>
         public TriggerActionsGroup<TTriggerEntity, TTriggerEntityRefs> InsertIfNotExists<TInsertEntity>(
             Expression<Func<TTriggerEntityRefs, TInsertEntity, bool>> insertPredicate,
             Expression<Func<TTriggerEntityRefs, TInsertEntity>> insertExpression)
@@ -138,6 +190,19 @@ namespace Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions
             return this;
         }
     
+        /// <summary>
+        /// Executes the raw sql query.
+        /// </summary>
+        /// <param name="sql">
+        /// Sql query, can contain parameters, e.g. etc.
+        /// INSERT INTO users_log VALUES ({0}, {1}).
+        /// </param>
+        /// <param name="getSqlVariable">
+        /// Describes parameters should be inserted to the passed sql query,
+        /// e.g (tableRefs) => tableRefs.New.Id,
+        /// (tableRefs) => tableRefs.New.Login.
+        /// </param>
+        /// <returns></returns>
         public TriggerActionsGroup<TTriggerEntity, TTriggerEntityRefs> ExecuteRawSql(
             string sql,
             params Expression<Func<TTriggerEntityRefs, object>>[] getSqlVariable)

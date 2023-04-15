@@ -7,11 +7,13 @@ using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
 
 namespace Laraue.EfCoreTriggers.SqlLite;
 
-public class SqliteInsertExpressionVisitor : InsertExpressionVisitor
+/// <inheritdoc />
+public sealed class SqliteInsertExpressionVisitor : InsertExpressionVisitor
 {
     private readonly IDbSchemaRetriever _adapter;
     private readonly ISqlGenerator _sqlGenerator;
 
+    /// <inheritdoc />
     public SqliteInsertExpressionVisitor(
         IMemberInfoVisitorFactory factory,
         IDbSchemaRetriever adapter,
@@ -22,6 +24,7 @@ public class SqliteInsertExpressionVisitor : InsertExpressionVisitor
         _sqlGenerator = sqlGenerator;
     }
 
+    /// <inheritdoc />
     protected override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression)
     {
         var insertType = insertExpression.Body.Type;

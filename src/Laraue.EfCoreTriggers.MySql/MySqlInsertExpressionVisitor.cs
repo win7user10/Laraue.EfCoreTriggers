@@ -5,13 +5,16 @@ using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
 
 namespace Laraue.EfCoreTriggers.MySql;
 
-public class MySqlInsertExpressionVisitor : InsertExpressionVisitor
+/// <inheritdoc />
+public sealed class MySqlInsertExpressionVisitor : InsertExpressionVisitor
 {
+    /// <inheritdoc />
     public MySqlInsertExpressionVisitor(IMemberInfoVisitorFactory factory, ISqlGenerator sqlGenerator) 
         : base(factory, sqlGenerator)
     {
     }
 
+    /// <inheritdoc />
     protected override SqlBuilder VisitEmptyInsertBody(LambdaExpression insertExpression)
     {
         var sqlBuilder = new SqlBuilder();

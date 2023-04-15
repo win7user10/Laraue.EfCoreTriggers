@@ -21,7 +21,7 @@ public class SqlServerSqlGenerator : SqlGenerator
 
     public override string OldEntityPrefix => "Deleted";
 
-    public override string GetNodeTypeSql(ExpressionType expressionType)
+    protected override string GetNodeTypeSql(ExpressionType expressionType)
     {
         return expressionType switch
         {

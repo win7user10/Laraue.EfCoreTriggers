@@ -6,6 +6,7 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 
 namespace Laraue.EfCoreTriggers.Common.TriggerBuilders
 {
+    /// <inheritdoc />
     public sealed class Trigger<TTriggerEntity, TTriggerEntityRefs> : ITrigger
         where TTriggerEntity : class
         where TTriggerEntityRefs : ITableRef<TTriggerEntity>

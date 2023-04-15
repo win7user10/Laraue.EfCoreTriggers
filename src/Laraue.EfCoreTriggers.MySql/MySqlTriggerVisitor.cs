@@ -6,17 +6,20 @@ using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrig
 
 namespace Laraue.EfCoreTriggers.MySql;
 
+/// <inheritdoc />
 public class MySqlTriggerVisitor : BaseTriggerVisitor
 {
     private readonly ITriggerActionVisitorFactory _factory;
     private readonly ISqlGenerator _sqlGenerator;
 
+    /// <inheritdoc />
     public MySqlTriggerVisitor(ITriggerActionVisitorFactory factory, ISqlGenerator sqlGenerator)
     {
         _factory = factory;
         _sqlGenerator = sqlGenerator;
     }
 
+    /// <inheritdoc />
     public override string GenerateCreateTriggerSql(ITrigger trigger)
     {
         var triggerTimeName = GetTriggerTimeName(trigger.TriggerTime);

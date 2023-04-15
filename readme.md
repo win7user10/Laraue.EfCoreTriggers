@@ -188,7 +188,7 @@ public static class StringExtensions
 {
     public static bool Like(this string str, string pattern)
     {
-        // Some code
+        throw new InvalidOperationException();
     }
 } 
 ```
@@ -203,13 +203,13 @@ public abstract class StringExtensionsLikeConverter : MethodCallConverter
         return expression.Method.ReflectedType == typeof(SomeFunctions) && MethodName == nameof(CustomFunctions.Like);
     }
     
-    public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression, Dictionary<string, ArgumentType> argumentTypes)
+    public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression)
     {
         // Generate SQL for arguments, they can be SQL expressions
-        var argumentSql = provider.GetMethodCallArgumentsSql(expression, argumentTypes)[0];
+        var argumentSql = provider.GetMethodCallArgumentsSql(expression)[0];
 
         // Generate SQL for this context, it also can be a SQL expression
-        var sqlBuilder = provider.GetExpressionSql(expression.Object, argumentTypes);
+        var sqlBuilder = provider.GetExpressionSql(expression.Object);
         
         // Combine SQL for object and SQL for arguments
         // Output will be like "thisValueSql LIKE 'passedArgumentValueSql'"
@@ -237,4 +237,11 @@ modelBuilder.Entity<Transaction>()
         .Action(action => action
             .Condition(oldTransaction => oldTransaction.Description.Like('%payment%'))
             
+```
+
+### Trigger prefix customization
+
+You can change the standard library prefix for trigger using the next static variable
+```cs
+Laraue.EfCoreTriggers.Common.Constants.AnnotationKey = "MY_PREFIX"
 ```

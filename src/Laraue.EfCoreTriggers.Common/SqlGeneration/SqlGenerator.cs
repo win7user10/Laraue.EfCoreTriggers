@@ -13,8 +13,10 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         private readonly SqlTypeMappings _sqlTypeMappings;
         private readonly VisitingInfo _visitingInfo;
 
+        /// <inheritdoc />
         public virtual string NewEntityPrefix => "NEW";
 
+        /// <inheritdoc />
         public virtual string OldEntityPrefix => "OLD";
 
         /// <summary>
@@ -31,8 +33,8 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             _sqlTypeMappings = sqlTypeMappings;
             _visitingInfo = visitingInfo;
         }
-    
-        public virtual string GetNodeTypeSql(ExpressionType expressionType)
+
+        protected virtual string GetNodeTypeSql(ExpressionType expressionType)
         {
             return expressionType switch
             {
@@ -57,6 +59,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             };
         }
 
+        /// <inheritdoc />
         public virtual string GetBinarySql(ExpressionType expressionType, SqlBuilder left, SqlBuilder right)
         {
             var nodeTypeSql = GetNodeTypeSql(expressionType);
@@ -64,6 +67,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             return $"{left} {nodeTypeSql} {right}";
         }
 
+        /// <inheritdoc />
         public string GetUnarySql(ExpressionType expressionType, SqlBuilder innerExpressionSql)
         {
             var nodeTypeSql = GetNodeTypeSql(expressionType);
@@ -75,6 +79,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                     : $"{innerExpressionSql} {nodeTypeSql}";
         }
 
+        /// <inheritdoc />
         public string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType)
         {
             var columnSql = WrapWithDelimiters(_adapter.GetColumnName(type, memberInfo));
@@ -88,6 +93,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             };
         }
 
+        /// <inheritdoc />
         public string GetTableSql(Type entity)
         {
             var schemaName = _adapter.GetTableSchemaName(entity);
@@ -98,11 +104,13 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 : $"{WrapWithDelimiters(schemaName)}.{tableSql}";
         }
 
+        /// <inheritdoc />
         public string GetFunctionNameSql(IEntityType entityType, string name)
         {
             return GetFunctionNameSql(_adapter.GetTableSchemaName(entityType), name);
         }
 
+        /// <inheritdoc />
         public string GetFunctionNameSql(Type entity, string name)
         {
             return GetFunctionNameSql(_adapter.GetTableSchemaName(entity), name);
@@ -117,28 +125,36 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 : $"{WrapWithDelimiters(schemaName)}.{functionName}";
         }
 
+        /// <inheritdoc />
         public string GetSqlType(Type type)
         {
             type = EfCoreTriggersHelper.GetNotNullableType(type);
             type = type.IsEnum ? typeof(Enum) : type;
+            
             _sqlTypeMappings.TryGetValue(type, out var sqlType);
-            return sqlType;
+            
+            return sqlType ?? throw new NotSupportedException($"The type {type} SQL generation is not supported");
         }
 
+        /// <inheritdoc />
         public string GetSql(string source)
         {
             return $"{Quote}{source}{Quote}";
         }
 
+        /// <inheritdoc />
         public string GetSql(char source)
         {
             return $"{Quote}{source}{Quote}";
         }
 
+        /// <inheritdoc />
         public string GetSql(Enum source)
         {
             var clrType = _adapter.GetActualClrType(
-                _visitingInfo.CurrentMember.DeclaringType,
+                _visitingInfo.CurrentMember?.DeclaringType
+                    ?? throw new InvalidOperationException(
+                    $"Invalid state, of current visiting member type {_visitingInfo.CurrentMember}"),
                 _visitingInfo.CurrentMember);
 
             return clrType == typeof(string)
@@ -146,21 +162,25 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
                 : source.ToString("D");
         }
 
+        /// <inheritdoc />
         public virtual string GetSql(bool source)
         {
             return $"{source.ToString().ToLower()}";
         }
 
+        /// <inheritdoc />
         public string GetNullValueSql()
         {
             return "NULL";
         }
 
+        /// <inheritdoc />
         public virtual char GetDelimiter()
         {
             return '"';
         }
 
+        /// <inheritdoc />
         public virtual string GetColumnValueReferenceSql(Type type, MemberInfo member, ArgumentType argumentType)
         {
             return GetColumnSql(type, member, argumentType);
