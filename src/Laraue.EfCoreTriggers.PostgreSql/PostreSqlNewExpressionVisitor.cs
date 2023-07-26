@@ -13,6 +13,6 @@ public class PostreSqlNewExpressionVisitor : NewExpressionVisitor
     /// <inheritdoc />
     protected override SqlBuilder GetNewDateTimeOffsetSql()
     {
-        return SqlBuilder.FromString("CURRENT_DATE");
+        return SqlBuilder.FromString("CURRENT_TIMESTAMP");
     }
 }
