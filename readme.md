@@ -200,7 +200,7 @@ public abstract class StringExtensionsLikeConverter : MethodCallConverter
 {
     public override bool IsApplicable(MethodCallExpression expression)
     {
-        return expression.Method.ReflectedType == typeof(SomeFunctions) && MethodName == nameof(CustomFunctions.Like);
+        return expression.Method.ReflectedType == typeof(StringExtensions) && MethodName == nameof(StringExtensions.Like);
     }
     
     public override SqlBuilder BuildSql(BaseExpressionProvider provider, MethodCallExpression expression)
