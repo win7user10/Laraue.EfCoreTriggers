@@ -21,18 +21,23 @@ jobs:
         run: |
           major_version=${GITHUB_REF:10:1} \
           && echo "MAJOR_VERSION=${major_version}" >> $GITHUB_ENV \
-          && [[ $major_version = 5 ]] && echo "PROJECT_TARGET=netstandard2.1" >> $GITHUB_ENV || echo "PROJECT_TARGET=net6.0" >> $GITHUB_ENV \
+          && [[ $major_version = 5 ]] && echo "PROJECT_TARGET=netstandard2.1" >> $GITHUB_ENV || [[ $major_version = 6 ]] && echo "PROJECT_TARGET=net6.0" >> $GITHUB_ENV || echo "PROJECT_TARGET=net8.0" \
           && echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Setup .NET5 environment
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '5.0.x'
+          dotnet-version: '5.x.x'
           
       - name: Setup .NET6 environment
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '6.x.x'
+      
+      - name: Setup .NET8 environment
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.x.x'
           
       - name: Build project
         run: |
