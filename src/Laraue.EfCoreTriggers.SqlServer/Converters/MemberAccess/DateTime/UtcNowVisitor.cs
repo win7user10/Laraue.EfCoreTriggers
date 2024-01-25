@@ -17,7 +17,7 @@ namespace Laraue.EfCoreTriggers.SqlServer.Converters.MemberAccess.DateTime
         /// <inheritdoc />
         public override SqlBuilder Visit(MemberExpression expression)
         {
-            return SqlBuilder.FromString("GETUTCDATE()");
+            return SqlBuilder.FromString("SYSUTCDATETIME()");
         }
     }
 }
