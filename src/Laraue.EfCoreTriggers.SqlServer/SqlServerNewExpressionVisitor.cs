@@ -13,6 +13,6 @@ public class SqlServerNewExpressionVisitor : NewExpressionVisitor
     /// <inheritdoc />
     protected override SqlBuilder GetNewDateTimeOffsetSql()
     {
-        return SqlBuilder.FromString("GETDATE()");
+        return SqlBuilder.FromString("SYSDATETIME()");
     }
 }
