@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Laraue.EfCoreTriggers.Common.Converters.MemberAccess;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
@@ -8,14 +11,17 @@ using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
 namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
 {
     /// <inheritdoc />
-    public sealed class MemberExpressionVisitor : BaseExpressionVisitor<MemberExpression>
+    public sealed class MemberExpressionVisitor
+        : BaseExpressionVisitor<MemberExpression>
     {
         private readonly ISqlGenerator _generator;
+        private readonly IEnumerable<IMemberAccessVisitor> _staticMembersVisitors;
     
         /// <inheritdoc />
-        public MemberExpressionVisitor(ISqlGenerator generator)
+        public MemberExpressionVisitor(ISqlGenerator generator, IEnumerable<IMemberAccessVisitor> staticMembersVisitors)
         {
             _generator = generator;
+            _staticMembersVisitors = staticMembersVisitors.Reverse().ToArray();
         }
 
         /// <inheritdoc />
@@ -35,16 +41,18 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
         /// <returns></returns>
         private string Visit(MemberExpression memberExpression, ArgumentType argumentType, VisitedMembers visitedMembers)
         {
-            if (memberExpression.Expression is MemberExpression nestedMemberExpression)
+            switch (memberExpression.Expression)
             {
-                return GetColumnSql(nestedMemberExpression, memberExpression.Member, visitedMembers);
+                // Static member
+                case null:
+                    return Visit(memberExpression);
+                
+                // Column
+                case MemberExpression nestedMemberExpression:
+                    return GetColumnSql(nestedMemberExpression, memberExpression.Member, visitedMembers);
             }
 
-            return GetTableSql(memberExpression, argumentType);
-        }
-
-        private string GetTableSql(MemberExpression memberExpression, ArgumentType argumentType)
-        {
+            // Table
             if (memberExpression.Member.TryGetNewTableRef(out _))
             {
                 return _generator.NewEntityPrefix;
@@ -93,6 +101,19 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
                 tableType!,
                 columnMember,
                 argumentType);
+        }
+        
+        private SqlBuilder Visit(MemberExpression expression)
+        {
+            foreach (var converter in _staticMembersVisitors)
+            {
+                if (converter.IsApplicable(expression))
+                {
+                    return converter.Visit(expression);
+                }
+            }
+        
+            throw new NotSupportedException($"Member expression {expression.Member.DeclaringType}.{expression.Member.Name} is not supported");
         }
     }
 }

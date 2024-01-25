@@ -12,5 +12,6 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
         public Guid? GuidValue { get; set; }
 
         public int? UniqueIdentifier { get; set; }
+        public DateTime? DateTimeValue { get; set; }
     }
 }

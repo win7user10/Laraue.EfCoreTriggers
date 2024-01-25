@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Converters.MemberAccess;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.CSharpMethods;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable.Count;
@@ -45,6 +46,19 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             where TImpl : class, IMethodCallVisitor
         {
             return services.AddScoped<IMethodCallVisitor, TImpl>();
+        }
+        
+        /// <summary>
+        /// Register new <see cref="IMemberAccessVisitor"/> into container.
+        /// All visitors are applied in reverse order. 
+        /// </summary>
+        /// <param name="services">Service collection.</param>
+        /// <typeparam name="TImpl">Implementation of visitor.</typeparam>
+        /// <returns></returns>
+        public static IServiceCollection AddMemberAccessConverter<TImpl>(this IServiceCollection services)
+            where TImpl : class, IMemberAccessVisitor
+        {
+            return services.AddScoped<IMemberAccessVisitor, TImpl>();
         }
     
         /// <summary>

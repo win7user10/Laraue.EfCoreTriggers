@@ -39,6 +39,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
                 });
 
             setupDbContext?.Invoke(dbContext);
+
             dbContext.SourceEntities.AddRange(sourceEntities);
             dbContext.SaveChanges();
 

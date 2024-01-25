@@ -21,6 +21,7 @@ using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
+using Laraue.EfCoreTriggers.PostgreSql.Converters.MemberAccess.DateTime;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -85,7 +86,9 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
                 .AddMethodCallConverter<MathCeilingVisitor>()
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
-                .AddMethodCallConverter<MathFloorVisitor>();
+                .AddMethodCallConverter<MathFloorVisitor>()
+                .AddMemberAccessConverter<UtcNowVisitor>()
+                .AddMemberAccessConverter<NowVisitor>();
         }
     }
 }
