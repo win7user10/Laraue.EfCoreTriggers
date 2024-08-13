@@ -30,6 +30,9 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         
         public abstract string ExceptedCharValueSql { get; }
         
+        public abstract string ExceptedDateTimeOffsetNowSql { get; }
+        public abstract string ExceptedDateTimeOffsetUtcNowSql { get; }
+        public abstract string ExceptedNewDateTimeSql { get; }
         public abstract string ExceptedNewDateTimeOffsetSql { get; }
 
         public override void EnumValueSql()
@@ -71,10 +74,25 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Unit
         {
             Factory.AssertGeneratedInsertSql(ExceptedCharValueSql, SetCharValueExpression);
         }
-
-        public override void DateTimeOffsetValueSql()
+        
+        public override void DateTimeOffsetNowSql()
         {
-            Factory.AssertGeneratedInsertSql(ExceptedNewDateTimeOffsetSql, SetNewDateOffsetValueExpression);
+            Factory.AssertGeneratedInsertSql(ExceptedDateTimeOffsetNowSql, SetDateTimeOffsetNowExpression);
+        }
+
+        public override void DateTimeOffsetUtcNowSql()
+        {
+            Factory.AssertGeneratedInsertSql(ExceptedDateTimeOffsetUtcNowSql, SetDateTimeOffsetUtcNowExpression);
+        }
+        
+        public override void NewDateTimeSql()
+        {
+            Factory.AssertGeneratedInsertSql(ExceptedNewDateTimeSql, SetNewDateTimeExpression);
+        }
+        
+        public override void NewDateTimeOffsetSql()
+        {
+            Factory.AssertGeneratedInsertSql(ExceptedNewDateTimeOffsetSql, SetNewDateTimeOffsetExpression);
         }
     }
 }

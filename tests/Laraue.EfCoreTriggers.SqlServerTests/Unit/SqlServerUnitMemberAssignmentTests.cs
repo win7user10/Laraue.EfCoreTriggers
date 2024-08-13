@@ -31,7 +31,11 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Unit
         public override string ExceptedCharVariableSql => "INSERT INTO \"destination_entities\" (\"char_value\") SELECT @NewCharValue;";
 
         public override string ExceptedCharValueSql => "INSERT INTO \"destination_entities\" (\"char_value\") SELECT 'a';";
-        
-        public override string ExceptedNewDateTimeOffsetSql => "INSERT INTO \"destination_entities\" (\"date_time_offset_value\") SELECT SYSDATETIME();";
+        public override string ExceptedDateTimeOffsetNowSql => "INSERT INTO \"destination_entities\" (\"date_time_offset_value\") SELECT SYSDATETIME();";
+        public override string ExceptedDateTimeOffsetUtcNowSql => "INSERT INTO \"destination_entities\" (\"date_time_offset_value\") SELECT SYSUTCDATETIME();";
+
+        public override string ExceptedNewDateTimeOffsetSql => "INSERT INTO \"destination_entities\" (\"date_time_offset_value\") SELECT '1753-01-01';";
+
+        public override string ExceptedNewDateTimeSql => "INSERT INTO \"destination_entities\" (\"date_time_value\") SELECT '1753-01-01';";
     }
 }

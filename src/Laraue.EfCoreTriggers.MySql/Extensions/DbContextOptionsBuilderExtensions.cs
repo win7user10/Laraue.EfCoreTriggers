@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
@@ -21,7 +20,8 @@ using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
-using Laraue.EfCoreTriggers.MySql.Converters.MemberAccess.DateTime;
+using Laraue.EfCoreTriggers.MySql.Converters.MethodCalls.Guid.NewGuid;
+using Laraue.EfCoreTriggers.MySql.Converters.NewExpression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -72,7 +72,6 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
                 .AddTriggerActionVisitor<TriggerUpsertAction, MySqlTriggerUpsertActionVisitor>()
                 .AddScoped<IInsertExpressionVisitor, MySqlInsertExpressionVisitor>()
                 .AddScoped<ISqlGenerator, MySqlSqlGenerator>()
-                .AddExpressionVisitor<NewExpression, MySqlNewExpressionVisitor>()
                 .AddTriggerActionVisitor<TriggerActionsGroup, MySqlTriggerActionsGroupVisitor>()
                 .AddMethodCallConverter<ConcatStringViaConcatFuncVisitor>()
                 .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
@@ -90,8 +89,13 @@ namespace Laraue.EfCoreTriggers.MySql.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>()
-                .AddMemberAccessConverter<UtcNowVisitor>()
-                .AddMemberAccessConverter<NowVisitor>();
+                .AddMethodCallConverter<NewGuidVisitor>()
+                .AddMemberAccessConverter<Converters.MemberAccess.DateTime.UtcNowVisitor>()
+                .AddMemberAccessConverter<Converters.MemberAccess.DateTime.NowVisitor>()
+                .AddMemberAccessConverter<Converters.MemberAccess.DateTimeOffset.UtcNowVisitor>()
+                .AddMemberAccessConverter<Converters.MemberAccess.DateTimeOffset.NowVisitor>()
+                .AddNewExpressionConverter<NewDateTimeExpressionVisitor>()
+                .AddNewExpressionConverter<NewDateTimeOffsetExpressionVisitor>();
         }
     }
 }

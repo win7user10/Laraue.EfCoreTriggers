@@ -77,7 +77,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetNewGuidValueExpression =
             tableRefs => new DestinationEntity
             {
-                GuidValue = new Guid()
+                GuidValue = Guid.NewGuid()
             };
 
         [Fact]
@@ -102,15 +102,51 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base
         public abstract void CharValueSql();
         
         /// <summary>
-        /// DateTimeOffsetValue = CURRENT_DATE()
+        /// DateTimeOffsetValue = DateTimeOffset.UtcNow
         /// </summary>
-        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetNewDateOffsetValueExpression =
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetDateTimeOffsetUtcNowExpression =
             tableRefs => new DestinationEntity
             {
-                DateTimeOffsetValue = new DateTimeOffset(),
+                DateTimeOffsetValue = DateTimeOffset.UtcNow,
             };
         
         [Fact]
-        public abstract void DateTimeOffsetValueSql();
+        public abstract void DateTimeOffsetUtcNowSql();
+        
+        /// <summary>
+        /// DateTimeOffsetValue = DateTimeOffset.Now
+        /// </summary>
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetDateTimeOffsetNowExpression =
+            tableRefs => new DestinationEntity
+            {
+                DateTimeOffsetValue = DateTimeOffset.Now,
+            };
+        
+        [Fact]
+        public abstract void DateTimeOffsetNowSql();
+        
+        /// <summary>
+        /// DateTime = new DateTime()
+        /// </summary>
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetNewDateTimeExpression =
+            tableRefs => new DestinationEntity
+            {
+                DateTimeValue = new DateTime()
+            };
+
+        [Fact]
+        public abstract void NewDateTimeSql();
+        
+        /// <summary>
+        /// DateTime = new DateTime()
+        /// </summary>
+        protected readonly Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> SetNewDateTimeOffsetExpression =
+            tableRefs => new DestinationEntity
+            {
+                DateTimeOffsetValue = new DateTimeOffset()
+            };
+
+        [Fact]
+        public abstract void NewDateTimeOffsetSql();
     }
 }

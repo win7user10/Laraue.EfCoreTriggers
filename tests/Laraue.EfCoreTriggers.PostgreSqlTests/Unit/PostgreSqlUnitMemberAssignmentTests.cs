@@ -31,7 +31,10 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
         public override string ExceptedCharVariableSql => "INSERT INTO \"destination_entities\" (\"char_value\") SELECT NEW.\"char_value\";";
         
         public override string ExceptedCharValueSql => "INSERT INTO \"destination_entities\" (\"char_value\") SELECT 'a';";
-       
-        public override string ExceptedNewDateTimeOffsetSql => "INSERT INTO \"destination_entities\" (\"date_time_offset_value\") SELECT CURRENT_TIMESTAMP;";
+        public override string ExceptedDateTimeOffsetNowSql => "INSERT INTO \"destination_entities\" (\"date_time_offset_value\") SELECT NOW();";
+        public override string ExceptedDateTimeOffsetUtcNowSql => "INSERT INTO \"destination_entities\" (\"date_time_offset_value\") SELECT CURRENT_TIMESTAMP;";
+
+        public override string ExceptedNewDateTimeOffsetSql => "INSERT INTO \"destination_entities\" (\"date_time_offset_value\") SELECT '0001-01-01';";
+        public override string ExceptedNewDateTimeSql => "INSERT INTO \"destination_entities\" (\"date_time_value\") SELECT '0001-01-01';";
     }
 }
