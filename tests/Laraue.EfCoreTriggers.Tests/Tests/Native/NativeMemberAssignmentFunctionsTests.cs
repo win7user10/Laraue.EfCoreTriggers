@@ -76,7 +76,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
         {
             var insertedEntity = ContextOptionsFactory.CheckTrigger(SetNewGuidValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
             {
-                GuidValue = new Guid()
+                GuidValue = Guid.NewGuid()
             });
             Assert.NotEqual(default, insertedEntity.GuidValue);
         }
@@ -151,11 +151,36 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
             Assert.Equal('a', insertedEntity.CharValue);
         }
 
-        public override void DateTimeOffsetValueSql()
+        public override void DateTimeOffsetNowSql()
         {
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(SetNewDateOffsetValueExpression, SetupDbContext, SetupModelBuilder, new SourceEntity());
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(SetDateTimeOffsetNowExpression, SetupDbContext, SetupModelBuilder, new SourceEntity());
+            
+            Assert.Equal(DateTimeOffset.Now.Date, insertedEntity.DateTimeOffsetValue.GetValueOrDefault().Date, TimeSpan.FromDays(1));
+        }
+
+        public override void DateTimeOffsetUtcNowSql()
+        {
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(SetDateTimeOffsetUtcNowExpression, SetupDbContext, SetupModelBuilder, new SourceEntity());
             
             Assert.Equal(DateTimeOffset.UtcNow.Date, insertedEntity.DateTimeOffsetValue.GetValueOrDefault().Date, TimeSpan.FromDays(1));
+        }
+
+        public override void NewDateTimeSql()
+        {
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(SetNewDateTimeExpression, SetupDbContext, SetupModelBuilder, new SourceEntity());
+            
+            // Just a smoke, all DB providers have different Min Dates
+            var dbMinDate = insertedEntity.DateTimeValue.GetValueOrDefault();
+            Assert.True(dbMinDate < new DateTime(2000, 01, 01));
+        }
+
+        public override void NewDateTimeOffsetSql()
+        {
+            var insertedEntity = ContextOptionsFactory.CheckTrigger(SetNewDateTimeOffsetExpression, SetupDbContext, SetupModelBuilder, new SourceEntity());
+            
+            // Just a smoke, all DB providers have different Min DateTime Offsets
+            var dbMinDateOffset = insertedEntity.DateTimeOffsetValue.GetValueOrDefault();
+            Assert.True(dbMinDateOffset < new DateTime(2000, 01, 01));
         }
     }
 }

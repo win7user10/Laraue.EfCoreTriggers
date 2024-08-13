@@ -32,6 +32,10 @@ namespace Laraue.EfCoreTriggers.MySqlTests.Unit
         
         public override string ExceptedCharValueSql => "INSERT INTO `destination_entities` (`char_value`) SELECT 'a';";
         
-        public override string ExceptedNewDateTimeOffsetSql => "INSERT INTO `destination_entities` (`date_time_offset_value`) SELECT CURRENT_DATE();";
+        public override string ExceptedDateTimeOffsetNowSql => "INSERT INTO `destination_entities` (`date_time_offset_value`) SELECT LOCALTIME();";
+        public override string ExceptedDateTimeOffsetUtcNowSql => "INSERT INTO `destination_entities` (`date_time_offset_value`) SELECT UTC_TIMESTAMP();";
+
+        public override string ExceptedNewDateTimeOffsetSql => "INSERT INTO `destination_entities` (`date_time_offset_value`) SELECT '1000-01-01';";
+        public override string ExceptedNewDateTimeSql => "INSERT INTO `destination_entities` (`date_time_value`) SELECT '1000-01-01';";
     }
 }

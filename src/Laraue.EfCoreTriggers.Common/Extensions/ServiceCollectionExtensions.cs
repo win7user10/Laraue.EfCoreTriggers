@@ -4,6 +4,7 @@ using Laraue.EfCoreTriggers.Common.Converters.MethodCall;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.CSharpMethods;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Enumerable.Count;
 using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Functions;
+using Laraue.EfCoreTriggers.Common.Converters.NewExpression;
 using Laraue.EfCoreTriggers.Common.Migrations;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
@@ -60,6 +61,19 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         {
             return services.AddScoped<IMemberAccessVisitor, TImpl>();
         }
+        
+        /// <summary>
+        /// Register new <see cref="INewExpressionVisitor"/> into container.
+        /// All visitors are applied in reverse order.
+        /// </summary>
+        /// <param name="services">Service collection.</param>
+        /// <typeparam name="TImpl">Implementation of visitor.</typeparam>
+        /// <returns></returns>
+        public static IServiceCollection AddNewExpressionConverter<TImpl>(this IServiceCollection services)
+            where TImpl : class, INewExpressionVisitor
+        {
+            return services.AddScoped<INewExpressionVisitor, TImpl>();
+        }
     
         /// <summary>
         /// Register new <see cref="IExpressionVisitor{T}"/> into container.
@@ -107,6 +121,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
                 .AddExpressionVisitor<MethodCallExpression, MethodCallExpressionVisitor>()
                 .AddExpressionVisitor<LambdaExpression, LambdaExpressionVisitor>()
                 .AddExpressionVisitor<ParameterExpression, ParameterExpressionVisitor>()
+                .AddExpressionVisitor<NewExpression, NewExpressionVisitor>()
             
                 .AddMethodCallConverter<CountVisitor>()
                 .AddMethodCallConverter<CoalesceVisitor>()

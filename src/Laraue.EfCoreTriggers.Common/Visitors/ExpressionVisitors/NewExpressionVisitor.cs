@@ -1,38 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using Laraue.EfCoreTriggers.Common.Converters.NewExpression;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
 
 namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
 {
     /// <inheritdoc />
-    public abstract class NewExpressionVisitor : BaseExpressionVisitor<NewExpression>
+    public class NewExpressionVisitor : BaseExpressionVisitor<NewExpression>
     {
+        private readonly INewExpressionVisitor[] _visitors;
+
+        /// <inheritdoc />
+        public NewExpressionVisitor(IEnumerable<INewExpressionVisitor> newExpressionVisitors)
+        {
+            _visitors = newExpressionVisitors.Reverse().ToArray();
+        }
+        
         /// <inheritdoc />
         public override SqlBuilder Visit(NewExpression expression, VisitedMembers visitedMembers)
         {
-            if (expression.Type == typeof(Guid))
-            {
-                return GetNewGuidSql();
-            }
+            var visitor = GetVisitor(expression);
         
-            if (expression.Type == typeof(DateTimeOffset))
-            {
-                return GetNewDateTimeOffsetSql();
-            }
-        
-            throw new NotImplementedException();
+            return visitor.Visit(expression, visitedMembers);
         }
-
-        /// <summary>
-        /// Generate new Guid SQL.
-        /// </summary>
-        /// <returns></returns>
-        protected abstract SqlBuilder GetNewGuidSql();
     
-        /// <summary>
-        /// Generate new DateTimeOffset SQL.
-        /// </summary>
-        /// <returns></returns>
-        protected abstract SqlBuilder GetNewDateTimeOffsetSql();
+        private INewExpressionVisitor GetVisitor(NewExpression expression)
+        {
+            foreach (var converter in _visitors)
+            {
+                if (converter.IsApplicable(expression))
+                {
+                    return converter;
+                }
+            }
+        
+            throw new NotSupportedException($"new {expression.Type}() translation is not supported");
+        }
     }
 }

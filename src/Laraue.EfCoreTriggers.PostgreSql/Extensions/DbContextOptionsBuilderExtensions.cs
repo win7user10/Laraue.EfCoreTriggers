@@ -21,7 +21,8 @@ using Laraue.EfCoreTriggers.Common.SqlGeneration;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
 using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
-using Laraue.EfCoreTriggers.PostgreSql.Converters.MemberAccess.DateTime;
+using Laraue.EfCoreTriggers.PostgreSql.Converters.MethodCalls.Guid.NewGuid;
+using Laraue.EfCoreTriggers.PostgreSql.Converters.NewExpression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -66,7 +67,6 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
             services.AddDefaultServices()
                 .AddScoped<SqlTypeMappings, PostgreSqlTypeMappings>()
                 .AddScoped<ITriggerVisitor, PostgreSqlTriggerVisitor>()
-                .AddExpressionVisitor<NewExpression, PostreSqlNewExpressionVisitor>()
                 .AddTriggerActionVisitor<TriggerUpsertAction, TriggerUpsertActionVisitor>()
                 .AddScoped<IInsertExpressionVisitor, InsertExpressionVisitor>()
                 .AddScoped<ISqlGenerator, SqlGenerator>()
@@ -87,8 +87,13 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
                 .AddMethodCallConverter<MathCosVisitor>()
                 .AddMethodCallConverter<MathExpVisitor>()
                 .AddMethodCallConverter<MathFloorVisitor>()
-                .AddMemberAccessConverter<UtcNowVisitor>()
-                .AddMemberAccessConverter<NowVisitor>();
+                .AddMethodCallConverter<NewGuidVisitor>()
+                .AddMemberAccessConverter<Converters.MemberAccess.DateTime.UtcNowVisitor>()
+                .AddMemberAccessConverter<Converters.MemberAccess.DateTime.NowVisitor>()
+                .AddMemberAccessConverter<Converters.MemberAccess.DateTimeOffset.UtcNowVisitor>()
+                .AddMemberAccessConverter<Converters.MemberAccess.DateTimeOffset.NowVisitor>()
+                .AddNewExpressionConverter<NewDateTimeExpressionVisitor>()
+                .AddNewExpressionConverter<NewDateTimeOffsetExpressionVisitor>();
         }
     }
 }
