@@ -196,7 +196,9 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
 
     public override string GenerateDeleteTriggerSql(string triggerName, IEntityType entityType)
     {
-        return $"DROP TRIGGER {triggerName};";
+        var tableSchemaPrefix = _sqlGenerator.GetSchemaPrefixSql(entityType.ClrType);
+        
+        return $"DROP TRIGGER {tableSchemaPrefix}{triggerName};";
     }
     
     private string GetSelectFromCursorSql(Type triggerEntityType, ArgumentType argumentType, MemberInfo[] members)

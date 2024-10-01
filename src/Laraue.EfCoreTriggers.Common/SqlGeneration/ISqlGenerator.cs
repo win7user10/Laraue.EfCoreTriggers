@@ -56,6 +56,13 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <param name="entity"></param>
         /// <returns></returns>
         string GetTableSql(Type entity);
+        
+        /// <summary>
+        /// Get schema prefix SQL, e.g. "dbo".
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        string? GetSchemaPrefixSql(Type entity);
     
         /// <summary>
         /// Get the function name with the entities schema.
