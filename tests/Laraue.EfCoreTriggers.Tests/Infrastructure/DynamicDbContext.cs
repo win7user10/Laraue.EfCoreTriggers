@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -33,11 +34,27 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 
         public override async ValueTask DisposeAsync()
         {
+            foreach (var command in GetMigrationDownCommands())
+            {
+                await Database.ExecuteSqlRawAsync(command.CommandText);
+            }
+            
             await Database.EnsureDeletedAsync();
             await base.DisposeAsync();
         }
 
         public override void Dispose()
+        {
+            foreach (var command in GetMigrationDownCommands())
+            {
+                Database.ExecuteSqlRaw(command.CommandText);
+            }
+            
+            Database.EnsureDeleted();
+            base.Dispose();
+        }
+
+        private IReadOnlyList<MigrationCommand> GetMigrationDownCommands()
         {
             var relationalModel = GetRelationalModel();
 
@@ -46,16 +63,7 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
                 .GetDifferences(relationalModel, null);
 
             var migrationsSqlGenerator = Database.GetService<IMigrationsSqlGenerator>();
-            var migrationCommands = migrationsSqlGenerator
-                .Generate(downMigrationDifferences);
-            
-            foreach (var command in migrationCommands)
-            {
-                Database.ExecuteSqlRaw(command.CommandText);
-            }
-            
-            Database.EnsureDeleted();
-            base.Dispose();
+            return migrationsSqlGenerator.Generate(downMigrationDifferences);
         }
 
         private IRelationalModel GetRelationalModel()
