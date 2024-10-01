@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 {
@@ -36,8 +39,32 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 
         public override void Dispose()
         {
+            var relationalModel = GetRelationalModel();
+
+            var migrationsModelDiffer = Database.GetService<IMigrationsModelDiffer>();
+            var downMigrationDifferences = migrationsModelDiffer
+                .GetDifferences(relationalModel, null);
+
+            var migrationsSqlGenerator = Database.GetService<IMigrationsSqlGenerator>();
+            var migrationCommands = migrationsSqlGenerator
+                .Generate(downMigrationDifferences);
+            
+            foreach (var command in migrationCommands)
+            {
+                Database.ExecuteSqlRaw(command.CommandText);
+            }
+            
             Database.EnsureDeleted();
             base.Dispose();
+        }
+
+        private IRelationalModel GetRelationalModel()
+        {
+#if NET5_0
+            return Model.GetRelationalModel();
+#else
+            return Database.GetService<IDesignTimeModel>().Model.GetRelationalModel();
+#endif
         }
     }
 }

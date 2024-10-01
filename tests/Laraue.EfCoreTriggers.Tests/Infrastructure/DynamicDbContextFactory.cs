@@ -11,6 +11,7 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 
             var context = new DynamicDbContext(contextOptions, setupDbContext);
 
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             return context;

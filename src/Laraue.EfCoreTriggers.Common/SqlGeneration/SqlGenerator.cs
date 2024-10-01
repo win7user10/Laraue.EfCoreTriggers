@@ -96,12 +96,19 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <inheritdoc />
         public string GetTableSql(Type entity)
         {
-            var schemaName = _adapter.GetTableSchemaName(entity);
+            var schemaPrefix = GetSchemaPrefixSql(entity);
             var tableSql = WrapWithDelimiters(_adapter.GetTableName(entity));
 
-            return string.IsNullOrWhiteSpace(schemaName)
-                ? tableSql
-                : $"{WrapWithDelimiters(schemaName)}.{tableSql}";
+            return $"{schemaPrefix}{tableSql}";
+        }
+
+        /// <inheritdoc />
+        public string? GetSchemaPrefixSql(Type entity)
+        {
+            var schemaName = _adapter.GetTableSchemaName(entity);
+            return string.IsNullOrEmpty(schemaName)
+                ? null
+                : $"{WrapWithDelimiters(schemaName)}.";
         }
 
         /// <inheritdoc />
@@ -115,7 +122,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         {
             return GetFunctionNameSql(_adapter.GetTableSchemaName(entity), name);
         }
-
+        
         private string GetFunctionNameSql(string? schemaName, string triggerName)
         {
             var functionName = WrapWithDelimiters(triggerName);
