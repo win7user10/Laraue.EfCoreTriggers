@@ -231,16 +231,16 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         }
 
         /// <summary>
-        /// Applies the passed trigger builder to the all types implementing <see cref="TBaseTriggerEntity"/>.
+        /// Applies the passed trigger builder to the all types implementing the <see cref="TBaseTriggerEntity"/>.
         /// </summary>
         /// <param name="modelBuilder"></param>
-        /// <param name="notification"></param>
-        /// <param name="filter"></param>
+        /// <param name="genericTriggerDefinition"></param>
+        /// <param name="inheritorsFilter"></param>
         /// <typeparam name="TBaseTriggerEntity"></typeparam>
         public static void AddGenericTrigger<TBaseTriggerEntity>(
             this ModelBuilder modelBuilder,
-            GenericTrigger<TBaseTriggerEntity> notification,
-            Func<Type[], Type[]>? filter = null)
+            GenericTrigger<TBaseTriggerEntity> genericTriggerDefinition,
+            Func<Type[], Type[]>? inheritorsFilter = null)
             where TBaseTriggerEntity : class
         {
             var inheritors = Assembly.GetAssembly(typeof(TBaseTriggerEntity))
@@ -248,9 +248,9 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
                 .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(TBaseTriggerEntity)))
                 .ToArray();
 
-            if (filter is not null)
+            if (inheritorsFilter is not null)
             {
-                inheritors = filter(inheritors);
+                inheritors = inheritorsFilter(inheritors);
             }
 
             foreach (var inheritor in inheritors)
@@ -265,10 +265,10 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
                 var generic = method.MakeGenericMethod(inheritor);
                 var typedBuilder = generic.Invoke(modelBuilder, null);
 
-                var applyTriggerMethod = notification.GetType()
+                var applyTriggerMethod = genericTriggerDefinition.GetType()
                     .GetMethod(nameof(GenericTrigger<TBaseTriggerEntity>.ApplyTrigger));
                 var applyTriggerGenericMethod = applyTriggerMethod!.MakeGenericMethod(inheritor);
-                applyTriggerGenericMethod.Invoke(notification, [typedBuilder]);
+                applyTriggerGenericMethod.Invoke(genericTriggerDefinition, [typedBuilder]);
             }
         }
     }
