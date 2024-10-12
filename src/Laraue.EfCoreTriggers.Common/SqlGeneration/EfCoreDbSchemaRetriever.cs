@@ -46,7 +46,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             
             if (entityType == null)
             {
-                throw new InvalidOperationException($"DbSet<{type}> should be added to the DbContext");
+                throw new InvalidOperationException($"DbSet<{type.FullName}> should be added to the DbContext");
             }
 
             return entityType;

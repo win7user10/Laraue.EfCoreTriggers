@@ -245,3 +245,33 @@ You can change the standard library prefix for trigger using the next static var
 ```cs
 Laraue.EfCoreTriggers.Common.Constants.AnnotationKey = "MY_PREFIX"
 ```
+
+### Generic triggers
+
+Define the generic trigger class inherits `GenericTrigger<BaseTriggerClass>`
+```cs
+// Trigger for all classes inherits class Notification
+private sealed class NotificationsTriggers : GenericTrigger<Notification>
+{
+    public override void ApplyTrigger<TImplEntity>(EntityTypeBuilder<TImplEntity> modelBuilder)
+    {
+        modelBuilder
+            .AfterInsert(x => x
+                .Action(y => y
+                    .Insert<NotificationLog>(inserted => new NotificationLog
+                    {
+                        Text = inserted.New.Text,
+                        NotificationType = typeof(TImplEntity).ToString(),
+                        OriginalId = inserted.New.Id
+                    })));
+    }
+}
+```
+
+Registering generic trigger
+```csharp
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.AddGenericTrigger(new NotificationsTriggers());
+}
+```
