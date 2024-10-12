@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
 using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
@@ -210,7 +212,79 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             
             configureTrigger.Invoke(trigger);
             
+            return entityTypeBuilder.AddTrigger(trigger);
+        }
+        
+        /// <summary>
+        /// Adds configured trigger definition to the <see cref="EntityTypeBuilder{T}"/>.
+        /// </summary>
+        /// <param name="entityTypeBuilder"></param>
+        /// <param name="trigger"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        private static EntityTypeBuilder<T> AddTrigger<T>(
+            this EntityTypeBuilder<T> entityTypeBuilder,
+            ITrigger trigger)
+            where T : class
+        {
             return entityTypeBuilder.AddTriggerAnnotation(trigger);
         }
+
+        /// <summary>
+        /// Applies the passed trigger builder to the all types implementing <see cref="TBaseTriggerEntity"/>.
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        /// <param name="notification"></param>
+        /// <param name="filter"></param>
+        /// <typeparam name="TBaseTriggerEntity"></typeparam>
+        public static void AddGenericTrigger<TBaseTriggerEntity>(
+            this ModelBuilder modelBuilder,
+            GenericTrigger<TBaseTriggerEntity> notification,
+            Func<Type[], Type[]>? filter = null)
+            where TBaseTriggerEntity : class
+        {
+            var inheritors = Assembly.GetAssembly(typeof(TBaseTriggerEntity))
+                .GetTypes()
+                .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(TBaseTriggerEntity)))
+                .ToArray();
+
+            if (filter is not null)
+            {
+                inheritors = filter(inheritors);
+            }
+
+            foreach (var inheritor in inheritors)
+            {
+                var method = typeof(ModelBuilder)
+                    .GetMethods()
+                    .Single(m => m.Name == nameof(ModelBuilder.Entity)
+                                 && m.IsGenericMethod
+                                 && m.GetGenericArguments().Length == 1
+                                 && m.GetParameters().Length == 0);
+                
+                var generic = method.MakeGenericMethod(inheritor);
+                var typedBuilder = generic.Invoke(modelBuilder, null);
+
+                var applyTriggerMethod = notification.GetType()
+                    .GetMethod(nameof(GenericTrigger<TBaseTriggerEntity>.ApplyTrigger));
+                var applyTriggerGenericMethod = applyTriggerMethod!.MakeGenericMethod(inheritor);
+                applyTriggerGenericMethod.Invoke(notification, [typedBuilder]);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Describe the trigger that can be generic.
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    public abstract class GenericTrigger<TEntity>
+    {
+        /// <summary>
+        /// The trigger definition.
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        /// <typeparam name="TImplEntity"></typeparam>
+        public abstract void ApplyTrigger<TImplEntity>(EntityTypeBuilder<TImplEntity> modelBuilder)
+            where TImplEntity : class, TEntity;
     }
 }

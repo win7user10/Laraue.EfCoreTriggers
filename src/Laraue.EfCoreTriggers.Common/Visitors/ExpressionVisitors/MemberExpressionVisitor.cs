@@ -16,11 +16,16 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
     {
         private readonly ISqlGenerator _generator;
         private readonly IEnumerable<IMemberAccessVisitor> _staticMembersVisitors;
+        private readonly IExpressionVisitorFactory _expressionVisitorFactory;
     
         /// <inheritdoc />
-        public MemberExpressionVisitor(ISqlGenerator generator, IEnumerable<IMemberAccessVisitor> staticMembersVisitors)
+        public MemberExpressionVisitor(
+            ISqlGenerator generator,
+            IEnumerable<IMemberAccessVisitor> staticMembersVisitors,
+            IExpressionVisitorFactory expressionVisitorFactory)
         {
             _generator = generator;
+            _expressionVisitorFactory = expressionVisitorFactory;
             _staticMembersVisitors = staticMembersVisitors.Reverse().ToArray();
         }
 
@@ -50,6 +55,12 @@ namespace Laraue.EfCoreTriggers.Common.Visitors.ExpressionVisitors
                 // Column
                 case MemberExpression nestedMemberExpression:
                     return GetColumnSql(nestedMemberExpression, memberExpression.Member, visitedMembers);
+                
+                // Constant value
+                case ConstantExpression constantExpression when memberExpression.Member is FieldInfo fieldInfo:
+                    var container = constantExpression.Value;
+                    var value = fieldInfo.GetValue(container);
+                    return _expressionVisitorFactory.Visit(Expression.Constant(value), visitedMembers);
             }
 
             // Table
