@@ -34,20 +34,20 @@ jobs:
         with:
           dotnet-version: '6.x.x'
       
-      - name: Setup .NET9 environment
+      - name: Setup .NET8 environment
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.x.x'
           
           
-      - name: Setup .NET8 environment
+      - name: Setup .NET9 environment
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '9.x.x'
           
       - name: Build project
         run: |
-          for p in $(find ./src -name *.csproj -not -name *MySql.csproj); do dotnet build $p --framework ${{env.PROJECT_TARGET}} --configuration Release; done
+          for p in $(find ./src -name *.csproj -not -name *MySql*); do dotnet build $p --framework ${{env.PROJECT_TARGET}} --configuration Release; done
 
       - name: Generate a NuGet package
         run: dotnet pack -p:TargetFrameworks=${{env.PROJECT_TARGET}} -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o .
