@@ -51,7 +51,7 @@ jobs:
 
       - name: Generate a NuGet package
         run: |
-          for p in $(find ./src -name *.csproj -not -name *MySql*); do dotnet pack $p -p:TargetFrameworks=${{env.PROJECT_TARGET}} -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o; done
+          for p in $(find ./src -name *.csproj -not -name *MySql*); do dotnet pack $p -p:TargetFrameworks=${{env.PROJECT_TARGET}} -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o .; done
 
       - name: Push to GitHub package registry
         run: dotnet nuget push "*.nupkg" -k ${{secrets.NUGETORGTOKEN}} -s https://api.nuget.org/v3/index.json --skip-duplicate 
