@@ -23,7 +23,19 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         /// <param name="updateAdapterFactory"></param>
         /// <param name="triggerModelDiffer"></param>
         /// <param name="commandBatchPreparerDependencies"></param>
-#if NET6_0_OR_GREATER
+#if NET9_0_OR_GREATER
+        public MigrationsModelDiffer(
+            IRelationalTypeMappingSource typeMappingSource,
+            IMigrationsAnnotationProvider migrationsAnnotationProvider,
+            IRelationalAnnotationProvider relationalAnnotationProvider,
+            IRowIdentityMapFactory rowIdentityMapFactory,
+            CommandBatchPreparerDependencies commandBatchPreparerDependencies,
+            ITriggerModelDiffer triggerModelDiffer) 
+            : base(typeMappingSource, migrationsAnnotationProvider, relationalAnnotationProvider, rowIdentityMapFactory, commandBatchPreparerDependencies)
+        {
+            _triggerModelDiffer = triggerModelDiffer;
+        }
+#elif NET6_0_OR_GREATER
         public MigrationsModelDiffer(
             IRelationalTypeMappingSource typeMappingSource,
             IMigrationsAnnotationProvider migrationsAnnotationProvider,
