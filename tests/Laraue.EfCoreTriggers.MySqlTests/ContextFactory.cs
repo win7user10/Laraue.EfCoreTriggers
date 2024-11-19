@@ -28,7 +28,6 @@ public class ContextOptionsFactory<TContext> : IContextOptionsFactory<TContext> 
             .UseMySql("server=localhost;user=root;password=mysql;database=efcoretriggers;", new MySqlServerVersion(new Version(8, 0, 22)),
                 x => x
                     .MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
-            .UseSnakeCaseNamingConvention()
             .UseMySqlTriggers()
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors()

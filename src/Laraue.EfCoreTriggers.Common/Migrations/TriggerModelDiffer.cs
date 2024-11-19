@@ -164,7 +164,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         {
             foreach (var entityType in model?.GetEntityTypes() ?? Enumerable.Empty<IEntityType>())
             {
-                var annotations = (SortedDictionary<string, Annotation>?) AnnotationsField.GetValue(entityType);
+                var annotations = (IDictionary<string, Annotation>?) AnnotationsField.GetValue(entityType);
 
                 if (annotations is null)
                 {

@@ -28,7 +28,6 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
                 {
                     x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName);
                 })
-                .UseSnakeCaseNamingConvention()
                 .UseSqlLiteTriggers()
                 .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
                 .Options;
