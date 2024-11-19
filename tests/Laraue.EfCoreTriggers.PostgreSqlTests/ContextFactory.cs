@@ -18,7 +18,6 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests
             return new DbContextOptionsBuilder<TContext>()
                 .UseNpgsql("User ID=postgres;Password=postgres;Host=localhost;Port=5432;Database=efcoretriggers;",
                     x => x.MigrationsAssembly(typeof(TContext).Assembly.FullName))
-                .UseSnakeCaseNamingConvention()
                 .UsePostgreSqlTriggers()
                 .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
                 .Options;

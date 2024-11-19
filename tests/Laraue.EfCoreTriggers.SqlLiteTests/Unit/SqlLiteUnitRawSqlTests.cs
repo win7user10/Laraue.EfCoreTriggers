@@ -16,10 +16,10 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests.Unit
         {
         }
 
-        protected override string ExceptedInsertTriggerSqlForMemberArgs => "PERFORM func(NEW.\"boolean_value\", NEW.\"double_value\", \"source_entities\")";
-        protected override string ExceptedInsertTriggerSqlForComputedArgs => "PERFORM func(NEW.\"double_value\" + 10)";
+        protected override string ExceptedInsertTriggerSqlForMemberArgs => "PERFORM func(NEW.\"BooleanValue\", NEW.\"DoubleValue\", \"SourceEntities\")";
+        protected override string ExceptedInsertTriggerSqlForComputedArgs => "PERFORM func(NEW.\"DoubleValue\" + 10)";
         protected override string ExceptedInsertTriggerSqlWhenNoArgs => "PERFORM func()";
-        protected override string ExceptedUpdateTriggerSqlForMemberArgs => "PERFORM func(OLD.\"decimal_value\", NEW.\"decimal_value\")";
-        protected override string ExceptedDeleteTriggerSqlForMemberArgs => "PERFORM func(OLD.\"decimal_value\", OLD.\"double_value\")";
+        protected override string ExceptedUpdateTriggerSqlForMemberArgs => "PERFORM func(OLD.\"DecimalValue\", NEW.\"DecimalValue\")";
+        protected override string ExceptedDeleteTriggerSqlForMemberArgs => "PERFORM func(OLD.\"DecimalValue\", OLD.\"DoubleValue\")";
     }
 }

@@ -14,8 +14,8 @@ public class SqlLiteUnitDateTimeFunctionsTests : UnitDateTimeFunctionsTests
     }
 
     protected override string ExceptedDateTimeUtcNowSql
-        => "INSERT INTO \"destination_entities\" (\"date_time_value\") SELECT DATETIME('now');";
+        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT DATETIME('now');";
     
     protected override string ExceptedDateTimeNowSql
-        => "INSERT INTO \"destination_entities\" (\"date_time_value\") SELECT DATETIME('now', 'localtime');";
+        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT DATETIME('now', 'localtime');";
 }

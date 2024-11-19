@@ -14,8 +14,8 @@ public class SqlServerUnitDateTimeFunctionsTests : UnitDateTimeFunctionsTests
     }
 
     protected override string ExceptedDateTimeUtcNowSql
-        => "INSERT INTO \"destination_entities\" (\"date_time_value\") SELECT SYSUTCDATETIME();";
+        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT SYSUTCDATETIME();";
     
     protected override string ExceptedDateTimeNowSql
-        => "INSERT INTO \"destination_entities\" (\"date_time_value\") SELECT SYSDATETIME();";
+        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT SYSDATETIME();";
 }

@@ -16,22 +16,22 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
         {
         }
 
-        protected override string ExceptedAbsSql => "INSERT INTO \"destination_entities\" (\"decimal_value\") SELECT ABS(NEW.\"decimal_value\");";
+        protected override string ExceptedAbsSql => "INSERT INTO \"DestinationEntities\" (\"DecimalValue\") SELECT ABS(NEW.\"DecimalValue\");";
 
-        protected override string ExceptedAcosSql => "INSERT INTO \"destination_entities\" (\"double_value\") SELECT ACOS(NEW.\"double_value\");";
+        protected override string ExceptedAcosSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT ACOS(NEW.\"DoubleValue\");";
 
-        protected override string ExceptedAsinSql => "INSERT INTO \"destination_entities\" (\"double_value\") SELECT ASIN(NEW.\"double_value\");";
+        protected override string ExceptedAsinSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT ASIN(NEW.\"DoubleValue\");";
 
-        protected override string ExceptedAtanSql => "INSERT INTO \"destination_entities\" (\"double_value\") SELECT ATAN(NEW.\"double_value\");";
+        protected override string ExceptedAtanSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT ATAN(NEW.\"DoubleValue\");";
 
-        protected override string ExceptedAtan2Sql => "INSERT INTO \"destination_entities\" (\"double_value\") SELECT ATAN2(NEW.\"double_value\", NEW.\"double_value\");";
+        protected override string ExceptedAtan2Sql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT ATAN2(NEW.\"DoubleValue\", NEW.\"DoubleValue\");";
 
-        protected override string ExceptedCeilingSql => "INSERT INTO \"destination_entities\" (\"double_value\") SELECT CEILING(NEW.\"double_value\");";
+        protected override string ExceptedCeilingSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT CEILING(NEW.\"DoubleValue\");";
 
-        protected override string ExceptedCosSql => "INSERT INTO \"destination_entities\" (\"double_value\") SELECT COS(NEW.\"double_value\");";
+        protected override string ExceptedCosSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT COS(NEW.\"DoubleValue\");";
 
-        protected override string ExceptedExpSql => "INSERT INTO \"destination_entities\" (\"double_value\") SELECT EXP(NEW.\"double_value\");";
+        protected override string ExceptedExpSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT EXP(NEW.\"DoubleValue\");";
 
-        protected override string ExceptedFloorSql => "INSERT INTO \"destination_entities\" (\"double_value\") SELECT FLOOR(NEW.\"double_value\");"; 
+        protected override string ExceptedFloorSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT FLOOR(NEW.\"DoubleValue\");"; 
     }
 }

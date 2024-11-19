@@ -14,8 +14,8 @@ public class PostgreSqlUnitDateTimeFunctionsTests : UnitDateTimeFunctionsTests
     }
 
     protected override string ExceptedDateTimeUtcNowSql
-        => "INSERT INTO \"destination_entities\" (\"date_time_value\") SELECT CURRENT_TIMESTAMP;";
+        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT CURRENT_TIMESTAMP;";
     
     protected override string ExceptedDateTimeNowSql
-        => "INSERT INTO \"destination_entities\" (\"date_time_value\") SELECT NOW();";
+        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT NOW();";
 }

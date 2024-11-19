@@ -14,8 +14,8 @@ public class MySqlUnitDateTimeFunctionsTests : UnitDateTimeFunctionsTests
     }
 
     protected override string ExceptedDateTimeUtcNowSql
-        => "INSERT INTO `destination_entities` (`date_time_value`) SELECT UTC_TIMESTAMP();";
+        => "INSERT INTO `DestinationEntities` (`DateTimeValue`) SELECT UTC_TIMESTAMP();";
     
     protected override string ExceptedDateTimeNowSql
-        => "INSERT INTO `destination_entities` (`date_time_value`) SELECT LOCALTIME();";
+        => "INSERT INTO `DestinationEntities` (`DateTimeValue`) SELECT LOCALTIME();";
 }

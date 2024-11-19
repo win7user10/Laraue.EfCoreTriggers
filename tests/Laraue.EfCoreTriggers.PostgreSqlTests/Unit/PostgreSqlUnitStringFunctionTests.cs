@@ -16,20 +16,20 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
         {
         }
 
-        protected override string ExceptedConcatSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT CONCAT(NEW.\"string_field\", 'abc');";
+        protected override string ExceptedConcatSql => "INSERT INTO \"DestinationEntities\" (\"StringField\") SELECT CONCAT(NEW.\"StringField\", 'abc');";
 
-        protected override string ExceptedStringLowerSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT LOWER(NEW.\"string_field\");";
+        protected override string ExceptedStringLowerSql => "INSERT INTO \"DestinationEntities\" (\"StringField\") SELECT LOWER(NEW.\"StringField\");";
 
-        protected override string ExceptedStringUpperSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT UPPER(NEW.\"string_field\");";
+        protected override string ExceptedStringUpperSql => "INSERT INTO \"DestinationEntities\" (\"StringField\") SELECT UPPER(NEW.\"StringField\");";
 
-        protected override string ExceptedStringTrimSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT BTRIM(NEW.\"string_field\");";
+        protected override string ExceptedStringTrimSql => "INSERT INTO \"DestinationEntities\" (\"StringField\") SELECT BTRIM(NEW.\"StringField\");";
 
-        protected override string ExceptedContainsSql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT STRPOS(NEW.\"string_field\", 'abc') > 0;";
+        protected override string ExceptedContainsSql => "INSERT INTO \"DestinationEntities\" (\"BooleanValue\") SELECT STRPOS(NEW.\"StringField\", 'abc') > 0;";
 
-        protected override string ExceptedEndsWithSql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT NEW.\"string_field\" LIKE ('%' || 'abc');";
+        protected override string ExceptedEndsWithSql => "INSERT INTO \"DestinationEntities\" (\"BooleanValue\") SELECT NEW.\"StringField\" LIKE ('%' || 'abc');";
 
-        protected override string ExceptedIsNullOrEmptySql => "INSERT INTO \"destination_entities\" (\"boolean_value\") SELECT NEW.\"string_field\" IS NULL OR NEW.\"string_field\" = '';";
+        protected override string ExceptedIsNullOrEmptySql => "INSERT INTO \"DestinationEntities\" (\"BooleanValue\") SELECT NEW.\"StringField\" IS NULL OR NEW.\"StringField\" = '';";
 
-        protected override string ExceptedCoalesceStringSql => "INSERT INTO \"destination_entities\" (\"string_field\") SELECT COALESCE(NEW.\"string_field\", 'John');";
+        protected override string ExceptedCoalesceStringSql => "INSERT INTO \"DestinationEntities\" (\"StringField\") SELECT COALESCE(NEW.\"StringField\", 'John');";
     }
 }

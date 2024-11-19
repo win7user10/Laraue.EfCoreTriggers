@@ -30,7 +30,6 @@ namespace Laraue.EfCoreTriggers.SqlServerTests
             return new DbContextOptionsBuilder<TContext>()
                 .UseSqlServer("Data Source=(LocalDb)\\MSSQLLocalDB;Database=EfCoreTriggers;Integrated Security=SSPI;Connection Timeout=5",
                     x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
-                .UseSnakeCaseNamingConvention()
                 .UseSqlServerTriggers()
                 .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
                 .Options;

@@ -12,7 +12,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Base;
 public abstract class BaseEnumerableFunctionsTests
 {
     /// <summary>
-    /// SELECT (SELECT COUNT(*) FROM related_entities WHERE source_entities.id = NEW.SourceEntityId), NEW.boolean_value
+    /// SELECT (SELECT COUNT(*) FROM related_entities WHERE SourceEntities.id = NEW.SourceEntityId), NEW.BooleanValue
     /// </summary>
     protected readonly Expression<Func<OldAndNewTableRefs<SourceEntity>, DestinationEntity>> CountRelatedExpression = refs => new DestinationEntity
     {
@@ -24,7 +24,7 @@ public abstract class BaseEnumerableFunctionsTests
     public abstract void CountRelatedSql();
     
     /// <summary>
-    /// IntValue = SELECT count(*) FROM destination_entities WHERE destination_entities.int_value > 1
+    /// IntValue = SELECT count(*) FROM DestinationEntities WHERE DestinationEntities.IntValue > 1
     /// </summary>
     protected readonly Expression<Func<OldAndNewTableRefs<SourceEntity>, DestinationEntity>> CountRelatedWithPredicateExpression = (tableRefs) => new DestinationEntity
     {
@@ -36,8 +36,8 @@ public abstract class BaseEnumerableFunctionsTests
     public abstract void CountRelatedWithPredicateSql();
     
     /// <summary>
-    /// IntValue = SELECT count(*) FROM destination_entities WHERE destination_entities.int_value
-    /// more than 1 AND destination_entities.int_value less than 3
+    /// IntValue = SELECT count(*) FROM DestinationEntities WHERE DestinationEntities.IntValue
+    /// more than 1 AND DestinationEntities.IntValue less than 3
     /// </summary>
     protected readonly Expression<Func<OldAndNewTableRefs<SourceEntity>, DestinationEntity>> CountRelatedWithWherePredicateExpression = tableRefs
         => new DestinationEntity
