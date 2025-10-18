@@ -9,10 +9,15 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</PackageProjectUrl>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>Latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />

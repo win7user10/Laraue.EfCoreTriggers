@@ -9,12 +9,15 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</PackageProjectUrl>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;SqlServer</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>Latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Laraue.EfCoreTriggers.Common\Laraue.EfCoreTriggers.Common.csproj" />
+
+    <None Include="../../LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
