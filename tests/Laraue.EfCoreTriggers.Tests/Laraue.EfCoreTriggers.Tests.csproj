@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5.0;net6.0;net8.0;net9.0</TargetFrameworks>
-    <IsPackable>false</IsPackable>
-    <LangVersion>Latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +23,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.17" />
     <PackageReference Include="linq2db.EntityFrameworkCore" Version="5.9.0" />
   </ItemGroup>
-  
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0" />
     <PackageReference Include="linq2db.EntityFrameworkCore" Version="6.10.0" />

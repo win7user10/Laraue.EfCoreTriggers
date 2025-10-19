@@ -3,14 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net6.0;net8.0;net9.0</TargetFrameworks>
     <Description>Generating native SqlServer triggers through migrations using EFCore entity builder.</Description>
-    <RepositoryUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <Authors>Belyanskiy Ilya</Authors>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</PackageProjectUrl>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;SqlServer</PackageTags>
-    <LangVersion>Latest</LangVersion>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

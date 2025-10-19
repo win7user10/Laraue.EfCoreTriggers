@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>Latest</LangVersion>
+    <Copyright>Ilya Belyanskiy 2020</Copyright>
+    <Authors>Belyanskiy Ilya</Authors>
+    <PackageProjectUrl>https://github.com/win7user10/Laraue.EfCoreTriggers</PackageProjectUrl>
+    <!-- Designate all projects as non-package projects by default -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+</Project>
