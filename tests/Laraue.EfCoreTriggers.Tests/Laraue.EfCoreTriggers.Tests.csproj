@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;net6.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net5.0;net6.0;net8.0;net9.0;net10.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +39,11 @@
     <PackageReference Include="linq2db.EntityFrameworkCore" Version="9.0.0" />
   </ItemGroup>
 
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
+        <PackageReference Include="linq2db.EntityFrameworkCore" Version="9.0.0" />
+    </ItemGroup>
+    
   <ItemGroup>
     <ProjectReference Include="..\..\src\Laraue.EfCoreTriggers.MySql\Laraue.EfCoreTriggers.MySql.csproj" />
     <ProjectReference Include="..\..\src\Laraue.EfCoreTriggers.Common\Laraue.EfCoreTriggers.Common.csproj" />
