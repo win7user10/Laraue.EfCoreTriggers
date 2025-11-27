@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using Laraue.Triggers.Core;
+using Laraue.Triggers.Core.SqlGeneration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -66,11 +68,11 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <returns></returns>
         public virtual string? GetTableSchemaName(Type entity)
         {
-            return GetTableSchemaName(GetEntityType(entity));
+            return GetTableSchemaName(new EfCoreTriggerEntityType(GetEntityType(entity)));
         }
 
         /// <inheritdoc />
-        public string? GetTableSchemaName(IEntityType? entityType)
+        public string? GetTableSchemaName(ITriggerEntityType? entityType)
         {
             return entityType?.GetSchema();
         }

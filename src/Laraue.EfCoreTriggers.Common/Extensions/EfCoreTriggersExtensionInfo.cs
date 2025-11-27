@@ -17,15 +17,13 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
         }
     
         /// <inheritdoc />
-#if NET6_0_OR_GREATER
-    public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
-    {
-        return string.Equals(LogFragment, other.LogFragment, StringComparison.Ordinal);
-    }
-    public override int GetServiceProviderHashCode() => 0;
-#else
-        public override long GetServiceProviderHashCode() => 0;
-#endif
+        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
+        {
+            return string.Equals(LogFragment, other.LogFragment, StringComparison.Ordinal);
+        }
+        
+        /// <inheritdoc />
+        public override int GetServiceProviderHashCode() => 0;
 
         /// <inheritdoc />
         public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)

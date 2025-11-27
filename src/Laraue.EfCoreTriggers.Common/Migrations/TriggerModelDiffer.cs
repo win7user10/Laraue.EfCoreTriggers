@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
+using Laraue.Triggers.Core;
+using Laraue.Triggers.Core.TriggerBuilders.Abstractions;
+using Laraue.Triggers.Core.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using ITrigger = Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions.ITrigger;
+using ITrigger = Laraue.Triggers.Core.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.Common.Migrations
 {
@@ -52,7 +53,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
             {
                 var deletedEntityType = sourceModel?.FindEntityType(deletedTypeName);
 
-                foreach (var annotation in deletedEntityType?.GetTriggerAnnotations() ?? Array.Empty<IAnnotation>())
+                foreach (var annotation in deletedEntityType?.GetTriggerAnnotations() ?? [])
                 {
                     _triggerVisitor.AddDeleteTriggerSqlMigration(deleteTriggerOperations, annotation, deletedEntityType!);
                 }
@@ -61,7 +62,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
             // Add all triggers to created entities.
             foreach (var newTypeName in newEntityTypeNames.Except(commonEntityTypeNames))
             {
-                foreach (var annotation in targetModel?.FindEntityType(newTypeName)?.GetTriggerAnnotations() ?? Array.Empty<IAnnotation>())
+                foreach (var annotation in targetModel?.FindEntityType(newTypeName)?.GetTriggerAnnotations() ?? [])
                 {
                     createTriggerOperations.AddCreateTriggerSqlMigration(annotation);
                 }
@@ -150,19 +151,19 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         private static readonly FieldInfo AnnotationsField = typeof(AnnotatableBase)
             .GetField("_annotations", BindingFlags.Instance | BindingFlags.NonPublic)!;
 #else
-        private static readonly FieldInfo AnnotationsField = typeof(Annotatable)
+        private static readonly FieldInfo AnnotationsField = typeof(Annotatable) // reflection
             .GetField("_annotations", BindingFlags.Instance | BindingFlags.NonPublic)!;
 #endif
         
         
         /// <summary>
-        /// Convert all not translated annotations of <see cref="Microsoft.EntityFrameworkCore.Metadata.ITrigger"/> type to SQL.
+        /// Convert all not translated annotations of <see cref="ITrigger"/> type to SQL.
         /// </summary>
         /// <param name="triggerVisitor"></param>
         /// <param name="model"></param>
         public static void ConvertTriggerAnnotationsToSql(this ITriggerVisitor triggerVisitor, IModel? model)
         {
-            foreach (var entityType in model?.GetEntityTypes() ?? Enumerable.Empty<IEntityType>())
+            foreach (var entityType in model?.GetEntityTypes() ?? [])
             {
                 var annotations = (IDictionary<string, Annotation>?) AnnotationsField.GetValue(entityType);
 
@@ -204,7 +205,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
                 .GetEntityTypes()
                 .Select(x => x.Name)
                 .ToArray()
-                   ?? Array.Empty<string>();
+                   ?? [];
         }
         
         /// <summary>
@@ -216,7 +217,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         {
             return entityType?.GetAnnotations()
                 .Where(x => x.Name.StartsWith(Constants.AnnotationKey))
-                    ?? Enumerable.Empty<IAnnotation>();
+                    ?? [];
         }
 
         /// <summary>
@@ -254,7 +255,7 @@ namespace Laraue.EfCoreTriggers.Common.Migrations
         {
             list.Add(new SqlOperation
             {
-                Sql = triggerVisitor.GenerateDeleteTriggerSql(annotation.Name, entityType),
+                Sql = triggerVisitor.GenerateDeleteTriggerSql(annotation.Name, new EfCoreTriggerEntityType(entityType)),
             });
         }
     }

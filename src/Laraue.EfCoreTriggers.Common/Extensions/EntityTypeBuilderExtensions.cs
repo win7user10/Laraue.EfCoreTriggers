@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
+using Laraue.EfCoreTriggers.Common.Migrations;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.Triggers.Core.SqlGeneration;
+using Laraue.Triggers.Core.TriggerBuilders;
+using Laraue.Triggers.Core.TriggerBuilders.Abstractions;
+using Laraue.Triggers.Core.TriggerBuilders.TableRefs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,6 +17,9 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
     /// </summary>
     public static class EntityTypeBuilderExtensions
     {
+        private static readonly MethodInfo? HasTriggerMethodInfo = typeof(TableBuilder)
+            .GetMethod("HasTrigger", BindingFlags.Instance | BindingFlags.Public);
+        
         /// <summary>
         /// Generate SQL for configured via <see cref="EntityTypeBuilder{T}"/> <see cref="ITrigger"/>
         /// and append it as annotation to the entity.
@@ -30,9 +36,14 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(entityTypeName)
                 ?? throw new InvalidOperationException($"Entity {entityTypeName} metadata was not found");
 
-#if NET6_0_OR_GREATER
-            entityTypeBuilder.ToTable(tb => tb.HasTrigger(configuredTrigger.Name));
-#endif
+            if (HasTriggerMethodInfo is not null)
+            {
+                entityTypeBuilder.ToTable(tb =>
+                {
+                    HasTriggerMethodInfo.Invoke(tb, [configuredTrigger.Name]);
+                });
+            }
+            
             entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger);
             
             return entityTypeBuilder;
@@ -243,9 +254,9 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             Func<Type[], Type[]>? inheritorsFilter = null)
             where TBaseTriggerEntity : class
         {
-            var inheritors = Assembly.GetAssembly(typeof(TBaseTriggerEntity))
+            var inheritors = Assembly.GetAssembly(typeof(TBaseTriggerEntity))!
                 .GetTypes()
-                .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(TBaseTriggerEntity)))
+                .Where(myType => myType is { IsClass: true, IsAbstract: false } && myType.IsSubclassOf(typeof(TBaseTriggerEntity)))
                 .ToArray();
 
             if (inheritorsFilter is not null)

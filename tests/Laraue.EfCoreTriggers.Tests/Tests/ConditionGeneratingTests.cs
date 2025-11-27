@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
-using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
+using Laraue.Triggers.Core.SqlGeneration;
+using Laraue.Triggers.Core.TriggerBuilders;
+using Laraue.Triggers.Core.TriggerBuilders.Actions;
+using Laraue.Triggers.Core.TriggerBuilders.TableRefs;
+using Laraue.Triggers.Core.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Categories;
@@ -16,7 +16,7 @@ using Xunit.Categories;
 namespace Laraue.EfCoreTriggers.Tests.Tests
 {
     [UnitTest]
-	public class ConditionGeneratingTests
+    public class ConditionGeneratingTests
     {
         private readonly ITriggerActionVisitorFactory _provider;
 
