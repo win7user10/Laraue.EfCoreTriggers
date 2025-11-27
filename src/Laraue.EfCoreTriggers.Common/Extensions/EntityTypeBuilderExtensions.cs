@@ -16,9 +16,6 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
     /// </summary>
     public static class EntityTypeBuilderExtensions
     {
-        private static readonly MethodInfo? HasTriggerMethodInfo = typeof(TableBuilder)
-            .GetMethod("HasTrigger", BindingFlags.Instance | BindingFlags.Public);
-        
         /// <summary>
         /// Generate SQL for configured via <see cref="EntityTypeBuilder{T}"/> <see cref="ITrigger"/>
         /// and append it as annotation to the entity.
@@ -35,14 +32,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(entityTypeName)
                 ?? throw new InvalidOperationException($"Entity {entityTypeName} metadata was not found");
 
-            if (HasTriggerMethodInfo is not null)
-            {
-                entityTypeBuilder.ToTable(tb =>
-                {
-                    HasTriggerMethodInfo.Invoke(tb, [configuredTrigger.Name]);
-                });
-            }
-            
+            entityTypeBuilder.ToTable(tb => tb.HasTrigger(configuredTrigger.Name));
             entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger);
             
             return entityTypeBuilder;
