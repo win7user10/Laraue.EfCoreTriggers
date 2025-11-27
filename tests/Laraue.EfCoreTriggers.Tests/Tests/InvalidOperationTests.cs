@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
-using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Entities;
 using Laraue.EfCoreTriggers.Tests.Enums;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
+using Laraue.Linq2Triggers.Core.SqlGeneration;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.Actions;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.TableRefs;
+using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Categories;

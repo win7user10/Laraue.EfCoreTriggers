@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net6.0;net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFramework>net9.0</TargetFramework>
     <Description>Generating native MySql triggers through migrations using EFCore entity builder.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;MySql</PackageTags>
     <Nullable>enable</Nullable>
+    <Version>10.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Laraue.EfCoreTriggers.Common\Laraue.EfCoreTriggers.Common.csproj" />
+    <ProjectReference Include="..\Laraue.Linq2Triggers.Providers.MySql\Laraue.Linq2Triggers.Providers.MySql.csproj" />
   </ItemGroup>
 
 </Project>

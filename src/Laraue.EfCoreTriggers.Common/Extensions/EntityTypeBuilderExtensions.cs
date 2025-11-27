@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Abstractions;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.TableRefs;
+using Laraue.EfCoreTriggers.Common.Migrations;
+using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.Linq2Triggers.Core.TriggerBuilders;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.Abstractions;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.TableRefs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -30,9 +32,7 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(entityTypeName)
                 ?? throw new InvalidOperationException($"Entity {entityTypeName} metadata was not found");
 
-#if NET6_0_OR_GREATER
             entityTypeBuilder.ToTable(tb => tb.HasTrigger(configuredTrigger.Name));
-#endif
             entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger);
             
             return entityTypeBuilder;
@@ -243,9 +243,9 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             Func<Type[], Type[]>? inheritorsFilter = null)
             where TBaseTriggerEntity : class
         {
-            var inheritors = Assembly.GetAssembly(typeof(TBaseTriggerEntity))
+            var inheritors = Assembly.GetAssembly(typeof(TBaseTriggerEntity))!
                 .GetTypes()
-                .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(TBaseTriggerEntity)))
+                .Where(myType => myType is { IsClass: true, IsAbstract: false } && myType.IsSubclassOf(typeof(TBaseTriggerEntity)))
                 .ToArray();
 
             if (inheritorsFilter is not null)

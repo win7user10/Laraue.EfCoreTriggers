@@ -1,14 +1,15 @@
 # Entity Framework Core Triggers
 
-EfCoreTriggers is the library to write native SQL triggers using EFCore model builder. Triggers are automatically translating into sql and adding to migrations.
+EfCoreTriggers is the library to write native SQL triggers using EFCore model builder. Triggers are automatically translating into SQL and adding to migrations.
 
 [![latest version](https://img.shields.io/nuget/v/Laraue.EfCoreTriggers.Common)](https://www.nuget.org/packages/Laraue.EfCoreTriggers.Common)
 [![latest version](https://img.shields.io/nuget/dt/Laraue.EfCoreTriggers.Common)](https://www.nuget.org/packages/Laraue.EfCoreTriggers.Common)
 
 #### Versions compatability
-| Package version | .NET version     | EF Core version |
+| Package version | Min .NET version | EF Core version |
 |-----------------|------------------|-----------------|
-| 9.x.x           | NET 9.0          | 9               |
+| 10.x.x          | NET 10.0         | 10              |
+| 9.x.x           | NET 8.0          | 9               |
 | 8.x.x           | NET 8.0          | 8               |
 | 7.x.x           | NET 6.0          | 7               |
 | 5.x.x           | NET standard 2.1 | 5               |
@@ -68,17 +69,17 @@ TriggerFunctions.GetColumnName<Transaction>(transaction => transaction.Value);
 
 ### All available triggers
 
-| Trigger | PostgreSql | SQL Server | SQLite | MySQL |
-| --- | --- | --- | --- | --- |
-| Before Insert | + | - | + | + |
-| After Insert | + | + | + | + |
-| Instead Of Insert | + | + | + | - |
-| Before Update | + | - | + | + |
-| After Update | + | + | + | + |
-| Instead Of Update | + | + | + | - |
-| Before Delete | + | - | + | + |
-| After Delete | + | + | + | + |
-| Instead Of Delete | + | + | + | - |
+| Trigger           | PostgreSql | SQL Server | SQLite | MySQL |
+|-------------------|------------|------------|--------|-------|
+| Before Insert     | +          | -          | +      | +     |
+| After Insert      | +          | +          | +      | +     |
+| Instead Of Insert | +          | +          | +      | -     |
+| Before Update     | +          | -          | +      | +     |
+| After Update      | +          | +          | +      | +     |
+| Instead Of Update | +          | +          | +      | -     |
+| Before Delete     | +          | -          | +      | +     |
+| After Delete      | +          | +          | +      | +     |
+| Instead Of Delete | +          | +          | +      | -     |
 
 ### Available actions after trigger has worked
 

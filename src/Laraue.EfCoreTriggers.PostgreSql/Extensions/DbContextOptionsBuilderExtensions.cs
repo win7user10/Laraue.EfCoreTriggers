@@ -1,28 +1,6 @@
 ﻿using System;
-using System.Linq.Expressions;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Abs;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Acos;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Asin;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Atan2;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Ceiling;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Cos;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Exp;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.Math.Floor;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Concat;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Contains;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.EndsWith;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.IsNullOrEmpty;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToLower;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.ToUpper;
-using Laraue.EfCoreTriggers.Common.Converters.MethodCall.String.Trim;
 using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.EfCoreTriggers.Common.TriggerBuilders.Actions;
-using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors;
-using Laraue.EfCoreTriggers.Common.Visitors.TriggerVisitors.Statements;
-using Laraue.EfCoreTriggers.PostgreSql.Converters.MethodCalls.Guid.NewGuid;
-using Laraue.EfCoreTriggers.PostgreSql.Converters.NewExpression;
+using Laraue.Linq2Triggers.Providers.PostgreSql.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -64,36 +42,9 @@ namespace Laraue.EfCoreTriggers.PostgreSql.Extensions
         /// <param name="services"></param>
         public static void AddPostgreSqlServices(this IServiceCollection services)
         {
-            services.AddDefaultServices()
-                .AddScoped<SqlTypeMappings, PostgreSqlTypeMappings>()
-                .AddScoped<ITriggerVisitor, PostgreSqlTriggerVisitor>()
-                .AddTriggerActionVisitor<TriggerUpsertAction, TriggerUpsertActionVisitor>()
-                .AddScoped<IInsertExpressionVisitor, InsertExpressionVisitor>()
-                .AddScoped<ISqlGenerator, SqlGenerator>()
-                .AddTriggerActionVisitor<TriggerActionsGroup, PostgreSqlTriggerActionsGroupVisitor>()
-                .AddMethodCallConverter<ConcatStringViaConcatFuncVisitor>()
-                .AddMethodCallConverter<StringToUpperViaUpperFuncVisitor>()
-                .AddMethodCallConverter<StringToLowerViaLowerFuncVisitor>()
-                .AddMethodCallConverter<StringTrimViaBtrimFuncVisitor>()
-                .AddMethodCallConverter<StringContainsViaStrposFuncVisitor>()
-                .AddMethodCallConverter<StringEndsWithViaDoubleVerticalLineVisitor>()
-                .AddMethodCallConverter<StringIsNullOrEmptyVisitor>()
-                .AddMethodCallConverter<MathAbsVisitor>()
-                .AddMethodCallConverter<MathAcosVisitor>()
-                .AddMethodCallConverter<MathAsinVisitor>()
-                .AddMethodCallConverter<MathAtanVisitor>()
-                .AddMethodCallConverter<MathAtan2Visitor>()
-                .AddMethodCallConverter<MathCeilingVisitor>()
-                .AddMethodCallConverter<MathCosVisitor>()
-                .AddMethodCallConverter<MathExpVisitor>()
-                .AddMethodCallConverter<MathFloorVisitor>()
-                .AddMethodCallConverter<NewGuidVisitor>()
-                .AddMemberAccessConverter<Converters.MemberAccess.DateTime.UtcNowVisitor>()
-                .AddMemberAccessConverter<Converters.MemberAccess.DateTime.NowVisitor>()
-                .AddMemberAccessConverter<Converters.MemberAccess.DateTimeOffset.UtcNowVisitor>()
-                .AddMemberAccessConverter<Converters.MemberAccess.DateTimeOffset.NowVisitor>()
-                .AddNewExpressionConverter<NewDateTimeExpressionVisitor>()
-                .AddNewExpressionConverter<NewDateTimeOffsetExpressionVisitor>();
+            services
+                .AddEfCoreTriggerAdapters()
+                .AddBasePostgreSqlServices();
         }
     }
 }
