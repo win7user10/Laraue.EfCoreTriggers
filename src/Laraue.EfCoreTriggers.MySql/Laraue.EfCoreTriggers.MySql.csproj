@@ -6,6 +6,7 @@
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;MySql</PackageTags>
     <Nullable>enable</Nullable>
     <Version>10.0.0</Version>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
