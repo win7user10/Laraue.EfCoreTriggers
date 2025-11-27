@@ -111,9 +111,9 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests.Unit
             var trigger = annotation.Value as Trigger<EmailNotification, NewTableRef<EmailNotification>>;
             var sql = _provider.Visit(trigger!.Actions[0].ActionExpressions.First(), new VisitedMembers());
             Assert.Equal(
-                @"UPDATE `NotificationsLog`
-SET `Text` = NEW.`Text`, `NotificationType` = 'Laraue.EfCoreTriggers.SqlLiteTests.Unit.EmailNotification', `OriginalId` = CAST(NEW.`Id` AS BIGINT)
-WHERE `NotificationsLog`.`Id` = NEW.`Id`;", sql);
+                "UPDATE `NotificationsLog`"
++ "\r\nSET `Text` = NEW.`Text`, `NotificationType` = 'Laraue.EfCoreTriggers.SqlLiteTests.Unit.EmailNotification', `OriginalId` = CAST(NEW.`Id` AS BIGINT)"
++ "\r\nWHERE `NotificationsLog`.`Id` = NEW.`Id`;", sql);
         }
 
         private static void AddTriggerAction<TEntity>(Trigger<TEntity, NewTableRef<TEntity>> trigger)
