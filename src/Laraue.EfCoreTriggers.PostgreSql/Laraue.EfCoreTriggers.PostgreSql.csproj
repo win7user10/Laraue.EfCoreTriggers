@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Laraue.EfCoreTriggers.Common\Laraue.EfCoreTriggers.Common.csproj" />
-    <ProjectReference Include="..\Laraue.Triggers.PostgreSql\Laraue.Triggers.PostgreSql.csproj" />
+    <ProjectReference Include="..\Laraue.Linq2Triggers.Providers.PostgreSql\Laraue.Linq2Triggers.Providers.PostgreSql.csproj" />
   </ItemGroup>
 
 </Project>

@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Laraue.EfCoreTriggers.Common\Laraue.EfCoreTriggers.Common.csproj" />
-    <ProjectReference Include="..\Laraue.Triggers.MySql\Laraue.Triggers.MySql.csproj" />
+    <ProjectReference Include="..\Laraue.Linq2Triggers.Providers.MySql\Laraue.Linq2Triggers.Providers.MySql.csproj" />
   </ItemGroup>
 
 </Project>

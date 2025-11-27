@@ -1,7 +1,7 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.Triggers.Sqlite.Extensions;
+using Laraue.Linq2Triggers.Providers.Sqlite.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

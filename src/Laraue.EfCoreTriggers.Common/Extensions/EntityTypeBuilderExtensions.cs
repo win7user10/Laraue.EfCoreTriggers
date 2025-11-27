@@ -3,10 +3,9 @@ using System.Linq;
 using System.Reflection;
 using Laraue.EfCoreTriggers.Common.Migrations;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.Triggers.Core.SqlGeneration;
-using Laraue.Triggers.Core.TriggerBuilders;
-using Laraue.Triggers.Core.TriggerBuilders.Abstractions;
-using Laraue.Triggers.Core.TriggerBuilders.TableRefs;
+using Laraue.Linq2Triggers.Core.TriggerBuilders;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.Abstractions;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.TableRefs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

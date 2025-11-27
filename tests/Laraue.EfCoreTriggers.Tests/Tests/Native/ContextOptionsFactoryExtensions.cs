@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
-using Laraue.Triggers.Core.TriggerBuilders.TableRefs;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.TableRefs;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 

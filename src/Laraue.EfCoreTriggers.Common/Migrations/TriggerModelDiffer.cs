@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Laraue.Triggers.Core;
-using Laraue.Triggers.Core.TriggerBuilders.Abstractions;
-using Laraue.Triggers.Core.Visitors.TriggerVisitors;
+using Laraue.Linq2Triggers.Core;
+using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using ITrigger = Laraue.Triggers.Core.TriggerBuilders.Abstractions.ITrigger;
+using ITrigger = Laraue.Linq2Triggers.Core.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.Common.Migrations
 {

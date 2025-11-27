@@ -29,15 +29,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laraue.EfCoreTriggers.SqlSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.EfCoreTriggers.TestMigration", "tests\Laraue.EfCoreTriggers.TestMigration\Laraue.EfCoreTriggers.TestMigration.csproj", "{50F9C440-4B10-4890-A266-A890341382EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Triggers.Core", "src\Laraue.Triggers.Core\Laraue.Triggers.Core.csproj", "{955DBECF-08AD-4279-BEC1-FFFE8E6BD716}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Linq2Triggers.Core", "src\Laraue.Linq2Triggers.Core\Laraue.Linq2Triggers.Core.csproj", "{955DBECF-08AD-4279-BEC1-FFFE8E6BD716}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Triggers.Sqlite", "src\Laraue.Triggers.Sqlite\Laraue.Triggers.Sqlite.csproj", "{A1C82905-D3CD-4AE3-A721-A87DD6CCAC7C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Linq2Triggers.Providers.Sqlite", "src\Laraue.Linq2Triggers.Providers.Sqlite\Laraue.Linq2Triggers.Providers.Sqlite.csproj", "{A1C82905-D3CD-4AE3-A721-A87DD6CCAC7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Triggers.MySql", "src\Laraue.Triggers.MySql\Laraue.Triggers.MySql.csproj", "{951A12A2-5F7D-4B70-922F-0C732E19674C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Linq2Triggers.Providers.MySql", "src\Laraue.Linq2Triggers.Providers.MySql\Laraue.Linq2Triggers.Providers.MySql.csproj", "{951A12A2-5F7D-4B70-922F-0C732E19674C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Triggers.PostgreSql", "src\Laraue.Triggers.PostgreSql\Laraue.Triggers.PostgreSql.csproj", "{E8456FDA-3423-4A10-9502-0E35D2016B22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Linq2Triggers.Providers.PostgreSql", "src\Laraue.Linq2Triggers.Providers.PostgreSql\Laraue.Linq2Triggers.Providers.PostgreSql.csproj", "{E8456FDA-3423-4A10-9502-0E35D2016B22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Triggers.SqlServer", "src\Laraue.Triggers.SqlServer\Laraue.Triggers.SqlServer.csproj", "{79D843C8-6ADF-4ACB-A0D4-CCEAE251F8FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.Linq2Triggers.Providers.SqlServer", "src\Laraue.Linq2Triggers.Providers.SqlServer\Laraue.Linq2Triggers.Providers.SqlServer.csproj", "{79D843C8-6ADF-4ACB-A0D4-CCEAE251F8FE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{655AC9AF-B85B-43D3-B989-6FEA80417042}"
 EndProject

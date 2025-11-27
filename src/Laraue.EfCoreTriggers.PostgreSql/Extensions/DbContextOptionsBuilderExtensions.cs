@@ -1,6 +1,6 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.Triggers.PostgreSql.Extensions;
+using Laraue.Linq2Triggers.Providers.PostgreSql.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,5 +1,5 @@
 ﻿using Laraue.EfCoreTriggers.Tests.Tests.Base;
-using Laraue.Triggers.Core.Visitors.TriggerVisitors;
+using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors;
 using Xunit.Categories;
 
 namespace Laraue.EfCoreTriggers.Tests.Tests.Unit

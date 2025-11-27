@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Laraue.Triggers.Core;
-using Laraue.Triggers.Core.SqlGeneration;
+using Laraue.Linq2Triggers.Core;
+using Laraue.Linq2Triggers.Core.SqlGeneration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 

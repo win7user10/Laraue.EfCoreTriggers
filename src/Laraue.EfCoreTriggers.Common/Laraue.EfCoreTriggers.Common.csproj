@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Laraue.Triggers.Core\Laraue.Triggers.Core.csproj" />
+    <ProjectReference Include="..\Laraue.Linq2Triggers.Core\Laraue.Linq2Triggers.Core.csproj" />
   </ItemGroup>
 
 </Project>

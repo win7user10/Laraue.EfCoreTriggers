@@ -4,17 +4,17 @@ using System.Linq;
 using Laraue.EfCoreTriggers.Common.Extensions;
 using Laraue.EfCoreTriggers.MySql.Extensions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
-using Laraue.Triggers.Core.Functions;
-using Laraue.Triggers.Core.SqlGeneration;
-using Laraue.Triggers.Core.TriggerBuilders;
-using Laraue.Triggers.Core.TriggerBuilders.TableRefs;
-using Laraue.Triggers.Core.Visitors.TriggerVisitors;
+using Laraue.Linq2Triggers.Core.Functions;
+using Laraue.Linq2Triggers.Core.SqlGeneration;
+using Laraue.Linq2Triggers.Core.TriggerBuilders;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.TableRefs;
+using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Xunit;
 using Xunit.Categories;
-using ITrigger = Laraue.Triggers.Core.TriggerBuilders.Abstractions.ITrigger;
+using ITrigger = Laraue.Linq2Triggers.Core.TriggerBuilders.Abstractions.ITrigger;
 
 namespace Laraue.EfCoreTriggers.SqlLiteTests.Unit
 {

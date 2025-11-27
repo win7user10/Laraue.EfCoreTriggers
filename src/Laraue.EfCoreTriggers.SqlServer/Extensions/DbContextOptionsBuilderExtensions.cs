@@ -1,6 +1,6 @@
 ﻿using System;
 using Laraue.EfCoreTriggers.Common.Extensions;
-using Laraue.Triggers.SqlServer.Extensions;
+using Laraue.Linq2Triggers.Providers.SqlServer.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

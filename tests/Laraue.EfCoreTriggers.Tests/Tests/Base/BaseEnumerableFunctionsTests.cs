@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
-using Laraue.Triggers.Core.TriggerBuilders.TableRefs;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.TableRefs;
 using Xunit;
 using Xunit.Categories;
 

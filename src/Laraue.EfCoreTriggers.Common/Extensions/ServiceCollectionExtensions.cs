@@ -1,6 +1,6 @@
 ﻿using Laraue.EfCoreTriggers.Common.Migrations;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
-using Laraue.Triggers.Core.SqlGeneration;
+using Laraue.Linq2Triggers.Core.SqlGeneration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.EfCoreTriggers.Common.Extensions;

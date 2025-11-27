@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq.Expressions;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
-using Laraue.Triggers.Core.Functions;
-using Laraue.Triggers.Core.SqlGeneration;
-using Laraue.Triggers.Core.TriggerBuilders.Actions;
-using Laraue.Triggers.Core.TriggerBuilders.TableRefs;
-using Laraue.Triggers.Core.Visitors.TriggerVisitors;
+using Laraue.Linq2Triggers.Core.Functions;
+using Laraue.Linq2Triggers.Core.SqlGeneration;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.Actions;
+using Laraue.Linq2Triggers.Core.TriggerBuilders.TableRefs;
+using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors;
 using Xunit;
 using Xunit.Categories;
 

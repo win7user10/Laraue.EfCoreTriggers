@@ -1,5 +1,5 @@
 ﻿using System;
-using Laraue.Triggers.Core;
+using Laraue.Linq2Triggers.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
