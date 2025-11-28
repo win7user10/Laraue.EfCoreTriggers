@@ -24,7 +24,7 @@ jobs:
         
     - name: Build project
       run: |
-          for p in $(find ./src -name *.csproj); do dotnet build $p --framework ${{env.PROJECT_TARGET}} --configuration Release; done
+          for p in $(find ./src -name *.csproj); do dotnet build $p --configuration Release; done
     
     - name: Test
       run: dotnet test --filter 'Category!=IntegrationTest' --no-build --verbosity normal
