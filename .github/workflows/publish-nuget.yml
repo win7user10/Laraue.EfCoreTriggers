@@ -14,26 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@master
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.x.x'
         
-    - name: Restore Dependencies
-      run: dotnet restore
-    
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Build project
+      run: |
+          for p in $(find ./src -name *.csproj); do dotnet build $p --framework ${{env.PROJECT_TARGET}} --configuration Release; done
     
     - name: Test
       run: dotnet test --filter 'Category!=IntegrationTest' --no-build --verbosity normal
 
     - name: Generate a NuGet package
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
-      run: dotnet pack --no-build -c Release -o .
+      run: |
+          for p in $(find ./src -name *.csproj); do dotnet pack $p -p:TargetFrameworks=${{env.PROJECT_TARGET}} -p:PackageVersion=${{env.RELEASE_VERSION}} --no-build -c Release -o .; done
 
     - name: Push to GitHub package registry
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
