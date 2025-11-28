@@ -33,8 +33,7 @@ jobs:
 
     - name: Generate a NuGet package
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
-      run: |
-          for p in $(find ./src -name *.csproj); do dotnet pack $p --no-build -c Release -o .; done
+      run: dotnet pack --no-build -p:GeneratePackageOnBuild=false -c Release -o .
 
     - name: Push to GitHub package registry
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
