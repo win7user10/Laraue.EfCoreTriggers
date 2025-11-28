@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@master
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -33,7 +33,7 @@ jobs:
 
     - name: Generate a NuGet package
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
-      run: dotnet pack --no-build -p:GeneratePackageOnBuild=false -c Release -o .
+      run: dotnet pack --no-build -c Release -o .
 
     - name: Push to GitHub package registry
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
