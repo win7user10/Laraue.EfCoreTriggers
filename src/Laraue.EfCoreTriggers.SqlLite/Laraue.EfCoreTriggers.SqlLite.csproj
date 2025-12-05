@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Description>Generating native SqlLite triggers through migrations using EFCore entity builder.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;SqlLite</PackageTags>
-    <Version>8.2.1</Version>
+    <Version>8.2.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
