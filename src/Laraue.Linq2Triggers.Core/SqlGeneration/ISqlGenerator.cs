@@ -62,6 +62,12 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         /// <param name="entity"></param>
         /// <returns></returns>
         string? GetSchemaPrefixSql(Type entity);
+        
+        /// <summary>
+        /// <see cref="GetSchemaPrefixSql(System.Type)"/>
+        /// </summary>
+        /// <returns></returns>
+        string? GetSchemaPrefixSql(ITriggerEntityType triggerEntityType);
     
         /// <summary>
         /// <see cref="GetFunctionNameSql(Type,string)"/>

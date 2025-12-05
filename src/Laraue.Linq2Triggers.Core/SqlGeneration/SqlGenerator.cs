@@ -105,11 +105,24 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         public string? GetSchemaPrefixSql(Type entity)
         {
             var schemaName = _adapter.GetTableSchemaName(entity);
+            return GetSchemaPrefixSql(schemaName);
+        }
+
+        /// <inheritdoc />
+        public string? GetSchemaPrefixSql(ITriggerEntityType triggerEntityType)
+        {
+            var schemaName = _adapter.GetTableSchemaName(triggerEntityType);
+            return GetSchemaPrefixSql(schemaName);
+        }
+
+        private string? GetSchemaPrefixSql(string? schemaName)
+        {
             return string.IsNullOrEmpty(schemaName)
                 ? null
                 : $"{WrapWithDelimiters(schemaName)}.";
         }
 
+        /// <inheritdoc />
         public string GetFunctionNameSql(ITriggerEntityType entityType, string name)
         {
             return GetFunctionNameSql(_adapter.GetTableSchemaName(entityType), name);
