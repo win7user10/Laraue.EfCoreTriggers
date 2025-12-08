@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Description>Generating native MySql triggers through migrations using EFCore entity builder.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;MySql</PackageTags>
     <Nullable>enable</Nullable>
-    <Version>6.5.0</Version>
+    <Version>5.7.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

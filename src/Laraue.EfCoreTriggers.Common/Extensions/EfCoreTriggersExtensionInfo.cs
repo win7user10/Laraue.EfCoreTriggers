@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Laraue.EfCoreTriggers.Common.Extensions
@@ -15,15 +14,9 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             : base(extension)
         {
         }
-    
-        /// <inheritdoc />
-        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
-        {
-            return string.Equals(LogFragment, other.LogFragment, StringComparison.Ordinal);
-        }
         
         /// <inheritdoc />
-        public override int GetServiceProviderHashCode() => 0;
+        public override long GetServiceProviderHashCode() => 0;
 
         /// <inheritdoc />
         public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)

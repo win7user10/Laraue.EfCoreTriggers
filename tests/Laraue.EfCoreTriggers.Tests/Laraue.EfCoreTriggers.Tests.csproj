@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="linq2db.EntityFrameworkCore" Version="6.17.0" />
+    <PackageReference Include="linq2db.EntityFrameworkCore" Version="5.19.0" />
   </ItemGroup>
     
   <ItemGroup>
