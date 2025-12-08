@@ -5,15 +5,15 @@
     <Description>Common classes EfCoreTriggers packages.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql</PackageTags>
     <Nullable>enable</Nullable>
-    <Version>7.3.0</Version>
+    <Version>6.5.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[7.0.0, 8.0.0)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="[7.0.0, 8.0.0)">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[6.0.0, 7.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="[6.0.0, 7.0.0)">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[7.0.0, 8.0.0)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[6.0.0, 7.0.0)" />
   </ItemGroup>
 
   <ItemGroup>

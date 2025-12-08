@@ -32,7 +32,6 @@ namespace Laraue.EfCoreTriggers.Common.Extensions
             var entityType = entityTypeBuilder.Metadata.Model.FindEntityType(entityTypeName)
                 ?? throw new InvalidOperationException($"Entity {entityTypeName} metadata was not found");
 
-            entityTypeBuilder.ToTable(tb => tb.HasTrigger(configuredTrigger.Name));
             entityType.AddAnnotation(configuredTrigger.Name, configuredTrigger);
             
             return entityTypeBuilder;
