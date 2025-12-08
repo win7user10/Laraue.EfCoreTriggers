@@ -5,7 +5,7 @@
     <Description>Common classes EfCoreTriggers packages.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql</PackageTags>
     <Nullable>enable</Nullable>
-    <Version>10.1.0-alpha3</Version>
+    <Version>10.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
