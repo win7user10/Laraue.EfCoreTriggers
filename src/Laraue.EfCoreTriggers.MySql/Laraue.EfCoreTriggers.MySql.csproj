@@ -5,7 +5,7 @@
     <Description>Generating native MySql triggers through migrations using EFCore entity builder.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;MySql</PackageTags>
     <Nullable>enable</Nullable>
-    <Version>10.1.0</Version>
+    <Version>10.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
