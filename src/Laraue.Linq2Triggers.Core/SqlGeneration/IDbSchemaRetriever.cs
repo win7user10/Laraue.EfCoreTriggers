@@ -13,9 +13,9 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         /// Note: this is just a column name, without table name, quotes and schema.
         /// </summary>
         /// <param name="type">Entity type.</param>
-        /// <param name="memberInfo">Member to get.</param>
+        /// <param name="memberName">Member to get.</param>
         /// <returns></returns>
-        string GetColumnName(Type type, MemberInfo memberInfo);
+        string GetColumnName(Type type, string memberName);
     
         /// <summary>
         /// Get the table name of passed entity.
@@ -61,6 +61,6 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         /// <param name="type">Entity type.</param>
         /// <param name="memberInfo">Entity member.</param>
         /// <returns></returns>
-        Type GetActualClrType(Type type, MemberInfo memberInfo);
+        Type GetActualClrType(Type type, VisitedMemberInfo memberInfo);
     }
 }

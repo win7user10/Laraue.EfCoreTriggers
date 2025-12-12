@@ -1,18 +1,22 @@
 # Entity Framework Core Triggers
 
-EfCoreTriggers is the library to write native SQL triggers using EFCore model builder. Triggers are automatically translating into SQL and adding to migrations.
+EfCoreTriggers is the library to write native SQL triggers using EFCore model builder. Triggers are automatically
+translating into SQL and adding to migrations.
 
 [![latest version](https://img.shields.io/nuget/v/Laraue.EfCoreTriggers.Common)](https://www.nuget.org/packages/Laraue.EfCoreTriggers.Common)
 [![latest version](https://img.shields.io/nuget/dt/Laraue.EfCoreTriggers.Common)](https://www.nuget.org/packages/Laraue.EfCoreTriggers.Common)
 
 #### Versions compatability
-| Package version | Min .NET version | EF Core version |
-|-----------------|------------------|-----------------|
-| 10.x.x          | NET 10.0         | 10              |
-| 9.x.x           | NET 8.0          | 9               |
-| 8.x.x           | NET 8.0          | 8               |
-| 7.x.x           | NET 6.0          | 7               |
-| 5.x.x           | NET standard 2.1 | 5               |
+Package major version matches an EF Core major version it uses.
+
+| Package version | Minimal required .NET version | 
+|-----------------|-------------------------------|
+| 10.x.x          | NET 10.0                      |
+| 9.x.x           | NET 8.0                       |
+| 8.x.x           | NET 8.0                       |
+| 7.x.x           | NET 6.0                       |
+| 6.x.x           | NET 6.0                       |
+| 5.x.x           | NET standard 2.1              |
 
 Install the provider package corresponding to your target database.
 
@@ -183,9 +187,9 @@ var options = new DbContextOptionsBuilder<TestDbContext>()
 var dbContext = new TestDbContext(options);
 ```
 
-### Adding translation of some custom function into sql code
+### Adding translation of some custom function into SQL code
 
-To do this thing a custom function converter should be added to a provider
+To do this thing, a custom function converter should be added to a provider
 
 Let's image that we have an extension like
 
@@ -224,7 +228,7 @@ public abstract class StringExtensionsLikeConverter : MethodCallConverter
 }
 ```
 
-All custom converters should be added while setup a database
+All custom converters should be added while set up a database
 
 ```cs
 var options = new DbContextOptionsBuilder<TestDbContext>()
@@ -245,11 +249,19 @@ modelBuilder.Entity<Transaction>()
             
 ```
 
-### Trigger prefix customization
+### Trigger naming strategy customization
 
-You can change the standard library prefix for trigger using the next static variable
+Trigger naming strategy can be changed replacing the function:
 ```cs
-Laraue.EfCoreTriggers.Common.Constants.AnnotationKey = "MY_PREFIX"
+Laraue.EfCoreTriggers.Common.Constants.GetTriggerName = (
+    TriggerTime triggerTime,
+    TriggerEvent triggerEvent,
+    Type triggerEntityType) => $"{triggerTime}_{triggerEvent}_{triggerEntityType.Name}".ToLower();
+``` 
+Trigger name always starts with the annotation key as soon as no other way found to determine trigger annotations.
+The key can also override:
+```csharp
+Laraue.EfCoreTriggers.Common.Constants.AnnotationKey = "lc_trigger_"
 ```
 
 ### Generic triggers
