@@ -61,6 +61,6 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         /// <param name="type">Entity type.</param>
         /// <param name="memberInfo">Entity member.</param>
         /// <returns></returns>
-        Type GetActualClrType(Type type, MemberInfo memberInfo);
+        Type GetActualClrType(Type type, VisitedMemberInfo memberInfo);
     }
 }

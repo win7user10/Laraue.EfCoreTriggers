@@ -16,6 +16,6 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Unit
         {
         }
 
-        protected override string ExceptedEfPropertyTranslationSql => "INSERT INTO \"DestinationEntities\" (\"IntValue\") SELECT Inserted.\"IntValue\";";
+        protected override string ExceptedEfPropertyTranslationSql => "INSERT INTO \"DestinationEntities\" (\"IntValue\") SELECT @NewIntValue;";
     }
 }

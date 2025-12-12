@@ -48,7 +48,9 @@ public class EfMethodCallVisitor : BaseMethodCallVisitor
         
         var dbSetType = dbSetExpression.Type;
         var argumentType = dbSetExpression.Member.GetArgumentType();
-        var columnSql = _sqlGenerator.GetColumnSql(dbSetType, propertyName, argumentType);
+        var columnSql = _sqlGenerator.GetColumnValueReferenceSql(dbSetType, propertyName, argumentType);
+        
+        visitedMembers.AddMember(argumentType, new VisitedMemberInfo(dbSetType, propertyName));
 
         return new SqlBuilder().Append(columnSql);
     }

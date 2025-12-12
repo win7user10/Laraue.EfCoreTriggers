@@ -114,9 +114,9 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         }
 
         /// <inheritdoc />
-        public Type GetActualClrType(Type type, MemberInfo memberInfo)
+        public Type GetActualClrType(Type type, VisitedMemberInfo memberInfo)
         {
-            var columnType = GetColumn(type, memberInfo.Name);
+            var columnType = GetColumn(type, memberInfo.MemberName);
 
             return columnType.FindAnnotation("ProviderClrType")?.Value as Type ?? columnType.ClrType;
         }

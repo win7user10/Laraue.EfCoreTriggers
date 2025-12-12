@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Laraue.Linq2Triggers.Core;
 using Laraue.Linq2Triggers.Core.SqlGeneration;
 using Laraue.Linq2Triggers.Core.TriggerBuilders;
@@ -106,14 +105,14 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         return sqlBuilder;
     }
     
-    private IEnumerable<string> DeclareVariablesSql(Type triggerType, ArgumentType argumentType, IEnumerable<MemberInfo> visitedMembers)
+    private IEnumerable<string> DeclareVariablesSql(Type triggerType, ArgumentType argumentType, IEnumerable<VisitedMemberInfo> visitedMembers)
     {
         return visitedMembers
             .Select(member => GetDeclareVariableNameSql(triggerType, argumentType, member))
             .ToArray();
     }
 
-    private string GetDeclareVariableNameSql(Type triggerType, ArgumentType argumentType, MemberInfo member)
+    private string GetDeclareVariableNameSql(Type triggerType, ArgumentType argumentType, VisitedMemberInfo member)
     {
         var clrType = _dbSchemaRetriever.GetActualClrType(triggerType, member);
         
@@ -122,9 +121,9 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         return $"{GetVariableNameSql(argumentType, member)} {sqlType}";
     }
 
-    public string GetVariableNameSql(ArgumentType argumentType, MemberInfo member)
+    public string GetVariableNameSql(ArgumentType argumentType, VisitedMemberInfo member)
     {
-        return _sqlGenerator.GetColumnValueReferenceSql(null, member, argumentType);
+        return _sqlGenerator.GetColumnValueReferenceSql(null, member.MemberName, argumentType);
     }
     
     private SqlBuilder DeclareCursorsSql(Type triggerEntityType, VisitedMembers visitedMembers, TriggerEvent triggerEvent)
@@ -136,7 +135,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         Type triggerEntityType, 
         VisitedMembers visitedMembers, 
         TriggerEvent triggerEvent, 
-        Func<Type, ArgumentType, MemberInfo[], SqlBuilder> generateSqlFunction)
+        Func<Type, ArgumentType, VisitedMemberInfo[], SqlBuilder> generateSqlFunction)
     {
         var cursorBlocksSql = visitedMembers
             .Where(x => x.Value.WhereDeclaringType(triggerEntityType).Any())
@@ -157,10 +156,10 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
             ? ArgumentType.Old
             : ArgumentType.New;
 
-        return generateSqlFunction(triggerEntityType, argumentType, Array.Empty<MemberInfo>());
+        return generateSqlFunction(triggerEntityType, argumentType, []);
     }
     
-    private SqlBuilder DeclareCursorBlockSql(Type triggerEntityType, ArgumentType argumentType, MemberInfo[] affectedMembers)
+    private SqlBuilder DeclareCursorBlockSql(Type triggerEntityType, ArgumentType argumentType, VisitedMemberInfo[] affectedMembers)
     {
         var cursorName = GetCursorName(triggerEntityType, argumentType);
         
@@ -201,12 +200,12 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         return $"DROP TRIGGER {tableSchemaPrefix}{triggerName};";
     }
     
-    private string GetSelectFromCursorSql(Type triggerEntityType, ArgumentType argumentType, MemberInfo[] members)
+    private string GetSelectFromCursorSql(Type triggerEntityType, ArgumentType argumentType, VisitedMemberInfo[] members)
     {
         members = members.WhereDeclaringType(triggerEntityType).ToArray();
         
         var columns = members.Any()
-            ? string.Join(", ", members.Select(member => _dbSchemaRetriever.GetColumnName(triggerEntityType, member.Name)))
+            ? string.Join(", ", members.Select(member => _dbSchemaRetriever.GetColumnName(triggerEntityType, member.MemberName)))
             : "*";
         
         return $"SELECT {columns} FROM {GetTemporaryTableName(argumentType)}";
@@ -217,7 +216,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         return GetCursorBlockSql(triggerEntityType, visitedMembers, triggerEvent, GetFetchCursorSql);
     }
 
-    private SqlBuilder GetFetchCursorSql(Type triggerEntityType, ArgumentType argumentType, MemberInfo[] members)
+    private SqlBuilder GetFetchCursorSql(Type triggerEntityType, ArgumentType argumentType, VisitedMemberInfo[] members)
     {
         var sqlBuilder = SqlBuilder.FromString($"FETCH NEXT FROM {GetCursorName(triggerEntityType, argumentType)}");
 
@@ -257,6 +256,6 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
 
 internal static class SqlServerProviderExtensions
 {
-    public static IEnumerable<MemberInfo> WhereDeclaringType(this IEnumerable<MemberInfo> values, Type declaringType)
-        => values.Where(x => x.ReflectedType?.IsAssignableFrom(declaringType) ?? false);
+    public static IEnumerable<VisitedMemberInfo> WhereDeclaringType(this IEnumerable<VisitedMemberInfo> values, Type declaringType)
+        => values.Where(x => x.Type?.IsAssignableFrom(declaringType) ?? false);
 }
