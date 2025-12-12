@@ -1,18 +1,18 @@
-﻿using Laraue.EfCoreTriggers.PostgreSql.Extensions;
+﻿using Laraue.EfCoreTriggers.SqlLite.Extensions;
 using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Unit;
 using Xunit;
 
-namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
+namespace Laraue.EfCoreTriggers.SqlLiteTests.Unit
 {
-    [Collection(CollectionNames.PostgreSql)]
-    public class PostgreSqlUnitEfFunctionsTests : UnitEfFunctionsTests
+    [Collection(CollectionNames.Sqlite)]
+    public class SqlLiteUnitEfFunctionsTests : UnitEfFunctionsTests
     {
-        public PostgreSqlUnitEfFunctionsTests() : base(
+        public SqlLiteUnitEfFunctionsTests() : base(
             Helper.GetTriggerActionFactory(
                 new ContextFactory().CreateDbContext().Model, 
-                collection => collection.AddPostgreSqlServices()))
+                collection => collection.AddSqliteServices()))
         {
         }
 

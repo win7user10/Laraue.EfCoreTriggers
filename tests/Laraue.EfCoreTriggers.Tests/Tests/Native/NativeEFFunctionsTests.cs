@@ -2,6 +2,7 @@
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Base;
 using Microsoft.EntityFrameworkCore;
+using Xunit;
 
 namespace Laraue.EfCoreTriggers.Tests.Tests.Native;
 
@@ -19,5 +20,15 @@ public abstract class NativeEFFunctionsTests : BaseEfFunctionsTests
         ContextOptionsFactory = contextOptionsFactory;
         SetupDbContext = setupDbContext;
         SetupModelBuilder = setupModelBuilder;
+    }
+
+    public override void EfPropertyTranslationSql()
+    {
+        var insertedEntity = ContextOptionsFactory.CheckTrigger(SetEfPropertyExpression, SetupDbContext, SetupModelBuilder, new SourceEntity
+        {
+            IntValue = 23
+        });
+        
+        Assert.Equal(23, insertedEntity.IntValue);
     }
 }

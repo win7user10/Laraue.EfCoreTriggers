@@ -81,7 +81,7 @@ namespace Laraue.Linq2Triggers.Core.Converters.MethodCall.Enumerable
             var joinParts = new List<string>();
             foreach (var key in keys)
             {
-                var column1Sql = _sqlGenerator.GetColumnSql(entityType, key.ForeignKey, ArgumentType.Default);
+                var column1Sql = _sqlGenerator.GetColumnSql(entityType, key.ForeignKey.Name, ArgumentType.Default);
 
                 if (baseMember.Expression is not MemberExpression memberExpression)
                 {
@@ -93,7 +93,7 @@ namespace Laraue.Linq2Triggers.Core.Converters.MethodCall.Enumerable
                 var column2WhereSql = _sqlGenerator.GetColumnValueReferenceSql(originalSetType, key.PrincipalKey, argument2Type);
                 visitedMembers.AddMember(argument2Type, key.PrincipalKey);
                 
-                var column2JoinSql = _sqlGenerator.GetColumnSql(originalSetType, key.PrincipalKey, ArgumentType.Default);
+                var column2JoinSql = _sqlGenerator.GetColumnSql(originalSetType, key.PrincipalKey.Name, ArgumentType.Default);
 
                 joinParts.Add($"{column1Sql} = {column2JoinSql}");
                 joinParts.Add($"{column1Sql} = {column2WhereSql}");

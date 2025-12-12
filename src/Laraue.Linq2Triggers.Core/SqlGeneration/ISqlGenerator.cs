@@ -44,10 +44,10 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         /// and its type. 
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="memberInfo"></param>
+        /// <param name="memberName"></param>
         /// <param name="argumentType"></param>
         /// <returns></returns>
-        string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType);
+        string GetColumnSql(Type type, string memberName, ArgumentType argumentType);
 
         /// <summary>
         /// Get table SQL, e.g. "dbo"."Users".

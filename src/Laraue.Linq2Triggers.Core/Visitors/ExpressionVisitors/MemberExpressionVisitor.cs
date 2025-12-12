@@ -110,7 +110,7 @@ namespace Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors
 
             return _generator.GetColumnSql(
                 tableType!,
-                columnMember,
+                columnMember.Name,
                 argumentType);
         }
         

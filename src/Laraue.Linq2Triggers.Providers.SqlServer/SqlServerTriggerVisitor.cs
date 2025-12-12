@@ -206,7 +206,7 @@ public class SqlServerTriggerVisitor : BaseTriggerVisitor
         members = members.WhereDeclaringType(triggerEntityType).ToArray();
         
         var columns = members.Any()
-            ? string.Join(", ", members.Select(member => _dbSchemaRetriever.GetColumnName(triggerEntityType, member)))
+            ? string.Join(", ", members.Select(member => _dbSchemaRetriever.GetColumnName(triggerEntityType, member.Name)))
             : "*";
         
         return $"SELECT {columns} FROM {GetTemporaryTableName(argumentType)}";

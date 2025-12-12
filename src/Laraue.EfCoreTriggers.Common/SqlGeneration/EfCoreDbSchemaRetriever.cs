@@ -24,22 +24,22 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         {
             Model = model;
         }
-    
+
         /// <inheritdoc />
-        public string GetColumnName(Type type, MemberInfo memberInfo)
+        public string GetColumnName(Type type, string memberName)
         {
             var entityType = GetEntityType(type);
-            var column = GetColumn(type, memberInfo);
-        
+            var column = GetColumn(type, memberName);
+            
             var identifier = (StoreObjectIdentifier)StoreObjectIdentifier.Create(entityType, StoreObjectType.Table)!;
-            return column.GetColumnName(identifier) 
-                   ?? throw new InvalidOperationException($"Column information was not found for {identifier}");
+            return column.GetColumnName(identifier)
+                ?? throw new InvalidOperationException($"Column information was not found for {identifier}");
         }
-
-        private IProperty GetColumn(Type type, MemberInfo memberInfo)
+        
+        private IProperty GetColumn(Type type, string propertyName)
         {
-            return GetEntityType(type).FindProperty(memberInfo.Name)
-                   ?? throw new InvalidOperationException($"Column {memberInfo.Name} was not found in {type}");
+            return GetEntityType(type).FindProperty(propertyName)
+                ?? throw new InvalidOperationException($"Column {propertyName} was not found in {type}");
         }
     
         private IEntityType GetEntityType(Type type)
@@ -83,11 +83,10 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
             var entityType = Model.FindEntityType(type);
         
             return entityType
-                       ?.FindPrimaryKey()
-                       ?.Properties
-                       .Select(x => x.PropertyInfo!)
-                       .ToArray()
-                   ?? Array.Empty<PropertyInfo>();
+               ?.FindPrimaryKey()
+               ?.Properties
+               .Select(x => x.PropertyInfo!)
+               .ToArray() ?? [];
         }
 
         /// <inheritdoc />
@@ -117,7 +116,7 @@ namespace Laraue.EfCoreTriggers.Common.SqlGeneration
         /// <inheritdoc />
         public Type GetActualClrType(Type type, MemberInfo memberInfo)
         {
-            var columnType = GetColumn(type, memberInfo);
+            var columnType = GetColumn(type, memberInfo.Name);
 
             return columnType.FindAnnotation("ProviderClrType")?.Value as Type ?? columnType.ClrType;
         }
