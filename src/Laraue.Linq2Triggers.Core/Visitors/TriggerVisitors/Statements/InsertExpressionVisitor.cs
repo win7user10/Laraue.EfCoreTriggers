@@ -41,7 +41,7 @@ namespace Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors.Statements
                 sqlResult.Append("(")
                     .AppendJoin(", ", assignmentParts
                         .Select(x =>
-                            _sqlGenerator.GetColumnSql(insertType, x.Key, ArgumentType.None)))
+                            _sqlGenerator.GetColumnSql(insertType, x.Key.Name, ArgumentType.None)))
                     .Append(") SELECT ");
 
                 sqlResult.AppendViaNewLine(", ", assignmentParts
