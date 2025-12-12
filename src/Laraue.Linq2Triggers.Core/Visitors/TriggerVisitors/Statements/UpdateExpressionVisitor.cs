@@ -38,7 +38,7 @@ namespace Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors.Statements
         
             var assignmentPartsSql = assignmentParts
                 .Select(expressionPart => 
-                    $"{_sqlGenerator.GetColumnSql(updateType, expressionPart.Key, ArgumentType.None)} = {expressionPart.Value}")
+                    $"{_sqlGenerator.GetColumnSql(updateType, expressionPart.Key.Name, ArgumentType.None)} = {expressionPart.Value}")
                 .ToArray();
         
             sqlResult.AppendJoin(", ", assignmentPartsSql);

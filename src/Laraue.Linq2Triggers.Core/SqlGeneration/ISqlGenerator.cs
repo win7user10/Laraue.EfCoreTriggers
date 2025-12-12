@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Reflection;
 using Laraue.Linq2Triggers.Core.TriggerBuilders;
 
 namespace Laraue.Linq2Triggers.Core.SqlGeneration
@@ -44,10 +43,10 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         /// and its type. 
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="memberInfo"></param>
+        /// <param name="memberName"></param>
         /// <param name="argumentType"></param>
         /// <returns></returns>
-        string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType);
+        string GetColumnSql(Type type, string memberName, ArgumentType argumentType);
 
         /// <summary>
         /// Get table SQL, e.g. "dbo"."Users".
@@ -139,6 +138,6 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         /// column name, e.g. NEW."Age".
         /// </summary>
         /// <returns></returns>
-        string GetColumnValueReferenceSql(Type? type, MemberInfo member, ArgumentType argumentType);
+        string GetColumnValueReferenceSql(Type? type, string memberName, ArgumentType argumentType);
     }
 }

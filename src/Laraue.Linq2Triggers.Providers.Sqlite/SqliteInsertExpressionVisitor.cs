@@ -34,7 +34,7 @@ public sealed class SqliteInsertExpressionVisitor : InsertExpressionVisitor
         var sqlBuilder = SqlBuilder.FromString("(")
             .AppendJoin(", ", primaryKeyProperties
                 .Select(propertyInfo => _sqlGenerator
-                    .GetColumnSql(insertType, propertyInfo, ArgumentType.None)))
+                    .GetColumnSql(insertType, propertyInfo.Name, ArgumentType.None)))
             .Append(") VALUES (")
             .AppendJoin(", ", primaryKeyProperties.Select(_ => "NULL"))
             .Append(")");
