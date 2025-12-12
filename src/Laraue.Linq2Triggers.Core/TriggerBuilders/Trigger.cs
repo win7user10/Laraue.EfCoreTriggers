@@ -36,23 +36,12 @@ namespace Laraue.Linq2Triggers.Core.TriggerBuilders
             TriggerTime = triggerTime;
             TriggerEvent = triggerEvent;
 
-            Name = $"{Constants.AnnotationKey}_{TriggerTime}_{TriggerEvent}_{typeof(TTriggerEntity).Name}"
-                .ToUpper();
+            var triggerName = Constants.GetTriggerName(triggerTime, triggerEvent, typeof(TTriggerEntity));
+            Name = $"{Constants.AnnotationKey}{triggerName}";
         }
 
         /// <summary>
-        /// Sets the trigger name. The full name will be 
-        /// generated from <see cref="Constants.AnnotationKey"/> and this name.
-        /// </summary>
-        public Trigger<TTriggerEntity, TTriggerEntityRefs> SetTriggerName(string name)
-        {
-            Name = $"{Constants.AnnotationKey}_{name}";
-
-            return this;
-        }
-
-        /// <summary>
-        /// Creates a new triggers action group. Each action groups represents the separated trigger.
+        /// Creates a new triggers action group. Each action group represents the separated trigger.
         /// </summary>
         /// <param name="triggerAction"></param>
         /// <returns></returns>
