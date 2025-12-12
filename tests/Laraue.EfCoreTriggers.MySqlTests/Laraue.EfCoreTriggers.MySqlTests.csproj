@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.3" />
+        <PackageReference Include="MySql.EntityFrameworkCore" Version="6.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.36">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
