@@ -17,8 +17,10 @@ public class SqlServerSqlGenerator : SqlGenerator
     {
     }
 
+    /// <inheritdoc />
     public override string NewEntityPrefix => "Inserted";
 
+    /// <inheritdoc />
     public override string OldEntityPrefix => "Deleted";
 
     protected override string GetNodeTypeSql(ExpressionType expressionType)
@@ -32,17 +34,19 @@ public class SqlServerSqlGenerator : SqlGenerator
         };
     }
 
+    /// <inheritdoc />
     public override string GetSql(bool source)
     {
         return source ? "1" : "0";
     }
 
-    public override string GetColumnValueReferenceSql(Type type, MemberInfo member, ArgumentType argumentType)
+    /// <inheritdoc />
+    public override string GetColumnValueReferenceSql(Type type, string memberName, ArgumentType argumentType)
     {
         return argumentType switch
         {
-            ArgumentType.New => $"@New{member.Name}",
-            ArgumentType.Old => $"@Old{member.Name}",
+            ArgumentType.New => $"@New{memberName}",
+            ArgumentType.Old => $"@Old{memberName}",
             _ => throw new InvalidOperationException(
                 $"Invalid attempt to generate declaring variable SQL using argument prefix {argumentType}")
         };

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using Laraue.Linq2Triggers.Core.Extensions;
 using Laraue.Linq2Triggers.Core.TriggerBuilders;
 using Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors;
 
@@ -79,9 +80,10 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         }
 
         /// <inheritdoc />
-        public string GetColumnSql(Type type, MemberInfo memberInfo, ArgumentType argumentType)
+        public string GetColumnSql(Type type, string memberName, ArgumentType argumentType)
         {
-            var columnSql = WrapWithDelimiters(_adapter.GetColumnName(type, memberInfo));
+            var columnName = _adapter.GetColumnName(type, memberName);
+            var columnSql = GetColumnSql(columnName);
         
             return argumentType switch
             {
@@ -173,7 +175,7 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
                 _visitingInfo.CurrentMember?.DeclaringType
                     ?? throw new InvalidOperationException(
                     $"Invalid state, of current visiting member type {_visitingInfo.CurrentMember}"),
-                _visitingInfo.CurrentMember);
+                _visitingInfo.CurrentMember.ToVisitedMemberInfo());
 
             return clrType == typeof(string)
                 ? GetSql(source.ToString())
@@ -199,14 +201,19 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         }
 
         /// <inheritdoc />
-        public virtual string GetColumnValueReferenceSql(Type type, MemberInfo member, ArgumentType argumentType)
+        public virtual string GetColumnValueReferenceSql(Type type, string memberName, ArgumentType argumentType)
         {
-            return GetColumnSql(type, member, argumentType);
+            return GetColumnSql(type, memberName, argumentType);
         }
 
         private string WrapWithDelimiters(string value)
         {
             return $"{GetDelimiter()}{value}{GetDelimiter()}";
+        }
+
+        private string GetColumnSql(string columnName)
+        {
+            return WrapWithDelimiters(columnName);
         }
     }
 }
