@@ -41,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{655AC9AF-B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ef", "ef", "{7E78BA60-159E-4E0C-973F-F00DA159D68C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laraue.EfCoreTriggers.MySqlTests", "tests\Laraue.EfCoreTriggers.MySqlTests\Laraue.EfCoreTriggers.MySqlTests.csproj", "{7C9F2AE2-5CCA-4A65-9036-17C5B694FC65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{79D843C8-6ADF-4ACB-A0D4-CCEAE251F8FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79D843C8-6ADF-4ACB-A0D4-CCEAE251F8FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79D843C8-6ADF-4ACB-A0D4-CCEAE251F8FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C9F2AE2-5CCA-4A65-9036-17C5B694FC65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C9F2AE2-5CCA-4A65-9036-17C5B694FC65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C9F2AE2-5CCA-4A65-9036-17C5B694FC65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C9F2AE2-5CCA-4A65-9036-17C5B694FC65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,6 +135,7 @@ Global
 		{95D6BB4B-77E8-42F2-B9FC-E6740DC89437} = {7E78BA60-159E-4E0C-973F-F00DA159D68C}
 		{EAF57617-5657-47D1-A719-424E1D6A63E8} = {7E78BA60-159E-4E0C-973F-F00DA159D68C}
 		{FBB5388A-4AFD-4891-A90A-51E59E364278} = {7E78BA60-159E-4E0C-973F-F00DA159D68C}
+		{7C9F2AE2-5CCA-4A65-9036-17C5B694FC65} = {7EE4BD3E-BA14-4823-A5E7-1464B3591407}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3167DB00-67A4-49E7-A52F-CE3B5DBE02A6}
