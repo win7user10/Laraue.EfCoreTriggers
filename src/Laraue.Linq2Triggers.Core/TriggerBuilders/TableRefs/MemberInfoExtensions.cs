@@ -58,7 +58,7 @@ namespace Laraue.Linq2Triggers.Core.TriggerBuilders.TableRefs
             refType = null;
 
             var reflectedType = memberInfo.ReflectedType
-                                ?? throw new InvalidOperationException("Passed member does not contain reflected type");
+                ?? throw new InvalidOperationException("Passed member does not contain reflected type");
         
             if (reflectedType.GenericTypeArguments.Length != 1)
             {

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using Laraue.Linq2Triggers.Core.CSharpMethods;
+using Laraue.Linq2Triggers.Core.Extensions;
 using Laraue.Linq2Triggers.Core.SqlGeneration;
 
 namespace Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors
@@ -41,8 +42,8 @@ namespace Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors
             {
                 // Convert(enumValue, Int32) == 1 when enum is stores as string -> enumValue == Enum.Value
                 var clrType = _schemaRetriever.GetActualClrType(
-                    memberExpression.Member.DeclaringType,
-                    memberExpression.Member);
+                    memberExpression.Member.DeclaringType!,
+                    memberExpression.Member.ToVisitedMemberInfo());
             
                 if (memberExpression.Type.IsEnum && clrType == typeof(string))
                 {

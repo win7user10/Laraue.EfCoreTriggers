@@ -1,5 +1,7 @@
-﻿using Laraue.EfCoreTriggers.Common.Migrations;
+﻿using Laraue.EfCoreTriggers.Common.Converters;
+using Laraue.EfCoreTriggers.Common.Migrations;
 using Laraue.EfCoreTriggers.Common.SqlGeneration;
+using Laraue.Linq2Triggers.Core.Extensions;
 using Laraue.Linq2Triggers.Core.SqlGeneration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +15,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddEfCoreTriggerAdapters(this IServiceCollection serviceCollection)
     {
         return serviceCollection
+            .AddMethodCallConverter<EfMethodCallVisitor>()
             .AddScoped<IDbSchemaRetriever, EfCoreDbSchemaRetriever>()
             .AddScoped<ITriggerModelDiffer, TriggerModelDiffer>();
     }
