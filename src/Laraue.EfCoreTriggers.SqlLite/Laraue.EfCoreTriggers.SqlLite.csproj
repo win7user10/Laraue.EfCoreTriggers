@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Description>Generating native SqlLite triggers through migrations using EFCore entity builder.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;SqlLite</PackageTags>
-    <Version>10.2.0</Version>
+    <Version>10.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
