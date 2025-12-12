@@ -44,7 +44,7 @@ namespace Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors
                 .Append(" ON CONFLICT (")
                 .AppendJoin(", ", matchExpressionParts
                     .Select(x =>
-                        _sqlGenerator.GetColumnSql(updateEntityType, x.Key, ArgumentType.None)))
+                        _sqlGenerator.GetColumnSql(updateEntityType, x.Key.Name, ArgumentType.None)))
                 .Append(")");
 
             if (triggerAction.UpdateExpression is null)

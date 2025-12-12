@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Laraue.Linq2Triggers.Core.Extensions;
 using Laraue.Linq2Triggers.Core.SqlGeneration;
 
 namespace Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors
@@ -98,7 +99,7 @@ namespace Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors
         
             return _dbSchemaRetriever.GetActualClrType(
                 NullableUtility.GetNotNullableType(parameterExpression.Type),
-                memberExpression.Member);
+                memberExpression.Member.ToVisitedMemberInfo());
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using Laraue.Linq2Triggers.Core.Converters.MemberAccess;
+using Laraue.Linq2Triggers.Core.Extensions;
 using Laraue.Linq2Triggers.Core.SqlGeneration;
 using Laraue.Linq2Triggers.Core.TriggerBuilders;
 using Laraue.Linq2Triggers.Core.TriggerBuilders.TableRefs;
@@ -32,7 +33,7 @@ namespace Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors
         /// <inheritdoc />
         public override SqlBuilder Visit(MemberExpression expression, VisitedMembers visitedMembers)
         {
-            visitedMembers.AddMember(ArgumentType.Default, expression.Member);
+            visitedMembers.AddMember(ArgumentType.Default, expression.Member.ToVisitedMemberInfo());
         
             return SqlBuilder.FromString(Visit(expression, ArgumentType.Default, visitedMembers));
         }
@@ -93,7 +94,7 @@ namespace Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors
                 argumentType = ArgumentType.Old;
             }
         
-            visitedMembers.AddMember(argumentType, parentMember);
+            visitedMembers.AddMember(argumentType, parentMember.ToVisitedMemberInfo());
         
             return GetColumnSql(memberType, parentMember, argumentType);
         }
@@ -104,13 +105,13 @@ namespace Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors
             {
                 return _generator.GetColumnValueReferenceSql(
                     tableType,
-                    columnMember,
+                    columnMember.Name,
                     argumentType);
             }
 
             return _generator.GetColumnSql(
                 tableType!,
-                columnMember,
+                columnMember.Name,
                 argumentType);
         }
         
