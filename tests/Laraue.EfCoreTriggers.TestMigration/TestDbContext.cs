@@ -30,6 +30,7 @@ public class TestDbContext : DbContext
         
         modelBuilder.Entity<Entity1>()
             .AfterDelete(x => x
+                .SetTriggerName("trigger_1")
                 .Action(y => y
                     .Insert(inserted => new Entity1 { Id = inserted.Old.Id + 1 })));
         
