@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Description>Generating native SqlServer triggers through migrations using EFCore entity builder.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;SqlServer</PackageTags>
-    <Version>9.2.0</Version>
+    <Version>9.2.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
