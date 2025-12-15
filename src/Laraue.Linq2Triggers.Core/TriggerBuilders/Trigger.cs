@@ -37,7 +37,18 @@ namespace Laraue.Linq2Triggers.Core.TriggerBuilders
             TriggerEvent = triggerEvent;
 
             var triggerName = Constants.GetTriggerName(triggerTime, triggerEvent, typeof(TTriggerEntity));
-            Name = $"{Constants.AnnotationKey}{triggerName}";
+            Name = GetFullTriggerName(triggerName);
+        }
+        
+        /// <summary>
+        /// Sets the trigger name. The full name will consist of concatenation of 
+        /// <see cref="Constants.AnnotationKey"/> and this string.
+        /// </summary>
+        public Trigger<TTriggerEntity, TTriggerEntityRefs> SetTriggerName(string name)
+        {
+            Name = GetFullTriggerName(name);
+
+            return this;
         }
 
         /// <summary>
@@ -55,6 +66,11 @@ namespace Laraue.Linq2Triggers.Core.TriggerBuilders
             Actions.Add(action);
 
             return this;
+        }
+
+        private string GetFullTriggerName(string triggerName)
+        {
+            return $"{Constants.AnnotationKey}{triggerName}";
         }
     }
 }
