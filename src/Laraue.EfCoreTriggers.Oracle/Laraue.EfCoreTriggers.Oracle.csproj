@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Description>Generating native Oracle triggers through migrations using EFCore entity builder.</Description>
+        <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;Oracle</PackageTags>
+        <Nullable>enable</Nullable>
+        <Version>10.3.1</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Laraue.EfCoreTriggers.Common\Laraue.EfCoreTriggers.Common.csproj" />
+        <ProjectReference Include="..\Laraue.Linq2Triggers.Providers.Oracle\Laraue.Linq2Triggers.Providers.Oracle.csproj" />
+    </ItemGroup>
+
+</Project>
