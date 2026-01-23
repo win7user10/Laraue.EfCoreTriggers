@@ -1,0 +1,25 @@
+﻿using Laraue.EfCoreTriggers.Oracle.Extensions;
+using Laraue.EfCoreTriggers.Tests;
+using Laraue.EfCoreTriggers.Tests.Infrastructure;
+using Laraue.EfCoreTriggers.Tests.Tests.Unit;
+using Xunit;
+
+namespace Laraue.EfCoreTriggers.OracleTests.Unit
+{
+    [Collection(CollectionNames.SqlServer)]
+    public class OracleUnitRawSqlTests : UnitRawSqlTests
+    {
+        public OracleUnitRawSqlTests() : base(
+            Helper.GetTriggerActionFactory(
+                new ContextFactory().CreateDbContext().Model, 
+                collection => collection.AddOracleServices()))
+        {
+        }
+
+        protected override string ExceptedInsertTriggerSqlForMemberArgs => "PERFORM func(@NewBooleanValue, @NewDoubleValue, \"SourceEntities\")";
+        protected override string ExceptedInsertTriggerSqlForComputedArgs => "PERFORM func(@NewDoubleValue + 10)";
+        protected override string ExceptedInsertTriggerSqlWhenNoArgs => "PERFORM func()";
+        protected override string ExceptedUpdateTriggerSqlForMemberArgs => "PERFORM func(@OldDecimalValue, @NewDecimalValue)";
+        protected override string ExceptedDeleteTriggerSqlForMemberArgs => "PERFORM func(@OldDecimalValue, @OldDoubleValue)";
+    }
+}
