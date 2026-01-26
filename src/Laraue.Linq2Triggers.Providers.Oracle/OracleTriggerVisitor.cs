@@ -33,7 +33,7 @@ public class OracleTriggerVisitor : BaseTriggerVisitor
             .AppendNewLine("FOR EACH ROW")
             .AppendNewLine("BEGIN")
             .WithIdent(triggerSql => triggerSql.AppendViaNewLine(actionsSql))
-            .AppendNewLine("END");
+            .AppendNewLine("END;");
         
         return sql;
     }

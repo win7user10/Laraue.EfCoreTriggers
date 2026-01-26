@@ -13,7 +13,6 @@ namespace Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors.Statements
         /// e.g. (column1, column2) VALUES ("value1", "value2")
         /// </summary>
         /// <param name="expression"></param>
-        /// <param name="argumentTypes"></param>
         /// <param name="visitedMembers"></param>
         /// <returns></returns>
         SqlBuilder Visit(LambdaExpression expression, VisitedMembers visitedMembers);

@@ -18,6 +18,9 @@ public sealed class OracleSqlGenerator : SqlGenerator
     /// <inheritdoc />
     public override char GetDelimiter()
     {
-        return '\'';
+        return '"';
     }
+
+    public override string NewEntityPrefix => ":NEW";
+    public override string OldEntityPrefix => ":OLD";
 }
