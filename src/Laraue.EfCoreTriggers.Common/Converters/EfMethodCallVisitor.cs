@@ -10,16 +10,13 @@ namespace Laraue.EfCoreTriggers.Common.Converters;
 
 public class EfMethodCallVisitor : BaseMethodCallVisitor
 {
-    private readonly IDbSchemaRetriever _schemaRetriever;
     private readonly ISqlGenerator _sqlGenerator;
 
     public EfMethodCallVisitor(
         IExpressionVisitorFactory visitorFactory,
-        IDbSchemaRetriever schemaRetriever,
         ISqlGenerator sqlGenerator)
         : base(visitorFactory)
     {
-        _schemaRetriever = schemaRetriever;
         _sqlGenerator = sqlGenerator;
     }
 
@@ -29,6 +26,7 @@ public class EfMethodCallVisitor : BaseMethodCallVisitor
     /// <inheritdoc />
     protected override Type ReflectedType => typeof(EF);
     
+    /// <inheritdoc />
     public override SqlBuilder Visit(MethodCallExpression expression, VisitedMembers visitedMembers)
     {
         if (expression.Arguments[0] is not MemberExpression dbSetExpression)

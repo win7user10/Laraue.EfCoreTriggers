@@ -45,7 +45,8 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 
         public override void Dispose()
         {
-            foreach (var command in GetMigrationDownCommands())
+            var commands = GetMigrationDownCommands();
+            foreach (var command in commands)
             {
                 Database.ExecuteSqlRaw(command.CommandText);
             }
