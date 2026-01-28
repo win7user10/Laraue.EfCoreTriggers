@@ -1,5 +1,8 @@
-﻿using Laraue.Linq2Triggers.Core.SqlGeneration;
+﻿using System.Linq;
+using Laraue.Linq2Triggers.Core.SqlGeneration;
+using Laraue.Linq2Triggers.Core.TriggerBuilders;
 using Laraue.Linq2Triggers.Core.TriggerBuilders.Actions;
+using Laraue.Linq2Triggers.Core.Visitors.SetExpressionVisitors;
 using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors;
 using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors.Statements;
 
@@ -8,18 +11,15 @@ namespace Laraue.Linq2Triggers.Providers.Oracle;
 /// <inheritdoc />
 public sealed class OracleTriggerUpsertActionVisitor : ITriggerActionVisitor<TriggerUpsertAction>
 {
-    private readonly IInsertExpressionVisitor _insertExpressionVisitor;
-    private readonly IUpdateExpressionVisitor _updateExpressionVisitor;
     private readonly ISqlGenerator _sqlGenerator;
+    private readonly IMemberInfoVisitorFactory _factory;
 
     public OracleTriggerUpsertActionVisitor(
-        IInsertExpressionVisitor insertExpressionVisitor,
-        IUpdateExpressionVisitor updateExpressionVisitor,
-        ISqlGenerator sqlGenerator)
+        ISqlGenerator sqlGenerator,
+        IMemberInfoVisitorFactory factory)
     {
-        _insertExpressionVisitor = insertExpressionVisitor;
-        _updateExpressionVisitor = updateExpressionVisitor;
         _sqlGenerator = sqlGenerator;
+        _factory = factory;
     }
     
     /// <inheritdoc />
@@ -27,31 +27,60 @@ public sealed class OracleTriggerUpsertActionVisitor : ITriggerActionVisitor<Tri
     {
         var updateEntityType = triggerAction.InsertExpression.Body.Type;
 
-        var insertStatementSql = _insertExpressionVisitor.Visit(
+        var sqlBuilder = new SqlBuilder();
+        
+        var insertParts = _factory.Visit(
             triggerAction.InsertExpression,
             visitedMembers);
+        
+        var matchParts = _factory.Visit(
+            triggerAction.MatchExpression,
+            visitedMembers);
 
-        var sqlBuilder = new SqlBuilder();
+        var targetTableSql = _sqlGenerator.GetTableSql(updateEntityType);
+        
+        sqlBuilder
+            .Append("MERGE INTO ")
+            .Append(targetTableSql)
+            .AppendNewLine("USING (")
+            .WithIdent(builder =>
+            {
+                builder
+                    .Append("SELECT ")
+                    .WithIdent(selectBuilder =>
+                    {
+                        selectBuilder
+                            .AppendViaNewLine(", ", insertParts
+                                .Select(x => x.Value));
+                    });
+            })
+            .AppendNewLine(")");
 
-        if (triggerAction.UpdateExpression is null)
-        {
-            sqlBuilder.Append($"INSERT IGNORE {_sqlGenerator.GetTableSql(updateEntityType)} ")
-                .Append(insertStatementSql)
-                .Append(";");
-        }
-        else
-        {
-            var updateStatementSql = _updateExpressionVisitor.Visit(
-                triggerAction.UpdateExpression,
-                visitedMembers);
+        sqlBuilder
+            .AppendNewLine("ON (")
+            .AppendViaNewLine(", ", matchParts
+                .Select(x => x.Value))
+            .Append(")");
             
-            sqlBuilder.Append($"INSERT INTO {_sqlGenerator.GetTableSql(updateEntityType)} ")
-                .Append(insertStatementSql)
-                .AppendNewLine("ON DUPLICATE KEY")
-                .AppendNewLine("UPDATE ")
-                .Append(updateStatementSql)
-                .Append(";");
-        }
+        sqlBuilder.AppendNewLine("WHEN NOT MATCHED THEN");
+        sqlBuilder.AppendNewLine("INSERT (")
+            .WithIdent(insertBuilder =>
+            {
+                insertBuilder
+                    .AppendJoin(", ", insertParts
+                        .Select(x =>
+                            _sqlGenerator.GetColumnSql(updateEntityType, x.Key.Name, ArgumentType.None)));
+            })
+            .AppendNewLine(")");
+            
+        sqlBuilder
+            .AppendNewLine("VALUES (")
+            .WithIdent(valuesBuilder =>
+            {
+                valuesBuilder.AppendViaNewLine(", ", insertParts
+                    .Select(x => x.Value));
+            })
+            .AppendNewLine(");");
 
         return sqlBuilder;
     }

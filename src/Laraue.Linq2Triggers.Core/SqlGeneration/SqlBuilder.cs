@@ -149,9 +149,18 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         {
             var arrayValues = values.ToArray();
             
-            ExecuteForAllBesidesLast(arrayValues, (_, _) => { }, (x, _) => x.Append(separator));
+            var last = arrayValues.Last();
+            foreach (var builder in arrayValues)
+            {
+                Append(builder);
+                if (builder != last)
+                {
+                    Append(separator);
+                    AppendNewLine();
+                }
+            }
 
-            return AppendViaNewLine(arrayValues);
+            return this;
         }
 
         /// <summary>
