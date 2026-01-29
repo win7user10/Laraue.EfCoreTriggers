@@ -1,15 +1,15 @@
 ﻿using System.Linq.Expressions;
-using Laraue.Linq2Triggers.Core.Converters.MemberAccess.DateTimeOffset;
+using Laraue.Linq2Triggers.Core.Converters.MemberAccess.DateTime;
 using Laraue.Linq2Triggers.Core.SqlGeneration;
 using Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors;
 
-namespace Laraue.Linq2Triggers.Providers.SqlServer.Converters.MemberAccess.DateTimeOffset
+namespace Laraue.Linq2Triggers.Providers.Oracle.Converters.MemberAccess.DateTime
 {
     /// <inheritdoc />
-    public class NowVisitor : BaseNowVisitor
+    public class DateTimeUtcNowVisitor : BaseUtcNowVisitor
     {
         /// <inheritdoc />
-        public NowVisitor(IExpressionVisitorFactory visitorFactory) 
+        public DateTimeUtcNowVisitor(IExpressionVisitorFactory visitorFactory) 
             : base(visitorFactory)
         {
         }
@@ -17,7 +17,7 @@ namespace Laraue.Linq2Triggers.Providers.SqlServer.Converters.MemberAccess.DateT
         /// <inheritdoc />
         public override SqlBuilder Visit(MemberExpression expression)
         {
-            return SqlBuilder.FromString("CURRENT_DATE()");
+            return SqlBuilder.FromString("SYS_EXTRACT_UTC(SYSTIMESTAMP)");
         }
     }
 }

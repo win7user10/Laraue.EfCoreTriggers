@@ -1,0 +1,16 @@
+﻿using Laraue.Linq2Triggers.Core.Converters.MethodCall.Guid.NewGuid;
+using Laraue.Linq2Triggers.Core.Visitors.ExpressionVisitors;
+
+namespace Laraue.Linq2Triggers.Providers.Oracle.Converters.MethodCalls.Guid.NewGuid;
+
+/// <inheritdoc />
+public class NewGuidVisitor : BaseNewGuidVisitor
+{
+    public NewGuidVisitor(IExpressionVisitorFactory visitorFactory)
+        : base(visitorFactory)
+    {
+    }
+
+    /// <inheritdoc />
+    protected override string NewGuidSql => "gen_random_uuid()";
+}

@@ -21,6 +21,15 @@ public sealed class OracleSqlGenerator : SqlGenerator
         return '"';
     }
 
+    /// <inheritdoc />
     public override string NewEntityPrefix => ":NEW";
+    
+    /// <inheritdoc />
     public override string OldEntityPrefix => ":OLD";
+    
+    /// <inheritdoc />
+    public override string GetSql(string source)
+    {
+        return $"N{Quote}{source}{Quote}";
+    }
 }

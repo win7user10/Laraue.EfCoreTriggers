@@ -1,4 +1,5 @@
-﻿using Laraue.Linq2Triggers.Core.Converters.MethodCall.Math.Abs;
+﻿using System.Linq.Expressions;
+using Laraue.Linq2Triggers.Core.Converters.MethodCall.Math.Abs;
 using Laraue.Linq2Triggers.Core.Converters.MethodCall.Math.Acos;
 using Laraue.Linq2Triggers.Core.Converters.MethodCall.Math.Asin;
 using Laraue.Linq2Triggers.Core.Converters.MethodCall.Math.Atan;
@@ -19,6 +20,8 @@ using Laraue.Linq2Triggers.Core.SqlGeneration;
 using Laraue.Linq2Triggers.Core.TriggerBuilders.Actions;
 using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors;
 using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors.Statements;
+using Laraue.Linq2Triggers.Providers.Oracle.Converters.MemberAccess.DateTime;
+using Laraue.Linq2Triggers.Providers.Oracle.Converters.MemberAccess.DateTimeOffset;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.Linq2Triggers.Providers.Oracle.Extensions;
@@ -32,6 +35,7 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection
             .AddDefaultServices()
+            .AddExpressionVisitor<UnaryExpression, OracleUnaryExpressionVisitor>()
             .AddScoped<SqlTypeMappings, OracleTypeMappings>()
             .AddScoped<ITriggerVisitor, OracleTriggerVisitor>()
             .AddTriggerActionVisitor<TriggerUpsertAction, OracleTriggerUpsertActionVisitor>()
@@ -50,9 +54,13 @@ public static class ServiceCollectionExtensions
             .AddMethodCallConverter<MathAsinVisitor>()
             .AddMethodCallConverter<MathAtanVisitor>()
             .AddMethodCallConverter<MathAtan2Visitor>()
-            .AddMethodCallConverter<MathCeilingVisitor>()
+            .AddMethodCallConverter<MathCeilVisitor>()
             .AddMethodCallConverter<MathCosVisitor>()
             .AddMethodCallConverter<MathExpVisitor>()
-            .AddMethodCallConverter<MathFloorVisitor>();
+            .AddMethodCallConverter<MathFloorVisitor>()
+            .AddMemberAccessConverter<DateTimeNowVisitor>()
+            .AddMemberAccessConverter<DateTimeUtcNowVisitor>()
+            .AddMemberAccessConverter<DateTimeOffsetNowVisitor>()
+            .AddMemberAccessConverter<DateTimeOffsetUtcNowVisitor>();
     }
 }
