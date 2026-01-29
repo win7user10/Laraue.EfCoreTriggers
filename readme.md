@@ -25,6 +25,7 @@ dotnet add package Laraue.EfCoreTriggers.PostgreSql
 dotnet add package Laraue.EfCoreTriggers.MySql
 dotnet add package Laraue.EfCoreTriggers.SqlServer
 dotnet add package Laraue.EfCoreTriggers.SqlLite
+dotnet add package Laraue.EfCoreTriggers.Oracle
 ```
 
 ### Basic usage
