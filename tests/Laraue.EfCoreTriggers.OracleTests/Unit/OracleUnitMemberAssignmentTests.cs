@@ -16,26 +16,40 @@ namespace Laraue.EfCoreTriggers.OracleTests.Unit
         {
         }
         
-        public override string ExceptedEnumValueSql => "INSERT INTO \"DestinationEntities\" (\"EnumValue\") SELECT @NewEnumValue;";
+        public override string ExceptedEnumValueSql
+            => "INSERT INTO \"DestinationEntities\" (\"EnumValue\") SELECT :NEW.\"EnumValue\";";
 
-        public override string ExceptedDecimalAddSql => "INSERT INTO \"DestinationEntities\" (\"DecimalValue\") SELECT @NewDecimalValue + 3;";
+        public override string ExceptedDecimalAddSql
+            => "INSERT INTO \"DestinationEntities\" (\"DecimalValue\") SELECT :NEW.\"DecimalValue\" + 3;";
 
-        public override string ExceptedDoubleSubSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT @NewDoubleValue + 3;";
+        public override string ExceptedDoubleSubSql
+            => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT :NEW.\"DoubleValue\" - 1;";
 
-        public override string ExceptedIntMultiplySql => "INSERT INTO \"DestinationEntities\" (\"IntValue\") SELECT @NewIntValue * 2;";
+        public override string ExceptedIntMultiplySql
+            => "INSERT INTO \"DestinationEntities\" (\"IntValue\") SELECT :NEW.\"IntValue\" * 2;";
 
-        public override string ExceptedBooleanSql => "INSERT INTO \"DestinationEntities\" (\"BooleanValue\") SELECT CASE WHEN @NewBooleanValue = 0 THEN 1 ELSE 0 END;";
+        public override string ExceptedBooleanSql
+            => "INSERT INTO \"DestinationEntities\" (\"BooleanValue\") SELECT CASE WHEN :NEW.\"BooleanValue\" IS FALSE THEN 1 ELSE 0 END;";
 
-        public override string ExceptedNewGuidSql => "INSERT INTO \"DestinationEntities\" (\"GuidValue\") SELECT NEWID();";
+        public override string ExceptedNewGuidSql
+            => "INSERT INTO \"DestinationEntities\" (\"GuidValue\") SELECT SYS_GUID();";
 
-        public override string ExceptedCharVariableSql => "INSERT INTO \"DestinationEntities\" (\"CharValue\") SELECT @NewCharValue;";
+        public override string ExceptedCharVariableSql
+            => "INSERT INTO \"DestinationEntities\" (\"CharValue\") SELECT :NEW.\"CharValue\";";
 
-        public override string ExceptedCharValueSql => "INSERT INTO \"DestinationEntities\" (\"CharValue\") SELECT 'a';";
-        public override string ExceptedDateTimeOffsetNowSql => "INSERT INTO \"DestinationEntities\" (\"DateTimeOffsetValue\") SELECT SYSDATETIME();";
-        public override string ExceptedDateTimeOffsetUtcNowSql => "INSERT INTO \"DestinationEntities\" (\"DateTimeOffsetValue\") SELECT SYSUTCDATETIME();";
+        public override string ExceptedCharValueSql
+            => "INSERT INTO \"DestinationEntities\" (\"CharValue\") SELECT 'a';";
+        
+        public override string ExceptedDateTimeOffsetNowSql
+            => "INSERT INTO \"DestinationEntities\" (\"DateTimeOffsetValue\") SELECT CURRENT_DATE;";
+        
+        public override string ExceptedDateTimeOffsetUtcNowSql
+            => "INSERT INTO \"DestinationEntities\" (\"DateTimeOffsetValue\") SELECT SYS_EXTRACT_UTC(SYSTIMESTAMP);";
 
-        public override string ExceptedNewDateTimeOffsetSql => "INSERT INTO \"DestinationEntities\" (\"DateTimeOffsetValue\") SELECT '1753-01-01';";
+        public override string ExceptedNewDateTimeOffsetSql
+            => "INSERT INTO \"DestinationEntities\" (\"DateTimeOffsetValue\") SELECT TO_DATE('0001-01-01', 'YYYY-MM-DD');";
 
-        public override string ExceptedNewDateTimeSql => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT '1753-01-01';";
+        public override string ExceptedNewDateTimeSql
+            => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT TO_DATE('0001-01-01', 'YYYY-MM-DD');";
     }
 }

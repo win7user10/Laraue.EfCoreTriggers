@@ -17,7 +17,7 @@ namespace Laraue.Linq2Triggers.Providers.SqlServer.Converters.MemberAccess.DateT
         /// <inheritdoc />
         public override SqlBuilder Visit(MemberExpression expression)
         {
-            return SqlBuilder.FromString("CURRENT_DATE()");
+            return SqlBuilder.FromString("SYSDATETIME()");
         }
     }
 }

@@ -14,8 +14,8 @@ public class OracleUnitDateTimeFunctionsTests : UnitDateTimeFunctionsTests
     }
 
     protected override string ExceptedDateTimeUtcNowSql
-        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT SYSUTCDATETIME();";
+        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT SYS_EXTRACT_UTC(SYSTIMESTAMP);";
     
     protected override string ExceptedDateTimeNowSql
-        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT SYSDATETIME();";
+        => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT CURRENT_DATE;";
 }

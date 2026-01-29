@@ -16,10 +16,19 @@ namespace Laraue.EfCoreTriggers.OracleTests.Unit
         {
         }
 
-        protected override string ExceptedInsertTriggerSqlForMemberArgs => "PERFORM func(@NewBooleanValue, @NewDoubleValue, \"SourceEntities\")";
-        protected override string ExceptedInsertTriggerSqlForComputedArgs => "PERFORM func(@NewDoubleValue + 10)";
-        protected override string ExceptedInsertTriggerSqlWhenNoArgs => "PERFORM func()";
-        protected override string ExceptedUpdateTriggerSqlForMemberArgs => "PERFORM func(@OldDecimalValue, @NewDecimalValue)";
-        protected override string ExceptedDeleteTriggerSqlForMemberArgs => "PERFORM func(@OldDecimalValue, @OldDoubleValue)";
+        protected override string ExceptedInsertTriggerSqlForMemberArgs
+            => "PERFORM func(:NEW.\"BooleanValue\", :NEW.\"DoubleValue\", \"SourceEntities\")";
+        
+        protected override string ExceptedInsertTriggerSqlForComputedArgs
+            => "PERFORM func(:NEW.\"DoubleValue\" + 10)";
+        
+        protected override string ExceptedInsertTriggerSqlWhenNoArgs
+            => "PERFORM func()";
+        
+        protected override string ExceptedUpdateTriggerSqlForMemberArgs
+            => "PERFORM func(:OLD.\"DecimalValue\", :NEW.\"DecimalValue\")";
+        
+        protected override string ExceptedDeleteTriggerSqlForMemberArgs
+            => "PERFORM func(:OLD.\"DecimalValue\", :OLD.\"DoubleValue\")";
     }
 }
