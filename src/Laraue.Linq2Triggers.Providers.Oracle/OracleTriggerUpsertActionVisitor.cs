@@ -4,7 +4,6 @@ using Laraue.Linq2Triggers.Core.TriggerBuilders;
 using Laraue.Linq2Triggers.Core.TriggerBuilders.Actions;
 using Laraue.Linq2Triggers.Core.Visitors.SetExpressionVisitors;
 using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors;
-using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors.Statements;
 
 namespace Laraue.Linq2Triggers.Providers.Oracle;
 
@@ -80,8 +79,34 @@ public sealed class OracleTriggerUpsertActionVisitor : ITriggerActionVisitor<Tri
                 valuesBuilder.AppendViaNewLine(", ", insertParts
                     .Select(x => x.Value));
             })
-            .AppendNewLine(");");
+            .AppendNewLine(")");
 
+        if (triggerAction.UpdateExpression is not null)
+        {
+            sqlBuilder.AppendNewLine("WHEN MATCHED THEN");
+            sqlBuilder.AppendNewLine("UPDATE SET")
+                .WithIdent(updateBuilder =>
+                {
+                    var updateParts = _factory.Visit(
+                        triggerAction.UpdateExpression,
+                        visitedMembers);
+                
+                    updateBuilder
+                        .AppendJoin(", ", updateParts
+                            .Select(x =>
+                            {
+                                var columnSql = _sqlGenerator.GetColumnSql(
+                                    updateEntityType,
+                                    x.Key.Name,
+                                    ArgumentType.None);
+                            
+                                return $"{columnSql} = {x.Value}";
+                            }));
+                });
+        }
+
+        sqlBuilder.Append(";");
+        
         return sqlBuilder;
     }
 }
