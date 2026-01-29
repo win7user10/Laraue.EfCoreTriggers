@@ -157,7 +157,7 @@ namespace Laraue.Linq2Triggers.Core.SqlGeneration
         }
 
         /// <inheritdoc />
-        public string GetSql(string source)
+        public virtual string GetSql(string source)
         {
             return $"{Quote}{source}{Quote}";
         }

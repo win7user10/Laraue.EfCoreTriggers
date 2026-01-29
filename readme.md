@@ -73,17 +73,17 @@ TriggerFunctions.GetColumnName<Transaction>(transaction => transaction.Value);
 
 ### All available triggers
 
-| Trigger           | PostgreSql | SQL Server | SQLite | MySQL |
-|-------------------|------------|------------|--------|-------|
-| Before Insert     | +          | -          | +      | +     |
-| After Insert      | +          | +          | +      | +     |
-| Instead Of Insert | +          | +          | +      | -     |
-| Before Update     | +          | -          | +      | +     |
-| After Update      | +          | +          | +      | +     |
-| Instead Of Update | +          | +          | +      | -     |
-| Before Delete     | +          | -          | +      | +     |
-| After Delete      | +          | +          | +      | +     |
-| Instead Of Delete | +          | +          | +      | -     |
+| Trigger           | PostgreSql | SQL Server | SQLite | MySQL | Oracle |
+|-------------------|------------|------------|--------|-------|--------|
+| Before Insert     | +          | -          | +      | +     | +      |
+| After Insert      | +          | +          | +      | +     | +      |
+| Instead Of Insert | +          | +          | +      | -     | +      |
+| Before Update     | +          | -          | +      | +     | +      |
+| After Update      | +          | +          | +      | +     | +      |
+| Instead Of Update | +          | +          | +      | -     | +      |
+| Before Delete     | +          | -          | +      | +     | +      |
+| After Delete      | +          | +          | +      | +     | +      |
+| Instead Of Delete | +          | +          | +      | -     | +      | 
 
 ### Available actions after trigger has worked
 
@@ -152,6 +152,22 @@ var dbContext = new TestDbContext(options);
 var options = new DbContextOptionsBuilder<TestDbContext>()
     .UseSqlite("Filename=D://test.db")
     .UseSqlLiteTriggers()
+    .Options;
+
+var dbContext = new TestDbContext(options);
+```
+
+## Laraue.EfCoreTriggers.Oracle
+
+[![latest version](https://img.shields.io/nuget/v/Laraue.EfCoreTriggers.Oracle)](https://www.nuget.org/packages/Laraue.EfCoreTriggers.Oracle)
+[![latest version](https://img.shields.io/nuget/dt/Laraue.EfCoreTriggers.Oracle)](https://www.nuget.org/packages/Laraue.EfCoreTriggers.Oracle)
+
+### Basic usage
+
+```cs
+var options = new DbContextOptionsBuilder<TestDbContext>()
+    .UseOracle("Data Source=localhost:1521/FREEPDB1;User Id=oracle;Password=oracle;")
+    .UseOracleTriggers()
     .Options;
 
 var dbContext = new TestDbContext(options);
