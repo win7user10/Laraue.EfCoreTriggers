@@ -12,5 +12,5 @@ public class NewGuidVisitor : BaseNewGuidVisitor
     }
 
     /// <inheritdoc />
-    protected override string NewGuidSql => "gen_random_uuid()";
+    protected override string NewGuidSql => "SYS_GUID()";
 }

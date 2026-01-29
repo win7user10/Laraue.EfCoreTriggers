@@ -22,6 +22,8 @@ using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors;
 using Laraue.Linq2Triggers.Core.Visitors.TriggerVisitors.Statements;
 using Laraue.Linq2Triggers.Providers.Oracle.Converters.MemberAccess.DateTime;
 using Laraue.Linq2Triggers.Providers.Oracle.Converters.MemberAccess.DateTimeOffset;
+using Laraue.Linq2Triggers.Providers.Oracle.Converters.MethodCalls.Guid.NewGuid;
+using Laraue.Linq2Triggers.Providers.Oracle.Converters.NewExpression;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Laraue.Linq2Triggers.Providers.Oracle.Extensions;
@@ -58,9 +60,12 @@ public static class ServiceCollectionExtensions
             .AddMethodCallConverter<MathCosVisitor>()
             .AddMethodCallConverter<MathExpVisitor>()
             .AddMethodCallConverter<MathFloorVisitor>()
+            .AddMethodCallConverter<NewGuidVisitor>()
             .AddMemberAccessConverter<DateTimeNowVisitor>()
             .AddMemberAccessConverter<DateTimeUtcNowVisitor>()
             .AddMemberAccessConverter<DateTimeOffsetNowVisitor>()
-            .AddMemberAccessConverter<DateTimeOffsetUtcNowVisitor>();
+            .AddMemberAccessConverter<DateTimeOffsetUtcNowVisitor>()
+            .AddNewExpressionConverter<NewDateTimeExpressionVisitor>()
+            .AddNewExpressionConverter<NewDateTimeOffsetExpressionVisitor>();
     }
 }
