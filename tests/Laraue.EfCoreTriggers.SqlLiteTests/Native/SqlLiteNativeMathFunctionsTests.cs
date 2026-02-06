@@ -1,4 +1,5 @@
-﻿using Laraue.EfCoreTriggers.Tests;
+﻿using System.IO;
+using Laraue.EfCoreTriggers.Tests;
 using Laraue.EfCoreTriggers.Tests.Infrastructure;
 using Laraue.EfCoreTriggers.Tests.Tests.Native;
 using Microsoft.Data.Sqlite;
@@ -17,7 +18,8 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests.Native
 
         private static void LoadExtension(DbContext dbContext, string extensionName)
         {
-            var extensionPath = $"Extensions/{extensionName}";
+            var currentDirectory = Directory.GetCurrentDirectory();
+            var extensionPath = Path.Combine(currentDirectory, "Extensions", extensionName);
             
 #if NET6_0_OR_GREATER
             using var connection = dbContext.Database.GetDbConnection() as SqliteConnection;

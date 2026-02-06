@@ -57,15 +57,20 @@ jobs:
         
     - name: Restore dependencies
       run: dotnet restore
-        
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
+
+    - name: Build src projects
+      run: |
+          for p in $(find ./src -name *.csproj); do dotnet build $p --configuration Release; done
+
+    - name: Build test projects
+      run: |
+          for p in $(find ./tests -name *.csproj); do dotnet build $p; done
     
     - name: Run unit tests
-      run: dotnet test --configuration Release --filter 'Category!=IntegrationTest' --no-build --verbosity normal
+      run: dotnet test --filter 'Category!=IntegrationTest' --no-build --verbosity normal
       
     - name: Run integration tests
-      run: dotnet test --configuration Release --filter 'Category=IntegrationTest' --no-build --verbosity normal
+      run: dotnet test= --filter 'Category=IntegrationTest' --no-build --verbosity normal
 
     - name: Generate a NuGet package
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
