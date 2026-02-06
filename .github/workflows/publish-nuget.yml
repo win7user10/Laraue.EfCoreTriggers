@@ -34,15 +34,15 @@ jobs:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
-          MSSQL_SA_PASSWORD=JahjdasIuqn2
-          ACCEPT_EULA=Y
+          MSSQL_SA_PASSWORD: JahjdasIuqn2
+          ACCEPT_EULA: Y
         ports:
           - "1433:1433"
           
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD=hjkahds68Y
+          MYSQL_ROOT_PASSWORD: hjkahds68Y
         ports:
           - "3306:3306"
     
