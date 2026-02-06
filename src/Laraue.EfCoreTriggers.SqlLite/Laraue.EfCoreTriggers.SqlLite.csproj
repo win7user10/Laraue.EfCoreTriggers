@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Description>Generating native SqlLite triggers through migrations using EFCore entity builder.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;SqlLite</PackageTags>
-    <Version>6.6.1</Version>
+    <Version>6.7.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
