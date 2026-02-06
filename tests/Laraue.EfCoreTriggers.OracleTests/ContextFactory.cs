@@ -28,7 +28,7 @@ namespace Laraue.EfCoreTriggers.OracleTests
         public DbContextOptions<TContext> CreateDbContextOptions()
         {
             return new DbContextOptionsBuilder<TContext>()
-                .UseOracle("Data Source=localhost:1521/FREEPDB1;User Id=oracle;Password=oracle;",
+                .UseOracle(ConfigurationUtility.GetConnectionString("Oracle"),
                     x => x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
                 .UseOracleTriggers()
                 .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactoryDesignTimeSupport>()
