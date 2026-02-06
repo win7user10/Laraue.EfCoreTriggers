@@ -69,11 +69,7 @@ namespace Laraue.EfCoreTriggers.Tests.Infrastructure
 
         private IRelationalModel GetRelationalModel()
         {
-#if NET5_0
             return Model.GetRelationalModel();
-#else
-            return Database.GetService<IDesignTimeModel>().Model.GetRelationalModel();
-#endif
         }
     }
 }

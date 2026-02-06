@@ -21,18 +21,8 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests.Native
             var currentDirectory = Directory.GetCurrentDirectory();
             var extensionPath = Path.Combine(currentDirectory, "Extensions", extensionName);
             
-#if NET6_0_OR_GREATER
-            using var connection = dbContext.Database.GetDbConnection() as SqliteConnection;
-            connection!.Open();
-            connection.EnableExtensions();
-            var comm = connection.CreateCommand();
-            comm.CommandText = $"SELECT load_extension('{extensionPath}');";
-            comm.ExecuteNonQuery();
-            connection.Close();
-#else
             using var connection = dbContext.Database.GetDbConnection() as SqliteConnection;
             connection!.LoadExtension(extensionPath);
-#endif
         }
     }
 }
