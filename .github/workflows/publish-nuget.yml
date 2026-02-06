@@ -70,7 +70,7 @@ jobs:
       run: dotnet test --filter 'Category!=IntegrationTest' --no-build --verbosity normal
       
     - name: Run integration tests
-      run: dotnet test= --filter 'Category=IntegrationTest' --no-build --verbosity normal
+      run: dotnet test --filter 'Category=IntegrationTest' --no-build --verbosity normal
 
     - name: Generate a NuGet package
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
