@@ -55,11 +55,17 @@ jobs:
       with:
         dotnet-version: '10.x.x'
         
-    - name: Build project
-      run: dotnet build --configuration Release
+    - name: Restore dependencies
+      run: dotnet restore
+        
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
     
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: Run unit tests
+      run: dotnet test --configuration Release --filter 'Category!=IntegrationTest' --no-build --verbosity normal
+      
+    - name: Run integration tests
+      run: dotnet test --configuration Release --filter 'Category=IntegrationTest' --no-build --verbosity normal
 
     - name: Generate a NuGet package
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')
