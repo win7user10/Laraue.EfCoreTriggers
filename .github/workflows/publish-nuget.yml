@@ -56,8 +56,7 @@ jobs:
         dotnet-version: '10.x.x'
         
     - name: Build project
-      run: |
-          for p in $(find ./src -name *.csproj); do dotnet build $p --configuration Release; done
+      run: dotnet build --configuration Release
     
     - name: Test
       run: dotnet test --no-build --verbosity normal
