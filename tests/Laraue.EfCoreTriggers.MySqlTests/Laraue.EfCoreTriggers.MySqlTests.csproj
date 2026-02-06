@@ -32,4 +32,10 @@
         <ProjectReference Include="..\..\src\Laraue.EfCoreTriggers.MySql\Laraue.EfCoreTriggers.MySql.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

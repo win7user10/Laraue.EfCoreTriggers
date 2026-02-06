@@ -6,5 +6,6 @@
         public const string PostgreSql = "PostgreSqlCollection";
         public const string SqlServer = "SqlServerCollection";
         public const string Sqlite = "SqliteCollection";
+        public const string Oracle = "OracleCollection";
     }
 }

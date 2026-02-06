@@ -75,7 +75,7 @@ namespace Laraue.Linq2Triggers.Core.Converters.MethodCall.Enumerable
                 .Append("SELECT ")
                 .Append(selectSql.Item1)
                 .AppendNewLine($"FROM {_sqlGenerator.GetTableSql(entityType)}")
-                .AppendNewLine($"INNER JOIN {_sqlGenerator.GetTableSql(originalSetType)} ON "));
+                .AppendNewLine($"WHERE "));
 
             var keys = _schemaRetriever.GetForeignKeyMembers(entityType, originalSetType);
 
@@ -91,14 +91,15 @@ namespace Laraue.Linq2Triggers.Core.Converters.MethodCall.Enumerable
                 
                 var argument2Type = memberExpression.Member.GetArgumentType();
                 
-                var column2WhereSql = _sqlGenerator.GetColumnValueReferenceSql(originalSetType, key.PrincipalKey.Name, argument2Type);
+                var column2WhereSql = _sqlGenerator.GetColumnValueReferenceSql(
+                    originalSetType,
+                    key.PrincipalKey.Name,
+                    argument2Type);
+                
                 visitedMembers.AddMember(
                     argument2Type,
                     key.PrincipalKey.ToVisitedMemberInfo());
                 
-                var column2JoinSql = _sqlGenerator.GetColumnSql(originalSetType, key.PrincipalKey.Name, ArgumentType.Default);
-
-                joinParts.Add($"{column1Sql} = {column2JoinSql}");
                 joinParts.Add($"{column1Sql} = {column2WhereSql}");
             }
 

@@ -29,7 +29,7 @@ namespace Laraue.Linq2Triggers.Providers.SqlServer.Extensions;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Add EF Core triggers MySQL provider services.
+    /// Add EF Core triggers Sql Server provider services.
     /// </summary>
     public static void AddBaseSqlServerServices(this IServiceCollection serviceCollection)
     {
