@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Description>Common classes EfCoreTriggers packages.</Description>
-    <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql</PackageTags>
-    <Nullable>enable</Nullable>
-    <Version>10.3.1</Version>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Description>Common classes EfCoreTriggers packages.</Description>
+        <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql</PackageTags>
+        <Nullable>enable</Nullable>
+        <Version>10.4.0</Version>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[10.0.0, 11.0.0)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="[10.0.0, 11.0.0)">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[10.0.0, 11.0.0)" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[10.0.0, 11.0.0)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="[10.0.0, 11.0.0)">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[10.0.0, 11.0.0)" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Laraue.Linq2Triggers.Core\Laraue.Linq2Triggers.Core.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Laraue.Linq2Triggers.Core\Laraue.Linq2Triggers.Core.csproj" />
+    </ItemGroup>
 
 </Project>

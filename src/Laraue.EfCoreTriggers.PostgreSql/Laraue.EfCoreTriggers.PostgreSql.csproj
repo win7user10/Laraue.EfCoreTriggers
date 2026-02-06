@@ -4,7 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Description>Generating native PostgreSql triggers through migrations using EFCore entity builder.</Description>
     <PackageTags>Entity Framework Core;entity-framework-core;ef;efcore;triggers;sql;PostgreSql</PackageTags>
-    <Version>10.3.1</Version>
+    <Version>10.4.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
