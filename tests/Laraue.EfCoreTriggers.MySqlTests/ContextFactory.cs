@@ -25,7 +25,7 @@ public class ContextOptionsFactory<TContext> : IContextOptionsFactory<TContext> 
     public DbContextOptions<TContext> CreateDbContextOptions()
     {
         return new DbContextOptionsBuilder<TContext>()
-            .UseMySQL("server=localhost;user=root;password=mysql;database=efcoretriggers;", x => x
+            .UseMySQL(ConfigurationUtility.GetConnectionString("MySql"), x => x
                 .MigrationsAssembly(typeof(ContextFactory).Assembly.FullName))
             .UseMySqlTriggers()
             .EnableSensitiveDataLogging()

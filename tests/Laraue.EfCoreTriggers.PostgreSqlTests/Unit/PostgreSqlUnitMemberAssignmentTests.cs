@@ -20,7 +20,7 @@ namespace Laraue.EfCoreTriggers.PostgreSqlTests.Unit
 
         public override string ExceptedDecimalAddSql => "INSERT INTO \"DestinationEntities\" (\"DecimalValue\") SELECT NEW.\"DecimalValue\" + 3;";
 
-        public override string ExceptedDoubleSubSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT NEW.\"DoubleValue\" + 3;";
+        public override string ExceptedDoubleSubSql => "INSERT INTO \"DestinationEntities\" (\"DoubleValue\") SELECT NEW.\"DoubleValue\" - 1;";
 
         public override string ExceptedIntMultiplySql => "INSERT INTO \"DestinationEntities\" (\"IntValue\") SELECT NEW.\"IntValue\" * 2;";
 
