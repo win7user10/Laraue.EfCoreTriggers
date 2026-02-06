@@ -47,9 +47,9 @@ namespace Laraue.EfCoreTriggers.OracleTests.Unit
             => "INSERT INTO \"DestinationEntities\" (\"DateTimeOffsetValue\") SELECT SYS_EXTRACT_UTC(SYSTIMESTAMP);";
 
         public override string ExceptedNewDateTimeOffsetSql
-            => "INSERT INTO \"DestinationEntities\" (\"DateTimeOffsetValue\") SELECT TO_DATE('0001-01-01', 'YYYY-MM-DD');";
+            => "INSERT INTO \"DestinationEntities\" (\"DateTimeOffsetValue\") SELECT TO_DATE('1000-01-01', 'YYYY-MM-DD');";
 
         public override string ExceptedNewDateTimeSql
-            => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT TO_DATE('0001-01-01', 'YYYY-MM-DD');";
+            => "INSERT INTO \"DestinationEntities\" (\"DateTimeValue\") SELECT TO_DATE('1000-01-01', 'YYYY-MM-DD');";
     }
 }

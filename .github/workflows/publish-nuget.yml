@@ -13,6 +13,39 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - "5432:5432"
+
+      oracle:
+        image: gvenzl/oracle-free:latest
+        env:
+          ORACLE_PASSWORD: sys_user_password
+          APP_USER: oracle
+          APP_USER_PASSWORD: oracle
+        ports:
+          - "1521:1521"
+          
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          MSSQL_SA_PASSWORD: JahjdasIuqn2
+          ACCEPT_EULA: Y
+        ports:
+          - "1433:1433"
+          
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: hjkahds68Y
+        ports:
+          - "3306:3306"
+    
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -22,12 +55,17 @@ jobs:
       with:
         dotnet-version: '10.x.x'
         
-    - name: Build project
-      run: |
-          for p in $(find ./src -name *.csproj); do dotnet build $p --configuration Release; done
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release
     
-    - name: Test
-      run: dotnet test --filter 'Category!=IntegrationTest' --no-build --verbosity normal
+    - name: Run unit tests
+      run: dotnet test --filter 'Category!=IntegrationTest' --configuration Release --no-build --verbosity normal
+      
+    - name: Run integration tests
+      run: dotnet test --filter 'Category=IntegrationTest' --configuration Release --no-build --verbosity normal
 
     - name: Generate a NuGet package
       if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release/')

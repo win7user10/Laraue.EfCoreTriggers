@@ -31,5 +31,11 @@
     <ProjectReference Include="..\Laraue.EfCoreTriggers.Tests\Laraue.EfCoreTriggers.Tests.csproj" />
     <ProjectReference Include="..\..\src\Laraue.EfCoreTriggers.Oracle\Laraue.EfCoreTriggers.Oracle.csproj" />
   </ItemGroup>
+    
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
 </Project>

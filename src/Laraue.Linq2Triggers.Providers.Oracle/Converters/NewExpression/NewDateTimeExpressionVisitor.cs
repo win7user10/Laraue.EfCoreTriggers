@@ -16,6 +16,6 @@ public class NewDateTimeExpressionVisitor : BaseNewDateTimeExpressionVisitor
     /// <inheritdoc />
     public override SqlBuilder Visit(System.Linq.Expressions.NewExpression expression, VisitedMembers visitedMembers)
     {
-        return SqlBuilder.FromString("TO_DATE('0001-01-01', 'YYYY-MM-DD')");
+        return SqlBuilder.FromString("TO_DATE('1000-01-01', 'YYYY-MM-DD')");
     }
 }
