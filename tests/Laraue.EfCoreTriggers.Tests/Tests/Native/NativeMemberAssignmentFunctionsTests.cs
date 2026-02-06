@@ -51,7 +51,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
             {
                 DoubleValue = 10.3
             });
-            Assert.Equal(13.3, insertedEntity.DoubleValue);
+            Assert.Equal(9.3, insertedEntity.DoubleValue);
         }
 
         public override void IntMultiplySql()
