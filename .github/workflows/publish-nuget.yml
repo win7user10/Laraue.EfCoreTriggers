@@ -53,7 +53,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '10.x.x'
+        dotnet-version: '5.x.x'
         
     - name: Restore dependencies
       run: dotnet restore
