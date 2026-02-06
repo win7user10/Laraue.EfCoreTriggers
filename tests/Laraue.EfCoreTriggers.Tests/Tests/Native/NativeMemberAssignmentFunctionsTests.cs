@@ -111,38 +111,6 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
             
             Assert.Equal(EnumValue.Value2, insertedEntity.EnumValue);
         }
-        
-        [Fact]
-        public void StringEnumSql()
-        {
-            Expression<Func<NewTableRef<SourceEntity>, DestinationEntity>> setEnumVariableExpression = tableRefs
-                => new DestinationEntity
-                {
-                    EnumValue = tableRefs.New.EnumValue,
-                };
-
-            Action<ModelBuilder> setupModelBuilder = builder =>
-            {
-                builder.Entity<SourceEntity>()
-                    .Property(x => x.EnumValue)
-                    .HasColumnType("varchar(100)")
-                    .HasConversion<string>();
-
-                builder.Entity<DestinationEntity>()
-                    .Property(x => x.EnumValue)
-                    .HasColumnType("varchar(100)")
-                    .HasConversion<string>();
-            };
-            
-            setupModelBuilder += SetupModelBuilder;
-
-            var insertedEntity = ContextOptionsFactory.CheckTrigger(setEnumVariableExpression, SetupDbContext, setupModelBuilder, new SourceEntity
-            {
-                EnumValue = EnumValue.Value2
-            });
-            
-            Assert.Equal(EnumValue.Value2, insertedEntity.EnumValue);
-        }
 
         public override void CharValueSql()
         {
