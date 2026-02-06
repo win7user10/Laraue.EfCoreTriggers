@@ -10,6 +10,6 @@ namespace Laraue.EfCoreTriggers.SqlServerTests.Native
     {
         public SqlServerNativeDateTimeFunctionsTests() : base(new ContextOptionsFactory<DynamicDbContext>()){}
 
-        protected override bool DateReturnsOnlyInUtc => false;
+        protected override bool DateReturnsOnlyInUtc => true;
     }
 }

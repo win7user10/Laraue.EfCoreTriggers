@@ -55,7 +55,7 @@ namespace Laraue.EfCoreTriggers.Tests.Tests.Native
                 dbDate = TimeZoneInfo.ConvertTimeFromUtc(dbDate, TimeZoneInfo.Local);
             }
             
-            Assert.Equal(dbDate, localTime, new TimeSpan(0, 1, 0));
+            Assert.Equal(localTime, dbDate, new TimeSpan(0, 1, 0));
         }
     }
 }
