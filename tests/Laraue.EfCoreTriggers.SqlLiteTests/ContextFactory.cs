@@ -24,7 +24,7 @@ namespace Laraue.EfCoreTriggers.SqlLiteTests
         public DbContextOptions<TContext> CreateDbContextOptions()
         {
             return new DbContextOptionsBuilder<TContext>()
-                .UseSqlite("Data Source=test.db;", x =>
+                .UseSqlite(ConfigurationUtility.GetConnectionString("Sqlite"), x =>
                 {
                     x.MigrationsAssembly(typeof(ContextFactory).Assembly.FullName);
                 })
