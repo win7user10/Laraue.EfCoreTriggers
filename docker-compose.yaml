@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+
+  oracle:
+    image: gvenzl/oracle-free:latest
+    environment:
+      ORACLE_PASSWORD: sys_user_password
+      APP_USER: oracle
+      APP_USER_PASSWORD: oracle
+    ports:
+      - "1521:1521"
+      
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - MSSQL_SA_PASSWORD=JahjdasIuqn2
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+      
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=hjkahds68Y
+    ports:
+      - "3306:3306"
