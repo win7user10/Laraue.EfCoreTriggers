@@ -310,3 +310,32 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
     modelBuilder.AddGenericTrigger(new NotificationsTriggers());
 }
 ```
+
+## Commercial Support & Custom Development
+
+Laraue.EfCoreTriggers is and will always be **free and open-source** for everyone, including commercial use (under MIT License).
+
+However, if your company needs:
+
+- A **specific new feature** that doesn’t yet exist
+- A **critical bug fix** on your timeline
+- **Integration assistance** or consulting
+- **Priority support** for your team
+
+You can commission me to build it. The resulting code will be **contributed back to this library** and made available
+to everyone – so you help the whole community while getting exactly what you need.
+
+### How it works
+1. You describe the feature or fix you need.
+2. We agree on a scope and price (fixed or hourly).
+3. I develop, test, and merge the change into the public repository.
+4. You get a working solution immediately, and everyone else benefits forever.
+
+### Contact for commercial work
+📧 **sales@laraue.com** – mention "EfCoreTriggers".
+
+### Why pay?
+- Faster delivery than waiting for community contributions.
+- Guaranteed attention to your specific use case.
+- Direct support and consultation.
+- You fund the long-term maintenance of a library you rely on.
